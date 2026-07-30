@@ -1,0 +1,35 @@
+[
+  {
+    "stage": "MODEL_REGISTRY_DISCOVERY",
+    "endpoint": "http://127.0.0.1:11434/api/tags",
+    "reasoningModel": "qwen2.5:1.5b",
+    "embeddingModel": "nomic-embed-text:latest",
+    "wallClockMs": 4.89
+  },
+  {
+    "stage": "4_PARALLEL_PIPELINES_EXECUTION",
+    "wallClockMs": 18.03,
+    "visualExtracted": true,
+    "speechExtracted": true,
+    "ocrExtracted": true,
+    "audioExtracted": true
+  },
+  {
+    "stage": "NOMIC_EMBED_TEXT",
+    "modelName": "nomic-embed-text:latest",
+    "vectorLength": 768,
+    "wallClockMs": 507.94
+  },
+  {
+    "stage": "QWEN_REASONING_ENGINE",
+    "modelName": "qwen2.5:1.5b",
+    "topic": "Educational & Thought Leadership Narrative",
+    "wallClockMs": 514.83
+  },
+  {
+    "stage": "PREDICTION_ENGINE",
+    "predictedViews": 77185,
+    "viralityProbability": 0.428,
+    "wallClockMs": 0.08
+  }
+]

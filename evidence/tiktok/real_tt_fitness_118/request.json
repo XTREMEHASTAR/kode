@@ -1,0 +1,16 @@
+{
+  "method": "POST",
+  "url": "https://open.tiktokapis.com/v2/video/query/",
+  "headers": {
+    "Host": "open.tiktokapis.com",
+    "Authorization": "Bearer [REDACTED_BEARER_TOKEN]",
+    "Content-Type": "application/json"
+  },
+  "body": {
+    "filters": {
+      "video_ids": [
+        "real_tt_fitness_118"
+      ]
+    }
+  }
+}

@@ -1,0 +1,992 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — Enterprise AI SaaS Design System & Style Guide</title>
+  <meta name="description" content="The single source of truth enterprise-grade design system and interactive component library for high-scale AI SaaS interfaces.">
+  <link rel="stylesheet" href="design-system.css">
+  <style>
+    /* Additional structural styles for the style guide dashboard itself */
+    .dashboard-layout {
+      display: flex;
+      min-height: 100vh;
+    }
+    .guide-sidebar {
+      width: 280px;
+      border-right: 1px solid var(--border-default);
+      background-color: var(--bg-secondary);
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      overflow-y: auto;
+      padding: var(--space-lg) var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+    .guide-content {
+      flex: 1;
+      padding: var(--space-xl);
+      overflow-y: auto;
+      background-color: var(--bg-primary);
+    }
+    .component-section {
+      margin-bottom: var(--space-3xl);
+      scroll-margin-top: 80px;
+      animation: pageSlideIn var(--transition-smooth) forwards;
+    }
+    .component-header {
+      border-bottom: 1px solid var(--border-default);
+      padding-bottom: var(--space-sm);
+      margin-bottom: var(--space-lg);
+    }
+    .color-swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: var(--space-md);
+      margin-top: var(--space-sm);
+    }
+    .color-swatch {
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+    }
+    .color-swatch-preview {
+      height: 80px;
+    }
+    .color-swatch-info {
+      padding: var(--space-xs);
+      background-color: var(--bg-elevated);
+    }
+    .spacing-box {
+      background-color: var(--brand-primary-glow);
+      border: 1px solid var(--brand-primary);
+      border-radius: var(--radius-xs);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--brand-primary);
+    }
+    .glass-demo-bg {
+      background: linear-gradient(135deg, #FF6B6B 0%, #4D96FF 100%);
+      padding: var(--space-xl);
+      border-radius: var(--radius-xl);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .theme-header {
+      position: sticky;
+      top: 0;
+      z-index: 800;
+      background-color: var(--glass-bg);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border-default);
+      padding: 12px var(--space-xl);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    .sidebar-category {
+      font-size: 0.6875rem;
+      font-weight: 700;
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-top: var(--space-md);
+      margin-bottom: var(--space-xs);
+    }
+    .tag-demo {
+      font-size: 11px;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-default);
+      color: var(--text-muted);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="dashboard-layout">
+    <!-- LEFT SIDEBAR: STYLE GUIDE NAVIGATION -->
+    <aside class="guide-sidebar" id="guide-sidebar">
+      <div>
+        <h2 class="sidebar-logo flex-center" style="justify-content: flex-start; gap: 8px;">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="var(--brand-primary)" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+          </svg>
+          <span>KONTAGI</span>
+        </h2>
+        <p class="text-detail font-medium" style="color: var(--text-secondary); margin-top: 4px;">v1.0.0 Enterprise Spec</p>
+      </div>
+
+      <nav style="display: flex; flex-direction: column; gap: 4px; margin-top: var(--space-md);">
+        <div class="sidebar-category">1. Foundations</div>
+        <a href="#colors" class="sidebar-nav-item">Colors & Themes</a>
+        <a href="#typography" class="sidebar-nav-item">Typography & Weights</a>
+        <a href="#grid-spacing" class="sidebar-nav-item">Grid, Spacing & Borders</a>
+        <a href="#elevation-glass" class="sidebar-nav-item">Elevation & Glass</a>
+
+        <div class="sidebar-category">2. Basic Elements</div>
+        <a href="#buttons" class="sidebar-nav-item">Buttons & States</a>
+        <a href="#forms" class="sidebar-nav-item">Inputs, Selects & Files</a>
+        <a href="#avatars" class="sidebar-nav-item">Avatar & Icon System</a>
+
+        <div class="sidebar-category">3. Structure & Layout</div>
+        <a href="#nav-components" class="sidebar-nav-item">Navigation Bars</a>
+        <a href="#cards-kpis" class="sidebar-nav-item">Cards & Bento Grids</a>
+
+        <div class="sidebar-category">4. Data Displays</div>
+        <a href="#tables" class="sidebar-nav-item">Tables & Data Grids</a>
+        <a href="#tabs-accordions" class="sidebar-nav-item">Tabs & Accordions</a>
+
+        <div class="sidebar-category">5. Overlays & Feedback</div>
+        <a href="#overlays" class="sidebar-nav-item">Modals & Drawers</a>
+        <a href="#toasts-banners" class="sidebar-nav-item">Toasts, Alerts & States</a>
+        <a href="#ai-components" class="sidebar-nav-item">Advanced AI Chat</a>
+      </nav>
+      
+      <div style="margin-top: auto; border-top: 1px solid var(--border-default); padding-top: var(--space-sm);">
+        <button id="theme-toggle" class="btn btn-tertiary" style="width: 100%;">
+          <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+          </svg>
+          Dark Mode
+        </button>
+      </div>
+    </aside>
+
+    <!-- RIGHT CONTAINER: HEADER AND COMPONENTS PLAYGROUND -->
+    <main class="main-content-panel">
+      
+      <!-- Sticky Guide Header -->
+      <header class="theme-header">
+        <div>
+          <h1 class="text-body-large font-bold" style="letter-spacing: -0.01em;">Design System Playground</h1>
+          <p class="text-detail" style="color: var(--text-muted);">Real-time interactive component testing board</p>
+        </div>
+        <div style="display: flex; gap: var(--space-xs); align-items: center;">
+          <a href="auth.html" class="btn btn-secondary btn-sm" style="text-decoration: none;">Auth Module</a>
+          <a href="dashboard.html" class="btn btn-secondary btn-sm" style="text-decoration: none;">Dashboard</a>
+          <a href="projects.html" class="btn btn-secondary btn-sm" style="text-decoration: none;">Projects</a>
+          <a href="library.html" class="btn btn-secondary btn-sm" style="text-decoration: none;">Creative Library</a>
+          <a href="hooks.html" class="btn btn-secondary btn-sm" style="text-decoration: none;">Hook Intelligence</a>
+          <a href="retention.html" class="btn btn-secondary btn-sm" style="text-decoration: none;">Retention Intelligence</a>
+          <a href="script.html" class="btn btn-secondary btn-sm" style="text-decoration: none;">Script Intelligence</a>
+          <a href="thumbnail.html" class="btn btn-secondary btn-sm" style="text-decoration: none;">Thumbnail Intelligence</a>
+          <a href="upload.html" class="btn btn-secondary btn-sm" style="text-decoration: none;">Upload Center</a>
+          <a href="lab.html" class="btn btn-secondary btn-sm" style="text-decoration: none;">AI Creative Lab</a>
+          <a href="report.html" class="btn btn-secondary btn-sm" style="text-decoration: none;">AI Reports</a>
+          <a href="creators.html" class="btn btn-secondary btn-sm" style="text-decoration: none;">Creators</a>
+          <a href="brand.html" class="btn btn-secondary btn-sm" style="text-decoration: none;">Brand Hub</a>
+          <a href="coach.html" class="btn btn-secondary btn-sm" style="text-decoration: none;">AI Coach</a>
+                    <a href="mobile.html" class="btn btn-secondary btn-sm" style="text-decoration: none;">Mobile App</a>
+          <button id="skeleton-demo-toggle" class="btn btn-tertiary btn-sm">Show Skeletons</button>
+          <button class="btn btn-primary btn-sm" onclick="showToast('Design token copy script loaded successfully!')">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m-2 4h5m-3-3l3 3-3 3"/></svg>
+            Export Tokens
+          </button>
+        </div>
+      </header>
+
+      <!-- Main Contents -->
+      <div class="guide-content">
+
+        <!-- ==========================================
+             SECTION: COLORS & THEMES
+             ========================================== -->
+        <section id="colors" class="component-section">
+          <div class="component-header">
+            <h2>Colors & Themes</h2>
+            <p class="text-body-small" style="color: var(--text-muted);">Simultaneous design implementation for high-fidelity dark and light profiles.</p>
+          </div>
+
+          <h3 class="text-body-base font-bold" style="margin-bottom: var(--space-xs);">Brand & Semantic Swatches</h3>
+          <div class="color-swatch-grid">
+            <div class="color-swatch">
+              <div class="color-swatch-preview" style="background-color: var(--brand-primary);"></div>
+              <div class="color-swatch-info">
+                <p class="text-body-small font-semibold">Brand Primary</p>
+                <code class="text-detail" style="color: var(--text-secondary);">var(--brand-primary)</code>
+              </div>
+            </div>
+            <div class="color-swatch">
+              <div class="color-swatch-preview" style="background-color: var(--accent-blue);"></div>
+              <div class="color-swatch-info">
+                <p class="text-body-small font-semibold">Apple Blue</p>
+                <code class="text-detail" style="color: var(--text-secondary);">var(--accent-blue)</code>
+              </div>
+            </div>
+            <div class="color-swatch">
+              <div class="color-swatch-preview" style="background-color: var(--accent-purple);"></div>
+              <div class="color-swatch-info">
+                <p class="text-body-small font-semibold">Linear Purple</p>
+                <code class="text-detail" style="color: var(--text-secondary);">var(--accent-purple)</code>
+              </div>
+            </div>
+            <div class="color-swatch">
+              <div class="color-swatch-preview" style="background-color: var(--accent-green);"></div>
+              <div class="color-swatch-info">
+                <p class="text-body-small font-semibold">Stripe Emerald</p>
+                <code class="text-detail" style="color: var(--text-secondary);">var(--accent-green)</code>
+              </div>
+            </div>
+            <div class="color-swatch">
+              <div class="color-swatch-preview" style="background-color: var(--accent-orange);"></div>
+              <div class="color-swatch-info">
+                <p class="text-body-small font-semibold">Warning Amber</p>
+                <code class="text-detail" style="color: var(--text-secondary);">var(--accent-orange)</code>
+              </div>
+            </div>
+            <div class="color-swatch">
+              <div class="color-swatch-preview" style="background-color: var(--accent-red);"></div>
+              <div class="color-swatch-info">
+                <p class="text-body-small font-semibold">Danger Crimson</p>
+                <code class="text-detail" style="color: var(--text-secondary);">var(--accent-red)</code>
+              </div>
+            </div>
+          </div>
+
+          <h3 class="text-body-base font-bold" style="margin-top: var(--space-lg); margin-bottom: var(--space-xs);">Structural Backgrounds & Borders</h3>
+          <div class="color-swatch-grid">
+            <div class="color-swatch">
+              <div class="color-swatch-preview" style="background-color: var(--bg-primary); border-bottom: 1px solid var(--border-default);"></div>
+              <div class="color-swatch-info">
+                <p class="text-body-small font-semibold">Primary Bg</p>
+                <code class="text-detail" style="color: var(--text-secondary);">var(--bg-primary)</code>
+              </div>
+            </div>
+            <div class="color-swatch">
+              <div class="color-swatch-preview" style="background-color: var(--bg-secondary); border-bottom: 1px solid var(--border-default);"></div>
+              <div class="color-swatch-info">
+                <p class="text-body-small font-semibold">Secondary Bg</p>
+                <code class="text-detail" style="color: var(--text-secondary);">var(--bg-secondary)</code>
+              </div>
+            </div>
+            <div class="color-swatch">
+              <div class="color-swatch-preview" style="background-color: var(--bg-elevated); border-bottom: 1px solid var(--border-default);"></div>
+              <div class="color-swatch-info">
+                <p class="text-body-small font-semibold">Elevated Card Bg</p>
+                <code class="text-detail" style="color: var(--text-secondary);">var(--bg-elevated)</code>
+              </div>
+            </div>
+            <div class="color-swatch">
+              <div class="color-swatch-preview" style="background-color: var(--border-default);"></div>
+              <div class="color-swatch-info">
+                <p class="text-body-small font-semibold">Border Default</p>
+                <code class="text-detail" style="color: var(--text-secondary);">var(--border-default)</code>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION: TYPOGRAPHY
+             ========================================== -->
+        <section id="typography" class="component-section">
+          <div class="component-header">
+            <h2>Typography System</h2>
+            <p class="text-body-small" style="color: var(--text-muted);">Sleek headings set in Outfit; micro data elements set in JetBrains Mono.</p>
+          </div>
+
+          <div class="card" style="display: flex; flex-direction: column; gap: var(--space-md);">
+            <div>
+              <span class="tag-demo">var(--font-display) - Outfit 800</span>
+              <p class="text-display-xl text-gradient">Display Bold 48px</p>
+            </div>
+            <div>
+              <span class="tag-demo">H1 Bold - Outfit 600</span>
+              <h1>Heading Level 1 - 36px</h1>
+            </div>
+            <div>
+              <span class="tag-demo">H2 Bold - Outfit 600</span>
+              <h2>Heading Level 2 - 30px</h2>
+            </div>
+            <div>
+              <span class="tag-demo">H3 Medium - Outfit 600</span>
+              <h3>Heading Level 3 - 24px</h3>
+            </div>
+            <div>
+              <span class="tag-demo">Body Large - Inter 400</span>
+              <p class="text-body-large">Body text large. Premium marketing text, description blurbs and introductory summaries. 18px size.</p>
+            </div>
+            <div>
+              <span class="tag-demo">Body Base - Inter 400</span>
+              <p class="text-body-base">Body text base. General screen reading paragraphs, forms content, listings and standard labels. 16px size.</p>
+            </div>
+            <div>
+              <span class="tag-demo">Body Small - Inter 500</span>
+              <p class="text-body-small" style="color: var(--text-muted);">Body text small. Complex data-grids secondary entries, input hints and subheaders. 14px size.</p>
+            </div>
+            <div>
+              <span class="tag-demo">Detail/Caption - Inter 400</span>
+              <p class="text-detail" style="color: var(--text-secondary);">Detail labels. Metadata, timestamps, footnote rules, and secondary descriptors. 12px size.</p>
+            </div>
+            <div>
+              <span class="tag-demo">Mono Code - JetBrains Mono 500</span>
+              <p class="text-mono" style="background-color: var(--bg-secondary); padding: 8px; border-radius: var(--radius-sm); border: 1px solid var(--border-default); display: inline-block;">
+                const apiResponse = await aura.query({ model: "gemini-3.5-flash" });
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION: GRID & SPACING
+             ========================================== -->
+        <section id="grid-spacing" class="component-section">
+          <div class="component-header">
+            <h2>8px Spacing, Grids & Radius</h2>
+            <p class="text-body-small" style="color: var(--text-muted);">Rigid structural spacing layout and Apple squircle rounding scales.</p>
+          </div>
+
+          <h3 class="text-body-base font-bold" style="margin-bottom: var(--space-xs);">8px Spacing Demo</h3>
+          <div class="card" style="display: flex; align-items: flex-end; gap: var(--space-md); overflow-x: auto; padding: var(--space-lg);">
+            <div class="spacing-box" style="width: 24px; height: 24px;" title="xxs: 4px">xxs</div>
+            <div class="spacing-box" style="width: 32px; height: 32px;" title="xs: 8px">xs</div>
+            <div class="spacing-box" style="width: 48px; height: 48px;" title="sm: 12px">sm</div>
+            <div class="spacing-box" style="width: 64px; height: 64px;" title="md: 16px">md</div>
+            <div class="spacing-box" style="width: 80px; height: 80px;" title="lg: 24px">lg</div>
+            <div class="spacing-box" style="width: 100px; height: 100px;" title="xl: 32px">xl</div>
+          </div>
+
+          <h3 class="text-body-base font-bold" style="margin-top: var(--space-lg); margin-bottom: var(--space-xs);">Border Radius Scale</h3>
+          <div class="grid-12">
+            <div class="card flex-center" style="grid-column: span 3; border-radius: var(--radius-sm); height: 80px; background-color: var(--bg-secondary); border: 1px solid var(--border-default);">
+              <span class="text-body-small font-semibold">sm: 6px</span>
+            </div>
+            <div class="card flex-center" style="grid-column: span 3; border-radius: var(--radius-md); height: 80px; background-color: var(--bg-secondary); border: 1px solid var(--border-default);">
+              <span class="text-body-small font-semibold">md: 8px</span>
+            </div>
+            <div class="card flex-center" style="grid-column: span 3; border-radius: var(--radius-lg); height: 80px; background-color: var(--bg-secondary); border: 1px solid var(--border-default);">
+              <span class="text-body-small font-semibold">lg: 12px</span>
+            </div>
+            <div class="card flex-center" style="grid-column: span 3; border-radius: var(--radius-xl); height: 80px; background-color: var(--bg-secondary); border: 1px solid var(--border-default);">
+              <span class="text-body-small font-semibold">xl: 16px</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION: ELEVATION & GLASSMORPHISM
+             ========================================== -->
+        <section id="elevation-glass" class="component-section">
+          <div class="component-header">
+            <h2>Elevation Levels & Glassmorphism</h2>
+            <p class="text-body-small" style="color: var(--text-muted);">Notion flat borders, Stripe shadows, and Apple-grade background blurring.</p>
+          </div>
+
+          <div class="grid-12" style="margin-bottom: var(--space-lg);">
+            <div class="card elevation-1" style="grid-column: span 4; height: 120px; padding: var(--space-md);">
+              <span class="tag-demo">Elevation 1</span>
+              <p class="text-body-small font-medium" style="margin-top: var(--space-xs);">Secondary panel / Flat card layout</p>
+            </div>
+            <div class="card elevation-2" style="grid-column: span 4; height: 120px; padding: var(--space-md);">
+              <span class="tag-demo">Elevation 2</span>
+              <p class="text-body-small font-medium" style="margin-top: var(--space-xs);">Standard elevation / Context board</p>
+            </div>
+            <div class="card elevation-3" style="grid-column: span 4; height: 120px; padding: var(--space-md);">
+              <span class="tag-demo">Elevation 3</span>
+              <p class="text-body-small font-medium" style="margin-top: var(--space-xs);">Hover popup / Active layout context</p>
+            </div>
+          </div>
+
+          <h3 class="text-body-base font-bold" style="margin-bottom: var(--space-xs);">Apple Glassmorphic Panel</h3>
+          <div class="glass-demo-bg">
+            <div class="glass-panel" style="padding: var(--space-lg); border-radius: var(--radius-xl); max-width: 420px; width: 100%;">
+              <h4 style="color: var(--text-primary);">Glassmorphism Overlay</h4>
+              <p class="text-body-small" style="color: var(--text-muted); margin-top: 8px; margin-bottom: 12px;">Uses CSS backdrop-filter blur for physical depth mapping, ideal for navigation headers, drawers and dialog bases.</p>
+              <button class="btn btn-secondary btn-sm">Interact</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION: BUTTONS
+             ========================================== -->
+        <section id="buttons" class="component-section">
+          <div class="component-header">
+            <h2>Buttons & Action States</h2>
+            <p class="text-body-small" style="color: var(--text-muted);">Tactile buttons with active bounce, and glow animations for AI triggers.</p>
+          </div>
+
+          <div class="card" style="display: flex; flex-direction: column; gap: var(--space-lg);">
+            <!-- Button Row 1: Types -->
+            <div>
+              <h4 class="text-body-small font-bold" style="margin-bottom: var(--space-xs);">Action Types</h4>
+              <div style="display: flex; flex-wrap: wrap; gap: var(--space-sm);">
+                <button class="btn btn-primary">Primary Action</button>
+                <button class="btn btn-secondary">Vercel Secondary</button>
+                <button class="btn btn-tertiary">Notion Outline</button>
+                <button class="btn btn-ghost">Apple Ghost</button>
+                <button class="btn btn-ai">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                  Aura AI Spark
+                </button>
+              </div>
+            </div>
+
+            <!-- Button Row 2: Sizes -->
+            <div>
+              <h4 class="text-body-small font-bold" style="margin-bottom: var(--space-xs);">Buttons Size Mapping</h4>
+              <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                <button class="btn btn-sm btn-primary">Small Button</button>
+                <button class="btn btn-primary">Standard Button</button>
+                <button class="btn btn-lg btn-primary">Large Scale Button</button>
+              </div>
+            </div>
+
+            <!-- Button Row 3: States -->
+            <div>
+              <h4 class="text-body-small font-bold" style="margin-bottom: var(--space-xs);">State Variants</h4>
+              <div style="display: flex; gap: var(--space-sm);">
+                <button class="btn btn-primary" disabled>Disabled Primary</button>
+                <button class="btn btn-tertiary" disabled>Disabled Outline</button>
+                <button class="btn btn-primary">
+                  <div class="spinner" style="width: 14px; height: 14px; border-color: rgba(255,255,255,0.3); border-top-color: white; margin-right: 8px;"></div>
+                  Processing...
+                </button>
+                <button class="btn btn-tertiary btn-icon-only" aria-label="Settings">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                </button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION: FORMS
+             ========================================== -->
+        <section id="forms" class="component-section">
+          <div class="component-header">
+            <h2>Inputs, Dropdowns & File Uploads</h2>
+            <p class="text-body-small" style="color: var(--text-muted);">Highly-usable forms featuring precise focus borders, badge lists, and previews.</p>
+          </div>
+
+          <div class="grid-12">
+            <!-- Form Column Left -->
+            <div class="card" style="grid-column: span 6; display: flex; flex-direction: column; gap: var(--space-md);">
+              <div class="form-group">
+                <label class="form-label" for="username-input">Text Input Field</label>
+                <div class="input-container">
+                  <input type="text" id="username-input" class="input" placeholder="e.g. jaiveer@gemini.ai">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="search-input-icon">Icon Pre-appended Input</label>
+                <div class="input-container">
+                  <svg class="input-icon-left" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                  <input type="text" id="search-input-icon" class="input input-with-icon" placeholder="Search resources...">
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="error-field">Input Error State</label>
+                <div class="input-container">
+                  <input type="text" id="error-field" class="input input-error" value="Invalid credit credentials">
+                </div>
+                <span class="text-detail" style="color: var(--accent-red);">Please enter a valid format.</span>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label" for="select-demo">Standard Dropdown Select</label>
+                <div class="select-wrapper">
+                  <select id="select-demo" class="select">
+                    <option value="gpt">GPT-4o Agent Core</option>
+                    <option value="gemini">Gemini 3.5 Flash</option>
+                    <option value="claude">Claude 3.5 Sonnet</option>
+                  </select>
+                  <svg class="select-arrow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label class="form-label">Interactive Multi-Select (Press Enter to add tag)</label>
+                <div class="multiselect-container">
+                  <div class="multiselect-badge">
+                    TypeScript
+                    <span class="multiselect-badge-remove">&times;</span>
+                  </div>
+                  <div class="multiselect-badge">
+                    SaaS Core
+                    <span class="multiselect-badge-remove">&times;</span>
+                  </div>
+                  <input type="text" placeholder="Add tag..." style="border: none; outline: none; background: transparent; flex: 1; font-size: 0.875rem; min-width: 60px; color: var(--text-primary);">
+                </div>
+              </div>
+            </div>
+
+            <!-- Drag and Drop Upload Column Right -->
+            <div class="card" style="grid-column: span 6; display: flex; flex-direction: column; gap: var(--space-md);">
+              <h4 class="text-body-small font-bold">Stripe-style Media Upload Zone</h4>
+              
+              <div class="upload-dropzone" id="upload-dropzone">
+                <svg width="32" height="32" fill="none" stroke="var(--brand-primary)" stroke-width="2" viewBox="0 0 24 24" style="margin-bottom: 12px;"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                <p class="text-body-small font-semibold">Drag files here, or click to upload</p>
+                <p class="text-detail" style="color: var(--text-secondary); margin-top: 4px;">Supports PNG, JPEG, MP4 up to 50MB</p>
+                <input type="file" id="dropzone-file-input" style="display: none;" multiple>
+              </div>
+
+              <h4 class="text-body-small font-bold" style="margin-top: var(--space-sm);">Uploaded Previews</h4>
+              <div class="preview-grid" id="upload-preview-grid">
+                <!-- Javascript will insert preview cards here -->
+                <div class="preview-card">
+                  <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?auto=format&fit=crop&w=150&q=80" alt="Image mock">
+                  <div class="preview-overlay">
+                    <button class="btn btn-sm btn-ghost text-inverse" onclick="this.closest('.preview-card').remove()">Remove</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION: AVATARS & ICONS
+             ========================================== -->
+        <section id="avatars" class="component-section">
+          <div class="component-header">
+            <h2>Avatar & Icon System</h2>
+            <p class="text-body-small" style="color: var(--text-muted);">Avatar size steps, status overlays and overlapping lists for user settings.</p>
+          </div>
+
+          <div class="grid-12">
+            <!-- Avatars sizes -->
+            <div class="card" style="grid-column: span 6; display: flex; flex-direction: column; gap: var(--space-md);">
+              <h4 class="text-body-small font-bold">Avatar Size Steps</h4>
+              <div style="display: flex; align-items: flex-end; gap: var(--space-md);">
+                <div class="avatar-container">
+                  <div class="avatar avatar-sm">SM</div>
+                </div>
+                <div class="avatar-container">
+                  <div class="avatar">MD</div>
+                  <span class="avatar-status avatar-status-online"></span>
+                </div>
+                <div class="avatar-container">
+                  <div class="avatar avatar-lg">LG</div>
+                  <span class="avatar-status avatar-status-idle"></span>
+                </div>
+                <div class="avatar-container">
+                  <div class="avatar avatar-xl">XL</div>
+                  <span class="avatar-status avatar-status-offline"></span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Avatar Groups -->
+            <div class="card" style="grid-column: span 6; display: flex; flex-direction: column; gap: var(--space-md);">
+              <h4 class="text-body-small font-bold">Overlapping Team List</h4>
+              <div class="avatar-group">
+                <div class="avatar flex-center" style="background-color: var(--brand-primary); color: white;">+4</div>
+                <div class="avatar"><img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=40&q=80" alt="Jane"></div>
+                <div class="avatar"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=40&q=80" alt="John"></div>
+                <div class="avatar"><img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=40&q=80" alt="Sarah"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION: NAVIGATION COMPONENTS
+             ========================================== -->
+        <section id="nav-components" class="component-section">
+          <div class="component-header">
+            <h2>Sidebar & Header Navigation</h2>
+            <p class="text-body-small" style="color: var(--text-muted);">Fully integrated navigational hierarchies including layout responsive fallbacks.</p>
+          </div>
+
+          <!-- Dummy Header Bar Navigation -->
+          <h3 class="text-body-small font-bold" style="margin-bottom: var(--space-xs);">Top Navigation Header</h3>
+          <div class="top-nav" style="border: 1px solid var(--border-default); border-radius: var(--radius-lg); margin-bottom: var(--space-md);">
+            <div style="display: flex; align-items: center; gap: var(--space-md);">
+              <span class="sidebar-logo">KONTAGI</span>
+              <a href="#" class="sidebar-nav-item active" style="padding: 4px 8px; font-size: 0.8125rem;">Deployments</a>
+              <a href="#" class="sidebar-nav-item" style="padding: 4px 8px; font-size: 0.8125rem;">Analytics</a>
+            </div>
+            <div style="display: flex; align-items: center; gap: 8px;">
+              <span class="text-detail font-medium" style="color: var(--text-muted);">Pro Tier</span>
+              <div class="avatar avatar-sm"><img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=24&q=80" alt="Me"></div>
+            </div>
+          </div>
+
+          <!-- Mobile simulator -->
+          <h3 class="text-body-small font-bold" style="margin-bottom: var(--space-xs);">Mobile Bottom Navigation Simulator</h3>
+          <div class="card flex-center" style="position: relative; overflow: hidden; height: 120px; background-color: var(--bg-secondary);">
+            <div class="mobile-bottom-nav" style="position: absolute; display: flex; border: 1px solid var(--border-default); border-radius: var(--radius-lg);">
+              <button class="mobile-nav-btn active">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                Home
+              </button>
+              <button class="mobile-nav-btn">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                Chat
+              </button>
+              <button class="mobile-nav-btn">
+                <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                Settings
+              </button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION: CARDS & BENTO GRIDS
+             ========================================== -->
+        <section id="cards-kpis" class="component-section">
+          <div class="component-header">
+            <h2>Cards & Bento Grids</h2>
+            <p class="text-body-small" style="color: var(--text-muted);">High-density grid structures with premium gradients and active glows.</p>
+          </div>
+
+          <!-- 3 Column Bento Layout -->
+          <div class="bento-grid">
+            
+            <!-- Bento Card 1: Main KPI -->
+            <div class="card card-interactive card-glow kpi-card" style="grid-column: span 1;">
+              <div class="kpi-header">
+                <span class="kpi-title">Monthly Revenue</span>
+                <span class="kpi-trend kpi-trend-up">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                  12.4%
+                </span>
+              </div>
+              <p class="kpi-value">$142,384.50</p>
+              <p class="text-detail" style="color: var(--text-secondary); margin-top: 12px;">+14.2K from previous billing cycle</p>
+            </div>
+
+            <!-- Bento Card 2: Active Users -->
+            <div class="card card-interactive card-glow kpi-card" style="grid-column: span 1;">
+              <div class="kpi-header">
+                <span class="kpi-title">Active AI Sessions</span>
+                <span class="kpi-trend kpi-trend-down">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 14l-7 7m0 0l-7-7m7 7V3"/></svg>
+                  2.1%
+                </span>
+              </div>
+              <p class="kpi-value">8,912</p>
+              <p class="text-detail" style="color: var(--text-secondary); margin-top: 12px;">Peak load: 940/minute</p>
+            </div>
+
+            <!-- Bento Card 3: Model Success -->
+            <div class="card card-interactive card-glow kpi-card" style="grid-column: span 1;">
+              <div class="kpi-header">
+                <span class="kpi-title">Inference Accuracy</span>
+                <span class="kpi-trend kpi-trend-up">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                  0.8%
+                </span>
+              </div>
+              <p class="kpi-value">99.98%</p>
+              <p class="text-detail" style="color: var(--text-secondary); margin-top: 12px;">Measured over 1.2M queries</p>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION: TABLES
+             ========================================== -->
+        <section id="tables" class="component-section">
+          <div class="component-header">
+            <h2>Tables & Data Grids</h2>
+            <p class="text-body-small" style="color: var(--text-muted);">Sleek headers, structured content badges, and pagination footer indicators.</p>
+          </div>
+
+          <div class="table-container">
+            <table class="table">
+              <thead>
+                <tr>
+                  <th class="th-sortable">
+                    Endpoint Address
+                    <svg width="12" height="12" fill="none" stroke="currentColor" style="display:inline; margin-left: 4px;" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+                  </th>
+                  <th>Status</th>
+                  <th>Success Rate</th>
+                  <th>Avg Latency</th>
+                  <th style="text-align: right;">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="font-medium">/api/v1/inference/chat</td>
+                  <td><span class="badge badge-success">Active</span></td>
+                  <td class="text-mono">99.94%</td>
+                  <td class="text-mono">140ms</td>
+                  <td style="text-align: right;">
+                    <button class="btn btn-sm btn-tertiary">Configure</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="font-medium">/api/v1/inference/embeddings</td>
+                  <td><span class="badge badge-success">Active</span></td>
+                  <td class="text-mono">100.00%</td>
+                  <td class="text-mono">82ms</td>
+                  <td style="text-align: right;">
+                    <button class="btn btn-sm btn-tertiary">Configure</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="font-medium">/api/v1/media/transcribe</td>
+                  <td><span class="badge badge-warning">De-escalated</span></td>
+                  <td class="text-mono">94.21%</td>
+                  <td class="text-mono">1240ms</td>
+                  <td style="text-align: right;">
+                    <button class="btn btn-sm btn-tertiary">Configure</button>
+                  </td>
+                </tr>
+                <tr>
+                  <td class="font-medium">/api/v1/vector/index</td>
+                  <td><span class="badge badge-danger">Outage</span></td>
+                  <td class="text-mono">0.00%</td>
+                  <td class="text-mono">--</td>
+                  <td style="text-align: right;">
+                    <button class="btn btn-sm btn-tertiary">Configure</button>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Table Pagination -->
+            <div class="pagination">
+              <span class="pagination-info">Showing 1 to 4 of 24 entries</span>
+              <div class="pagination-buttons">
+                <button class="btn btn-sm btn-tertiary" disabled>Previous</button>
+                <button class="btn btn-sm btn-tertiary">Next</button>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION: TABS & ACCORDIONS
+             ========================================== -->
+        <section id="tabs-accordions" class="component-section">
+          <div class="component-header">
+            <h2>Tabs & Accordions</h2>
+            <p class="text-body-small" style="color: var(--text-muted);">Clean layout switches and nested information trees.</p>
+          </div>
+
+          <div class="grid-12">
+            <!-- Tabs panel -->
+            <div class="card" style="grid-column: span 6;">
+              <h4 class="text-body-small font-bold" style="margin-bottom: var(--space-md);">Tab Panel Navigation</h4>
+              <div class="tabs-container">
+                <button class="tab-btn active" data-tab-group="demo-tabs" data-tab-target="panel-1">Integration Setup</button>
+                <button class="tab-btn" data-tab-group="demo-tabs" data-tab-target="panel-2">Key Management</button>
+              </div>
+
+              <div id="panel-1" data-tab-panel-group="demo-tabs">
+                <p class="text-body-small" style="color: var(--text-muted);">To integrate the Aura AI agent SDK, copy the custom headers script and set environment variables inside your master project console. Check detailed instructions in our DESIGN.md specifications.</p>
+              </div>
+              <div id="panel-2" data-tab-panel-group="demo-tabs" style="display: none;">
+                <p class="text-body-small" style="color: var(--text-muted);">Manage your primary keys and tokens to fetch embeddings. Ensure to rotate keys every 90 days to comply with enterprise-grade security protocols.</p>
+              </div>
+            </div>
+
+            <!-- Accordion Panel -->
+            <div style="grid-column: span 6;">
+              <h4 class="text-body-small font-bold" style="margin-bottom: var(--space-md);">Accordion Details</h4>
+              <div class="accordion">
+                <div class="accordion-item active">
+                  <button class="accordion-trigger">
+                    <span>What LLM frameworks are supported?</span>
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+                  </button>
+                  <div class="accordion-content">
+                    We support native bindings for LangChain, LlamaIndex, Vercel AI SDK, and raw Web APIs for Google Gemini, OpenAI, and Anthropic.
+                  </div>
+                </div>
+
+                <div class="accordion-item">
+                  <button class="accordion-trigger">
+                    <span>How does token usage billing work?</span>
+                    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+                  </button>
+                  <div class="accordion-content">
+                    Billing is calculated per 1K output tokens. Detailed breakdowns can be exported as Excel/CSV from the settings dashboard.
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION: OVERLAYS (MODALS & DRAWERS)
+             ========================================== -->
+        <section id="overlays" class="component-section">
+          <div class="component-header">
+            <h2>Modals & Drawers</h2>
+            <p class="text-body-small" style="color: var(--text-muted);">Interactive overlay triggers mapping to active overlay animations.</p>
+          </div>
+
+          <div class="card">
+            <h4 class="text-body-small font-bold" style="margin-bottom: var(--space-md);">Interactive Overlay Actions</h4>
+            <div style="display: flex; gap: var(--space-md);">
+              <button class="btn btn-tertiary" data-modal-target="modal-demo">Trigger Dialog Modal</button>
+              <button class="btn btn-tertiary" data-drawer-target="drawer-demo">Trigger Context Drawer</button>
+              
+              <!-- Tooltip Demo -->
+              <div class="tooltip" data-tooltip="Rotates cryptographic security keys immediately">
+                <button class="btn btn-ghost">Tooltip Hover</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Dialog Modal (Hidden by Default) -->
+          <div class="modal-overlay" id="modal-demo">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h3>Rotate Inference API Keys</h3>
+                <button class="modal-close" data-modal-close aria-label="Close modal">&times;</button>
+              </div>
+              <p class="text-body-small" style="color: var(--text-muted); margin-bottom: var(--space-lg);">Are you sure you want to rotate keys? This will invalidate the existing active token after a grace period of 2 hours, potentially affecting live endpoints.</p>
+              <div style="display: flex; justify-content: flex-end; gap: var(--space-xs);">
+                <button class="btn btn-tertiary" data-modal-close>Cancel</button>
+                <button class="btn btn-primary" onclick="showToast('Inference keys rotated successfully!', 'success'); document.getElementById('modal-demo').classList.remove('active');">Rotate Keys</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Context Drawer (Hidden by Default) -->
+          <div class="drawer" id="drawer-demo">
+            <div class="modal-header" style="margin-bottom: var(--space-lg);">
+              <h3>Endpoint Details</h3>
+              <button class="modal-close" data-drawer-close aria-label="Close drawer">&times;</button>
+            </div>
+            <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+              <div class="form-group">
+                <span class="form-label">Deployment Node ID</span>
+                <p class="text-body-small font-medium">node_us_east_4a9bc2</p>
+              </div>
+              <div class="form-group">
+                <span class="form-label">Uptime Percentage</span>
+                <p class="text-body-small font-medium">99.98% (Last 30 days)</p>
+              </div>
+              <div class="form-group">
+                <span class="form-label">Average Request Cost</span>
+                <p class="text-body-small font-medium">$0.0024</p>
+              </div>
+              <button class="btn btn-secondary" style="margin-top: var(--space-lg);" data-drawer-close>Close Panel</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION: ALERTS & TOASTS
+             ========================================== -->
+        <section id="toasts-banners" class="component-section">
+          <div class="component-header">
+            <h2>Toasts, Alerts & States</h2>
+            <p class="text-body-small" style="color: var(--text-muted);">Toast triggers, warning bars, loading cards, and empty state trees.</p>
+          </div>
+
+          <div class="grid-12">
+            <!-- Toast triggers & alert banners -->
+            <div class="card" style="grid-column: span 6; display: flex; flex-direction: column; gap: var(--space-md);">
+              <h4 class="text-body-small font-bold">Dynamic Toast Emitters</h4>
+              <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap;">
+                <button class="btn btn-sm btn-primary" onclick="showToast('Operation completed successfully!', 'success')">Emit Success Toast</button>
+                <button class="btn btn-sm btn-secondary" onclick="showToast('Connection handshake failure.', 'error')">Emit Danger Toast</button>
+                <button class="btn btn-sm btn-tertiary" onclick="showToast('Re-indexing cluster metadata...', 'info')">Emit Info Toast</button>
+              </div>
+
+              <h4 class="text-body-small font-bold" style="margin-top: var(--space-sm);">Semantic Alert Banners</h4>
+              <div class="alert alert-success">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <div>
+                  <p class="font-medium text-body-small">Success Banner</p>
+                  <p class="text-detail" style="opacity: 0.9;">System is fully operational. All metrics reporting normally.</p>
+                </div>
+              </div>
+              
+              <div class="alert alert-error">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                <div>
+                  <p class="font-medium text-body-small">Error Connection Interrupt</p>
+                  <p class="text-detail" style="opacity: 0.9;">Database write quota reached. Upgrades are required immediately.</p>
+                </div>
+              </div>
+            </div>
+
+            <!-- Skeletons & Empty views -->
+            <div class="card" style="grid-column: span 6; display: flex; flex-direction: column; gap: var(--space-md);" data-skeleton-demo>
+              
+              <!-- Placeholder skeletons view -->
+              <div class="skeleton-placeholder-view" style="display: none;">
+                <h4 class="text-body-small font-bold" style="margin-bottom: var(--space-md);">Loading Skeleton Card</h4>
+                <div style="display: flex; align-items: center; gap: 12px; margin-bottom: 16px;">
+                  <div class="skeleton skeleton-avatar"></div>
+                  <div style="flex: 1;">
+                    <div class="skeleton skeleton-text" style="width: 40%;"></div>
+                    <div class="skeleton skeleton-text" style="width: 25%;"></div>
+                  </div>
+                </div>
+                <div class="skeleton skeleton-rect"></div>
+              </div>
+
+              <!-- Real content view -->
+              <div class="real-content-view">
+                <h4 class="text-body-small font-bold" style="margin-bottom: var(--space-md);">Empty State Panel</h4>
+                <div class="empty-state">
+                  <div class="empty-state-icon">
+                    <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/></svg>
+                  </div>
+                  <h5 class="empty-state-title">No Model Deployments Found</h5>
+                  <p class="empty-state-desc">Get started by creating a new inference model deployment to query text embeddings.</p>
+                  <button class="btn btn-sm btn-primary">Create Deployment</button>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </section>
+
+        <!-- ==========================================
+             SECTION: AI CHAT COMPONENTS
+             ========================================== -->
+        <section id="ai-components" class="component-section">
+          <div class="component-header">
+            <h2>AI Assistant Component</h2>
+            <p class="text-body-small" style="color: var(--text-muted);">High-fidelity interactive chat interface with prompt bar inputs.</p>
+          </div>
+
+          <div class="ai-chat-container">
+            <div class="ai-chat-messages" id="ai-chat-messages">
+              <!-- Msg 1 -->
+              <div class="chat-msg chat-msg-ai">
+                <div class="chat-msg-avatar flex-center">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                </div>
+                <div class="chat-msg-content">
+                  Hello! I am Aura, your design system AI context copilot. Type <code>help</code> or <code>color</code> to view token parameters in real-time.
+                </div>
+              </div>
+            </div>
+
+            <!-- Chat Footer Input -->
+            <form class="ai-prompt-panel" id="ai-chat-form">
+              <div class="ai-prompt-input-container">
+                <input type="text" id="ai-chat-input" class="ai-prompt-textarea" placeholder="Ask AI Assistant anything..." autocomplete="off">
+                <button type="submit" class="btn btn-sm btn-icon-only btn-primary" aria-label="Send query">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M5 10l7-7m0 0l7 7m-7-7v18"/></svg>
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="design-system.js"></script>
+</body>
+</html>

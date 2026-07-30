@@ -1,0 +1,37 @@
+{
+  "sceneCount": 8,
+  "shotLengthSec": 1.8,
+  "motionIntensity": 0.95,
+  "brightness": 0.78,
+  "saturation": 0.85,
+  "contrast": 0.8,
+  "faceCount": 2,
+  "faceSizePct": 0.35,
+  "cameraMovement": "DYNAMIC",
+  "editingRhythmScore": 0.98,
+  "thumbnailQualityScore": 0.84,
+  "visualNoveltyScore": 0.89,
+  "colorHistogram": [
+    0.75,
+    0.75,
+    0.75,
+    0.75,
+    0.75,
+    0.75,
+    0.75,
+    0.75,
+    0.75,
+    0.75,
+    0.75,
+    0.75,
+    0.75,
+    0.75,
+    0.75,
+    0.75
+  ],
+  "detectedObjects": [
+    "meme_cat",
+    "reaction_face",
+    "subtitles"
+  ]
+}

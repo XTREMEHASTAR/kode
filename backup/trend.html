@@ -1,0 +1,1825 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — AI Trend Intelligence Dashboard</title>
+  <link rel="stylesheet" href="design-system.css">
+  <style>
+    /* ==========================================================================
+       SANDBOX CORE LAYOUT FRAMEWORK
+       ========================================================================== */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-smooth);
+    }
+
+    .sandbox-header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-xs) var(--space-lg);
+      z-index: 1000;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .sandbox-brand h1 {
+      font-size: 1.125rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .sandbox-brand span {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .sandbox-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-control-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      background-color: var(--bg-secondary);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+    }
+
+    .sandbox-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sandbox-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .sandbox-btn.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sandbox-workspace {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      position: relative;
+    }
+
+    .emulator-viewport {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      transition: width var(--transition-smooth), height var(--transition-smooth), border-radius var(--transition-smooth);
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .emulator-viewport.desktop {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      border: none;
+    }
+
+    .emulator-viewport.tablet {
+      width: 768px;
+      height: 95%;
+      border-radius: var(--radius-lg);
+    }
+
+    .emulator-viewport.mobile {
+      width: 375px;
+      height: 85%;
+      border-radius: var(--radius-2xl);
+    }
+
+    /* ==========================================================================
+       DASHBOARD AND SIDEBAR STRUCTURE
+       ========================================================================== */
+    .dashboard-shell {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .dashboard-sidebar {
+      width: 260px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      transition: transform var(--transition-smooth), width var(--transition-smooth);
+    }
+
+    .sidebar-header {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .sidebar-nav {
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .sidebar-nav-item:hover, .sidebar-nav-item.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .sidebar-nav-item.active {
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .dashboard-main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-primary);
+    }
+
+    .dashboard-header {
+      height: 64px;
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-lg);
+      flex-shrink: 0;
+    }
+
+    .dashboard-search-bar {
+      display: flex;
+      align-items: center;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 6px 12px;
+      gap: var(--space-xs);
+      width: 240px;
+      max-width: 100%;
+    }
+
+    .dashboard-body {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: var(--space-xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    /* Emulator viewports responsive overrides */
+    .emulator-viewport.tablet .dashboard-sidebar {
+      width: 70px;
+    }
+    .emulator-viewport.tablet .sidebar-text-label,
+    .emulator-viewport.tablet .sidebar-footer {
+      display: none;
+    }
+
+    .emulator-viewport.mobile #sidebar-toggle-btn {
+      display: inline-flex !important;
+    }
+    .emulator-viewport.mobile .dashboard-sidebar {
+      display: none;
+    }
+    .emulator-viewport.mobile .dashboard-sidebar.active {
+      display: flex;
+      position: absolute;
+      left: 0;
+      top: 64px;
+      bottom: 0;
+      z-index: 950;
+      height: calc(100% - 64px);
+      width: 240px;
+      box-shadow: var(--shadow-xl);
+      animation: dropdownEnter var(--transition-fast) forwards;
+    }
+
+    /* Skeleton Loading State Sync */
+    .skeleton-view-panel {
+      display: none;
+      flex-direction: column;
+      gap: var(--space-lg);
+      width: 100%;
+    }
+
+    .loading-state-active .skeleton-view-panel {
+      display: flex !important;
+    }
+    .loading-state-active .real-view-panel {
+      display: none !important;
+    }
+
+    .skeleton-pulse {
+      background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--border-default) 50%, var(--bg-secondary) 75%);
+      background-size: 200% 100%;
+      animation: skeletonGlow 1.5s infinite;
+      border-radius: var(--radius-md);
+    }
+
+    @keyframes skeletonGlow {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* History view toggle panel */
+    .history-view-panel {
+      display: none;
+      margin-top: var(--space-md);
+      animation: slideInUp var(--transition-smooth) forwards;
+    }
+    .history-state-active .history-view-panel {
+      display: block !important;
+    }
+
+    /* ==========================================================================
+       TREND CUSTOM COMPONENTS STYLING
+       ========================================================================== */
+    
+    /* Segmented filter selector pills */
+    .niche-filter-bar {
+      display: flex;
+      gap: var(--space-xs);
+      border-bottom: 1px solid var(--border-default);
+      padding-bottom: var(--space-sm);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .niche-filter-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .niche-pill {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+    .niche-pill:hover {
+      color: var(--text-primary);
+      border-color: var(--text-muted);
+    }
+    .niche-pill.active {
+      background-color: var(--brand-primary);
+      border-color: var(--brand-primary);
+      color: var(--text-inverse);
+    }
+
+    /* Opportunity Finder Grid Cards */
+    .opportunity-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: var(--space-md);
+    }
+    .opportunity-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      transition: all var(--transition-smooth);
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .opportunity-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 3px;
+      background: linear-gradient(90deg, var(--brand-primary), var(--accent-purple));
+      opacity: 0;
+      transition: opacity var(--transition-fast);
+    }
+    .opportunity-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--brand-primary);
+      box-shadow: var(--shadow-lg);
+    }
+    .opportunity-card:hover::before {
+      opacity: 1;
+    }
+
+    /* Sounds Waveform visualization animations */
+    .sound-list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-sm) var(--space-md);
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      transition: border-color var(--transition-fast);
+    }
+    .sound-list-item:hover {
+      border-color: var(--border-focus);
+    }
+
+    .play-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background-color: var(--brand-primary-glow);
+      color: var(--brand-primary);
+      border: none;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .play-btn:hover {
+      background-color: var(--brand-primary);
+      color: var(--text-inverse);
+    }
+
+    .visual-equalizer {
+      display: flex;
+      align-items: flex-end;
+      gap: 3px;
+      height: 24px;
+      width: 70px;
+    }
+    .equalizer-bar {
+      width: 4px;
+      height: 20%;
+      background-color: var(--brand-primary);
+      border-radius: 2px;
+      transition: height 0.1s ease;
+    }
+    .playing .equalizer-bar {
+      animation: bounceEqualizer 1s ease-in-out infinite alternate;
+    }
+    .playing .equalizer-bar:nth-child(2) { animation-delay: 0.15s; }
+    .playing .equalizer-bar:nth-child(3) { animation-delay: 0.35s; }
+    .playing .equalizer-bar:nth-child(4) { animation-delay: 0.05s; }
+    .playing .equalizer-bar:nth-child(5) { animation-delay: 0.25s; }
+    .playing .equalizer-bar:nth-child(6) { animation-delay: 0.45s; }
+
+    @keyframes bounceEqualizer {
+      0% { height: 10%; }
+      100% { height: 90%; }
+    }
+
+    /* Trend forecast grid chart details */
+    .prediction-chart-box {
+      position: relative;
+      height: 220px;
+      border: 1px solid var(--border-default);
+      background-color: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      overflow: hidden;
+    }
+
+    .chart-tooltip {
+      position: absolute;
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      padding: 6px 10px;
+      border-radius: var(--radius-sm);
+      font-size: 0.6875rem;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+      z-index: 10;
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Topics grid tags */
+    .topics-bento {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+    }
+    .topic-tag {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: var(--space-xs) var(--space-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .topic-tag:hover {
+      border-color: var(--brand-primary);
+      background-color: var(--brand-primary-glow);
+    }
+
+    /* Toast Alert notifications style */
+    .toast-notifications-container {
+      position: fixed;
+      bottom: var(--space-lg);
+      right: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      z-index: 2000;
+    }
+    .toast-alert {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-lg);
+      border-radius: var(--radius-md);
+      padding: var(--space-sm) var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      min-width: 280px;
+      animation: slideInRight 0.2s forwards;
+      color: var(--text-primary);
+      font-size: 0.8125rem;
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(120%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    .skeleton-grid-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: var(--space-lg);
+    }
+    .trend-workspace-split {
+      display: grid;
+      grid-template-columns: 1.5fr 1fr;
+      gap: var(--space-lg);
+    }
+
+    .emulator-viewport.tablet .trend-workspace-split,
+    .emulator-viewport.mobile .trend-workspace-split,
+    .emulator-viewport.tablet .skeleton-grid-layout,
+    .emulator-viewport.mobile .skeleton-grid-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .emulator-viewport.tablet .filter-header-row,
+    .emulator-viewport.mobile .filter-header-row {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-sm);
+    }
+  </style>
+</head>
+<body class="dark">
+
+  <!-- ==============================================
+       1. SANDBOX HEADER PANEL
+       ============================================== -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <div style="width: 20px; height: 20px; background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%); border-radius: 4px;"></div>
+      <h1>KONTAGI Sandbox</h1>
+      <span>v2.4-BETA</span>
+    </div>
+
+    <div class="sandbox-controls">
+      <!-- Layout / Viewport selector -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" data-viewport="desktop" title="Desktop emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          Desktop
+        </button>
+        <button class="sandbox-btn" data-viewport="tablet" title="Tablet emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          Tablet
+        </button>
+        <button class="sandbox-btn" data-viewport="mobile" title="Mobile emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          Mobile
+        </button>
+      </div>
+
+      <!-- State triggers selector -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" id="state-normal">Normal</button>
+        <button class="sandbox-btn" id="state-loading">Loading State</button>
+        <button class="sandbox-btn" id="state-history">Forecast History</button>
+      </div>
+
+      <!-- Theme Switcher -->
+      <button class="btn btn-secondary btn-sm" id="theme-toggle" style="height: 32px; padding: 0 var(--space-sm);">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        Dark Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- ==============================================
+       2. WORKSPACE AND EMULATED APP CONTAINER
+       ============================================== -->
+  <main class="sandbox-workspace">
+    <div class="emulator-viewport desktop" id="viewport-frame">
+      
+      <div class="dashboard-shell" id="dashboard-main-shell">
+        
+        <!-- Collapsible App Sidebar -->
+        <aside class="dashboard-sidebar">
+          <!-- Header Workspace Selector -->
+          <div class="sidebar-header flex-between" style="align-items: center;">
+              <div class="flex-center" style="gap: var(--space-xs);">
+                <div style="width: 24px; height: 24px; background-color: var(--brand-primary); border-radius: var(--radius-sm); background: linear-gradient(135deg, var(--brand-primary), var(--accent-blue));"></div>
+                <span class="font-display font-bold text-body sidebar-text-label">KONTAGI</span>
+              </div>
+            </div>
+
+                        <nav class="sidebar-nav">
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-bottom: 6px; text-transform: uppercase;">Workspace</span>
+              <a class="sidebar-nav-item" href="dashboard.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="sidebar-text-label">Dashboard</span>
+              </a>
+              <a class="sidebar-nav-item" href="projects.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span class="sidebar-text-label">Projects</span>
+              </a>
+              <a class="sidebar-nav-item" href="library.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+                <span class="sidebar-text-label">Creative Library</span>
+              </a>
+              <a class="sidebar-nav-item" href="hooks.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                <span class="sidebar-text-label">Hook Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="retention.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Retention Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="script.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="sidebar-text-label">Script Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="thumbnail.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15l-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Thumbnail Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="caption.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                <span class="sidebar-text-label">Caption Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="audio.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                <span class="sidebar-text-label">Audio Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="visual.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-.447.894L15 18.5V10zM5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Visual Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item active" href="trend.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <span class="sidebar-text-label">Trend Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="audience.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <span class="sidebar-text-label">Audience Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="upload.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span class="sidebar-text-label">Upload Center</span>
+              </a>
+              <a class="sidebar-nav-item" href="lab.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                <span class="sidebar-text-label">AI Creative Lab</span>
+              </a>
+              <a class="sidebar-nav-item" href="report.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="sidebar-text-label">AI Reports</span>
+              </a>
+              <a class="sidebar-nav-item" href="creators.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Creators</span>
+              </a>
+              <a class="sidebar-nav-item" href="brand.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17V9h3a2 2 0 110 4H9m0 4h3a2 2 0 100-4"/></svg>
+                <span class="sidebar-text-label">Brand Hub</span>
+              </a>
+              <a class="sidebar-nav-item" href="coach.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="sidebar-text-label">AI Coach</span>
+              </a>
+              <a class="sidebar-nav-item" onclick="window.showToast('Loading database insights...', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                <span class="sidebar-text-label">Analytics</span>
+              </a>
+              <a class="sidebar-nav-item" href="client.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Clients</span>
+              </a>
+              <a class="sidebar-nav-item" href="team.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0zm3 10v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg>
+                <span class="sidebar-text-label">Team Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="billing.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span class="sidebar-text-label">Billing</span>
+              </a>
+              <a class="sidebar-nav-item" href="notifications.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="sidebar-text-label">Notifications</span>
+              </a>
+              <a class="sidebar-nav-item" href="settings.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="sidebar-text-label">Settings</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">System</span>
+              <a class="sidebar-nav-item" href="admin.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="sidebar-text-label">Admin Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="mobile.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Mobile App</span>
+              </a>
+              <a class="sidebar-nav-item" href="index.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                <span class="sidebar-text-label">Design System</span>
+              </a>
+            </nav>
+
+          <div class="sidebar-footer">
+            <div class="avatar">JV</div>
+            <div class="flex-column">
+              <span class="text-body-small font-bold">Jaiveer</span>
+              <span class="text-detail text-muted">Pro Account</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- App Main Dashboard content container -->
+        <main class="dashboard-main">
+          
+          <div class="dashboard-header">
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <button class="btn btn-secondary btn-icon" id="sidebar-toggle-btn" style="display: none; height: 36px; width: 36px; padding: 0;">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              <h2 class="text-h4 font-display">Trend Intelligence</h2>
+            </div>
+            
+            <div class="flex-center" style="gap: var(--space-md);">
+              <div class="dashboard-search-bar">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" id="trend-search" placeholder="Search trending hooks..." style="background: transparent; border: none; outline: none; width: 100%; font-size: 0.75rem; color: var(--text-primary);">
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="openModelModal()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                Model Trend Fit
+              </button>
+              <button class="btn btn-primary btn-sm" onclick="openExportModal()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Export Trend Sheet
+              </button>
+            </div>
+          </div>
+
+          <div class="dashboard-body">
+
+            <!-- ================= SKELETON PANEL ================= -->
+            <div class="skeleton-view-panel">
+              <div class="skeleton-grid-layout">
+                <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                  <div class="skeleton-pulse" style="height: 140px;"></div>
+                  <div class="skeleton-pulse" style="height: 260px;"></div>
+                  <div class="skeleton-pulse" style="height: 220px;"></div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                  <div class="skeleton-pulse" style="height: 200px;"></div>
+                  <div class="skeleton-pulse" style="height: 180px;"></div>
+                  <div class="skeleton-pulse" style="height: 240px;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================= REAL APP VIEWPORT ================= -->
+            <div class="real-view-panel" style="display: flex; flex-direction: column; gap: var(--space-lg);">
+
+              <!-- Industry Selector & Regional Segment switches -->
+              <div class="filter-header-row flex-between flex-wrap" style="gap: var(--space-md); border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-sm);">
+                <!-- Niche buttons list -->
+                <div class="niche-filter-bar" id="niche-filter-container">
+                  <button class="niche-pill active" onclick="switchNiche('tech')">Tech & SaaS</button>
+                  <button class="niche-pill" onclick="switchNiche('ecommerce')">E-Commerce</button>
+                  <button class="niche-pill" onclick="switchNiche('finance')">Finance & Crypto</button>
+                  <button class="niche-pill" onclick="switchNiche('fitness')">Fitness & Health</button>
+                  <button class="niche-pill" onclick="switchNiche('lifestyle')">Beauty & Lifestyle</button>
+                </div>
+
+                <!-- Region Selector button group -->
+                <div class="sandbox-control-group" style="border-radius: var(--radius-full);">
+                  <button class="sandbox-btn active" onclick="switchRegion(this, 'US')" style="border-radius: var(--radius-full);">United States</button>
+                  <button class="sandbox-btn" onclick="switchRegion(this, 'EU')" style="border-radius: var(--radius-full);">Europe</button>
+                  <button class="sandbox-btn" onclick="switchRegion(this, 'APAC')" style="border-radius: var(--radius-full);">APAC</button>
+                </div>
+              </div>
+
+              <!-- Opportunity Finder Header -->
+              <div>
+                <h3 class="text-h5 font-display font-bold">Opportunity Finder</h3>
+                <p class="text-body-small text-muted">AI detected high search-volume content gaps with minimal competitor overlap</p>
+              </div>
+
+              <!-- Bento Grid for Content Opportunities -->
+              <div class="opportunity-grid" id="opportunity-container">
+                <!-- Opportunity Card 1 -->
+                <div class="opportunity-card" onclick="openOpportunityModal('SaaS Burnout', 'Low competition surrounding indie-developer mental fatigue and work routines.', '88% Match', '92k Searches')">
+                  <div class="flex-between" style="margin-bottom: var(--space-xs);">
+                    <span class="badge" style="background-color: var(--accent-purple-bg); color: var(--accent-purple); font-weight: 700;">HIGH VOLUME</span>
+                    <span class="text-detail font-bold text-success" id="opp-score-1">94 Score</span>
+                  </div>
+                  <h4 class="text-body font-bold" id="opp-title-1">Solo-Dev Burnout Routines</h4>
+                  <p class="text-detail text-muted" style="margin-top: 4px; margin-bottom: var(--space-sm);" id="opp-desc-1">Low competition content gaps surrounding developers showing raw day-in-the-life work blocks.</p>
+                  <div class="flex-between text-detail" style="border-top: 1px solid var(--border-default); padding-top: var(--space-xs);">
+                    <span>Monthly Volume: <strong class="text-primary" id="opp-vol-1">94,000</strong></span>
+                    <span class="text-success font-bold">Analyze Opportunity &rarr;</span>
+                  </div>
+                </div>
+
+                <!-- Opportunity Card 2 -->
+                <div class="opportunity-card" onclick="openOpportunityModal('No-Code Automation', 'Explosive rising demand for AI agent tutorials with zero script code blocks.', '91% Match', '140k Searches')">
+                  <div class="flex-between" style="margin-bottom: var(--space-xs);">
+                    <span class="badge badge-success">RISING FAST</span>
+                    <span class="text-detail font-bold text-success" id="opp-score-2">91 Score</span>
+                  </div>
+                  <h4 class="text-body font-bold" id="opp-title-2">No-Code Agent Building</h4>
+                  <p class="text-detail text-muted" style="margin-top: 4px; margin-bottom: var(--space-sm);" id="opp-desc-2">Highly actionable, fast-paced workflows demonstrating automated lead retrieval using AI bots.</p>
+                  <div class="flex-between text-detail" style="border-top: 1px solid var(--border-default); padding-top: var(--space-xs);">
+                    <span>Monthly Volume: <strong class="text-primary" id="opp-vol-2">128,000</strong></span>
+                    <span class="text-success font-bold">Analyze Opportunity &rarr;</span>
+                  </div>
+                </div>
+
+                <!-- Opportunity Card 3 -->
+                <div class="opportunity-card" onclick="openOpportunityModal('Cursor/Windsurf IDE hacks', 'Hot developer trend detailing custom configuration parameters.', '85% Match', '82k Searches')">
+                  <div class="flex-between" style="margin-bottom: var(--space-xs);">
+                    <span class="badge" style="background-color: var(--accent-blue-bg); color: var(--accent-blue); font-weight: 700;">NEW TREND</span>
+                    <span class="text-detail font-bold text-success" id="opp-score-3">87 Score</span>
+                  </div>
+                  <h4 class="text-body font-bold" id="opp-title-3">Windsurf Config Shortcuts</h4>
+                  <p class="text-detail text-muted" style="margin-top: 4px; margin-bottom: var(--space-sm);" id="opp-desc-3">Short-form videos documenting custom command profiles that accelerate codebase navigation.</p>
+                  <div class="flex-between text-detail" style="border-top: 1px solid var(--border-default); padding-top: var(--space-xs);">
+                    <span>Monthly Volume: <strong class="text-primary" id="opp-vol-3">81,500</strong></span>
+                    <span class="text-success font-bold">Analyze Opportunity &rarr;</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Main Dashboard split sections -->
+              <div class="trend-workspace-split">
+                
+                <!-- Left Side: Forecasting Charts, Trending Sounds, Hooks -->
+                <div style="display: flex; flex-direction: column; gap: var(--space-lg);">
+                  
+                  <!-- Trend Forecast / Prediction Curve -->
+                  <div class="card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-sm);">
+                    <div class="flex-between" style="align-items: center;">
+                      <div>
+                        <h4 class="text-body font-bold font-display">30-Day Trend Prediction Forecast</h4>
+                        <p class="text-detail text-muted">Machine learning projections on trend fatigue index and lifespan</p>
+                      </div>
+                      <div class="sandbox-control-group">
+                        <button class="sandbox-btn active" id="btn-chart-7d" onclick="toggleForecastDuration(7)">7 Days</button>
+                        <button class="sandbox-btn" id="btn-chart-30d" onclick="toggleForecastDuration(30)">30 Days</button>
+                        <button class="sandbox-btn" id="btn-chart-90d" onclick="toggleForecastDuration(90)">90 Days</button>
+                      </div>
+                    </div>
+
+                    <!-- Interactive SVG chart -->
+                    <div class="prediction-chart-box" onmousemove="showChartTooltip(event)" onmouseleave="hideChartTooltip()">
+                      <div class="chart-tooltip" id="chart-tip">Date: Jul 24 &bull; Score: 92%</div>
+                      <svg width="100%" height="100%" viewBox="0 0 600 160" preserveAspectRatio="none" id="forecast-svg">
+                        <!-- Chart Grid Lines -->
+                        <line x1="0" y1="20" x2="600" y2="20" stroke="var(--border-default)" stroke-dasharray="4 4" stroke-width="1"/>
+                        <line x1="0" y1="80" x2="600" y2="80" stroke="var(--border-default)" stroke-dasharray="4 4" stroke-width="1"/>
+                        <line x1="0" y1="140" x2="600" y2="140" stroke="var(--border-default)" stroke-dasharray="4 4" stroke-width="1"/>
+
+                        <!-- Area Gradient -->
+                        <defs>
+                          <linearGradient id="chart-area-grad" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="0%" stop-color="var(--brand-primary)" stop-opacity="0.3"/>
+                            <stop offset="100%" stop-color="var(--brand-primary)" stop-opacity="0.0"/>
+                          </linearGradient>
+                        </defs>
+                        
+                        <!-- Smooth prediction area path -->
+                        <path d="M 0 140 Q 150 20 300 40 T 600 130 L 600 160 L 0 160 Z" fill="url(#chart-area-grad)" id="chart-fill-path" style="transition: d var(--transition-smooth);"/>
+                        <!-- Line Path -->
+                        <path d="M 0 140 Q 150 20 300 40 T 600 130" fill="none" stroke="var(--brand-primary)" stroke-width="3" id="chart-line-path" style="transition: d var(--transition-smooth);"/>
+
+                        <!-- Grid timeline points -->
+                        <circle cx="150" cy="50" r="5" fill="var(--brand-primary)" stroke="#ffffff" stroke-width="2" style="cursor: pointer;"/>
+                        <circle cx="300" cy="40" r="5" fill="var(--accent-purple)" stroke="#ffffff" stroke-width="2" style="cursor: pointer;"/>
+                        <circle cx="450" cy="85" r="5" fill="var(--brand-primary)" stroke="#ffffff" stroke-width="2" style="cursor: pointer;"/>
+                      </svg>
+
+                      <!-- Chart X-axis Labels -->
+                      <div class="flex-between text-detail text-muted" style="margin-top: 6px;">
+                        <span>Current Day</span>
+                        <span>Next 10 Days (Peaking)</span>
+                        <span>Next 20 Days (Fatigue Stage)</span>
+                        <span>Next 30 Days (Saturated)</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Trending Hooks Table -->
+                  <div class="card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-sm);">
+                    <h4 class="text-body font-bold font-display">Top Trending Hooks</h4>
+                    
+                    <div style="display: flex; flex-direction: column; gap: var(--space-xs);" id="hooks-container">
+                      
+                      <!-- Hook 1 -->
+                      <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-xs); border: 1px solid var(--border-default); border-radius: var(--radius-md); background-color: var(--bg-secondary);">
+                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                          <div class="flex-center" style="gap: var(--space-xs); flex-wrap: wrap;">
+                            <span class="text-body-small font-bold" id="hook-title-1">"The one setting that changed everything..."</span>
+                            <span class="badge" style="background-color: var(--accent-orange-bg); color: var(--accent-orange);">Curiosity Open</span>
+                          </div>
+                          <p class="text-detail text-muted">Format: Zoom close-up on screen, transition to talking head.</p>
+                        </div>
+                        <div class="flex-center" style="gap: var(--space-sm);">
+                          <div style="text-align: right;">
+                            <span class="text-body-small font-bold text-success" id="hook-mult-1">2.7x standard</span>
+                            <div class="text-detail text-muted">Retention Match: 92%</div>
+                          </div>
+                          <button class="btn btn-secondary btn-icon" onclick="copyHookToClipboard('The one setting that changed everything...', this)" title="Copy Hook format">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H14m0 0l3-3m-3 3l3 3"/></svg>
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Hook 2 -->
+                      <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-xs); border: 1px solid var(--border-default); border-radius: var(--radius-md); background-color: var(--bg-secondary);">
+                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                          <div class="flex-center" style="gap: var(--space-xs); flex-wrap: wrap;">
+                            <span class="text-body-small font-bold" id="hook-title-2">"Stop building SaaS apps like this."</span>
+                            <span class="badge" style="background-color: var(--accent-red-bg); color: var(--accent-red);">Negative Hook</span>
+                          </div>
+                          <p class="text-detail text-muted">Format: Red warning watermark overlay, rapid cuts (0.4s cuts).</p>
+                        </div>
+                        <div class="flex-center" style="gap: var(--space-sm);">
+                          <div style="text-align: right;">
+                            <span class="text-body-small font-bold text-success" id="hook-mult-2">2.4x standard</span>
+                            <div class="text-detail text-muted">Retention Match: 88%</div>
+                          </div>
+                          <button class="btn btn-secondary btn-icon" onclick="copyHookToClipboard('Stop building SaaS apps like this.', this)" title="Copy Hook format">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H14m0 0l3-3m-3 3l3 3"/></svg>
+                          </button>
+                        </div>
+                      </div>
+
+                      <!-- Hook 3 -->
+                      <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-xs); border: 1px solid var(--border-default); border-radius: var(--radius-md); background-color: var(--bg-secondary);">
+                        <div style="display: flex; flex-direction: column; gap: 2px;">
+                          <div class="flex-center" style="gap: var(--space-xs); flex-wrap: wrap;">
+                            <span class="text-body-small font-bold" id="hook-title-3">"I created an AI script in exactly 4 minutes..."</span>
+                            <span class="badge" style="background-color: var(--accent-blue-bg); color: var(--accent-blue);">Result First</span>
+                          </div>
+                          <p class="text-detail text-muted">Format: Showing final product, screen capture with timer running.</p>
+                        </div>
+                        <div class="flex-center" style="gap: var(--space-sm);">
+                          <div style="text-align: right;">
+                            <span class="text-body-small font-bold text-success" id="hook-mult-3">2.1x standard</span>
+                            <div class="text-detail text-muted">Retention Match: 85%</div>
+                          </div>
+                          <button class="btn btn-secondary btn-icon" onclick="copyHookToClipboard('I created an AI script in exactly 4 minutes...', this)" title="Copy Hook format">
+                            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m2 4H14m0 0l3-3m-3 3l3 3"/></svg>
+                          </button>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Right Side: Trending Sounds, Styles, Topics, Competitor analytics -->
+                <div style="display: flex; flex-direction: column; gap: var(--space-lg);">
+                  
+                  <!-- Trending Sounds -->
+                  <div class="card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-sm);">
+                    <h4 class="text-body-small font-bold text-muted" style="text-transform: uppercase;">Trending Sound Stems</h4>
+                    
+                    <div style="display: flex; flex-direction: column; gap: var(--space-xs);" id="sounds-container">
+                      <!-- Sound 1 -->
+                      <div class="sound-list-item">
+                        <div class="flex-center" style="gap: var(--space-sm);">
+                          <button class="play-btn" onclick="togglePlaySound(this)">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24" class="play-icon"><path d="M8 5v14l11-7z"/></svg>
+                          </button>
+                          <div>
+                            <span class="text-body-small font-bold" id="snd-name-1">Cyber-Synth Retro Loop</span>
+                            <div class="text-detail text-muted">SaaS &bull; +280% usage</div>
+                          </div>
+                        </div>
+                        <div class="visual-equalizer">
+                          <div class="equalizer-bar"></div>
+                          <div class="equalizer-bar"></div>
+                          <div class="equalizer-bar"></div>
+                          <div class="equalizer-bar"></div>
+                          <div class="equalizer-bar"></div>
+                        </div>
+                      </div>
+
+                      <!-- Sound 2 -->
+                      <div class="sound-list-item">
+                        <div class="flex-center" style="gap: var(--space-sm);">
+                          <button class="play-btn" onclick="togglePlaySound(this)">
+                            <svg width="12" height="12" fill="currentColor" viewBox="0 0 24 24" class="play-icon"><path d="M8 5v14l11-7z"/></svg>
+                          </button>
+                          <div>
+                            <span class="text-body-small font-bold" id="snd-name-2">Low-Fi Focus Beats</span>
+                            <div class="text-detail text-muted">Tutorials &bull; +145% usage</div>
+                          </div>
+                        </div>
+                        <div class="visual-equalizer">
+                          <div class="equalizer-bar"></div>
+                          <div class="equalizer-bar"></div>
+                          <div class="equalizer-bar"></div>
+                          <div class="equalizer-bar"></div>
+                          <div class="equalizer-bar"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Trending Topics tags grid -->
+                  <div class="card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-sm);">
+                    <h4 class="text-body-small font-bold text-muted" style="text-transform: uppercase;">Hot Content Topics</h4>
+                    
+                    <div class="topics-bento" id="topics-container">
+                      <div class="topic-tag">
+                        <span class="font-bold text-primary">#indiehackers</span>
+                        <span class="text-detail text-muted">+140k</span>
+                      </div>
+                      <div class="topic-tag">
+                        <span class="font-bold text-primary">#cursor-ide</span>
+                        <span class="text-detail text-success font-bold">Hot</span>
+                      </div>
+                      <div class="topic-tag">
+                        <span class="font-bold text-primary">#saas-life</span>
+                        <span class="text-detail text-muted">+92k</span>
+                      </div>
+                      <div class="topic-tag">
+                        <span class="font-bold text-primary">#buildinpublic</span>
+                        <span class="text-detail text-muted">+115k</span>
+                      </div>
+                      <div class="topic-tag">
+                        <span class="font-bold text-primary">#no-code-automation</span>
+                        <span class="text-detail text-success font-bold">Rising</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Trending Style & Pacing -->
+                  <div class="card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-sm);">
+                    <h4 class="text-body-small font-bold text-muted" style="text-transform: uppercase;">Trending Video Styles</h4>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 8px;">
+                      <div>
+                        <div class="flex-between text-detail" style="margin-bottom: 2px;">
+                          <span>Rapid Cut Montage (0.5s clips)</span>
+                          <span class="font-bold text-success" id="style-rate-1">74% Share</span>
+                        </div>
+                        <div class="limit-progress-bar">
+                          <div class="limit-progress-fill" id="style-bar-1" style="width: 74%"></div>
+                        </div>
+                      </div>
+                      <div>
+                        <div class="flex-between text-detail" style="margin-bottom: 2px;">
+                          <span>Dark Aesthetic Code Loops</span>
+                          <span class="font-bold text-primary" id="style-rate-2">61% Share</span>
+                        </div>
+                        <div class="limit-progress-bar">
+                          <div class="limit-progress-fill" id="style-bar-2" style="width: 61%"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Competitor Analytics -->
+                  <div class="card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-sm);">
+                    <h4 class="text-body-small font-bold text-muted" style="text-transform: uppercase;">Competitor Performance Overlap</h4>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 6px;" id="competitors-container">
+                      <div class="flex-between text-detail" style="border-bottom: 1px solid var(--border-default); padding-bottom: 4px;">
+                        <span class="font-bold">Competitor</span>
+                        <span class="font-bold">Avg views</span>
+                        <span class="font-bold">Overlap</span>
+                      </div>
+                      <div class="flex-between text-detail">
+                        <span>@dev_insights</span>
+                        <span class="font-bold">142k</span>
+                        <span class="text-warning font-bold">82% High</span>
+                      </div>
+                      <div class="flex-between text-detail">
+                        <span>@saas_wizard</span>
+                        <span class="font-bold">98k</span>
+                        <span class="text-primary font-bold">45% Mid</span>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- ================= FORECAST HISTORY PANEL ================= -->
+            <div class="card history-view-panel" style="padding: var(--space-md);">
+              <div class="flex-between">
+                <div>
+                  <h4 class="text-body font-bold font-display">Forecast Accuracy & History Log</h4>
+                  <p class="text-detail text-muted">Verify the accuracy rate of previous machine learning forecasts</p>
+                </div>
+                <span class="badge badge-success">91.8% Avg Accuracy</span>
+              </div>
+              
+              <div style="display: flex; flex-direction: column; gap: var(--space-sm); margin-top: var(--space-sm);">
+                <!-- Log 1 -->
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-xs); border-radius: var(--radius-md); border: 1px solid var(--border-default); background-color: var(--bg-secondary);">
+                  <div>
+                    <span class="text-body-small font-bold">Windsurf Configuration Shortcuts</span>
+                    <div class="text-detail text-muted">Forecasted on Jul 05 &bull; Lifespan: 18 days</div>
+                  </div>
+                  <div class="flex-center" style="gap: var(--space-sm);">
+                    <span class="badge badge-success">94.2% Accurate</span>
+                    <button class="btn btn-secondary btn-sm" onclick="showToast('Restored historical model config')">Load Model</button>
+                  </div>
+                </div>
+
+                <!-- Log 2 -->
+                <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-xs); border-radius: var(--radius-md); border: 1px solid var(--border-default); background-color: var(--bg-secondary);">
+                  <div>
+                    <span class="text-body-small font-bold">Indie Hacking Solo Routines</span>
+                    <div class="text-detail text-muted">Forecasted on Jun 28 &bull; Lifespan: 24 days</div>
+                  </div>
+                  <div class="flex-center" style="gap: var(--space-sm);">
+                    <span class="badge badge-success">89.4% Accurate</span>
+                    <button class="btn btn-secondary btn-sm" onclick="showToast('Restored historical model config')">Load Model</button>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </main>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==============================================
+       3. MODAL PANELS (OPPORTUNITY DETAIL, MODELING, EXPORT)
+       ============================================== -->
+  
+  <!-- Opportunity Detail Modal -->
+  <div class="modal-overlay" id="opportunity-modal">
+    <div class="modal-container" style="max-width: 520px; width: 90%;">
+      <div class="modal-header">
+        <h3 class="text-h5 font-display" id="modal-opp-title">Opportunity Details</h3>
+        <button class="btn btn-secondary btn-icon" onclick="closeOpportunityModal()" style="border: none;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: var(--space-md);">
+        <div>
+          <span class="text-body-small font-bold text-muted" style="text-transform: uppercase;">AI Opportunity Description</span>
+          <p class="text-body-small text-muted" id="modal-opp-desc" style="margin-top: 4px;">Content gaps details will load here...</p>
+        </div>
+
+        <div style="border-top: 1px solid var(--border-default); padding-top: var(--space-xs); display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm);">
+          <div>
+            <span class="text-detail text-muted">Audience Match</span>
+            <div class="font-bold text-success" id="modal-opp-match">92% Match</div>
+          </div>
+          <div>
+            <span class="text-detail text-muted">Monthly search volume</span>
+            <div class="font-bold text-primary" id="modal-opp-volume">120k Searches</div>
+          </div>
+        </div>
+
+        <div class="card" style="padding: var(--space-sm); background-color: var(--brand-primary-glow); border-color: var(--brand-primary);">
+          <span class="text-body-small font-bold text-primary">AI Suggested Hook Concept:</span>
+          <p class="text-detail text-muted" style="margin-top: 4px;">"This single file setup saved me from burning out as a solo-developer..."</p>
+        </div>
+      </div>
+
+      <div class="modal-footer flex-end" style="gap: var(--space-sm); margin-top: var(--space-md);">
+        <button class="btn btn-secondary" onclick="closeOpportunityModal()">Close</button>
+        <button class="btn btn-primary" onclick="generateHookFromOpp()">Draft Hook Script</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Model Trend Fit Modal -->
+  <div class="modal-overlay" id="model-modal">
+    <div class="modal-container" style="max-width: 640px; width: 90%;">
+      <div class="modal-header">
+        <h3 class="text-h5 font-display">Model Trend Performance Fit</h3>
+        <button class="btn btn-secondary btn-icon" onclick="closeModelModal()" style="border: none;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: var(--space-md);">
+        <p class="text-body-small text-muted">Compare your video concept parameters against the active trending criteria:</p>
+        
+        <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+          <div>
+            <label class="text-detail font-bold text-muted">Your Custom Hook Concept</label>
+            <input type="text" value="How I built a SaaS in 24 hours without sleep..." style="width: 100%; padding: var(--space-xs); background-color: var(--bg-secondary); border: 1px solid var(--border-default); border-radius: var(--radius-sm); color: var(--text-primary); margin-top: 4px;">
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm);">
+            <div>
+              <label class="text-detail font-bold text-muted">Select Sound Stem</label>
+              <select style="width: 100%; padding: var(--space-xs); background-color: var(--bg-secondary); border: 1px solid var(--border-default); border-radius: var(--radius-sm); color: var(--text-primary); margin-top: 4px;">
+                <option>Cyber-Synth Retro Loop</option>
+                <option>Low-Fi Focus Beats</option>
+              </select>
+            </div>
+            <div>
+              <label class="text-detail font-bold text-muted">Target Topic</label>
+              <select style="width: 100%; padding: var(--space-xs); background-color: var(--bg-secondary); border: 1px solid var(--border-default); border-radius: var(--radius-sm); color: var(--text-primary); margin-top: 4px;">
+                <option>#indiehackers</option>
+                <option>#cursor-ide</option>
+                <option>#saas-life</option>
+              </select>
+            </div>
+          </div>
+        </div>
+
+        <div style="border-top: 1px solid var(--border-default); padding-top: var(--space-sm); display: flex; flex-direction: column; gap: 4px;">
+          <div class="flex-between text-body-small">
+            <span>Predicted Retention multiplier</span>
+            <span class="text-success font-bold">2.4x</span>
+          </div>
+          <div class="flex-between text-body-small">
+            <span>Predicted Click-Through Rate</span>
+            <span class="text-success font-bold">9.2% (High Opportunity)</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer flex-end" style="gap: var(--space-sm); margin-top: var(--space-md);">
+        <button class="btn btn-secondary" onclick="closeModelModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="closeModelModal(); showToast('Trend prediction parameters finalized!')">Save Model</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Report Modal -->
+  <div class="modal-overlay" id="export-modal">
+    <div class="modal-container" style="max-width: 420px; width: 90%;">
+      <div class="modal-header">
+        <h3 class="text-h5 font-display">Export Trend Sheet</h3>
+        <button class="btn btn-secondary btn-icon" onclick="closeExportModal()" style="border: none;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: var(--space-md);">
+        <p class="text-body-small text-muted">Select trend sheets and sound databases to export:</p>
+        
+        <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
+          <label class="flex-center" style="gap: var(--space-sm); cursor: pointer; user-select: none;">
+            <input type="checkbox" checked style="width: 16px; height: 16px; accent-color: var(--brand-primary);">
+            <span class="text-body-small">Trending Sound Metadata (.JSON)</span>
+          </label>
+          <label class="flex-center" style="gap: var(--space-sm); cursor: pointer; user-select: none;">
+            <input type="checkbox" checked style="width: 16px; height: 16px; accent-color: var(--brand-primary);">
+            <span class="text-body-small">Weekly Hook Multiplier database (.CSV)</span>
+          </label>
+          <label class="flex-center" style="gap: var(--space-sm); cursor: pointer; user-select: none;">
+            <input type="checkbox" style="width: 16px; height: 16px; accent-color: var(--brand-primary);">
+            <span class="text-body-small">Competitor Performance benchmark logs</span>
+          </label>
+        </div>
+
+        <div id="export-progress-container" style="display: none; flex-direction: column; gap: var(--space-xxs);">
+          <div class="flex-between text-detail">
+            <span id="export-progress-lbl">Rasterizing sound waveforms...</span>
+            <span id="export-progress-pct">0%</span>
+          </div>
+          <div style="height: 6px; background-color: var(--border-default); border-radius: var(--radius-full); overflow: hidden;">
+            <div id="export-progress-fill" style="height: 100%; width: 0%; background-color: var(--brand-primary); transition: width 0.1s linear;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer flex-end" style="gap: var(--space-sm); margin-top: var(--space-md);">
+        <button class="btn btn-secondary" onclick="closeExportModal()">Cancel</button>
+        <button class="btn btn-primary" id="btn-start-export" onclick="startExportProcess()">Start Export</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Toast Container -->
+  <div class="toast-notifications-container" id="toast-container"></div>
+
+  <!-- JavaScript Interactive Logic -->
+  <script>
+    // Mock Data Matrix for Niches
+    const nicheData = {
+      tech: {
+        opportunities: [
+          { title: "Solo-Dev Burnout Routines", desc: "Low competition content gaps surrounding developers showing raw day-in-the-life work blocks.", volume: "94,000", score: "94 Score" },
+          { title: "No-Code Agent Building", desc: "Highly actionable, fast-paced workflows demonstrating automated lead retrieval using AI bots.", volume: "128,000", score: "91 Score" },
+          { title: "Windsurf Config Shortcuts", desc: "Short-form videos documenting custom command profiles that accelerate codebase navigation.", volume: "81,500", score: "87 Score" }
+        ],
+        sounds: [
+          { name: "Cyber-Synth Retro Loop", usecase: "SaaS &bull; +280% usage" },
+          { name: "Low-Fi Focus Beats", usecase: "Tutorials &bull; +145% usage" }
+        ],
+        hooks: [
+          { title: "The one setting that changed everything...", mult: "2.7x standard" },
+          { title: "Stop building SaaS apps like this.", mult: "2.4x standard" },
+          { title: "I created an AI script in exactly 4 minutes...", mult: "2.1x standard" }
+        ],
+        topics: [
+          { name: "#indiehackers", value: "+140k" },
+          { name: "#cursor-ide", value: "Hot" },
+          { name: "#saas-life", value: "+92k" },
+          { name: "#buildinpublic", value: "+115k" },
+          { name: "#no-code-automation", value: "Rising" }
+        ],
+        styles: { r1: "74%", r2: "61%" },
+        competitors: [
+          { name: "@dev_insights", views: "142k", overlap: "82% High" },
+          { name: "@saas_wizard", views: "98k", overlap: "45% Mid" }
+        ]
+      },
+      ecommerce: {
+        opportunities: [
+          { title: "Sustainably Packaged Products", desc: "Rising consumer awareness for eco-friendly shipping boxes and bio-based wrap reels.", volume: "185,000", score: "96 Score" },
+          { title: "Direct-to-Consumer Unboxing", desc: "ASMR audio recordings of box cutting, card slides, and custom tissue paper unfolds.", volume: "110,000", score: "92 Score" },
+          { title: "Local Fulfillment Centers", desc: "Tours behind the scenes showing packaging robots loading trucks.", volume: "74,000", score: "84 Score" }
+        ],
+        sounds: [
+          { name: "Crisp Cardboard Folds (ASMR)", usecase: "Packaging &bull; +340% usage" },
+          { name: "Energetic Summer Groove", usecase: "Showcase &bull; +180% usage" }
+        ],
+        hooks: [
+          { title: "Everything wrong with standard packaging...", mult: "3.2x standard" },
+          { title: "I ordered 5 products to test this theory...", mult: "2.9x standard" },
+          { title: "Why DTC brands are charging you double...", mult: "2.5x standard" }
+        ],
+        topics: [
+          { name: "#sustainablepackaging", value: "+240k" },
+          { name: "#unboxingasmr", value: "+180k" },
+          { name: "#shopifydropship", value: "+150k" },
+          { name: "#dtcbrands", value: "Rising" },
+          { name: "#packwithme", value: "Hot" }
+        ],
+        styles: { r1: "88%", r2: "45%" },
+        competitors: [
+          { name: "@dtc_expert", views: "340k", overlap: "91% High" },
+          { name: "@retail_hacks", views: "180k", overlap: "54% Mid" }
+        ]
+      },
+      finance: {
+        opportunities: [
+          { title: "DeFi Yield Allocation", desc: "Interactive breakdowns showing how liquidity pools split deposits across smart nodes.", volume: "72,000", score: "89 Score" },
+          { title: "Inflation-Hedge Real Estate", desc: "Fractional ownership tutorials focusing on residential land values.", volume: "64,000", score: "85 Score" },
+          { title: "Micro-Saving AI Apps", desc: "Comparisons of automated round-up modules on retail checking lines.", volume: "51,000", score: "82 Score" }
+        ],
+        sounds: [
+          { name: "Retro Digital Cash Sound", usecase: "Stats &bull; +210% usage" },
+          { name: "Deep Techno Focus Beats", usecase: "Charts &bull; +110% usage" }
+        ],
+        hooks: [
+          { title: "I put $500 into this liquidity vault...", mult: "2.9x standard" },
+          { title: "The silent tax eating your cash savings...", mult: "2.6x standard" },
+          { title: "How 19-year-olds are buying homes today...", mult: "2.2x standard" }
+        ],
+        topics: [
+          { name: "#cryptoportfolio", value: "+110k" },
+          { name: "#yieldfarming", value: "Hot" },
+          { name: "#inflationhacks", value: "+75k" },
+          { name: "#wealthbuilding", value: "+98k" },
+          { name: "#personalfinance", value: "Rising" }
+        ],
+        styles: { r1: "65%", r2: "78%" },
+        competitors: [
+          { name: "@finance_flows", views: "115k", overlap: "76% High" },
+          { name: "@defi_hustle", views: "87k", overlap: "38% Mid" }
+        ]
+      },
+      fitness: {
+        opportunities: [
+          { title: "Zone 2 Cardio Routines", desc: "Explosive demand for steady-state heart-rate maintenance techniques and recovery metrics.", volume: "210,000", score: "97 Score" },
+          { title: "Isokinetic Lifting Systems", desc: "Scientific visual breakdowns of muscular load ratios throughout rep extensions.", volume: "85,000", score: "88 Score" },
+          { title: "Protein-Dense Meal Prep", desc: "Rapidly edited clips showing 3-ingredient dishes cooked in under 5 minutes.", volume: "160,000", score: "93 Score" }
+        ],
+        sounds: [
+          { name: "Heavy Industrial Synth Beat", usecase: "Workout &bull; +410% usage" },
+          { name: "Upbeat Lo-Fi Chill Hop", usecase: "Prep &bull; +195% usage" }
+        ],
+        hooks: [
+          { title: "Stop doing cardio at this intensity...", mult: "3.5x standard" },
+          { title: "The exact meal I eat to stay at 9% body fat...", mult: "3.1x standard" },
+          { title: "Why your muscle gains stopped at month 3...", mult: "2.7x standard" }
+        ],
+        topics: [
+          { name: "#zone2cardio", value: "+320k" },
+          { name: "#isokinetics", value: "+90k" },
+          { name: "#mealprephacks", value: "+210k" },
+          { name: "#fitnessscience", value: "Hot" },
+          { name: "#fatlossrecipes", value: "Rising" }
+        ],
+        styles: { r1: "82%", r2: "54%" },
+        competitors: [
+          { name: "@coach_science", views: "410k", overlap: "88% High" },
+          { name: "@prepped_physique", views: "240k", overlap: "62% Mid" }
+        ]
+      },
+      lifestyle: {
+        opportunities: [
+          { title: "Minimalist Morning Habits", desc: "High search volumes for slow-burn aesthetic clips showing screen-free morning routines.", volume: "310,000", score: "98 Score" },
+          { title: "Glass Skin Skincare Steps", desc: "Actionable breakdowns of peptide serums and hydration schedules.", volume: "240,000", score: "95 Score" },
+          { title: "Capsule Wardrobe Styling", desc: "Outfit combinations matching 10 basic clothing items across 30 days.", volume: "180,000", score: "91 Score" }
+        ],
+        sounds: [
+          { name: "Soft Raindrop Piano Beats", usecase: "Morning &bull; +390% usage" },
+          { name: "Chill French Cafe Accordion", usecase: "OOTD &bull; +220% usage" }
+        ],
+        hooks: [
+          { title: "This 10-minute morning routine saved my sanity...", mult: "3.8x standard" },
+          { title: "The actual secret to clear skin that costs $0...", mult: "3.4x standard" },
+          { title: "Stop buying clothes you only wear once...", mult: "3.0x standard" }
+        ],
+        topics: [
+          { name: "#morninghabits", value: "+450k" },
+          { name: "#glassskincare", value: "+310k" },
+          { name: "#capsulewardrobe", value: "+270k" },
+          { name: "#aestheticminimalist", value: "Hot" },
+          { name: "#minimalistlifestyle", value: "Rising" }
+        ],
+        styles: { r1: "91%", r2: "38%" },
+        competitors: [
+          { name: "@minimal_vibe", views: "520k", overlap: "95% High" },
+          { name: "@skin_glow", views: "310k", overlap: "59% Mid" }
+        ]
+      }
+    };
+
+    // Active State variables
+    let currentNiche = 'tech';
+    let currentRegion = 'US';
+
+    // Switch niche handler
+    function switchNiche(nicheKey) {
+      currentNiche = nicheKey;
+      
+      // Update pills active class
+      const pills = document.querySelectorAll('.niche-pill');
+      pills.forEach(p => p.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const data = nicheData[nicheKey];
+      if (!data) return;
+
+      // Update Opportunity Finder cards
+      for (let i = 0; i < 3; i++) {
+        const opp = data.opportunities[i];
+        document.getElementById(`opp-title-${i+1}`).innerText = opp.title;
+        document.getElementById(`opp-desc-${i+1}`).innerText = opp.desc;
+        document.getElementById(`opp-score-${i+1}`).innerText = opp.score;
+        document.getElementById(`opp-vol-${i+1}`).innerText = opp.volume;
+      }
+
+      // Update Trending Sounds list
+      for (let i = 0; i < 2; i++) {
+        const snd = data.sounds[i];
+        document.getElementById(`snd-name-${i+1}`).innerText = snd.name;
+        document.getElementById(`snd-name-${i+1}`).nextElementSibling.innerHTML = snd.usecase;
+      }
+
+      // Update Trending Hooks
+      for (let i = 0; i < 3; i++) {
+        const hk = data.hooks[i];
+        document.getElementById(`hook-title-${i+1}`).innerText = hk.title;
+        document.getElementById(`hook-mult-${i+1}`).innerText = hk.mult;
+      }
+
+      // Update Topics Tags
+      const topicsContainer = document.getElementById('topics-container');
+      topicsContainer.innerHTML = '';
+      data.topics.forEach(tp => {
+        const tag = document.createElement('div');
+        tag.className = 'topic-tag';
+        tag.innerHTML = `
+          <span class="font-bold text-primary">${tp.name}</span>
+          <span class="text-detail ${tp.value === 'Hot' || tp.value === 'Rising' ? 'text-success font-bold' : 'text-muted'}">${tp.value}</span>
+        `;
+        topicsContainer.appendChild(tag);
+      });
+
+      // Update Styles progress bars
+      document.getElementById('style-rate-1').innerText = data.styles.r1 + ' Share';
+      document.getElementById('style-bar-1').style.width = data.styles.r1;
+      document.getElementById('style-rate-2').innerText = data.styles.r2 + ' Share';
+      document.getElementById('style-bar-2').style.width = data.styles.r2;
+
+      // Update Competitors
+      const compContainer = document.getElementById('competitors-container');
+      compContainer.innerHTML = `
+        <div class="flex-between text-detail" style="border-bottom: 1px solid var(--border-default); padding-bottom: 4px;">
+          <span class="font-bold">Competitor</span>
+          <span class="font-bold">Avg views</span>
+          <span class="font-bold">Overlap</span>
+        </div>
+      `;
+      data.competitors.forEach(cp => {
+        const item = document.createElement('div');
+        item.className = 'flex-between text-detail';
+        item.innerHTML = `
+          <span>${cp.name}</span>
+          <span class="font-bold">${cp.views}</span>
+          <span class="${cp.overlap.includes('High') ? 'text-warning' : 'text-primary'} font-bold">${cp.overlap}</span>
+        `;
+        compContainer.appendChild(item);
+      });
+
+      showToast(`Loaded ${event.target.innerText} trending metrics`);
+      recalculateChartCurve();
+    }
+
+    // Switch region handler
+    function switchRegion(btn, regionKey) {
+      currentRegion = regionKey;
+      
+      // Update active btn styling
+      const btns = btn.parentNode.querySelectorAll('.sandbox-btn');
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      showToast(`Targeting forecast region: ${regionKey}`);
+      recalculateChartCurve();
+    }
+
+    // Chart toggle duration handler
+    function toggleForecastDuration(days) {
+      const durBtns = document.querySelectorAll('.sandbox-control-group button[id^="btn-chart"]');
+      durBtns.forEach(b => b.classList.remove('active'));
+      document.getElementById(`btn-chart-${days}d`).classList.add('active');
+
+      const fillPath = document.getElementById('chart-fill-path');
+      const linePath = document.getElementById('chart-line-path');
+
+      if (days === 7) {
+        fillPath.setAttribute('d', 'M 0 140 Q 150 80 300 30 T 600 20 L 600 160 L 0 160 Z');
+        linePath.setAttribute('d', 'M 0 140 Q 150 80 300 30 T 600 20');
+        showToast('Short-term 7 Days prediction path rendered');
+      } else if (days === 30) {
+        fillPath.setAttribute('d', 'M 0 140 Q 150 20 300 40 T 600 130 L 600 160 L 0 160 Z');
+        linePath.setAttribute('d', 'M 0 140 Q 150 20 300 40 T 600 130');
+        showToast('Standard 30 Days prediction path rendered');
+      } else if (days === 90) {
+        fillPath.setAttribute('d', 'M 0 140 Q 150 40 300 90 T 600 150 L 600 160 L 0 160 Z');
+        linePath.setAttribute('d', 'M 0 140 Q 150 40 300 90 T 600 150');
+        showToast('Long-term 90 Days prediction path rendered');
+      }
+    }
+
+    // Chart curves recalculator based on niche/region mix
+    function recalculateChartCurve() {
+      const fillPath = document.getElementById('chart-fill-path');
+      const linePath = document.getElementById('chart-line-path');
+      
+      let baseOffset = currentNiche === 'tech' ? 10 : currentNiche === 'ecommerce' ? 40 : 25;
+      if (currentRegion === 'APAC') baseOffset += 15;
+      if (currentRegion === 'EU') baseOffset -= 10;
+
+      fillPath.setAttribute('d', `M 0 140 Q 150 ${20 + baseOffset} 300 ${40 + baseOffset} T 600 ${110 + baseOffset} L 600 160 L 0 160 Z`);
+      linePath.setAttribute('d', `M 0 140 Q 150 ${20 + baseOffset} 300 ${40 + baseOffset} T 600 ${110 + baseOffset}`);
+    }
+
+    // Chart tooltip handlers
+    function showChartTooltip(e) {
+      const tip = document.getElementById('chart-tip');
+      const box = e.currentTarget.getBoundingClientRect();
+      const x = e.clientX - box.left;
+      const y = e.clientY - box.top;
+      
+      tip.style.opacity = '1';
+      tip.style.transform = `translate(${x + 10}px, ${y - 35}px)`;
+      
+      const dayIndex = Math.floor((x / box.width) * 30);
+      const score = Math.round(100 - (y / box.height) * 100);
+      tip.innerHTML = `Day +${dayIndex} &bull; Fatigue Rate: ${score}%`;
+    }
+
+    function hideChartTooltip() {
+      document.getElementById('chart-tip').style.opacity = '0';
+    }
+
+    // Sound player simulator
+    function togglePlaySound(btn) {
+      const listItem = btn.closest('.sound-list-item');
+      const isPlaying = listItem.classList.contains('playing');
+      
+      // Stop all sounds first
+      document.querySelectorAll('.sound-list-item').forEach(item => {
+        item.classList.remove('playing');
+        item.querySelector('.play-btn svg').innerHTML = '<path d="M8 5v14l11-7z"/>';
+      });
+
+      if (!isPlaying) {
+        listItem.classList.add('playing');
+        btn.querySelector('svg').innerHTML = '<path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/>';
+        showToast('Playing sound demo stems');
+      } else {
+        showToast('Paused sound demo');
+      }
+    }
+
+    // Copy Hooks
+    function copyHookToClipboard(text, btn) {
+      navigator.clipboard.writeText(text).then(() => {
+        showToast('Hook copied to clipboard!');
+        const origSVG = btn.innerHTML;
+        btn.innerHTML = `
+          <svg width="14" height="14" fill="none" stroke="var(--accent-green)" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+        `;
+        setTimeout(() => {
+          btn.innerHTML = origSVG;
+        }, 1500);
+      }).catch(err => {
+        showToast('Failed to copy hook.');
+      });
+    }
+
+    // Opportunity Modal controls
+    function openOpportunityModal(title, desc, match, vol) {
+      document.getElementById('modal-opp-title').innerText = title + ' Opportunity';
+      document.getElementById('modal-opp-desc').innerText = desc;
+      document.getElementById('modal-opp-match').innerText = match;
+      document.getElementById('modal-opp-volume').innerText = vol;
+      document.getElementById('opportunity-modal').classList.add('active');
+    }
+    
+    function closeOpportunityModal() {
+      document.getElementById('opportunity-modal').classList.remove('active');
+    }
+
+    document.getElementById('opportunity-modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('opportunity-modal')) {
+        closeOpportunityModal();
+      }
+    });
+
+    function generateHookFromOpp() {
+      closeOpportunityModal();
+      showToast('Redirecting to Script Editor with drafted template hook...');
+      setTimeout(() => {
+        window.location.href = 'script.html';
+      }, 1200);
+    }
+
+    // Model modal controls
+    function openModelModal() {
+      document.getElementById('model-modal').classList.add('active');
+    }
+    function closeModelModal() {
+      document.getElementById('model-modal').classList.remove('active');
+    }
+    document.getElementById('model-modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('model-modal')) {
+        closeModelModal();
+      }
+    });
+
+    // Export Modal controls
+    function openExportModal() {
+      document.getElementById('export-modal').classList.add('active');
+    }
+    function closeExportModal() {
+      document.getElementById('export-modal').classList.remove('active');
+      document.getElementById('export-progress-container').style.display = 'none';
+      document.getElementById('btn-start-export').innerText = 'Start Export';
+      document.getElementById('btn-start-export').disabled = false;
+    }
+    document.getElementById('export-modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('export-modal')) {
+        closeExportModal();
+      }
+    });
+
+    function startExportProcess() {
+      const container = document.getElementById('export-progress-container');
+      const fill = document.getElementById('export-progress-fill');
+      const pct = document.getElementById('export-progress-pct');
+      const lbl = document.getElementById('export-progress-lbl');
+      const btn = document.getElementById('btn-start-export');
+
+      container.style.display = 'flex';
+      btn.innerText = 'Exporting...';
+      btn.disabled = true;
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 10;
+        fill.style.width = `${progress}%`;
+        pct.innerText = `${progress}%`;
+        
+        if (progress === 30) {
+          lbl.innerText = 'Extracting trending hashtag clouds...';
+        } else if (progress === 70) {
+          lbl.innerText = 'Formatting CSV hook multipliers...';
+        } else if (progress >= 100) {
+          clearInterval(interval);
+          closeExportModal();
+          showToast('Trend sheet exported successfully!');
+        }
+      }, 150);
+    }
+
+    // Theme Manager
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.addEventListener('click', () => {
+      if (document.body.classList.contains('dark')) {
+        document.body.classList.remove('dark');
+        document.body.classList.add('light');
+        themeToggle.innerHTML = `
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 5a7 7 0 100 14 7 7 0 000-14z"/></svg>
+          Light Mode
+        `;
+      } else {
+        document.body.classList.remove('light');
+        document.body.classList.add('dark');
+        themeToggle.innerHTML = `
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          Dark Mode
+        `;
+      }
+    });
+
+    // Viewport Emulation Scaler
+    const viewportFrame = document.getElementById('viewport-frame');
+    const viewportButtons = document.querySelectorAll('[data-viewport]');
+    
+    viewportButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        viewportButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const vp = btn.getAttribute('data-viewport');
+        viewportFrame.className = 'emulator-viewport ' + vp;
+        showToast(`Switched view to ${vp.toUpperCase()} emulation`);
+      });
+    });
+
+    // Mobile Sidebar toggle
+    const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+    const sidebar = document.querySelector('.dashboard-sidebar');
+    if (sidebarToggleBtn) {
+      sidebarToggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+      });
+    }
+
+    // State Modifiers Simulation
+    const stateNormal = document.getElementById('state-normal');
+    const stateLoading = document.getElementById('state-loading');
+    const stateHistory = document.getElementById('state-history');
+    const dashboardShell = document.getElementById('dashboard-main-shell');
+
+    stateNormal.addEventListener('click', () => {
+      stateNormal.classList.add('active');
+      stateLoading.classList.remove('active');
+      stateHistory.classList.remove('active');
+      dashboardShell.classList.remove('loading-state-active');
+      dashboardShell.classList.remove('history-state-active');
+      showToast('Loaded active trend prediction analytics');
+    });
+
+    stateLoading.addEventListener('click', () => {
+      stateNormal.classList.remove('active');
+      stateLoading.classList.add('active');
+      stateHistory.classList.remove('active');
+      dashboardShell.classList.add('loading-state-active');
+      dashboardShell.classList.remove('history-state-active');
+      
+      // Return to normal automatically
+      setTimeout(() => {
+        stateNormal.click();
+      }, 2000);
+    });
+
+    stateHistory.addEventListener('click', () => {
+      stateNormal.classList.remove('active');
+      stateLoading.classList.remove('active');
+      stateHistory.classList.add('active');
+      dashboardShell.classList.remove('loading-state-active');
+      dashboardShell.classList.add('history-state-active');
+      showToast('Viewing Forecast Accuracy History Logs');
+    });
+
+    // Toast Alert Helper
+    function showToast(message) {
+      const container = document.getElementById('toast-container');
+      
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'toast-alert';
+      alertDiv.innerHTML = `
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>${message}</span>
+      `;
+      
+      container.appendChild(alertDiv);
+      
+      // Auto-remove after 3 seconds
+      setTimeout(() => {
+        alertDiv.style.animation = 'slideOutRight 0.2s forwards';
+        setTimeout(() => {
+          alertDiv.remove();
+        }, 200);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

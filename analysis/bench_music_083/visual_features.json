@@ -1,0 +1,36 @@
+{
+  "sceneCount": 7,
+  "shotLengthSec": 5.57,
+  "motionIntensity": 0.2028,
+  "brightness": 0.3465,
+  "saturation": 0.5969,
+  "contrast": 0.4974,
+  "faceCount": 1,
+  "faceSizePct": 0.35,
+  "cameraMovement": "PAN",
+  "editingRhythmScore": 0.2692,
+  "thumbnailQualityScore": 0.4069,
+  "visualNoveltyScore": 0.6413,
+  "colorHistogram": [
+    0.0128,
+    0.0128,
+    0.0641,
+    0.0513,
+    0.5513,
+    0.0769,
+    0.0128,
+    0.0385,
+    0.0641,
+    0.0256,
+    0.0641,
+    0.0256,
+    0,
+    0,
+    0,
+    0
+  ],
+  "detectedObjects": [
+    "high_contrast_foreground",
+    "dynamic_motion"
+  ]
+}

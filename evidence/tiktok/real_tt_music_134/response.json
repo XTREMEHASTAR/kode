@@ -1,0 +1,19 @@
+{
+  "data": {
+    "videos": [
+      {
+        "id": "real_tt_music_134",
+        "create_time": 1773801224,
+        "duration": 29,
+        "view_count": 315280,
+        "like_count": 20728,
+        "comment_count": 1090,
+        "share_count": 2708
+      }
+    ]
+  },
+  "error": {
+    "code": "ok",
+    "message": ""
+  }
+}

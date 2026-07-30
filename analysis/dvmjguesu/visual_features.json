@@ -1,0 +1,33 @@
+{
+  "sceneCount": 1,
+  "shotLengthSec": 8,
+  "motionIntensity": 0.0434,
+  "brightness": 0.3913,
+  "saturation": 0.0943,
+  "contrast": 0.0786,
+  "faceCount": 1,
+  "faceSizePct": 0.35,
+  "cameraMovement": "STATIC",
+  "editingRhythmScore": 0.1875,
+  "thumbnailQualityScore": 0.2662,
+  "visualNoveltyScore": 0.115,
+  "colorHistogram": [
+    0.114,
+    0.0956,
+    0.0478,
+    0.1176,
+    0.1838,
+    0.0662,
+    0.0221,
+    0.0147,
+    0.0331,
+    0.0331,
+    0.0147,
+    0.0735,
+    0.0809,
+    0.0588,
+    0.011,
+    0.0331
+  ],
+  "detectedObjects": []
+}

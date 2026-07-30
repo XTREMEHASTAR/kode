@@ -1,0 +1,13 @@
+{
+  "assetId": "real_yt_cooking_125",
+  "videoPath": "c:/videos/real_yt_cooking_125.mp4",
+  "duration": 20,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "bitrate": 4500000,
+  "keyframe_count": 20,
+  "extracted_frame_count": 20,
+  "extracted_audio_samples": 220500,
+  "contentHash": 560443696
+}

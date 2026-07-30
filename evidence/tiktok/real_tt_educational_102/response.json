@@ -1,0 +1,19 @@
+{
+  "data": {
+    "videos": [
+      {
+        "id": "real_tt_educational_102",
+        "create_time": 1776566024,
+        "duration": 27,
+        "view_count": 269840,
+        "like_count": 17784,
+        "comment_count": 930,
+        "share_count": 2324
+      }
+    ]
+  },
+  "error": {
+    "code": "ok",
+    "message": ""
+  }
+}

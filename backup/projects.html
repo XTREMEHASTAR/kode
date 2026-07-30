@@ -1,0 +1,2033 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — Enterprise AI SaaS Project Management Portal</title>
+  
+  <link rel="stylesheet" href="design-system.css">
+  <script src="design-system.js" defer></script>
+  
+  <style>
+    /* Custom grid system overrides matching dashboard page layout */
+    .grid-12 {
+      display: grid;
+      grid-template-columns: repeat(12, 1fr);
+      gap: var(--space-md);
+    }
+    .col-span-1 { grid-column: span 1; }
+    .col-span-2 { grid-column: span 2; }
+    .col-span-3 { grid-column: span 3; }
+    .col-span-4 { grid-column: span 4; }
+    .col-span-5 { grid-column: span 5; }
+    .col-span-6 { grid-column: span 6; }
+    .col-span-7 { grid-column: span 7; }
+    .col-span-8 { grid-column: span 8; }
+    .col-span-9 { grid-column: span 9; }
+    .col-span-10 { grid-column: span 10; }
+    .col-span-11 { grid-column: span 11; }
+    .col-span-12 { grid-column: span 12; }
+
+    /* Custom style overrides for simulated sandbox environments */
+    .sandbox-header {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      padding: 0 var(--space-lg);
+      backdrop-filter: blur(var(--glass-blur));
+      background-color: var(--glass-bg);
+    }
+
+    .sandbox-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .sandbox-brand h1 {
+      font-family: var(--font-display);
+      font-size: 1.125rem;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
+
+    .sandbox-brand span {
+      background-color: var(--brand-primary-glow);
+      color: var(--brand-primary);
+      font-size: 0.6875rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+    }
+
+    .sandbox-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .sandbox-control-group {
+      display: flex;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      padding: 2px;
+      border-radius: var(--radius-md);
+    }
+
+    .sandbox-btn {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.8125rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--transition-fast);
+    }
+
+    .sandbox-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .sandbox-btn.active {
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sandbox-workspace {
+      background-color: var(--bg-tertiary);
+      min-height: calc(100vh - 64px);
+      padding: var(--space-xl) var(--space-lg);
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      overflow-x: auto;
+    }
+
+    /* Viewport Simulator Frame */
+    .emulator-viewport {
+      background-color: var(--bg-primary);
+      border-radius: var(--radius-xl);
+      box-shadow: var(--shadow-xl);
+      border: 1px solid var(--border-default);
+      transition: width var(--transition-smooth), height var(--transition-smooth);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .emulator-viewport.desktop { width: 100%; max-width: 1440px; min-height: 800px; }
+    .emulator-viewport.tablet { width: 768px; min-height: 800px; }
+    .emulator-viewport.mobile { width: 375px; min-height: 700px; }
+
+    /* Shell Layout Grid */
+    .dashboard-shell {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      min-height: 800px;
+    }
+
+    .emulator-viewport.mobile .dashboard-shell {
+      min-height: 700px;
+    }
+
+    .dashboard-sidebar {
+      width: 240px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      z-index: 900;
+      transition: width var(--transition-smooth);
+    }
+
+    .sidebar-header {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .sidebar-nav {
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 10px 12px;
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .sidebar-nav-item:hover {
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+    }
+
+    .sidebar-nav-item.active {
+      background-color: var(--brand-primary-glow);
+      color: var(--brand-primary);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .dashboard-main {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      background-color: var(--bg-primary);
+      overflow-y: auto;
+      max-height: 850px;
+    }
+
+    .emulator-viewport.mobile .dashboard-main {
+      max-height: 700px;
+    }
+
+    .dashboard-header {
+      height: 64px;
+      border-bottom: 1px solid var(--border-default);
+      padding: 0 var(--space-lg);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .dashboard-body {
+      padding: var(--space-lg);
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    /* Dynamic Project Layouts styling */
+    .projects-layout-container {
+      display: flex;
+      gap: var(--space-lg);
+      flex: 1;
+    }
+
+    /* Folders Navigation Left Panel */
+    .folders-sidebar {
+      width: 200px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      flex-shrink: 0;
+    }
+
+    .folder-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 8px 12px;
+      border-radius: var(--radius-md);
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      cursor: pointer;
+      font-weight: 500;
+      transition: all var(--transition-fast);
+    }
+
+    .folder-item:hover {
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .folder-item.active {
+      background-color: var(--bg-tertiary);
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .folder-count {
+      font-size: 0.75rem;
+      background-color: var(--bg-tertiary);
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      color: var(--text-secondary);
+    }
+
+    /* Right pane project list display container */
+    .projects-list-pane {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    /* Project Cards Grid */
+    .projects-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-md);
+    }
+
+    .project-card {
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xl);
+      background-color: var(--bg-elevated);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      position: relative;
+      transition: transform var(--transition-bounce), border-color var(--transition-fast), box-shadow var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .project-card:hover {
+      transform: translateY(-4px);
+      border-color: var(--border-active);
+      box-shadow: var(--shadow-md);
+    }
+
+    .project-thumbnail-wrapper {
+      height: 120px;
+      background: linear-gradient(135deg, var(--brand-primary-glow), var(--bg-tertiary));
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .project-card-actions {
+      position: absolute;
+      top: var(--space-xs);
+      right: var(--space-xs);
+      z-index: 10;
+    }
+
+    .project-card-body {
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      flex: 1;
+    }
+
+    /* Floating AI drawer components */
+    .ai-chat-drawer {
+      position: absolute;
+      top: 64px;
+      right: -360px;
+      bottom: 0;
+      width: 360px;
+      background-color: var(--bg-elevated);
+      border-left: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      z-index: 950;
+      display: flex;
+      flex-direction: column;
+      transition: right var(--transition-smooth);
+    }
+
+    .ai-chat-drawer.active {
+      right: 0;
+    }
+
+    /* Dynamic Project Details subpanels */
+    .project-details-grid {
+      display: grid;
+      grid-template-columns: 8fr 4fr;
+      gap: var(--space-lg);
+    }
+
+    .file-preview-card {
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: var(--space-sm);
+      background-color: var(--bg-secondary);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-xs);
+    }
+
+    .file-icon {
+      width: 36px;
+      height: 36px;
+      background-color: var(--bg-primary);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--brand-primary);
+      border: 1px solid var(--border-default);
+    }
+
+    /* Viewport adjustments */
+    /* Tablet Simulation Overrides */
+    .emulator-viewport.tablet .dashboard-sidebar {
+      width: 70px;
+    }
+
+    .emulator-viewport.tablet .sidebar-text-label,
+    .emulator-viewport.tablet .sidebar-footer {
+      display: none;
+    }
+
+    .emulator-viewport.tablet .projects-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+
+    .emulator-viewport.tablet .project-details-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Mobile Simulation Overrides */
+    .emulator-viewport.mobile #sidebar-toggle-btn {
+      display: inline-flex !important;
+    }
+
+    .emulator-viewport.mobile .dashboard-sidebar {
+      display: none;
+    }
+
+    .emulator-viewport.mobile .dashboard-sidebar.active {
+      display: flex;
+      position: absolute;
+      left: 0;
+      top: 64px;
+      bottom: 0;
+      z-index: 950;
+      height: calc(100% - 64px);
+      width: 240px;
+      box-shadow: var(--shadow-xl);
+      animation: dropdownEnter var(--transition-fast) forwards;
+    }
+
+    .emulator-viewport.mobile .dashboard-header {
+      padding: 0 var(--space-sm);
+    }
+
+    .emulator-viewport.mobile .folders-sidebar {
+      display: none;
+    }
+
+    .emulator-viewport.mobile .projects-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    .emulator-viewport.mobile .project-details-grid {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Skeletons loader display controls */
+    .skeleton-view-panel {
+      display: none !important;
+    }
+
+    .loading-state-active .skeleton-view-panel {
+      display: block !important;
+    }
+
+    .loading-state-active .real-view-panel {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. SANDBOX HEADER CONTROL PANEL -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M16 8L25 13V19L16 24L7 19V13L16 8Z" fill="var(--brand-primary)" opacity="0.15"/>
+        <circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/>
+      </svg>
+      <h1>KONTAGI Projects</h1>
+      <span>Sandbox</span>
+    </div>
+
+    <div class="sandbox-controls">
+      <!-- Viewport Emulator buttons -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" data-viewport="desktop" title="Desktop emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 21h12m-9-4l-1 4m8-4l1 4"/></svg>
+          Desktop
+        </button>
+        <button class="sandbox-btn" data-viewport="tablet" title="Tablet emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          Tablet
+        </button>
+        <button class="sandbox-btn" data-viewport="mobile" title="Mobile emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
+          Mobile
+        </button>
+      </div>
+
+      <!-- State Modifiers -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" id="state-normal">Normal</button>
+        <button class="sandbox-btn" id="state-loading">Loading State</button>
+        <button class="sandbox-btn" id="state-ai-chat">Ask Aura AI</button>
+      </div>
+
+      <!-- Mode Toggles -->
+      <button class="btn btn-tertiary btn-sm" id="theme-toggle" style="box-shadow: none;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        Dark Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- 2. MAIN WORKSPACE WITH VIEWPORT SIMULATOR -->
+  <main class="sandbox-workspace">
+    <div class="emulator-viewport desktop" id="viewport-frame">
+      
+      <div class="dashboard-shell" id="dashboard-main-shell">
+        
+        <!-- ==============================================
+             SIDEBAR COMPONENT
+             ============================================== -->
+        <aside class="dashboard-sidebar">
+          <div>
+            <!-- Header Workspace Selector -->
+            <div class="sidebar-header">
+              <div class="flex-between select-wrapper" style="width: 100%;">
+                <div class="flex-center" style="gap: var(--space-xs); cursor: pointer;">
+                  <div class="workspace-avatar" style="width: 28px; height: 28px; font-size: 0.75rem; background-color: var(--brand-primary-glow); color: var(--brand-primary);">GD</div>
+                  <span class="text-body-small font-bold sidebar-text-label">Deepmind Dev</span>
+                </div>
+                <svg class="sidebar-text-label" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </div>
+
+            <!-- Sidebar Navigations -->
+                        <nav class="sidebar-nav">
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-bottom: 6px; text-transform: uppercase;">Workspace</span>
+              <a class="sidebar-nav-item" href="dashboard.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="sidebar-text-label">Dashboard</span>
+              </a>
+              <a class="sidebar-nav-item active" href="projects.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span class="sidebar-text-label">Projects</span>
+              </a>
+              <a class="sidebar-nav-item" href="library.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+                <span class="sidebar-text-label">Creative Library</span>
+              </a>
+              <a class="sidebar-nav-item" href="hooks.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                <span class="sidebar-text-label">Hook Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="retention.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Retention Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="script.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="sidebar-text-label">Script Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="thumbnail.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15l-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Thumbnail Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="caption.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                <span class="sidebar-text-label">Caption Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="audio.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                <span class="sidebar-text-label">Audio Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="visual.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-.447.894L15 18.5V10zM5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Visual Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="trend.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <span class="sidebar-text-label">Trend Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="upload.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span class="sidebar-text-label">Upload Center</span>
+              </a>
+              <a class="sidebar-nav-item" href="lab.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                <span class="sidebar-text-label">AI Creative Lab</span>
+              </a>
+              <a class="sidebar-nav-item" href="report.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="sidebar-text-label">AI Reports</span>
+              </a>
+              <a class="sidebar-nav-item" href="creators.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Creators</span>
+              </a>
+              <a class="sidebar-nav-item" href="brand.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17V9h3a2 2 0 110 4H9m0 4h3a2 2 0 100-4"/></svg>
+                <span class="sidebar-text-label">Brand Hub</span>
+              </a>
+              <a class="sidebar-nav-item" href="coach.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="sidebar-text-label">AI Coach</span>
+              </a>
+              <a class="sidebar-nav-item" onclick="window.showToast('Loading database insights...', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                <span class="sidebar-text-label">Analytics</span>
+              </a>
+              <a class="sidebar-nav-item" href="client.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Clients</span>
+              </a>
+              <a class="sidebar-nav-item" href="team.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0zm3 10v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg>
+                <span class="sidebar-text-label">Team Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="billing.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span class="sidebar-text-label">Billing</span>
+              </a>
+              <a class="sidebar-nav-item" href="notifications.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="sidebar-text-label">Notifications</span>
+              </a>
+              <a class="sidebar-nav-item" href="settings.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="sidebar-text-label">Settings</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">System</span>
+              <a class="sidebar-nav-item" href="admin.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="sidebar-text-label">Admin Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="mobile.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Mobile App</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">Design</span>
+              <a class="sidebar-nav-item" href="index.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                <span class="sidebar-text-label">Design System</span>
+              </a>
+            </nav>
+          </div>
+
+          <!-- Footer Profile metadata -->
+          <div class="sidebar-footer">
+            <div class="avatar avatar-md font-bold" style="background-color: var(--brand-secondary); color: var(--text-inverse);">JH</div>
+            <div class="sidebar-text-label" style="display: flex; flex-direction: column;">
+              <span class="text-body-small font-bold" style="line-height: 1.2;">Jaiveer Hastar</span>
+              <span class="text-detail text-secondary">jaiveer@company.com</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- ==============================================
+             MAIN PANEL COMPONENT
+             ============================================== -->
+        <div class="dashboard-main">
+          
+          <!-- Dashboard sub-header -->
+          <header class="dashboard-header">
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <button class="btn btn-sm btn-tertiary" style="padding: 4px; display: none;" id="sidebar-toggle-btn">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              <h2 class="text-display-xs" id="page-title-header">Projects Management</h2>
+            </div>
+            
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <!-- Top search/actions -->
+              <div class="input-container dashboard-search-bar" style="margin-bottom: 0; max-width: 220px;">
+                <svg class="input-icon-left" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" class="input input-with-icon" placeholder="Search projects..." id="global-search-input" oninput="handleSearchFilter()">
+              </div>
+              <button class="btn btn-primary" data-modal-target="create-project-modal">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-right: 4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                New Project
+              </button>
+            </div>
+          </header>
+
+          <!-- Core Body container -->
+          <div class="dashboard-body">
+
+            <!-- ==============================================
+                 SCREEN 1: PROJECT LIST CONTAINER
+                 ============================================== -->
+            <div class="view-project-list" id="view-project-list" style="display: flex; flex-direction: column; gap: var(--space-lg); flex: 1;">
+              
+              <!-- Filter toolbar block -->
+              <div class="flex-between card" style="padding: var(--space-sm) var(--space-md); flex-direction: row; gap: var(--space-md);">
+                <div class="flex-center" style="gap: var(--space-sm); flex-wrap: wrap;">
+                  <span class="text-body-small font-bold text-secondary">Filters:</span>
+                  
+                  <div class="select-wrapper" style="width: 140px;">
+                    <select class="select" id="filter-status" onchange="handleSearchFilter()" style="padding-top: 6px; padding-bottom: 6px; padding-right: 1.75rem;">
+                      <option value="all">All Statuses</option>
+                      <option value="completed">Completed</option>
+                      <option value="running">Running</option>
+                      <option value="failed">Failed</option>
+                      <option value="archived">Archived</option>
+                    </select>
+                    <svg class="select-arrow" style="right: 0.5rem;" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                  </div>
+
+                  <div class="select-wrapper" style="width: 140px;">
+                    <select class="select" id="filter-sort" onchange="handleSort()" style="padding-top: 6px; padding-bottom: 6px; padding-right: 1.75rem;">
+                      <option value="recent">Sort: Recent</option>
+                      <option value="name">Sort: Name</option>
+                      <option value="confidence">Sort: Confidence</option>
+                    </select>
+                    <svg class="select-arrow" style="right: 0.5rem;" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                  </div>
+                </div>
+
+                <div class="flex-center" style="gap: var(--space-xs);">
+                  <button class="btn btn-tertiary btn-sm active" id="btn-toggle-grid" onclick="toggleLayoutView('grid')" style="padding: var(--space-xs);">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                  </button>
+                  <button class="btn btn-tertiary btn-sm" id="btn-toggle-list" onclick="toggleLayoutView('list')" style="padding: var(--space-xs);">
+                    <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Main horizontal list layout container -->
+              <div class="projects-layout-container">
+                <!-- Left Folder Explorer -->
+                <aside class="folders-sidebar">
+                  <span class="text-detail font-bold text-muted" style="text-transform: uppercase; margin-bottom: var(--space-xxs); display: block;">Folders</span>
+                  <div class="folder-item active" onclick="selectFolder('all', this)">
+                    <span>📁 All Projects</span>
+                    <span class="folder-count" id="count-all">6</span>
+                  </div>
+                  <div class="folder-item" onclick="selectFolder('Marketing Ads', this)">
+                    <span>📁 Marketing Ads</span>
+                    <span class="folder-count" id="count-mktg">2</span>
+                  </div>
+                  <div class="folder-item" onclick="selectFolder('Core Pipelines', this)">
+                    <span>📁 Core Pipelines</span>
+                    <span class="folder-count" id="count-core">2</span>
+                  </div>
+                  <div class="folder-item" onclick="selectFolder('Audio Prompts', this)">
+                    <span>📁 Audio Prompts</span>
+                    <span class="folder-count" id="count-audio">1</span>
+                  </div>
+                  <div class="folder-item" onclick="selectFolder('Design Assets', this)">
+                    <span>📁 Design Assets</span>
+                    <span class="folder-count" id="count-design">1</span>
+                  </div>
+                  <div class="folder-item" onclick="selectFolder('Archived', this)">
+                    <span>📥 Archived</span>
+                    <span class="folder-count" id="count-archived">1</span>
+                  </div>
+                  <div class="folder-item" onclick="selectFolder('Trash', this)">
+                    <span>🗑️ Trash</span>
+                    <span class="folder-count" id="count-trash">0</span>
+                  </div>
+                </aside>
+
+                <!-- Right list panels -->
+                <div class="projects-list-pane">
+                  
+                  <!-- Real Panel: Grid View -->
+                  <div class="real-view-panel projects-grid" id="projects-grid-view">
+                    <!-- Project 1 -->
+                    <div class="project-card" data-project-id="1" data-name="hero_video_inference.mp4" data-folder="Marketing Ads" data-status="completed" data-confidence="98.2" onclick="openProjectDetails(1)">
+                      <div class="project-thumbnail-wrapper">
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--brand-primary);">
+                          <rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/>
+                          <line x1="7" y1="2" x2="7" y2="22"/>
+                          <line x1="17" y1="2" x2="17" y2="22"/>
+                          <line x1="2" y1="12" x2="22" y2="12"/>
+                          <path d="M2 7h5M2 17h5M17 7h5M17 17h5"/>
+                        </svg>
+                        <div class="project-card-actions" onclick="event.stopPropagation()">
+                          <button class="btn btn-tertiary btn-sm dropdown-trigger" data-dropdown="menu-proj-1" style="padding: 2px;">&bull;&bull;&bull;</button>
+                          <div class="dropdown-menu dropdown-menu-right" id="menu-proj-1">
+                            <a class="dropdown-item" onclick="openShareModal('hero_video_inference.mp4')">Share & Permissions</a>
+                            <a class="dropdown-item" onclick="duplicateProject(1)">Duplicate</a>
+                            <a class="dropdown-item" onclick="archiveProject(1)">Archive</a>
+                            <a class="dropdown-item text-danger" onclick="deleteProject(1)">Delete</a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="project-card-body">
+                        <div class="flex-between">
+                          <span class="badge badge-success text-xxs">COMPLETED</span>
+                          <span class="text-detail font-mono text-muted">v2.4</span>
+                        </div>
+                        <h4 class="text-body font-bold text-primary" style="margin-top: 4px;">hero_video_inference.mp4</h4>
+                        <p class="text-detail text-secondary">Stable Video synthesis inference logs.</p>
+                        <div class="flex-between" style="margin-top: var(--space-xs); border-top: 1px solid var(--border-muted); padding-top: var(--space-xs);">
+                          <span class="text-detail text-muted">Confidence: <b class="font-mono text-primary">98.2%</b></span>
+                          <span class="text-detail text-secondary">2 mins ago</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Project 2 -->
+                    <div class="project-card" data-project-id="2" data-name="banner_creative_ad.png" data-folder="Marketing Ads" data-status="completed" data-confidence="96.8" onclick="openProjectDetails(2)">
+                      <div class="project-thumbnail-wrapper">
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--accent-blue);">
+                          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                          <circle cx="8.5" cy="8.5" r="1.5"/>
+                          <polyline points="21 15 16 10 5 21"/>
+                        </svg>
+                        <div class="project-card-actions" onclick="event.stopPropagation()">
+                          <button class="btn btn-tertiary btn-sm dropdown-trigger" data-dropdown="menu-proj-2" style="padding: 2px;">&bull;&bull;&bull;</button>
+                          <div class="dropdown-menu dropdown-menu-right" id="menu-proj-2">
+                            <a class="dropdown-item" onclick="openShareModal('banner_creative_ad.png')">Share & Permissions</a>
+                            <a class="dropdown-item" onclick="duplicateProject(2)">Duplicate</a>
+                            <a class="dropdown-item" onclick="archiveProject(2)">Archive</a>
+                            <a class="dropdown-item text-danger" onclick="deleteProject(2)">Delete</a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="project-card-body">
+                        <div class="flex-between">
+                          <span class="badge badge-success text-xxs">COMPLETED</span>
+                          <span class="text-detail font-mono text-muted">v1.0</span>
+                        </div>
+                        <h4 class="text-body font-bold text-primary" style="margin-top: 4px;">banner_creative_ad.png</h4>
+                        <p class="text-detail text-secondary">Imagen creative output ad graphics.</p>
+                        <div class="flex-between" style="margin-top: var(--space-xs); border-top: 1px solid var(--border-muted); padding-top: var(--space-xs);">
+                          <span class="text-detail text-muted">Confidence: <b class="font-mono text-primary">96.8%</b></span>
+                          <span class="text-detail text-secondary">3 hours ago</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Project 3 -->
+                    <div class="project-card" data-project-id="3" data-name="model_v5_test_loop.pt" data-folder="Core Pipelines" data-status="running" data-confidence="0" onclick="openProjectDetails(3)">
+                      <div class="project-thumbnail-wrapper">
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--accent-purple);">
+                          <polygon points="12 2 22 8.5 12 15 2 8.5 12 2"/>
+                          <polyline points="2 12.5 12 19 22 12.5"/>
+                          <polyline points="2 7.5 12 14 22 7.5"/>
+                        </svg>
+                        <div class="project-card-actions" onclick="event.stopPropagation()">
+                          <button class="btn btn-tertiary btn-sm dropdown-trigger" data-dropdown="menu-proj-3" style="padding: 2px;">&bull;&bull;&bull;</button>
+                          <div class="dropdown-menu dropdown-menu-right" id="menu-proj-3">
+                            <a class="dropdown-item" onclick="openShareModal('model_v5_test_loop.pt')">Share & Permissions</a>
+                            <a class="dropdown-item" onclick="duplicateProject(3)">Duplicate</a>
+                            <a class="dropdown-item" onclick="archiveProject(3)">Archive</a>
+                            <a class="dropdown-item text-danger" onclick="deleteProject(3)">Delete</a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="project-card-body">
+                        <div class="flex-between">
+                          <span class="badge badge-info text-xxs">RUNNING</span>
+                          <span class="text-detail font-mono text-muted">v5.0-a</span>
+                        </div>
+                        <h4 class="text-body font-bold text-primary" style="margin-top: 4px;">model_v5_test_loop.pt</h4>
+                        <p class="text-detail text-secondary">Pytorch neural pipeline evaluation.</p>
+                        <div class="flex-between" style="margin-top: var(--space-xs); border-top: 1px solid var(--border-muted); padding-top: var(--space-xs);">
+                          <span class="text-detail text-muted">Confidence: <b class="font-mono text-primary">--</b></span>
+                          <span class="text-detail text-secondary">Active</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Project 4 -->
+                    <div class="project-card" data-project-id="4" data-name="voiceover_narrative.wav" data-folder="Audio Prompts" data-status="completed" data-confidence="94.1" onclick="openProjectDetails(4)">
+                      <div class="project-thumbnail-wrapper">
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--accent-orange);">
+                          <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/>
+                          <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"/>
+                        </svg>
+                        <div class="project-card-actions" onclick="event.stopPropagation()">
+                          <button class="btn btn-tertiary btn-sm dropdown-trigger" data-dropdown="menu-proj-4" style="padding: 2px;">&bull;&bull;&bull;</button>
+                          <div class="dropdown-menu dropdown-menu-right" id="menu-proj-4">
+                            <a class="dropdown-item" onclick="openShareModal('voiceover_narrative.wav')">Share & Permissions</a>
+                            <a class="dropdown-item" onclick="duplicateProject(4)">Duplicate</a>
+                            <a class="dropdown-item" onclick="archiveProject(4)">Archive</a>
+                            <a class="dropdown-item text-danger" onclick="deleteProject(4)">Delete</a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="project-card-body">
+                        <div class="flex-between">
+                          <span class="badge badge-success text-xxs">COMPLETED</span>
+                          <span class="text-detail font-mono text-muted">v3.1</span>
+                        </div>
+                        <h4 class="text-body font-bold text-primary" style="margin-top: 4px;">voiceover_narrative.wav</h4>
+                        <p class="text-detail text-secondary">ElevenLabs text-to-speech rendering.</p>
+                        <div class="flex-between" style="margin-top: var(--space-xs); border-top: 1px solid var(--border-muted); padding-top: var(--space-xs);">
+                          <span class="text-detail text-muted">Confidence: <b class="font-mono text-primary">94.1%</b></span>
+                          <span class="text-detail text-secondary">1 day ago</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Project 5 -->
+                    <div class="project-card" data-project-id="5" data-name="landing_page_concept.sketch" data-folder="Design Assets" data-status="archived" data-confidence="0" onclick="openProjectDetails(5)">
+                      <div class="project-thumbnail-wrapper">
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--text-secondary);">
+                          <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+                          <polyline points="2 17 12 22 22 17"/>
+                          <polyline points="2 12 12 17 22 12"/>
+                        </svg>
+                        <div class="project-card-actions" onclick="event.stopPropagation()">
+                          <button class="btn btn-tertiary btn-sm dropdown-trigger" data-dropdown="menu-proj-5" style="padding: 2px;">&bull;&bull;&bull;</button>
+                          <div class="dropdown-menu dropdown-menu-right" id="menu-proj-5">
+                            <a class="dropdown-item" onclick="openShareModal('landing_page_concept.sketch')">Share & Permissions</a>
+                            <a class="dropdown-item" onclick="duplicateProject(5)">Duplicate</a>
+                            <a class="dropdown-item" onclick="restoreProject(5)">Restore</a>
+                            <a class="dropdown-item text-danger" onclick="deleteProject(5)">Delete</a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="project-card-body">
+                        <div class="flex-between">
+                          <span class="badge badge-warning text-xxs">ARCHIVED</span>
+                          <span class="text-detail font-mono text-muted">v1.2</span>
+                        </div>
+                        <h4 class="text-body font-bold text-primary" style="margin-top: 4px;">landing_page_concept.sketch</h4>
+                        <p class="text-detail text-secondary">Product design mockup layouts.</p>
+                        <div class="flex-between" style="margin-top: var(--space-xs); border-top: 1px solid var(--border-muted); padding-top: var(--space-xs);">
+                          <span class="text-detail text-muted">Confidence: <b class="font-mono text-primary">--</b></span>
+                          <span class="text-detail text-secondary">4 days ago</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Project 6 -->
+                    <div class="project-card" data-project-id="6" data-name="evaluation_metrics_v2.json" data-folder="Core Pipelines" data-status="failed" data-confidence="0" onclick="openProjectDetails(6)">
+                      <div class="project-thumbnail-wrapper">
+                        <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--accent-red);">
+                          <path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3-3a1 1 0 0 0-1.4-1.4L17 5.6l-.9-.9a1 1 0 0 0-1.4 0zM17 12a5 5 0 1 0 5 5v-1a1 1 0 0 0-2 0v1a3 3 0 1 1-3-3h1a1 1 0 0 0 0-2h-1z"/>
+                          <circle cx="5" cy="5" r="3"/>
+                        </svg>
+                        <div class="project-card-actions" onclick="event.stopPropagation()">
+                          <button class="btn btn-tertiary btn-sm dropdown-trigger" data-dropdown="menu-proj-6" style="padding: 2px;">&bull;&bull;&bull;</button>
+                          <div class="dropdown-menu dropdown-menu-right" id="menu-proj-6">
+                            <a class="dropdown-item" onclick="openShareModal('evaluation_metrics_v2.json')">Share & Permissions</a>
+                            <a class="dropdown-item" onclick="duplicateProject(6)">Duplicate</a>
+                            <a class="dropdown-item" onclick="archiveProject(6)">Archive</a>
+                            <a class="dropdown-item text-danger" onclick="deleteProject(6)">Delete</a>
+                          </div>
+                        </div>
+                      </div>
+                      <div class="project-card-body">
+                        <div class="flex-between">
+                          <span class="badge badge-danger text-xxs">FAILED</span>
+                          <span class="text-detail font-mono text-muted">v2.1</span>
+                        </div>
+                        <h4 class="text-body font-bold text-primary" style="margin-top: 4px;">evaluation_metrics_v2.json</h4>
+                        <p class="text-detail text-secondary">JSON validation pipeline log reports.</p>
+                        <div class="flex-between" style="margin-top: var(--space-xs); border-top: 1px solid var(--border-muted); padding-top: var(--space-xs);">
+                          <span class="text-detail text-muted">Confidence: <b class="font-mono text-primary">--</b></span>
+                          <span class="text-detail text-secondary">1 week ago</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Real Panel: List View (Table Mode) -->
+                  <div class="real-view-panel table-container" id="projects-list-view" style="display: none;">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Name</th>
+                          <th>Folder</th>
+                          <th>Status</th>
+                          <th>Version</th>
+                          <th>Confidence</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="projects-table-body">
+                        <tr data-project-id="1" onclick="openProjectDetails(1)">
+                          <td class="font-bold text-primary">hero_video_inference.mp4</td>
+                          <td>Marketing Ads</td>
+                          <td><span class="badge badge-success">COMPLETED</span></td>
+                          <td class="font-mono">v2.4</td>
+                          <td class="font-mono">98.2%</td>
+                          <td onclick="event.stopPropagation()">
+                            <button class="btn btn-ghost btn-sm" onclick="openShareModal('hero_video_inference.mp4')">Share</button>
+                            <button class="btn btn-ghost btn-sm dropdown-trigger" data-dropdown="table-menu-1">&bull;&bull;&bull;</button>
+                            <div class="dropdown-menu dropdown-menu-right" id="table-menu-1">
+                              <a class="dropdown-item" onclick="duplicateProject(1)">Duplicate</a>
+                              <a class="dropdown-item" onclick="archiveProject(1)">Archive</a>
+                              <a class="dropdown-item text-danger" onclick="deleteProject(1)">Delete</a>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr data-project-id="2" onclick="openProjectDetails(2)">
+                          <td class="font-bold text-primary">banner_creative_ad.png</td>
+                          <td>Marketing Ads</td>
+                          <td><span class="badge badge-success">COMPLETED</span></td>
+                          <td class="font-mono">v1.0</td>
+                          <td class="font-mono">96.8%</td>
+                          <td onclick="event.stopPropagation()">
+                            <button class="btn btn-ghost btn-sm" onclick="openShareModal('banner_creative_ad.png')">Share</button>
+                            <button class="btn btn-ghost btn-sm dropdown-trigger" data-dropdown="table-menu-2">&bull;&bull;&bull;</button>
+                            <div class="dropdown-menu dropdown-menu-right" id="table-menu-2">
+                              <a class="dropdown-item" onclick="duplicateProject(2)">Duplicate</a>
+                              <a class="dropdown-item" onclick="archiveProject(2)">Archive</a>
+                              <a class="dropdown-item text-danger" onclick="deleteProject(2)">Delete</a>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr data-project-id="3" onclick="openProjectDetails(3)">
+                          <td class="font-bold text-primary">model_v5_test_loop.pt</td>
+                          <td>Core Pipelines</td>
+                          <td><span class="badge badge-info">RUNNING</span></td>
+                          <td class="font-mono">v5.0-a</td>
+                          <td class="font-mono">--</td>
+                          <td onclick="event.stopPropagation()">
+                            <button class="btn btn-ghost btn-sm" onclick="openShareModal('model_v5_test_loop.pt')">Share</button>
+                            <button class="btn btn-ghost btn-sm dropdown-trigger" data-dropdown="table-menu-3">&bull;&bull;&bull;</button>
+                            <div class="dropdown-menu dropdown-menu-right" id="table-menu-3">
+                              <a class="dropdown-item" onclick="duplicateProject(3)">Duplicate</a>
+                              <a class="dropdown-item" onclick="archiveProject(3)">Archive</a>
+                              <a class="dropdown-item text-danger" onclick="deleteProject(3)">Delete</a>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr data-project-id="4" onclick="openProjectDetails(4)">
+                          <td class="font-bold text-primary">voiceover_narrative.wav</td>
+                          <td>Audio Prompts</td>
+                          <td><span class="badge badge-success">COMPLETED</span></td>
+                          <td class="font-mono">v3.1</td>
+                          <td class="font-mono">94.1%</td>
+                          <td onclick="event.stopPropagation()">
+                            <button class="btn btn-ghost btn-sm" onclick="openShareModal('voiceover_narrative.wav')">Share</button>
+                            <button class="btn btn-ghost btn-sm dropdown-trigger" data-dropdown="table-menu-4">&bull;&bull;&bull;</button>
+                            <div class="dropdown-menu dropdown-menu-right" id="table-menu-4">
+                              <a class="dropdown-item" onclick="duplicateProject(4)">Duplicate</a>
+                              <a class="dropdown-item" onclick="archiveProject(4)">Archive</a>
+                              <a class="dropdown-item text-danger" onclick="deleteProject(4)">Delete</a>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr data-project-id="5" onclick="openProjectDetails(5)">
+                          <td class="font-bold text-primary">landing_page_concept.sketch</td>
+                          <td>Design Assets</td>
+                          <td><span class="badge badge-warning">ARCHIVED</span></td>
+                          <td class="font-mono">v1.2</td>
+                          <td class="font-mono">--</td>
+                          <td onclick="event.stopPropagation()">
+                            <button class="btn btn-ghost btn-sm" onclick="openShareModal('landing_page_concept.sketch')">Share</button>
+                            <button class="btn btn-ghost btn-sm dropdown-trigger" data-dropdown="table-menu-5">&bull;&bull;&bull;</button>
+                            <div class="dropdown-menu dropdown-menu-right" id="table-menu-5">
+                              <a class="dropdown-item" onclick="duplicateProject(5)">Duplicate</a>
+                              <a class="dropdown-item" onclick="restoreProject(5)">Restore</a>
+                              <a class="dropdown-item text-danger" onclick="deleteProject(5)">Delete</a>
+                            </div>
+                          </td>
+                        </tr>
+                        <tr data-project-id="6" onclick="openProjectDetails(6)">
+                          <td class="font-bold text-primary">evaluation_metrics_v2.json</td>
+                          <td>Core Pipelines</td>
+                          <td><span class="badge badge-danger">FAILED</span></td>
+                          <td class="font-mono">v2.1</td>
+                          <td class="font-mono">--</td>
+                          <td onclick="event.stopPropagation()">
+                            <button class="btn btn-ghost btn-sm" onclick="openShareModal('evaluation_metrics_v2.json')">Share</button>
+                            <button class="btn btn-ghost btn-sm dropdown-trigger" data-dropdown="table-menu-6">&bull;&bull;&bull;</button>
+                            <div class="dropdown-menu dropdown-menu-right" id="table-menu-6">
+                              <a class="dropdown-item" onclick="duplicateProject(6)">Duplicate</a>
+                              <a class="dropdown-item" onclick="archiveProject(6)">Archive</a>
+                              <a class="dropdown-item text-danger" onclick="deleteProject(6)">Delete</a>
+                            </div>
+                          </td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- Loading state skeleton panels -->
+                  <div class="skeleton-view-panel">
+                    <div class="grid-3" style="gap: var(--space-md);">
+                      <div class="card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-xs);">
+                        <div class="skeleton" style="height: 120px; width: 100%; border-radius: var(--radius-md);"></div>
+                        <div class="skeleton-title" style="width: 70%;"></div>
+                        <div class="skeleton-text"></div>
+                        <div class="skeleton-text" style="width: 40%;"></div>
+                      </div>
+                      <div class="card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-xs);">
+                        <div class="skeleton" style="height: 120px; width: 100%; border-radius: var(--radius-md);"></div>
+                        <div class="skeleton-title" style="width: 60%;"></div>
+                        <div class="skeleton-text"></div>
+                        <div class="skeleton-text" style="width: 50%;"></div>
+                      </div>
+                      <div class="card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-xs);">
+                        <div class="skeleton" style="height: 120px; width: 100%; border-radius: var(--radius-md);"></div>
+                        <div class="skeleton-title" style="width: 80%;"></div>
+                        <div class="skeleton-text"></div>
+                        <div class="skeleton-text" style="width: 30%;"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 SCREEN 2: PROJECT DETAILS CONTAINER
+                 ============================================== -->
+            <div class="view-project-details" id="view-project-details" style="display: none; flex-direction: column; gap: var(--space-md); flex: 1;">
+              <!-- Navigation breadcrumbs toolbar -->
+              <div class="flex-between">
+                <ul class="breadcrumbs" style="margin-bottom: 0;">
+                  <li><a href="projects.html" onclick="event.preventDefault(); closeProjectDetails()">Projects</a></li>
+                  <li id="detail-breadcrumb-folder">Marketing Ads</li>
+                  <li id="detail-breadcrumb-name">hero_video_inference.mp4</li>
+                </ul>
+                <button class="btn btn-tertiary btn-sm" onclick="closeProjectDetails()">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right: 4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/></svg>
+                  Back to List
+                </button>
+              </div>
+
+              <!-- Main project layout panel split grid -->
+              <div class="project-details-grid">
+                
+                <!-- Left panel tabs container (8 cols) -->
+                <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                  <div class="card" style="padding: var(--space-lg);">
+                    
+                    <!-- Header metrics overview details -->
+                    <div class="flex-between" style="border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-md); margin-bottom: var(--space-md);">
+                      <div>
+                        <h3 class="text-display-xs" id="detail-project-title">hero_video_inference.mp4</h3>
+                        <p class="text-body-small text-secondary" id="detail-project-desc">Stable Video synthesis inference logs.</p>
+                      </div>
+                      <div class="flex-center" style="gap: var(--space-xs);">
+                        <span class="badge badge-success" id="detail-project-badge">COMPLETED</span>
+                        <button class="btn btn-primary btn-sm" onclick="window.showToast('Re-triggering pipeline run...', 'info')">Run Pipeline</button>
+                        <button class="btn btn-tertiary btn-sm dropdown-trigger" data-dropdown="detail-actions-dropdown">Actions</button>
+                        <div class="dropdown-menu dropdown-menu-right" id="detail-actions-dropdown">
+                          <a class="dropdown-item" onclick="openShareModalFromDetails()">Share & Permissions</a>
+                          <a class="dropdown-item" onclick="duplicateFromDetails()">Duplicate</a>
+                          <a class="dropdown-item" onclick="archiveFromDetails()">Archive</a>
+                          <a class="dropdown-item text-danger" onclick="deleteFromDetails()">Delete</a>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Dynamic Tabs selector -->
+                    <div class="tabs-container">
+                      <button class="tab-btn active" data-tab-group="detail-tabs" data-tab-target="tab-overview">Overview</button>
+                      <button class="tab-btn" data-tab-group="detail-tabs" data-tab-target="tab-timeline">Activity Timeline</button>
+                      <button class="tab-btn" data-tab-group="detail-tabs" data-tab-target="tab-version">Version History</button>
+                      <button class="tab-btn" data-tab-group="detail-tabs" data-tab-target="tab-comments">Comments</button>
+                    </div>
+
+                    <!-- TAB 1: OVERVIEW SUBPANEL -->
+                    <div class="tabs-panel" id="tab-overview" data-tab-panel-group="detail-tabs">
+                      <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                        <!-- Creative asset preview box -->
+                        <div class="card" style="background-color: var(--bg-secondary); border: 1px solid var(--border-default); overflow: hidden; padding: 0;">
+                          <div class="flex-between" style="padding: var(--space-sm) var(--space-md); border-bottom: 1px solid var(--border-default);">
+                            <span class="text-body-small font-bold text-primary">Inference Output Preview</span>
+                            <span class="text-detail font-mono text-secondary">24.5 MB &bull; MP4 &bull; 60fps</span>
+                          </div>
+                          <!-- Mock creative visualization -->
+                          <div class="flex-center" style="height: 240px; background: linear-gradient(135deg, var(--bg-tertiary), var(--brand-primary-glow)); flex-direction: column; position: relative;">
+                            <svg width="48" height="48" fill="var(--brand-primary)" viewBox="0 0 24 24" style="margin-bottom: 12px; opacity: 0.85;"><path d="M8 5v14l11-7z"/></svg>
+                            <span class="text-body-small font-bold text-primary">hero_video_inference_render_v2.4.mp4</span>
+                            <span class="text-detail text-secondary" style="margin-top: 4px;">Click to preview rendering segment</span>
+                          </div>
+                        </div>
+
+                        <!-- Config Parameters list -->
+                        <div>
+                          <h4 class="text-body font-bold text-primary" style="margin-bottom: var(--space-xs);">Pipeline Parameters</h4>
+                          <div class="grid-12" style="gap: var(--space-sm);">
+                            <div class="card col-span-4" style="padding: var(--space-sm);">
+                              <span class="text-detail text-secondary">Prompt Weights</span>
+                              <p class="text-body-small font-bold font-mono text-primary" style="margin-top: 4px;">CFG Scale: 7.5</p>
+                            </div>
+                            <div class="card col-span-4" style="padding: var(--space-sm);">
+                              <span class="text-detail text-secondary">Sampling Loops</span>
+                              <p class="text-body-small font-bold font-mono text-primary" style="margin-top: 4px;">Euler &bull; 50 steps</p>
+                            </div>
+                            <div class="card col-span-4" style="padding: var(--space-sm);">
+                              <span class="text-detail text-secondary">Neural Base weights</span>
+                              <p class="text-body-small font-bold font-mono text-primary" style="margin-top: 4px;">SD-XL v1.0-refiner</p>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- TAB 2: TIMELINE LOGS -->
+                    <div class="tabs-panel" id="tab-timeline" data-tab-panel-group="detail-tabs" style="display: none;">
+                      <div class="timeline" style="margin-top: var(--space-sm);">
+                        <div class="timeline-item">
+                          <div class="timeline-dot timeline-dot-success"></div>
+                          <div class="timeline-content">
+                            <div class="flex-between">
+                              <span class="text-body-small font-bold text-primary">Inference run completed</span>
+                              <span class="text-detail text-secondary">Today, 10:14 AM</span>
+                            </div>
+                            <p class="text-detail text-secondary">Aura AI pipeline synthesized v2.4 with 98.2% confidence. Output logged successfully.</p>
+                          </div>
+                        </div>
+                        <div class="timeline-item">
+                          <div class="timeline-dot timeline-dot-info"></div>
+                          <div class="timeline-content">
+                            <div class="flex-between">
+                              <span class="text-body-small font-bold text-primary">Pipeline source file uploaded</span>
+                              <span class="text-detail text-secondary">Today, 10:12 AM</span>
+                            </div>
+                            <p class="text-detail text-secondary">User <b>Jaiveer Hastar</b> attached draft source file `raw_asset_record.mov` (124 MB).</p>
+                          </div>
+                        </div>
+                        <div class="timeline-item">
+                          <div class="timeline-dot timeline-dot-warning"></div>
+                          <div class="timeline-content">
+                            <div class="flex-between">
+                              <span class="text-body-small font-bold text-primary">Pipeline prompt settings adjusted</span>
+                              <span class="text-detail text-secondary">Yesterday, 4:45 PM</span>
+                            </div>
+                            <p class="text-detail text-secondary">Model resolution adjusted to 1080p. Frame rate upscaled to 60fps.</p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- TAB 3: VERSION HISTORY TABLE -->
+                    <div class="tabs-panel" id="tab-version" data-tab-panel-group="detail-tabs" style="display: none;">
+                      <table class="table" style="margin-top: var(--space-sm);">
+                        <thead>
+                          <tr>
+                            <th>Version</th>
+                            <th>Status</th>
+                            <th>Latency</th>
+                            <th>Confidence</th>
+                            <th>Compiled By</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td class="font-bold text-primary">v2.4 (Active)</td>
+                            <td><span class="badge badge-success text-xxs">COMPLETED</span></td>
+                            <td class="text-secondary font-mono">14ms</td>
+                            <td class="font-mono">98.2%</td>
+                            <td>Jaiveer Hastar</td>
+                          </tr>
+                          <tr>
+                            <td class="font-bold text-muted">v2.3</td>
+                            <td><span class="badge badge-success text-xxs">COMPLETED</span></td>
+                            <td class="text-secondary font-mono">16ms</td>
+                            <td class="font-mono">97.1%</td>
+                            <td>Sarah Jenkins</td>
+                          </tr>
+                          <tr>
+                            <td class="font-bold text-muted">v2.0</td>
+                            <td><span class="badge badge-success text-xxs">COMPLETED</span></td>
+                            <td class="text-secondary font-mono">22ms</td>
+                            <td class="font-mono">95.0%</td>
+                            <td>Aura AI System</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+
+                    <!-- TAB 4: COLLABORATION COMMENTS -->
+                    <div class="tabs-panel" id="tab-comments" data-tab-panel-group="detail-tabs" style="display: none;">
+                      <div style="display: flex; flex-direction: column; gap: var(--space-md); margin-top: var(--space-sm);">
+                        <!-- Comment Feed -->
+                        <div id="project-comments-list" style="display: flex; flex-direction: column; gap: var(--space-sm); max-height: 240px; overflow-y: auto; padding-right: 6px;">
+                          <!-- Comment 1 -->
+                          <div class="flex-start" style="gap: var(--space-sm);">
+                            <div class="avatar avatar-md font-bold" style="background-color: var(--accent-blue-bg); color: var(--accent-blue);">SJ</div>
+                            <div class="card" style="padding: 10px 14px; background-color: var(--bg-secondary); flex: 1; gap: 2px;">
+                              <div class="flex-between">
+                                <span class="text-body-small font-bold text-primary">Sarah Jenkins</span>
+                                <span class="text-detail text-secondary">3 hours ago</span>
+                              </div>
+                              <p class="text-detail text-muted">The video synthesis on Euler loop looks correct, but we should test SDXL base resolution settings for the mobile crop mockup.</p>
+                            </div>
+                          </div>
+                          <!-- Comment 2 -->
+                          <div class="flex-start" style="gap: var(--space-sm);">
+                            <div class="avatar avatar-md font-bold" style="background-color: var(--brand-primary-glow); color: var(--brand-primary);">AI</div>
+                            <div class="card" style="padding: 10px 14px; background-color: var(--bg-secondary); flex: 1; gap: 2px; border-left: 2px solid var(--brand-primary);">
+                              <div class="flex-between">
+                                <span class="text-body-small font-bold text-primary">Aura AI Agent</span>
+                                <span class="text-detail text-secondary">2 hours ago</span>
+                              </div>
+                              <p class="text-detail text-muted">Anomalies check complete. Average latency is within thresholds (14ms). Performance metrics score: 98.2%.</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <!-- Add Comment input -->
+                        <div class="flex-start" style="gap: var(--space-sm); border-top: 1px solid var(--border-default); padding-top: var(--space-md);">
+                          <div class="avatar avatar-md font-bold" style="background-color: var(--brand-secondary); color: var(--text-inverse);">JH</div>
+                          <div class="form-group" style="flex: 1; margin-bottom: 0;">
+                            <input type="text" class="input" placeholder="Type a comment..." id="new-comment-input" onkeydown="if(event.key==='Enter') appendNewComment()">
+                          </div>
+                          <button class="btn btn-primary" onclick="appendNewComment()">Post</button>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- Right panel attachments (4 cols) -->
+                <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                  <!-- Attachments overview list -->
+                  <div class="card" style="padding: var(--space-lg);">
+                    <h4 class="text-body font-bold text-primary" style="margin-bottom: var(--space-md);">Attachments</h4>
+                    <div id="attachments-container-list">
+                      <div class="file-preview-card">
+                        <div class="file-icon">
+                          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                        </div>
+                        <div style="display: flex; flex-direction: column; flex: 1;">
+                          <span class="text-body-small font-bold text-primary" style="word-break: break-all;">hero_video_inference.mp4</span>
+                          <span class="text-detail text-secondary">24.5 MB &bull; Rendered</span>
+                        </div>
+                        <button class="btn btn-ghost btn-sm" onclick="window.showToast('Downloading file...', 'info')">⬇️</button>
+                      </div>
+                      <div class="file-preview-card">
+                        <div class="file-icon">
+                          <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                        </div>
+                        <div style="display: flex; flex-direction: column; flex: 1;">
+                          <span class="text-body-small font-bold text-primary" style="word-break: break-all;">raw_asset_record.mov</span>
+                          <span class="text-detail text-secondary">124.0 MB &bull; Source Video</span>
+                        </div>
+                        <button class="btn btn-ghost btn-sm" onclick="window.showToast('Downloading file...', 'info')">⬇️</button>
+                      </div>
+                    </div>
+
+                    <!-- Dropzone Drag & Drop Uploader -->
+                    <div style="margin-top: var(--space-md);">
+                      <div class="upload-dropzone" id="upload-dropzone">
+                        <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-bottom: var(--space-xs); color: var(--text-secondary);"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                        <span class="text-body-small font-bold text-primary">Upload attachments</span>
+                        <span class="text-detail text-secondary" style="margin-top: 2px;">Drag & drop files or click to browse</span>
+                      </div>
+                      <input type="file" id="dropzone-file-input" style="display: none;" multiple>
+                      <div class="preview-grid" id="upload-preview-grid"></div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ==============================================
+             AURA AI FLOATING DRAWER CHAT PANEL
+             ============================================== -->
+        <aside class="ai-chat-drawer" id="ai-chat-drawer">
+          <div class="flex-between" style="padding: var(--space-md); border-bottom: 1px solid var(--border-default); background-color: var(--bg-secondary);">
+            <div class="flex-center" style="gap: var(--space-xs);">
+              <div class="ai-status-pulse"></div>
+              <span class="text-body-small font-bold text-primary">Aura AI Assistant</span>
+            </div>
+            <button class="modal-close" id="ai-chat-drawer-close">&times;</button>
+          </div>
+          
+          <div class="ai-chat-messages" id="ai-chat-messages">
+            <div class="chat-msg chat-msg-ai">
+              <div class="chat-msg-avatar flex-center font-bold">AI</div>
+              <div class="chat-msg-content">
+                Hello Jaiveer! I can assist with pipeline queries, model weights verification, file duplicates, or archived logs. Try asking about "confidence score".
+              </div>
+            </div>
+          </div>
+          
+          <div class="ai-prompt-panel">
+            <form id="ai-chat-form" style="margin: 0;">
+              <div class="ai-prompt-input-container">
+                <textarea class="ai-prompt-textarea" placeholder="Ask Aura AI..." id="ai-chat-input" onkeydown="if(event.key==='Enter' && !event.shiftKey) { event.preventDefault(); this.form.dispatchEvent(new Event('submit')); }"></textarea>
+                <button class="btn btn-primary" type="submit" style="padding: 4px 8px; border-radius: var(--radius-sm);">Send</button>
+              </div>
+            </form>
+          </div>
+        </aside>
+
+      </div>
+    </div>
+  </main>
+
+  <!-- ==============================================
+       MODAL 1: CREATE PROJECT WIZARD
+       ============================================== -->
+  <div class="modal-overlay" id="create-project-modal">
+    <div class="modal-content" style="max-width: 600px;">
+      <div class="modal-header">
+        <h3 class="text-display-xs">Create New Project</h3>
+        <button class="modal-close" data-modal-close>&times;</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: var(--space-sm);">
+        <div class="form-group">
+          <label class="form-label">Project Name</label>
+          <input type="text" class="input" id="new-project-name" placeholder="e.g. ad_campaign_inference_output.mp4" required>
+        </div>
+        <div class="grid-12" style="gap: var(--space-sm);">
+          <div class="form-group col-span-6" style="margin-bottom: 0;">
+            <label class="form-label">Workspace Folder</label>
+            <div class="select-wrapper">
+              <select class="select" id="new-project-folder">
+                <option value="Marketing Ads">Marketing Ads</option>
+                <option value="Core Pipelines">Core Pipelines</option>
+                <option value="Audio Prompts">Audio Prompts</option>
+                <option value="Design Assets">Design Assets</option>
+              </select>
+              <svg class="select-arrow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+          <div class="form-group col-span-6" style="margin-bottom: 0;">
+            <label class="form-label">Pipeline Model</label>
+            <div class="select-wrapper">
+              <select class="select" id="new-project-pipeline">
+                <option value="Video Synthesis">Stable Video Synthesis</option>
+                <option value="Image Generation">Imagen Ad Generator</option>
+                <option value="Text-to-Speech">ElevenLabs Audio Pipeline</option>
+                <option value="Model Tuning">PyTorch Training Loop</option>
+              </select>
+              <svg class="select-arrow" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <textarea class="input" id="new-project-desc" style="height: 80px;" placeholder="Optional project details..."></textarea>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Configuration Tags (Press Enter)</label>
+          <div class="multiselect-container">
+            <div class="multiselect-badge">CFG Scale: 7.5<span class="multiselect-badge-remove" onclick="this.parentElement.remove()">&times;</span></div>
+            <div class="multiselect-badge">Steps: 50<span class="multiselect-badge-remove" onclick="this.parentElement.remove()">&times;</span></div>
+            <input type="text" placeholder="Add custom tag...">
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer flex-end" style="gap: var(--space-sm); border-top: 1px solid var(--border-default); padding-top: var(--space-md); margin-top: var(--space-sm);">
+        <button class="btn btn-tertiary" data-modal-close>Cancel</button>
+        <button class="btn btn-primary" onclick="createNewProjectSubmit()">Create Project</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       MODAL 2: SHARING & PERMISSIONS DIALOG
+       ============================================== -->
+  <div class="modal-overlay" id="share-project-modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 class="text-display-xs">Share & Permissions</h3>
+        <button class="modal-close" data-modal-close>&times;</button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: var(--space-md);">
+        <div style="border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-sm);">
+          <span class="text-body-small font-bold text-secondary">Project: </span>
+          <b class="text-body-small text-primary" id="share-project-name-label">hero_video_inference.mp4</b>
+        </div>
+        
+        <!-- Invite collaborator -->
+        <div style="display: flex; gap: var(--space-xs); align-items: flex-end;">
+          <div class="form-group" style="flex: 1; margin-bottom: 0;">
+            <label class="form-label">Invite Collaborator (Email)</label>
+            <input type="email" class="input" id="invite-email" placeholder="colleague@company.com">
+          </div>
+          <div class="select-wrapper" style="width: 110px;">
+            <select class="select" id="invite-role" style="padding-right: 1.75rem;">
+              <option value="Editor">Editor</option>
+              <option value="Viewer">Viewer</option>
+            </select>
+            <svg class="select-arrow" style="right: 0.5rem;" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+          <button class="btn btn-primary" onclick="inviteCollaborator()">Invite</button>
+        </div>
+
+        <!-- Collaborators list -->
+        <div>
+          <span class="text-detail font-bold text-muted" style="text-transform: uppercase; display: block; margin-bottom: var(--space-xs);">Who Has Access</span>
+          <div style="display: flex; flex-direction: column; gap: var(--space-xs);" id="share-modal-collaborators-list">
+            <div class="flex-between" style="border-bottom: 1px solid var(--border-muted); padding-bottom: var(--space-xs);">
+              <div class="flex-center" style="gap: var(--space-xs);">
+                <div class="avatar avatar-sm font-bold" style="background-color: var(--brand-secondary); color: var(--text-inverse);">JH</div>
+                <div style="display: flex; flex-direction: column;">
+                  <span class="text-body-small font-bold text-primary">Jaiveer Hastar</span>
+                  <span class="text-detail text-secondary">jaiveer@company.com</span>
+                </div>
+              </div>
+              <span class="badge badge-success text-xxs">OWNER</span>
+            </div>
+            <div class="flex-between" style="border-bottom: 1px solid var(--border-muted); padding-bottom: var(--space-xs);">
+              <div class="flex-center" style="gap: var(--space-xs);">
+                <div class="avatar avatar-sm font-bold" style="background-color: var(--accent-blue-bg); color: var(--accent-blue);">SJ</div>
+                <div style="display: flex; flex-direction: column;">
+                  <span class="text-body-small font-bold text-primary">Sarah Jenkins</span>
+                  <span class="text-detail text-secondary">sarah@company.com</span>
+                </div>
+              </div>
+              <span class="text-detail text-muted font-bold">Editor</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer flex-end" style="border-top: 1px solid var(--border-default); padding-top: var(--space-md); margin-top: var(--space-sm);">
+        <button class="btn btn-primary" data-modal-close>Done</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Javascript Sandbox Controller Logic -->
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Sandbox Emulator Viewport Switcher
+      const viewportFrame = document.getElementById('viewport-frame');
+      const viewportBtns = document.querySelectorAll('[data-viewport]');
+      viewportBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          viewportBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const vp = btn.getAttribute('data-viewport');
+          viewportFrame.className = `emulator-viewport ${vp}`;
+          window.showToast(`Switched view to ${vp} emulation.`, "info");
+        });
+      });
+
+      // 2. Sandbox Emulated States Modifier
+      const stateNormalBtn = document.getElementById('state-normal');
+      const stateLoadingBtn = document.getElementById('state-loading');
+      const stateAIChatBtn = document.getElementById('state-ai-chat');
+      const shell = document.getElementById('dashboard-main-shell');
+
+      stateNormalBtn.addEventListener('click', () => {
+        stateNormalBtn.classList.add('active');
+        stateLoadingBtn.classList.remove('active');
+        stateAIChatBtn.classList.remove('active');
+        shell.classList.remove('loading-state-active');
+        closeAIChatDrawer();
+      });
+
+      stateLoadingBtn.addEventListener('click', () => {
+        stateLoadingBtn.classList.add('active');
+        stateNormalBtn.classList.remove('active');
+        stateAIChatBtn.classList.remove('active');
+        shell.classList.add('loading-state-active');
+        window.showToast("Loading state & skeleton loader panels active.", "info");
+      });
+
+      stateAIChatBtn.addEventListener('click', () => {
+        stateAIChatBtn.classList.add('active');
+        stateNormalBtn.classList.remove('active');
+        stateLoadingBtn.classList.remove('active');
+        shell.classList.remove('loading-state-active');
+        openAIChatDrawer();
+      });
+
+      // Close drawer handler
+      document.getElementById('ai-chat-drawer-close').addEventListener('click', () => {
+        closeAIChatDrawer();
+        stateNormalBtn.click();
+      });
+
+      function openAIChatDrawer() {
+        document.getElementById('ai-chat-drawer').classList.add('active');
+      }
+
+      function closeAIChatDrawer() {
+        document.getElementById('ai-chat-drawer').classList.remove('active');
+      }
+
+      // Theme Toggle handler
+      const themeBtn = document.getElementById('theme-toggle');
+      if (themeBtn) {
+        themeBtn.addEventListener('click', () => {
+          const isDark = document.body.classList.toggle('dark');
+          themeBtn.innerHTML = isDark ? 
+            `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 5a7 7 0 100 14 7 7 0 000-14z"/></svg> Light Mode` :
+            `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg> Dark Mode`;
+        });
+      }
+
+      // Mobile Menu Hamburger Toggle
+      const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+      if (sidebarToggleBtn) {
+        sidebarToggleBtn.addEventListener('click', () => {
+          document.querySelector('.dashboard-sidebar').classList.toggle('active');
+        });
+      }
+    });
+
+    // 3. Grid vs List view layouts toggling
+    let currentLayout = 'grid';
+    function toggleLayoutView(mode) {
+      currentLayout = mode;
+      const gridView = document.getElementById('projects-grid-view');
+      const listView = document.getElementById('projects-list-view');
+      const btnGrid = document.getElementById('btn-toggle-grid');
+      const btnList = document.getElementById('btn-toggle-list');
+
+      if (mode === 'grid') {
+        gridView.style.display = 'grid';
+        listView.style.display = 'none';
+        btnGrid.classList.add('active');
+        btnList.classList.remove('active');
+      } else {
+        gridView.style.display = 'none';
+        listView.style.display = 'block';
+        btnList.classList.add('active');
+        btnGrid.classList.remove('active');
+      }
+      window.showToast(`Switched layout to ${mode} view.`, "info");
+    }
+
+    // 4. Folder selection & filters logic
+    let selectedFolderName = 'all';
+    function selectFolder(folder, element) {
+      document.querySelectorAll('.folder-item').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+      selectedFolderName = folder;
+      handleSearchFilter();
+    }
+
+    function handleSearchFilter() {
+      const searchVal = document.getElementById('global-search-input').value.toLowerCase();
+      const statusVal = document.getElementById('filter-status').value;
+      const cards = document.querySelectorAll('.project-card');
+      const rows = document.querySelectorAll('#projects-table-body tr');
+
+      let visibleCount = 0;
+
+      // Filter Cards
+      cards.forEach(card => {
+        const name = card.getAttribute('data-name').toLowerCase();
+        const folder = card.getAttribute('data-folder');
+        const status = card.getAttribute('data-status');
+
+        const matchSearch = name.includes(searchVal);
+        const matchFolder = (selectedFolderName === 'all') || (folder === selectedFolderName) || (selectedFolderName === 'Archived' && status === 'archived');
+        const matchStatus = (statusVal === 'all') || (status === statusVal);
+
+        if (matchSearch && matchFolder && matchStatus) {
+          card.style.display = 'flex';
+          visibleCount++;
+        } else {
+          card.style.display = 'none';
+        }
+      });
+
+      // Filter Table Rows
+      rows.forEach(row => {
+        const name = row.querySelector('td').innerText.toLowerCase();
+        const folder = row.querySelectorAll('td')[1].innerText;
+        const status = row.querySelector('.badge').innerText.toLowerCase();
+
+        const matchSearch = name.includes(searchVal);
+        const matchFolder = (selectedFolderName === 'all') || (folder === selectedFolderName) || (selectedFolderName === 'Archived' && status === 'archived');
+        const matchStatus = (statusVal === 'all') || (status === statusVal);
+
+        if (matchSearch && matchFolder && matchStatus) {
+          row.style.display = 'table-row';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    // Sort order logic
+    function handleSort() {
+      const sortVal = document.getElementById('filter-sort').value;
+      const gridView = document.getElementById('projects-grid-view');
+      const cards = Array.from(gridView.querySelectorAll('.project-card'));
+
+      if (sortVal === 'name') {
+        cards.sort((a, b) => a.getAttribute('data-name').localeCompare(b.getAttribute('data-name')));
+      } else if (sortVal === 'confidence') {
+        cards.sort((a, b) => parseFloat(b.getAttribute('data-confidence')) - parseFloat(a.getAttribute('data-confidence')));
+      } else {
+        // Default sort (Recent)
+        cards.sort((a, b) => parseInt(b.getAttribute('data-project-id')) - parseInt(a.getAttribute('data-project-id')));
+      }
+
+      gridView.innerHTML = '';
+      cards.forEach(card => gridView.appendChild(card));
+      window.showToast("Sorted project list.", "success");
+    }
+
+    // 5. Open/Close Detailed Screen Sub-panels
+    let activeProjectId = null;
+    function openProjectDetails(id) {
+      activeProjectId = id;
+      document.getElementById('view-project-list').style.display = 'none';
+      document.getElementById('view-project-details').style.display = 'flex';
+
+      // Load specific details based on card attributes
+      const card = document.querySelector(`.project-card[data-project-id="${id}"]`);
+      if (card) {
+        const name = card.getAttribute('data-name');
+        const folder = card.getAttribute('data-folder');
+        const status = card.getAttribute('data-status').toUpperCase();
+
+        document.getElementById('detail-breadcrumb-name').innerText = name;
+        document.getElementById('detail-breadcrumb-folder').innerText = folder;
+        document.getElementById('detail-project-title').innerText = name;
+        
+        const badge = document.getElementById('detail-project-badge');
+        badge.innerText = status;
+        badge.className = `badge badge-${status === 'COMPLETED' ? 'success' : status === 'RUNNING' ? 'info' : status === 'FAILED' ? 'danger' : 'warning'}`;
+        document.getElementById('page-title-header').innerText = `Project Details: ${name}`;
+      }
+    }
+
+    function closeProjectDetails() {
+      document.getElementById('view-project-list').style.display = 'flex';
+      document.getElementById('view-project-details').style.display = 'none';
+      document.getElementById('page-title-header').innerText = 'Projects Management';
+    }
+
+    // 6. Project actions (Duplicate, Archive, Delete, Restore)
+    function duplicateProject(id) {
+      const card = document.querySelector(`.project-card[data-project-id="${id}"]`);
+      if (card) {
+        const newId = Date.now();
+        const clone = card.cloneNode(true);
+        clone.setAttribute('data-project-id', newId);
+        clone.setAttribute('data-name', 'Copy of ' + card.getAttribute('data-name'));
+        clone.querySelector('h4').innerText = 'Copy of ' + card.getAttribute('data-name');
+        clone.onclick = () => openProjectDetails(newId);
+        
+        document.getElementById('projects-grid-view').appendChild(clone);
+        
+        // Also clone in table list
+        const row = document.querySelector(`tr[data-project-id="${id}"]`);
+        if (row) {
+          const cloneRow = row.cloneNode(true);
+          cloneRow.setAttribute('data-project-id', newId);
+          cloneRow.querySelector('.text-primary').innerText = 'Copy of ' + card.getAttribute('data-name');
+          cloneRow.onclick = () => openProjectDetails(newId);
+          document.getElementById('projects-table-body').appendChild(cloneRow);
+        }
+
+        window.showToast("Project duplicated successfully.");
+      }
+    }
+
+    function archiveProject(id) {
+      const card = document.querySelector(`.project-card[data-project-id="${id}"]`);
+      if (card) {
+        card.setAttribute('data-status', 'archived');
+        card.querySelector('.badge').className = 'badge badge-warning text-xxs';
+        card.querySelector('.badge').innerText = 'ARCHIVED';
+        
+        const row = document.querySelector(`tr[data-project-id="${id}"]`);
+        if (row) {
+          row.querySelector('.badge').className = 'badge badge-warning';
+          row.querySelector('.badge').innerText = 'ARCHIVED';
+        }
+
+        // Increment count
+        document.getElementById('count-archived').innerText = parseInt(document.getElementById('count-archived').innerText) + 1;
+        handleSearchFilter();
+        window.showToast("Project moved to archive.", "warning");
+      }
+    }
+
+    function restoreProject(id) {
+      const card = document.querySelector(`.project-card[data-project-id="${id}"]`);
+      if (card) {
+        card.setAttribute('data-status', 'completed');
+        card.querySelector('.badge').className = 'badge badge-success text-xxs';
+        card.querySelector('.badge').innerText = 'COMPLETED';
+        
+        const row = document.querySelector(`tr[data-project-id="${id}"]`);
+        if (row) {
+          row.querySelector('.badge').className = 'badge badge-success';
+          row.querySelector('.badge').innerText = 'COMPLETED';
+        }
+
+        // Decrement count
+        document.getElementById('count-archived').innerText = Math.max(0, parseInt(document.getElementById('count-archived').innerText) - 1);
+        handleSearchFilter();
+        window.showToast("Project successfully restored.");
+      }
+    }
+
+    function deleteProject(id) {
+      const card = document.querySelector(`.project-card[data-project-id="${id}"]`);
+      if (card) {
+        card.style.display = 'none';
+        card.setAttribute('data-status', 'trash');
+        
+        const row = document.querySelector(`tr[data-project-id="${id}"]`);
+        if (row) row.style.display = 'none';
+
+        document.getElementById('count-trash').innerText = parseInt(document.getElementById('count-trash').innerText) + 1;
+        window.showToast(`Project moved to trash. <a onclick="undoDeleteProject(${id})" style="color: var(--accent-blue); text-decoration: underline; cursor: pointer; margin-left: 8px;">Undo</a>`, "error");
+      }
+    }
+
+    window.undoDeleteProject = function(id) {
+      const card = document.querySelector(`.project-card[data-project-id="${id}"]`);
+      if (card) {
+        card.style.display = 'flex';
+        card.setAttribute('data-status', 'completed');
+        
+        const row = document.querySelector(`tr[data-project-id="${id}"]`);
+        if (row) row.style.display = 'table-row';
+
+        document.getElementById('count-trash').innerText = Math.max(0, parseInt(document.getElementById('count-trash').innerText) - 1);
+        window.showToast("Project deletion undone.");
+      }
+    }
+
+    // Details actions wrapper
+    function duplicateFromDetails() {
+      duplicateProject(activeProjectId);
+      closeProjectDetails();
+    }
+
+    function archiveFromDetails() {
+      archiveProject(activeProjectId);
+      closeProjectDetails();
+    }
+
+    function deleteFromDetails() {
+      deleteProject(activeProjectId);
+      closeProjectDetails();
+    }
+
+    function openShareModalFromDetails() {
+      const name = document.getElementById('detail-project-title').innerText;
+      openShareModal(name);
+    }
+
+    // 7. Modal interactions submit handlers
+    function createNewProjectSubmit() {
+      const nameInput = document.getElementById('new-project-name');
+      const folderInput = document.getElementById('new-project-folder');
+      const pipelineInput = document.getElementById('new-project-pipeline');
+      const descInput = document.getElementById('new-project-desc');
+
+      if (!nameInput.value.trim()) {
+        window.showToast("Please enter a valid project name.", "error");
+        return;
+      }
+
+      const id = Date.now();
+      const name = nameInput.value.trim();
+      const folder = folderInput.value;
+      const pipeline = pipelineInput.value;
+      const desc = descInput.value.trim() || "AI synthesis pipeline run.";
+
+      // 1. Append Card to Grid
+      const gridView = document.getElementById('projects-grid-view');
+      const newCard = document.createElement('div');
+      newCard.className = 'project-card';
+      newCard.setAttribute('data-project-id', id);
+      newCard.setAttribute('data-name', name);
+      newCard.setAttribute('data-folder', folder);
+      newCard.setAttribute('data-status', 'completed');
+      newCard.setAttribute('data-confidence', '94.5');
+      newCard.onclick = () => openProjectDetails(id);
+      newCard.innerHTML = `
+        <div class="project-thumbnail-wrapper">
+          <svg width="60" height="60" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="color: var(--brand-primary);">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"/>
+            <polyline points="2 17 12 22 22 17"/>
+            <polyline points="2 12 12 17 22 12"/>
+          </svg>
+          <div class="project-card-actions" onclick="event.stopPropagation()">
+            <button class="btn btn-tertiary btn-sm dropdown-trigger" data-dropdown="menu-proj-${id}" style="padding: 2px;">&bull;&bull;&bull;</button>
+            <div class="dropdown-menu dropdown-menu-right" id="menu-proj-${id}">
+              <a class="dropdown-item" onclick="openShareModal('${name}')">Share & Permissions</a>
+              <a class="dropdown-item" onclick="duplicateProject(${id})">Duplicate</a>
+              <a class="dropdown-item" onclick="archiveProject(${id})">Archive</a>
+              <a class="dropdown-item text-danger" onclick="deleteProject(${id})">Delete</a>
+            </div>
+          </div>
+        </div>
+        <div class="project-card-body">
+          <div class="flex-between">
+            <span class="badge badge-success text-xxs">COMPLETED</span>
+            <span class="text-detail font-mono text-muted">v1.0</span>
+          </div>
+          <h4 class="text-body font-bold text-primary" style="margin-top: 4px;">${name}</h4>
+          <p class="text-detail text-secondary">${desc}</p>
+          <div class="flex-between" style="margin-top: var(--space-xs); border-top: 1px solid var(--border-muted); padding-top: var(--space-xs);">
+            <span class="text-detail text-muted">Confidence: <b class="font-mono text-primary">94.5%</b></span>
+            <span class="text-detail text-secondary">Just now</span>
+          </div>
+        </div>
+      `;
+      gridView.insertBefore(newCard, gridView.firstChild);
+
+      // 2. Append Row to Table
+      const tableBody = document.getElementById('projects-table-body');
+      const newRow = document.createElement('tr');
+      newRow.setAttribute('data-project-id', id);
+      newRow.onclick = () => openProjectDetails(id);
+      newRow.innerHTML = `
+        <td class="font-bold text-primary">${name}</td>
+        <td>${folder}</td>
+        <td><span class="badge badge-success">COMPLETED</span></td>
+        <td class="font-mono">v1.0</td>
+        <td class="font-mono">94.5%</td>
+        <td onclick="event.stopPropagation()">
+          <button class="btn btn-ghost btn-sm" onclick="openShareModal('${name}')">Share</button>
+          <button class="btn btn-ghost btn-sm dropdown-trigger" data-dropdown="table-menu-${id}">&bull;&bull;&bull;</button>
+          <div class="dropdown-menu dropdown-menu-right" id="table-menu-${id}">
+            <a class="dropdown-item" onclick="duplicateProject(${id})">Duplicate</a>
+            <a class="dropdown-item" onclick="archiveProject(${id})">Archive</a>
+            <a class="dropdown-item text-danger" onclick="deleteProject(${id})">Delete</a>
+          </div>
+        </td>
+      `;
+      tableBody.insertBefore(newRow, tableBody.firstChild);
+
+      // Update Folder Counters
+      updateFolderCounts();
+
+      // Clear input values
+      nameInput.value = '';
+      descInput.value = '';
+      
+      // Close Modal
+      document.getElementById('create-project-modal').classList.remove('active');
+      document.body.style.overflow = '';
+
+      // Trigger design-system dropdown rebinding
+      rebindDropdownTriggers();
+
+      window.showToast(`Project '${name}' created successfully.`);
+    }
+
+    function rebindDropdownTriggers() {
+      const dropdownTriggers = document.querySelectorAll('.dropdown-trigger');
+      dropdownTriggers.forEach(trigger => {
+        trigger.replaceWith(trigger.cloneNode(true));
+      });
+      
+      const newTriggers = document.querySelectorAll('.dropdown-trigger');
+      newTriggers.forEach(trigger => {
+        trigger.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const menuId = trigger.getAttribute('data-dropdown');
+          const menu = document.getElementById(menuId);
+          
+          document.querySelectorAll('.dropdown-menu').forEach(m => {
+            if (m !== menu) m.classList.remove('active');
+          });
+
+          if (menu) menu.classList.toggle('active');
+        });
+      });
+    }
+
+    function updateFolderCounts() {
+      const folders = ['Marketing Ads', 'Core Pipelines', 'Audio Prompts', 'Design Assets'];
+      folders.forEach(folder => {
+        const count = document.querySelectorAll(`.project-card[data-folder="${folder}"][data-status="completed"]`).length;
+        if (folder === 'Marketing Ads') document.getElementById('count-mktg').innerText = count;
+        if (folder === 'Core Pipelines') document.getElementById('count-core').innerText = count;
+        if (folder === 'Audio Prompts') document.getElementById('count-audio').innerText = count;
+        if (folder === 'Design Assets') document.getElementById('count-design').innerText = count;
+      });
+    }
+
+    // 8. Sharing Modal Collaborators Logic
+    function openShareModal(name) {
+      document.getElementById('share-project-name-label').innerText = name;
+      document.getElementById('share-project-modal').classList.add('active');
+      document.body.style.overflow = 'hidden';
+    }
+
+    function inviteCollaborator() {
+      const emailInput = document.getElementById('invite-email');
+      const roleInput = document.getElementById('invite-role');
+
+      if (!emailInput.value.trim() || !emailInput.value.includes('@')) {
+        window.showToast("Please enter a valid email address.", "error");
+        return;
+      }
+
+      const email = emailInput.value.trim();
+      const role = roleInput.value;
+      const initials = email.substring(0, 2).toUpperCase();
+
+      const container = document.getElementById('share-modal-collaborators-list');
+      const newCollab = document.createElement('div');
+      newCollab.className = 'flex-between';
+      newCollab.style.borderBottom = '1px solid var(--border-muted)';
+      newCollab.style.paddingBottom = 'var(--space-xs)';
+      newCollab.innerHTML = `
+        <div class="flex-center" style="gap: var(--space-xs);">
+          <div class="avatar avatar-sm font-bold" style="background-color: var(--accent-purple-bg); color: var(--accent-purple);">${initials}</div>
+          <div style="display: flex; flex-direction: column;">
+            <span class="text-body-small font-bold text-primary">${email.split('@')[0]}</span>
+            <span class="text-detail text-secondary">${email}</span>
+          </div>
+        </div>
+        <span class="text-detail text-muted font-bold">${role}</span>
+      `;
+      container.appendChild(newCollab);
+
+      emailInput.value = '';
+      window.showToast(`Invitation sent to ${email}.`);
+    }
+
+    // 9. Comments thread logic
+    function appendNewComment() {
+      const commentInput = document.getElementById('new-comment-input');
+      if (!commentInput.value.trim()) return;
+
+      const text = commentInput.value.trim();
+      const list = document.getElementById('project-comments-list');
+      const newComment = document.createElement('div');
+      newComment.className = 'flex-start';
+      newComment.style.gap = 'var(--space-sm)';
+      newComment.innerHTML = `
+        <div class="avatar avatar-md font-bold" style="background-color: var(--brand-secondary); color: var(--text-inverse);">JH</div>
+        <div class="card" style="padding: 10px 14px; background-color: var(--bg-secondary); flex: 1; gap: 2px;">
+          <div class="flex-between">
+            <span class="text-body-small font-bold text-primary">Jaiveer Hastar</span>
+            <span class="text-detail text-secondary">Just now</span>
+          </div>
+          <p class="text-detail text-muted">${text}</p>
+        </div>
+      `;
+      list.appendChild(newComment);
+      commentInput.value = '';
+      list.scrollTop = list.scrollHeight;
+      window.showToast("Comment posted.");
+    }
+  </script>
+</body>
+</html>

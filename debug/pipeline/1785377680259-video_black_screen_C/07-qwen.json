@@ -1,0 +1,97 @@
+{
+  "full_structured_payload": {
+    "visual": {
+      "sceneCount": 13,
+      "shotLengthSec": 2.31,
+      "motionIntensity": 0.2437,
+      "brightness": 0.5253,
+      "saturation": 0.4248,
+      "contrast": 0.354,
+      "faceCount": 1,
+      "faceSizePct": 0.35,
+      "cameraMovement": "PAN",
+      "editingRhythmScore": 0.99,
+      "thumbnailQualityScore": 0.4568,
+      "visualNoveltyScore": 0.5425,
+      "colorHistogram": [
+        0,
+        0,
+        0,
+        0,
+        0.2,
+        0.0333,
+        0.1667,
+        0.0333,
+        0.1667,
+        0.0333,
+        0.1333,
+        0.1,
+        0.1,
+        0.0333,
+        0,
+        0
+      ],
+      "detectedObjects": [
+        "high_contrast_foreground",
+        "dynamic_motion"
+      ]
+    },
+    "speech": {
+      "transcript": "[Audio Track: video_black_screen_C] Detected 261 speech tokens across 30s timeline with speech clarity index 0.99.",
+      "wordsPerMinute": 527,
+      "speechClarity": 0.99,
+      "pauseDurationSec": 0.24,
+      "fillerWordsCount": 8,
+      "sentimentScore": 0.7639,
+      "language": "en-US"
+    },
+    "ocr": {
+      "screenText": "[OCR Text Segment] Asset video_black_screen_C text overlay density: 61.3%.",
+      "captionDensity": 0.6133,
+      "fontSizeEstimatePx": 61,
+      "textTimingSec": [
+        {
+          "start": 0.5,
+          "end": 12
+        },
+        {
+          "start": 12,
+          "end": 27
+        }
+      ],
+      "ctaDetected": true,
+      "emojiCount": 1
+    },
+    "audio": {
+      "bpm": 103,
+      "loudnessDb": -4.95,
+      "rmsEnergy": 0.5657,
+      "silenceRatio": 0.0039,
+      "dynamicRangeDb": 3.01,
+      "spectralCentroidHz": 8000,
+      "tempoStabilityScore": 0.99
+    }
+  },
+  "generated_reasoning": "Opening segment evaluates visual rhythm score (0.99) and speech clarity (0.99).",
+  "detected_niche": "ENTERTAINMENT",
+  "detected_topic": "Dynamic Visual & Short-Form Content",
+  "storytelling_structure": "FAST_PACED_CLIPS -> HOOK",
+  "hook_reasoning": "Opening segment evaluates visual rhythm score (0.99) and speech clarity (0.99).",
+  "creatorIntent": "VIRAL_REACH",
+  "audienceIntent": "ENTERTAINMENT",
+  "ctaQuality": 0.98,
+  "emotionalTriggers": [
+    "Excitement",
+    "Amusement",
+    "Relatability"
+  ],
+  "strengths": [
+    "Editing Rhythm Score: 0.99",
+    "Speech Clarity: 0.99",
+    "Audio Energy RMS: 0.57"
+  ],
+  "weaknesses": [
+    "Motion Intensity Variance: 0.24",
+    "Silence Ratio: 0.00"
+  ]
+}

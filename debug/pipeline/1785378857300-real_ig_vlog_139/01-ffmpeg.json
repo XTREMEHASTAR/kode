@@ -1,0 +1,13 @@
+{
+  "assetId": "real_ig_vlog_139",
+  "videoPath": "c:/videos/real_ig_vlog_139.mp4",
+  "duration": 34,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "bitrate": 4500000,
+  "keyframe_count": 34,
+  "extracted_frame_count": 34,
+  "extracted_audio_samples": 220500,
+  "contentHash": 1296287736
+}

@@ -1,0 +1,1812 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — Authentication Module Sandbox</title>
+  <!-- Design System Base Styles -->
+  <link rel="stylesheet" href="design-system.css">
+  
+  <style>
+    /* Sandbox Framework Layout */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-smooth);
+    }
+
+    /* Sandbox Header Control Panel */
+    .sandbox-header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-xs) var(--space-lg);
+      z-index: 1000;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .sandbox-brand h1 {
+      font-size: 1.125rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .sandbox-brand span {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .sandbox-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-control-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      background-color: var(--bg-secondary);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+    }
+
+    .sandbox-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sandbox-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .sandbox-btn.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sandbox-select {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      color: var(--text-primary);
+      border-radius: var(--radius-md);
+      padding: 6px 12px;
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      outline: none;
+      cursor: pointer;
+    }
+
+    /* Emulator Display Frame */
+    .sandbox-workspace {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      position: relative;
+    }
+
+    /* Device Viewport Simulators */
+    .emulator-viewport {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      transition: width var(--transition-smooth), height var(--transition-smooth), border-radius var(--transition-smooth);
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      height: 100%;
+    }
+
+    .emulator-viewport.desktop {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      border: none;
+    }
+
+    .emulator-viewport.tablet {
+      width: 768px;
+      height: 95%;
+      border-radius: var(--radius-lg);
+    }
+
+    .emulator-viewport.mobile {
+      width: 375px;
+      height: 85%;
+      border-radius: var(--radius-2xl);
+    }
+
+    /* Auth Screens General Layout */
+    .auth-screen {
+      display: none; /* Controlled by JS switcher */
+      flex-grow: 1;
+      min-height: 100%;
+      animation: authFadeIn var(--transition-smooth) forwards;
+    }
+
+    .auth-screen.active {
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Split layout (Desktop only, merges into clean single column on mobile) */
+    .auth-split-container {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      min-height: 100%;
+      width: 100%;
+    }
+
+    .auth-side-panel {
+      background: radial-gradient(circle at 10% 20%, rgba(99, 102, 241, 0.15) 0%, transparent 40%),
+                  radial-gradient(circle at 90% 80%, rgba(139, 92, 246, 0.15) 0%, transparent 40%),
+                  var(--bg-secondary);
+      border-right: 1px solid var(--border-default);
+      padding: var(--space-3xl);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+    }
+
+    /* Ambient animated grids inside side panels */
+    .auth-side-panel::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(var(--border-default) 1px, transparent 1px),
+                        linear-gradient(90deg, var(--border-default) 1px, transparent 1px);
+      background-size: 40px 40px;
+      mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+      -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 80%);
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .auth-form-panel {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: var(--space-3xl) var(--space-4xl);
+      background-color: var(--bg-primary);
+    }
+
+    .auth-form-width {
+      width: 100%;
+      max-width: 400px;
+      margin: 0 auto;
+    }
+
+    /* Responsiveness adjustments inside emulator */
+    .emulator-viewport.tablet .auth-split-container,
+    .emulator-viewport.mobile .auth-split-container {
+      grid-template-columns: 1fr;
+    }
+
+    .emulator-viewport.tablet .auth-side-panel,
+    .emulator-viewport.mobile .auth-side-panel {
+      display: none;
+    }
+
+    .emulator-viewport.tablet .auth-form-panel,
+    .emulator-viewport.mobile .auth-form-panel {
+      padding: var(--space-xl) var(--space-lg);
+    }
+
+    /* Carousel component inside sidebar */
+    .onboarding-carousel {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      gap: var(--space-xl);
+      z-index: 1;
+    }
+
+    .carousel-slide {
+      opacity: 0;
+      transform: translateX(10px);
+      display: none;
+      transition: all var(--transition-smooth);
+    }
+
+    .carousel-slide.active {
+      opacity: 1;
+      transform: translateX(0);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .carousel-indicators {
+      display: flex;
+      gap: var(--space-xs);
+    }
+
+    .carousel-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: var(--radius-full);
+      background-color: var(--border-active);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .carousel-dot.active {
+      background-color: var(--brand-primary);
+      width: 24px;
+    }
+
+    /* OTP Code input boxes */
+    .otp-input-container {
+      display: flex;
+      gap: var(--space-sm);
+      justify-content: space-between;
+      margin: var(--space-lg) 0;
+    }
+
+    .otp-cell {
+      width: 50px;
+      height: 54px;
+      text-align: center;
+      font-size: 1.5rem;
+      font-weight: 600;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-default);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      outline: none;
+      transition: all var(--transition-fast);
+      box-shadow: var(--shadow-inner);
+    }
+
+    .otp-cell:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px var(--brand-primary-glow);
+    }
+
+    /* Password Strength Grid */
+    .password-strength-container {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 4px;
+    }
+
+    .password-strength-bar {
+      height: 4px;
+      border-radius: var(--radius-full);
+      background-color: var(--border-default);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .password-strength-fill {
+      height: 100%;
+      width: 0;
+      background-color: var(--accent-red);
+      transition: width var(--transition-smooth), background-color var(--transition-smooth);
+    }
+
+    .password-strength-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    /* Pricing Subscriptions Selector Grid */
+    .subscription-selection-container {
+      max-width: 900px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xl);
+      padding: var(--space-lg);
+      width: 100%;
+    }
+
+    .pricing-header-pill {
+      display: inline-flex;
+      align-items: center;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      padding: 4px;
+      border-radius: var(--radius-full);
+      margin: 0 auto;
+    }
+
+    .pricing-header-btn {
+      background: transparent;
+      border: none;
+      font-size: 0.8125rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      padding: 6px 16px;
+      border-radius: var(--radius-full);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .pricing-header-btn.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .pricing-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-lg);
+      width: 100%;
+    }
+
+    .pricing-card {
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      background-color: var(--bg-elevated);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: var(--space-lg);
+      position: relative;
+      cursor: pointer;
+      transition: all var(--transition-smooth);
+    }
+
+    .pricing-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--border-active);
+    }
+
+    .pricing-card.popular {
+      border-color: var(--brand-primary);
+      box-shadow: 0 10px 30px rgba(99, 102, 241, 0.08);
+    }
+
+    .pricing-card.popular::before {
+      content: 'Most Popular';
+      position: absolute;
+      top: -12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 4px 12px;
+      border-radius: var(--radius-full);
+      box-shadow: 0 4px 10px rgba(99, 102, 241, 0.2);
+    }
+
+    .pricing-features-list {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .pricing-features-list li {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    /* Workspace cards */
+    .workspace-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: var(--space-md);
+      margin: var(--space-lg) 0;
+    }
+
+    .workspace-item-card {
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      background-color: var(--bg-elevated);
+      cursor: pointer;
+      transition: all var(--transition-smooth);
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+    }
+
+    .workspace-item-card:hover {
+      border-color: var(--brand-primary);
+      background-color: var(--bg-secondary);
+      transform: translateY(-1px);
+    }
+
+    .workspace-item-card.active {
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 3px var(--brand-primary-glow);
+      background-color: var(--bg-secondary);
+    }
+
+    .workspace-avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-tertiary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 600;
+      color: var(--text-primary);
+      font-size: 1.125rem;
+    }
+
+    /* Legal scroll boxes */
+    .legal-scroll-box {
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      background-color: var(--bg-secondary);
+      height: 200px;
+      overflow-y: auto;
+      padding: var(--space-md);
+      font-size: 0.8125rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin: var(--space-md) 0;
+    }
+
+    .legal-scroll-box p {
+      margin-bottom: var(--space-sm);
+    }
+
+    /* Success checkmark animation */
+    .success-checkmark-svg {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto var(--space-lg) auto;
+      display: block;
+    }
+
+    .success-checkmark-circle {
+      stroke-dasharray: 166;
+      stroke-dashoffset: 166;
+      stroke-width: 2;
+      stroke-miterlimit: 10;
+      stroke: var(--accent-green);
+      fill: none;
+      animation: strokeCircle 0.6s cubic-bezier(0.65, 0, 0.45, 1) forwards;
+    }
+
+    .success-checkmark-check {
+      transform-origin: 50% 50%;
+      stroke-dasharray: 48;
+      stroke-dashoffset: 48;
+      stroke: var(--accent-green);
+      stroke-width: 3;
+      fill: none;
+      animation: strokeCheck 0.3s cubic-bezier(0.65, 0, 0.45, 1) 0.6s forwards;
+    }
+
+    /* Keyframes */
+    @keyframes authFadeIn {
+      from { opacity: 0; transform: translateY(6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @keyframes strokeCircle {
+      to { stroke-dashoffset: 0; }
+    }
+
+    @keyframes strokeCheck {
+      to { stroke-dashoffset: 0; }
+    }
+
+    /* Error indicator animation */
+    .error-helper-text {
+      color: var(--accent-red);
+      font-size: 0.75rem;
+      font-weight: 500;
+      margin-top: 4px;
+      display: none;
+      animation: authFadeIn var(--transition-fast) forwards;
+    }
+
+    .error-state-active .error-helper-text {
+      display: block;
+    }
+
+    /* Inline Loading indicator spinners */
+    .spinner {
+      animation: rotateSpinner 1s linear infinite;
+      width: 16px;
+      height: 16px;
+      border: 2px solid currentColor;
+      border-radius: 50%;
+      border-top-color: transparent;
+      display: inline-block;
+    }
+
+    @keyframes rotateSpinner {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Social logins grid */
+    .social-auth-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-sm);
+    }
+
+    /* Responsive frames overrides */
+    .emulator-viewport.mobile .pricing-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .emulator-viewport.mobile .workspace-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .emulator-viewport.mobile .social-auth-grid {
+      grid-template-columns: 1fr;
+      gap: var(--space-xs);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. SANDBOX HEADER CONTROL PANEL -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M16 8L25 13V19L16 24L7 19V13L16 8Z" fill="var(--brand-primary)" opacity="0.15"/>
+        <circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/>
+      </svg>
+      <h1>KONTAGI Auth Workspace</h1>
+      <span>Sandbox</span>
+    </div>
+
+    <div class="sandbox-controls">
+      <!-- Screen Switcher -->
+      <select class="sandbox-select" id="screen-selector">
+        <option value="screen-splash">1. Splash Screen</option>
+        <option value="screen-onboarding">2. Onboarding Carousel</option>
+        <option value="screen-login" selected>3. Login Screen</option>
+        <option value="screen-register">4. Register Screen</option>
+        <option value="screen-forgot">5. Forgot Password</option>
+        <option value="screen-otp">6. OTP Verification</option>
+        <option value="screen-reset">7. Reset Password</option>
+        <option value="screen-workspace">8. Workspace Selection</option>
+        <option value="screen-invite">9. Invite Acceptance</option>
+        <option value="screen-subscription">10. Subscription selection</option>
+        <option value="screen-terms">11. Terms of Service</option>
+        <option value="screen-privacy">12. Privacy Policy</option>
+        <option value="screen-success">13. Success Transition</option>
+      </select>
+
+      <!-- Viewport emulators -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" data-viewport="desktop" title="Desktop emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 21h12m-9-4l-1 4m8-4l1 4"/></svg>
+          Desktop
+        </button>
+        <button class="sandbox-btn" data-viewport="tablet" title="Tablet emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          Tablet
+        </button>
+        <button class="sandbox-btn" data-viewport="mobile" title="Mobile emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
+          Mobile
+        </button>
+      </div>
+
+      <!-- State Modifiers -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" id="state-normal">Normal</button>
+        <button class="sandbox-btn" id="state-loading">Loading State</button>
+        <button class="sandbox-btn" id="state-error">Error State</button>
+      </div>
+
+      <!-- Mode Toggle -->
+      <button class="btn btn-tertiary btn-sm" id="theme-toggle" style="box-shadow: none;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        Dark Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- 2. MAIN SANBOX VIEWPORT FRAME -->
+  <main class="sandbox-workspace">
+    <div class="emulator-viewport desktop" id="viewport-frame">
+      
+      <!-- ==============================================
+           SCREEN 1: SPLASH SCREEN
+           ============================================== -->
+      <section class="auth-screen" id="screen-splash">
+        <div class="flex-center" style="flex-grow: 1; flex-direction: column; gap: var(--space-lg); background-color: var(--bg-primary); text-align: center; padding: var(--space-xl);">
+          <!-- Glowing mesh container logo -->
+          <div class="card-glow flex-center" style="width: 100px; height: 100px; border-radius: var(--radius-2xl); border: 1px solid var(--border-default); background-color: var(--bg-secondary); margin-bottom: var(--space-md); box-shadow: var(--shadow-lg);">
+            <svg width="48" height="48" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+              <path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3" stroke-linejoin="round"/>
+              <circle cx="16" cy="16" r="4" fill="var(--brand-primary)" class="skeleton-pulse-element"/>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-display-xl text-gradient" style="margin-bottom: var(--space-xxs);">Insaas AI</h1>
+            <p class="text-body-base text-muted font-medium">Billion-Dollar Enterprise Intelligence</p>
+          </div>
+          
+          <!-- Loading indicator -->
+          <div style="width: 200px; margin-top: var(--space-lg);">
+            <div class="skeleton" style="height: 4px; border-radius: var(--radius-full); width: 100%; position: relative; overflow: hidden; background-color: var(--border-default);">
+              <div style="position: absolute; left: 0; top: 0; bottom: 0; background-color: var(--brand-primary); width: 65%; border-radius: var(--radius-full); animation: pulse 1.5s infinite ease-in-out;"></div>
+            </div>
+            <p class="text-detail text-secondary font-mono" style="margin-top: var(--space-xs);" id="splash-status">CONNECTING SECURE DATABASE PIPELINES...</p>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           SCREEN 2: ONBOARDING SCREEN
+           ============================================== -->
+      <section class="auth-screen" id="screen-onboarding">
+        <div class="auth-split-container">
+          <!-- Left side visual showcase -->
+          <div class="auth-side-panel">
+            <div class="sandbox-brand">
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="none"><path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3"/><circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/></svg>
+              <span class="text-body-small font-bold text-gradient">Insaas AI</span>
+            </div>
+
+            <div class="onboarding-carousel">
+              <div class="carousel-slide active" data-slide="1">
+                <span class="badge badge-info" style="align-self: flex-start;">01 / AI Telemetry</span>
+                <h2>Inference Pipelines Built For High Scale workload</h2>
+                <p class="text-body-base text-muted">Deploy complex machine learning models directly into production clusters in 3 clicks. Automate your operations under zero-downtime environments.</p>
+              </div>
+              <div class="carousel-slide" data-slide="2">
+                <span class="badge badge-info" style="align-self: flex-start;">02 / Security</span>
+                <h2>Enterprise-Grade Access Guardrails</h2>
+                <p class="text-body-base text-muted">Rotate API credentials safely. Leverage custom security compliance modules including SOC 2 benchmarks and role-based permissions policies.</p>
+              </div>
+              <div class="carousel-slide" data-slide="3">
+                <span class="badge badge-info" style="align-self: flex-start;">03 / Collaboration</span>
+                <h2>Centralized Datasets & Shared Team Nodes</h2>
+                <p class="text-body-base text-muted">Invite developers, assign roles, configure billing limits, and track usage telemetry within a single cohesive organization dashboard.</p>
+              </div>
+              
+              <div class="carousel-indicators">
+                <span class="carousel-dot active" data-slide-target="1"></span>
+                <span class="carousel-dot" data-slide-target="2"></span>
+                <span class="carousel-dot" data-slide-target="3"></span>
+              </div>
+            </div>
+
+            <div class="text-detail text-secondary">
+              &copy; 2026 Insaas Corporation. All rights reserved.
+            </div>
+          </div>
+
+          <!-- Right side form panel -->
+          <div class="auth-form-panel">
+            <div class="auth-form-width">
+              <div class="card-glow" style="display: inline-flex; padding: var(--space-xs); border-radius: var(--radius-md); border: 1px solid var(--border-default); background-color: var(--bg-secondary); margin-bottom: var(--space-lg);">
+                <svg width="24" height="24" viewBox="0 0 32 32" fill="none"><path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3"/></svg>
+              </div>
+              <h2 style="margin-bottom: var(--space-xxs);">Unified Intelligence</h2>
+              <p class="text-body-small text-muted" style="margin-bottom: var(--space-xl);">Create a secure workspace or join an existing organization to launch pipelines.</p>
+
+              <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                <button class="btn btn-primary btn-lg" onclick="showScreen('screen-register')">
+                  Create a New Workspace
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-left: 8px; margin-right: 0;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                </button>
+                <button class="btn btn-tertiary btn-lg" onclick="showScreen('screen-login')">
+                  Sign In to Account
+                </button>
+              </div>
+
+              <footer style="margin-top: var(--space-2xl); text-align: center;">
+                <p class="text-detail text-secondary">By continuing, you agree to our <a href="#" onclick="showScreen('screen-terms')" class="text-gradient font-medium">Terms</a> & <a href="#" onclick="showScreen('screen-privacy')" class="text-gradient font-medium">Privacy Policies</a>.</p>
+              </footer>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           SCREEN 3: LOGIN SCREEN
+           ============================================== -->
+      <section class="auth-screen" id="screen-login">
+        <div class="auth-split-container">
+          <!-- Left side visual showcase -->
+          <div class="auth-side-panel">
+            <div class="sandbox-brand">
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="none"><path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3"/><circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/></svg>
+              <span class="text-body-small font-bold text-gradient">Insaas AI</span>
+            </div>
+
+            <div style="z-index: 1;">
+              <h2 style="margin-bottom: var(--space-md);">"Insaas is the infrastructure layer that enabled our ML engineering squad to scale compute workloads by 10x with zero downtime."</h2>
+              <p class="text-body-small font-medium text-gradient">— Principal AI Architect, Google Deepmind</p>
+            </div>
+
+            <div class="text-detail text-secondary">
+              &copy; 2026 Insaas Corporation. All rights reserved.
+            </div>
+          </div>
+
+          <!-- Right side form panel -->
+          <div class="auth-form-panel">
+            <div class="auth-form-width">
+              <h2 style="margin-bottom: var(--space-xxs);" class="text-gradient">Welcome Back</h2>
+              <p class="text-body-small text-muted" style="margin-bottom: var(--space-lg);">Enter your credentials to access your secure AI pipeline.</p>
+
+              <!-- Social Auth Block -->
+              <div class="social-auth-grid" style="margin-bottom: var(--space-lg);">
+                <button class="btn btn-tertiary btn-sm">
+                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12.24 10.285V14.4h6.887c-.648 2.41-2.519 4.114-5.136 4.114-3.41 0-6.19-2.77-6.19-6.19 0-3.41 2.78-6.19 6.19-6.19 1.54 0 2.94.57 4.03 1.51l3.07-3.07C19.305 2.147 16.035 1 12.24 1 5.48 1 0 6.48 0 13.24s5.48 12.24 12.24 12.24c6.74 0 12.28-5.48 12.28-12.24 0-.812-.087-1.597-.247-2.355H12.24z"/></svg>
+                  Google
+                </button>
+                <button class="btn btn-tertiary btn-sm">
+                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/></svg>
+                  GitHub
+                </button>
+                <button class="btn btn-tertiary btn-sm">
+                  <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 4.17c.66-.81 1.11-1.93.99-3.06-1 .04-2.22.67-2.94 1.51-.63.73-1.18 1.87-1.03 2.99 1.12.09 2.28-.59 2.98-1.44"/></svg>
+                  Apple
+                </button>
+              </div>
+
+              <div style="display: flex; align-items: center; margin-bottom: var(--space-md);">
+                <div style="flex-grow: 1; height: 1px; background-color: var(--border-default);"></div>
+                <span class="text-detail text-secondary font-medium" style="margin: 0 var(--space-md); text-transform: uppercase;">Or continue with email</span>
+                <div style="flex-grow: 1; height: 1px; background-color: var(--border-default);"></div>
+              </div>
+
+              <!-- Form Block -->
+              <form id="login-form" onsubmit="event.preventDefault(); handleAuthAction('Sign In successful!', 'screen-workspace');">
+                <div class="form-group" id="login-email-group">
+                  <label class="form-label" for="login-email">Business Email</label>
+                  <div class="input-container">
+                    <svg class="input-icon-left" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 12a4 4 0 10-8 0 4 4 0 008 0zm0 0v1.5a2.5 2.5 0 005 0V12a9 9 0 10-9 9m4.5-1.206a8.959 8.959 0 01-4.5 1.207"/></svg>
+                    <input type="email" class="input input-with-icon" id="login-email" placeholder="name@company.com" required value="developer@deepmind.com">
+                  </div>
+                  <span class="error-helper-text">Invalid email address or workspace mapping.</span>
+                </div>
+
+                <div class="form-group" id="login-password-group">
+                  <div class="flex-between">
+                    <label class="form-label" for="login-password">Password</label>
+                    <a href="#" onclick="showScreen('screen-forgot')" class="text-detail text-gradient font-medium">Forgot Password?</a>
+                  </div>
+                  <div class="input-container">
+                    <svg class="input-icon-left" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                    <input type="password" class="input input-with-icon" id="login-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required value="SuperSecurePass123!">
+                  </div>
+                  <span class="error-helper-text">Incorrect password. Please try again.</span>
+                </div>
+
+                <div style="display: flex; align-items: center; gap: var(--space-xs); margin-bottom: var(--space-lg);">
+                  <input type="checkbox" id="remember-me" style="cursor: pointer; accent-color: var(--brand-primary);">
+                  <label class="text-detail text-muted font-medium" for="remember-me" style="cursor: pointer; user-select: none;">Keep me signed in for 30 days</label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;" id="login-submit-btn">
+                  <span>Sign In</span>
+                </button>
+              </form>
+
+              <footer style="margin-top: var(--space-xl); text-align: center;">
+                <p class="text-body-small text-muted">New to Insaas? <a href="#" onclick="showScreen('screen-register')" class="text-gradient font-semibold">Create an account</a></p>
+              </footer>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           SCREEN 4: REGISTER SCREEN
+           ============================================== -->
+      <section class="auth-screen" id="screen-register">
+        <div class="auth-split-container">
+          <!-- Left side visual showcase -->
+          <div class="auth-side-panel">
+            <div class="sandbox-brand">
+              <svg width="20" height="20" viewBox="0 0 32 32" fill="none"><path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3"/><circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/></svg>
+              <span class="text-body-small font-bold text-gradient">Insaas AI</span>
+            </div>
+
+            <div style="z-index: 1;">
+              <h2 style="margin-bottom: var(--space-md);">Deploy ML workloads on the edge in seconds.</h2>
+              <div class="card elevation-2" style="background-color: var(--glass-bg); backdrop-filter: blur(10px); border-color: var(--glass-border);">
+                <div class="flex-between" style="margin-bottom: var(--space-sm);">
+                  <span class="text-detail font-mono text-secondary">CLUSTERS STATUS</span>
+                  <span class="badge badge-success">ONLINE</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: var(--space-xxs);">
+                  <div class="skeleton" style="height: 12px; width: 80%; border-radius: var(--radius-sm);"></div>
+                  <div class="skeleton" style="height: 12px; width: 60%; border-radius: var(--radius-sm);"></div>
+                </div>
+              </div>
+            </div>
+
+            <div class="text-detail text-secondary">
+              &copy; 2026 Insaas Corporation. All rights reserved.
+            </div>
+          </div>
+
+          <!-- Right side form panel -->
+          <div class="auth-form-panel">
+            <div class="auth-form-width">
+              <h2 style="margin-bottom: var(--space-xxs);" class="text-gradient">Get Started</h2>
+              <p class="text-body-small text-muted" style="margin-bottom: var(--space-lg);">Set up your secure business AI workspace today.</p>
+
+              <!-- Form Block -->
+              <form id="register-form" onsubmit="event.preventDefault(); handleAuthAction('Verification code sent!', 'screen-otp');">
+                <div class="form-group" id="reg-name-group">
+                  <label class="form-label" for="reg-name">Full Name</label>
+                  <input type="text" class="input" id="reg-name" placeholder="John Doe" required value="Jaiveer Hastar">
+                  <span class="error-helper-text">Please enter your full name.</span>
+                </div>
+
+                <div class="form-group" id="reg-email-group">
+                  <label class="form-label" for="reg-email">Business Email</label>
+                  <input type="email" class="input" id="reg-email" placeholder="name@company.com" required value="jaiveer@company.com">
+                  <span class="error-helper-text">Please use a valid company email domain.</span>
+                </div>
+
+                <div class="form-group" id="reg-domain-group">
+                  <label class="form-label" for="reg-domain">Workspace Domain</label>
+                  <div class="input-container">
+                    <input type="text" class="input" id="reg-domain" placeholder="my-org" style="padding-right: 90px;" required value="deepmind-dev">
+                    <span class="text-detail text-secondary font-mono" style="position: absolute; right: 12px; pointer-events: none;">.insaas.ai</span>
+                  </div>
+                  <span class="error-helper-text">This workspace domain is already claimed.</span>
+                </div>
+
+                <div class="form-group" id="reg-password-group">
+                  <label class="form-label" for="reg-password">Password</label>
+                  <input type="password" class="input" id="reg-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required oninput="evaluatePasswordStrength(this.value)">
+                  
+                  <!-- Password Strength Meter -->
+                  <div class="password-strength-container">
+                    <div class="password-strength-bar">
+                      <div class="password-strength-fill" id="strength-bar-fill"></div>
+                    </div>
+                    <span class="password-strength-label" id="strength-label">Password strength</span>
+                  </div>
+                  <span class="error-helper-text">Password must be at least 8 characters.</span>
+                </div>
+
+                <div style="display: flex; align-items: flex-start; gap: var(--space-xs); margin-bottom: var(--space-lg);">
+                  <input type="checkbox" id="accept-legal" style="cursor: pointer; margin-top: 4px; accent-color: var(--brand-primary);" required checked>
+                  <label class="text-detail text-muted font-medium" for="accept-legal" style="cursor: pointer; line-height: 1.4; user-select: none;">
+                    I accept the <a href="#" onclick="showScreen('screen-terms')" class="text-gradient">Terms of Service</a> and have read the <a href="#" onclick="showScreen('screen-privacy')" class="text-gradient">Privacy Policy</a>.
+                  </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;" id="reg-submit-btn">
+                  <span>Create Account</span>
+                </button>
+              </form>
+
+              <footer style="margin-top: var(--space-xl); text-align: center;">
+                <p class="text-body-small text-muted">Already have an account? <a href="#" onclick="showScreen('screen-login')" class="text-gradient font-semibold">Sign in</a></p>
+              </footer>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           SCREEN 5: FORGOT PASSWORD SCREEN
+           ============================================== -->
+      <section class="auth-screen" id="screen-forgot">
+        <div class="flex-center" style="flex-grow: 1; background-color: var(--bg-primary);">
+          <div class="auth-form-width p-lg" style="text-align: center;">
+            <div class="card-glow flex-center" style="width: 56px; height: 56px; border-radius: var(--radius-lg); border: 1px solid var(--border-default); background-color: var(--bg-secondary); margin: 0 auto var(--space-lg) auto;">
+              <svg width="24" height="24" fill="none" stroke="var(--brand-primary)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m-5 8a3 3 0 11-6 0 3 3 0 016 0zM12 18a9 9 0 00-9-9"/></svg>
+            </div>
+            
+            <h2 style="margin-bottom: var(--space-xs);" class="text-gradient">Forgot password?</h2>
+            <p class="text-body-small text-muted" style="margin-bottom: var(--space-xl); line-height: 1.6;">No worries, enter your email address and we'll transmit a secure link to reset your account key.</p>
+
+            <form id="forgot-form" onsubmit="event.preventDefault(); handleAuthAction('Recovery link dispatched!', 'screen-reset');" style="text-align: left;">
+              <div class="form-group" id="forgot-email-group">
+                <label class="form-label" for="forgot-email">Email Address</label>
+                <input type="email" class="input" id="forgot-email" placeholder="name@company.com" required value="jaiveer@company.com">
+                <span class="error-helper-text">No account matched with this email address.</span>
+              </div>
+              <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;" id="forgot-submit-btn">
+                <span>Send Reset Link</span>
+              </button>
+            </form>
+
+            <div style="margin-top: var(--space-xl);">
+              <a href="#" onclick="showScreen('screen-login')" class="btn btn-ghost btn-sm" style="gap: var(--space-xs);">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right: 0;"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+                Back to Sign In
+              </a>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           SCREEN 6: OTP VERIFICATION
+           ============================================== -->
+      <section class="auth-screen" id="screen-otp">
+        <div class="flex-center" style="flex-grow: 1; background-color: var(--bg-primary);">
+          <div class="auth-form-width p-lg" style="text-align: center;">
+            <div class="card-glow flex-center" style="width: 56px; height: 56px; border-radius: var(--radius-lg); border: 1px solid var(--border-default); background-color: var(--bg-secondary); margin: 0 auto var(--space-lg) auto;">
+              <svg width="24" height="24" fill="none" stroke="var(--brand-primary)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            </div>
+            
+            <h2 style="margin-bottom: var(--space-xs);" class="text-gradient">Security Verification</h2>
+            <p class="text-body-small text-muted" style="margin-bottom: var(--space-lg); line-height: 1.6;">We have dispatched a 6-digit confirmation code to <span class="font-medium text-gradient">jaiveer@company.com</span>. Code expires in <span class="font-medium font-mono text-gradient" id="otp-timer">05:00</span>.</p>
+
+            <form id="otp-form" onsubmit="event.preventDefault(); handleAuthAction('Verification complete!', 'screen-subscription');">
+              <div class="otp-input-container">
+                <input type="text" class="otp-cell" maxlength="1" pattern="[0-9]" inputmode="numeric" required value="4">
+                <input type="text" class="otp-cell" maxlength="1" pattern="[0-9]" inputmode="numeric" required value="8">
+                <input type="text" class="otp-cell" maxlength="1" pattern="[0-9]" inputmode="numeric" required value="2">
+                <input type="text" class="otp-cell" maxlength="1" pattern="[0-9]" inputmode="numeric" required value="0">
+                <input type="text" class="otp-cell" maxlength="1" pattern="[0-9]" inputmode="numeric" required value="9">
+                <input type="text" class="otp-cell" maxlength="1" pattern="[0-9]" inputmode="numeric" required value="1">
+              </div>
+              <span class="error-helper-text" id="otp-error-helper" style="text-align: center; margin-bottom: var(--space-md);">The security token entered is incorrect or expired.</span>
+              
+              <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;" id="otp-submit-btn">
+                <span>Verify & Proceed</span>
+              </button>
+            </form>
+
+            <div style="margin-top: var(--space-xl);">
+              <p class="text-body-small text-muted">Didn't receive the token? <a href="#" id="resend-otp-btn" class="text-gradient font-semibold" style="pointer-events: none; opacity: 0.5;">Resend Token (in 45s)</a></p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           SCREEN 7: RESET PASSWORD SCREEN
+           ============================================== -->
+      <section class="auth-screen" id="screen-reset">
+        <div class="flex-center" style="flex-grow: 1; background-color: var(--bg-primary);">
+          <div class="auth-form-width p-lg">
+            <div class="card-glow flex-center" style="width: 56px; height: 56px; border-radius: var(--radius-lg); border: 1px solid var(--border-default); background-color: var(--bg-secondary); margin: 0 auto var(--space-lg) auto;">
+              <svg width="24" height="24" fill="none" stroke="var(--brand-primary)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            </div>
+            
+            <h2 style="text-align: center; margin-bottom: var(--space-xs);" class="text-gradient">Reset Account Password</h2>
+            <p class="text-body-small text-muted" style="text-align: center; margin-bottom: var(--space-xl);">Set your new password below. Ensure it conforms to standards.</p>
+
+            <form id="reset-form" onsubmit="event.preventDefault(); handleAuthAction('Password updated!', 'screen-login');">
+              <div class="form-group" id="reset-password-group">
+                <label class="form-label" for="reset-password">New Password</label>
+                <input type="password" class="input" id="reset-password" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required value="VercelLinearStripeApple1!">
+                <span class="error-helper-text">Password does not meet complexity requirements.</span>
+              </div>
+
+              <div class="form-group" id="reset-confirm-group">
+                <label class="form-label" for="reset-confirm">Confirm New Password</label>
+                <input type="password" class="input" id="reset-confirm" placeholder="&bull;&bull;&bull;&bull;&bull;&bull;&bull;&bull;" required value="VercelLinearStripeApple1!">
+                <span class="error-helper-text">Passwords do not match. Please verify.</span>
+              </div>
+
+              <!-- Password Requirements List -->
+              <div class="card elevation-1 p-sm" style="margin-bottom: var(--space-lg);">
+                <span class="text-detail text-muted font-bold" style="text-transform: uppercase;">Password requirements</span>
+                <ul class="pricing-features-list" style="margin-top: var(--space-xs); gap: 4px;">
+                  <li>
+                    <svg width="12" height="12" fill="none" stroke="var(--accent-green)" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    At least 8 characters
+                  </li>
+                  <li>
+                    <svg width="12" height="12" fill="none" stroke="var(--accent-green)" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    One uppercase & one lowercase letter
+                  </li>
+                  <li>
+                    <svg width="12" height="12" fill="none" stroke="var(--accent-green)" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    One numerical digit & special character
+                  </li>
+                </ul>
+              </div>
+
+              <button type="submit" class="btn btn-primary btn-lg" style="width: 100%;" id="reset-submit-btn">
+                <span>Update Password</span>
+              </button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           SCREEN 8: WORKSPACE SELECTION SCREEN
+           ============================================== -->
+      <section class="auth-screen" id="screen-workspace">
+        <div class="flex-center" style="flex-grow: 1; background-color: var(--bg-primary);">
+          <div style="width: 100%; max-width: 540px; padding: var(--space-lg);">
+            <div class="sandbox-brand flex-center" style="margin-bottom: var(--space-lg);">
+              <svg width="24" height="24" viewBox="0 0 32 32" fill="none"><path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3"/><circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/></svg>
+              <span class="text-gradient font-bold" style="font-size: 1.25rem;">Insaas AI</span>
+            </div>
+
+            <h2 style="text-align: center; margin-bottom: var(--space-xxs);">Select Workspace</h2>
+            <p class="text-body-small text-muted" style="text-align: center; margin-bottom: var(--space-xl);">Choose an organization workspace to resume development pipelines.</p>
+
+            <div class="workspace-grid">
+              <div class="workspace-item-card active" onclick="selectWorkspaceCard(this)">
+                <div class="workspace-avatar" style="background-color: var(--accent-blue-bg); color: var(--accent-blue);">D</div>
+                <div style="flex-grow: 1;">
+                  <span class="text-body-small font-bold" style="display: block;">Deepmind Dev</span>
+                  <span class="text-detail text-secondary">256 members &bull; Owner</span>
+                </div>
+                <svg width="16" height="16" fill="none" stroke="var(--brand-primary)" stroke-width="2" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+              </div>
+
+              <div class="workspace-item-card" onclick="selectWorkspaceCard(this)">
+                <div class="workspace-avatar" style="background-color: var(--accent-purple-bg); color: var(--accent-purple);">P</div>
+                <div style="flex-grow: 1;">
+                  <span class="text-body-small font-bold" style="display: block;">Personal Lab</span>
+                  <span class="text-detail text-secondary">1 member &bull; Creator</span>
+                </div>
+              </div>
+
+              <div class="workspace-item-card" onclick="selectWorkspaceCard(this)">
+                <div class="workspace-avatar" style="background-color: var(--accent-green-bg); color: var(--accent-green);">A</div>
+                <div style="flex-grow: 1;">
+                  <span class="text-body-small font-bold" style="display: block;">Antigravity HQ</span>
+                  <span class="text-detail text-secondary">8 members &bull; Developer</span>
+                </div>
+              </div>
+
+              <div class="workspace-item-card" style="border-style: dashed; justify-content: center; align-items: center;" onclick="showScreen('screen-register')">
+                <svg width="16" height="16" fill="none" stroke="var(--text-secondary)" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+                <span class="text-body-small text-secondary font-bold">New Workspace</span>
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-lg" style="width: 100%; margin-top: var(--space-md);" onclick="handleAuthAction('Workspace loaded!', 'screen-success');">
+              Continue to Workspace
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           SCREEN 9: INVITE ACCEPTANCE SCREEN
+           ============================================== -->
+      <section class="auth-screen" id="screen-invite">
+        <div class="flex-center" style="flex-grow: 1; background-color: var(--bg-primary);">
+          <div class="auth-form-width p-lg" style="text-align: center;">
+            <div style="position: relative; display: inline-block; margin-bottom: var(--space-lg);">
+              <div class="workspace-avatar" style="width: 64px; height: 64px; border-radius: var(--radius-xl); background-color: var(--brand-primary-glow); color: var(--brand-primary); font-size: 1.5rem; font-weight: 700; margin: 0 auto;">
+                GD
+              </div>
+              <div style="position: absolute; bottom: -4px; right: -4px; background-color: var(--bg-primary); border-radius: 50%; padding: 3px;">
+                <div style="background-color: var(--accent-green); width: 12px; height: 12px; border-radius: 50%;"></div>
+              </div>
+            </div>
+
+            <h2 style="margin-bottom: var(--space-xs);" class="text-gradient">Team Invitation</h2>
+            <p class="text-body-small text-muted" style="margin-bottom: var(--space-xl); line-height: 1.6;">
+              <span class="font-bold text-primary">Jaiveer Hastar</span> has invited you to join the <span class="font-bold text-primary">Google Deepmind</span> workspace on Insaas.
+            </p>
+
+            <!-- Invitation Card -->
+            <div class="card elevation-1" style="text-align: left; margin-bottom: var(--space-xl); display: flex; flex-direction: column; gap: var(--space-sm);">
+              <div class="flex-between">
+                <span class="text-detail text-secondary font-mono">WORKSPACE CREDENTIALS</span>
+                <span class="badge badge-success">ACTIVE INVITATION</span>
+              </div>
+              <div style="display: flex; flex-direction: column; gap: 4px;">
+                <span class="text-body-small font-bold" style="color: var(--text-primary);">Google Deepmind</span>
+                <span class="text-detail text-secondary">256 team nodes active &bull; insaas.ai/deepmind</span>
+              </div>
+              <div style="border-top: 1px solid var(--border-default); padding-top: var(--space-sm);">
+                <span class="text-detail text-muted font-medium" style="display: block;">Access Privileges:</span>
+                <span class="text-body-small font-medium text-gradient">Member &mdash; Full write permissions to model pipelines</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: var(--space-md);">
+              <button class="btn btn-tertiary btn-lg" style="flex: 1;" onclick="window.showToast('Invitation declined.', 'error')">Decline</button>
+              <button class="btn btn-primary btn-lg" style="flex: 2;" onclick="handleAuthAction('Joined workspace successfully!', 'screen-success');">Accept & Join Workspace</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           SCREEN 10: SUBSCRIPTION SELECTION
+           ============================================= -->
+      <section class="auth-screen" id="screen-subscription">
+        <div class="flex-center" style="flex-grow: 1; background-color: var(--bg-primary); overflow-y: auto;">
+          <div class="subscription-selection-container">
+            <div style="text-align: center;">
+              <h2 class="text-gradient" style="margin-bottom: var(--space-xs);">Model Subscription Tiers</h2>
+              <p class="text-body-small text-muted">Scale your neural pipelines. Save 20% by committing to an annual layout.</p>
+            </div>
+
+            <!-- Billing Toggle Switch -->
+            <div class="pricing-header-pill">
+              <button class="pricing-header-btn active" id="billing-monthly" onclick="toggleBillingPeriod('monthly')">Monthly billing</button>
+              <button class="pricing-header-btn" id="billing-annual" onclick="toggleBillingPeriod('annual')">
+                Annual billing
+                <span class="badge badge-success" style="padding: 1px 6px; font-size: 0.625rem; margin-left: 4px;">-20%</span>
+              </button>
+            </div>
+
+            <!-- Pricing Grid -->
+            <div class="pricing-grid">
+              <!-- Starter Plan -->
+              <div class="pricing-card" onclick="selectPricingCard(this)">
+                <div>
+                  <span class="text-detail text-secondary font-mono" style="text-transform: uppercase;">Starter Tier</span>
+                  <div style="margin-top: var(--space-xs);">
+                    <span class="text-display-xl" style="font-size: 2.25rem;">$0</span>
+                    <span class="text-detail text-secondary font-medium">/ month</span>
+                  </div>
+                  <p class="text-detail text-muted" style="margin-top: var(--space-xs);">Ideal for local pipelines prototyping and testing.</p>
+                </div>
+                
+                <ul class="pricing-features-list">
+                  <li>
+                    <svg width="12" height="12" fill="none" stroke="var(--brand-primary)" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    1,000 monthly requests
+                  </li>
+                  <li>
+                    <svg width="12" height="12" fill="none" stroke="var(--brand-primary)" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    1 active pipeline cluster
+                  </li>
+                  <li>
+                    <svg width="12" height="12" fill="none" stroke="var(--brand-primary)" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    Community slack support
+                  </li>
+                </ul>
+
+                <button class="btn btn-tertiary" style="width: 100%;">Select Starter</button>
+              </div>
+
+              <!-- Growth/Pro Plan -->
+              <div class="pricing-card popular" onclick="selectPricingCard(this)">
+                <div>
+                  <span class="text-detail font-mono" style="color: var(--brand-primary); text-transform: uppercase;">Growth Pro</span>
+                  <div style="margin-top: var(--space-xs);">
+                    <span class="text-display-xl" style="font-size: 2.25rem;" id="pro-price-tag">$49</span>
+                    <span class="text-detail text-secondary font-medium">/ month</span>
+                  </div>
+                  <p class="text-detail text-muted" style="margin-top: var(--space-xs);">Perfect for production software scaling rapidly.</p>
+                </div>
+                
+                <ul class="pricing-features-list">
+                  <li>
+                    <svg width="12" height="12" fill="none" stroke="var(--brand-primary)" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    100,000 requests / month
+                  </li>
+                  <li>
+                    <svg width="12" height="12" fill="none" stroke="var(--brand-primary)" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    10 active clusters on the edge
+                  </li>
+                  <li>
+                    <svg width="12" height="12" fill="none" stroke="var(--brand-primary)" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    Dedicated 24/7 support node
+                  </li>
+                  <li>
+                    <svg width="12" height="12" fill="none" stroke="var(--brand-primary)" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    Custom subdomains (.insaas.ai)
+                  </li>
+                </ul>
+
+                <button class="btn btn-primary" style="width: 100%;">Select Growth Pro</button>
+              </div>
+
+              <!-- Enterprise Plan -->
+              <div class="pricing-card" onclick="selectPricingCard(this)">
+                <div>
+                  <span class="text-detail text-secondary font-mono" style="text-transform: uppercase;">Enterprise scale</span>
+                  <div style="margin-top: var(--space-xs);">
+                    <span class="text-display-xl" style="font-size: 2.25rem;">Custom</span>
+                  </div>
+                  <p class="text-detail text-muted" style="margin-top: var(--space-xs);">Dedicated bare metal servers for extreme scale.</p>
+                </div>
+                
+                <ul class="pricing-features-list">
+                  <li>
+                    <svg width="12" height="12" fill="none" stroke="var(--brand-primary)" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    Unlimited requests SLA
+                  </li>
+                  <li>
+                    <svg width="12" height="12" fill="none" stroke="var(--brand-primary)" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    Dedicated nodes & clusters
+                  </li>
+                  <li>
+                    <svg width="12" height="12" fill="none" stroke="var(--brand-primary)" stroke-width="3" viewBox="0 0 24 24"><path d="M5 13l4 4L19 7"/></svg>
+                    Custom VPC configurations
+                  </li>
+                </ul>
+
+                <button class="btn btn-tertiary" style="width: 100%;">Contact Sales</button>
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-lg" style="align-self: center; min-width: 240px;" onclick="handleAuthAction('Subscription Confirmed!', 'screen-terms')">Confirm Subscription</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           SCREEN 11: TERMS OF SERVICE
+           ============================================= -->
+      <section class="auth-screen" id="screen-terms">
+        <div class="flex-center" style="flex-grow: 1; background-color: var(--bg-primary);">
+          <div class="auth-form-width p-lg">
+            <h2 class="text-gradient" style="margin-bottom: var(--space-xxs);">Terms of Service</h2>
+            <p class="text-body-small text-muted" style="margin-bottom: var(--space-md);">Please review the legal terms governing Insaas AI.</p>
+
+            <div class="legal-scroll-box" id="terms-box" onscroll="handleLegalScroll(this, 'terms-submit')">
+              <p class="font-bold text-primary">1. Agreement to Terms</p>
+              <p>By executing account activation parameters or deploying ML pipelines inside Insaas, you signify legal acceptance of all tokens, usage regulations, and compliance architectures described herein.</p>
+              
+              <p class="font-bold text-primary">2. User Account Security</p>
+              <p>You assume complete responsibility for safeguarding workspace access keys. You must immediately notify telemetry administrators of any unauthorized API accesses or security leaks.</p>
+
+              <p class="font-bold text-primary">3. Compute Usage Restrictions</p>
+              <p>You agree not to deploy models for malicious computational requests, distributed denial of service triggers, or decryption loops exceeding legal parameters.</p>
+
+              <p class="font-bold text-primary">4. Data Ownership & Rights</p>
+              <p>We claim zero ownership over dataset parameters or weights uploaded into your secure edge node. All neural assets remain the sole IP of the creator.</p>
+
+              <p class="font-bold text-primary">5. System Availability SLA</p>
+              <p>We commit to a 99.99% model pipeline availability guarantee for Growth Pro and Enterprise tiers, subject to external cloud provider outages.</p>
+            </div>
+
+            <div style="display: flex; align-items: flex-start; gap: var(--space-xs); margin-bottom: var(--space-lg);">
+              <input type="checkbox" id="agree-terms" style="cursor: pointer; margin-top: 4px; accent-color: var(--brand-primary);" disabled>
+              <label class="text-detail text-muted font-medium" for="agree-terms" id="agree-terms-label" style="opacity: 0.5; line-height: 1.4; user-select: none;">
+                Scroll to the bottom of the document to unlock acceptance checks.
+              </label>
+            </div>
+
+            <button class="btn btn-primary btn-lg" style="width: 100%;" id="terms-submit" disabled onclick="handleAuthAction('Terms Accepted!', 'screen-privacy')">
+              Accept & Proceed
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           SCREEN 12: PRIVACY POLICY
+           ============================================= -->
+      <section class="auth-screen" id="screen-privacy">
+        <div class="flex-center" style="flex-grow: 1; background-color: var(--bg-primary);">
+          <div class="auth-form-width p-lg">
+            <h2 class="text-gradient" style="margin-bottom: var(--space-xxs);">Privacy Policy</h2>
+            <p class="text-body-small text-muted" style="margin-bottom: var(--space-md);">Configure privacy nodes and diagnostics telemetry.</p>
+
+            <div class="legal-scroll-box" id="privacy-box" onscroll="handleLegalScroll(this, 'privacy-submit')">
+              <p class="font-bold text-primary">1. Data Storage & Privacy</p>
+              <p>All training vector databases and model weights are secured using AES-256 protocols at rest and TLS 1.3 key exchanges during operational transitions.</p>
+
+              <p class="font-bold text-primary">2. Telemetry and Analytics</p>
+              <p>To improve cluster processing times, we collect anonymous query latency metrics and model throughput indicators. You can modify functional settings below.</p>
+
+              <p class="font-bold text-primary">3. GDPR Compliance</p>
+              <p>We adhere to strict data residency rules. European Union workspaces are hosted strictly on bare-metal clusters in Frankfurt and Dublin.</p>
+
+              <p class="font-bold text-primary">4. Data Deletion (Right to be Forgotten)</p>
+              <p>Upon organization de-registration, all model weights, database references, and transaction histories are shredded dynamically from edge servers within 72 hours.</p>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: var(--space-xs); margin-bottom: var(--space-lg);">
+              <div style="display: flex; align-items: flex-start; gap: var(--space-xs);">
+                <input type="checkbox" id="telemetry-opt-in" style="cursor: pointer; margin-top: 3px; accent-color: var(--brand-primary);" checked disabled>
+                <label class="text-detail text-muted font-medium" for="telemetry-opt-in" id="telemetry-label" style="opacity: 0.5; user-select: none;">
+                  Allow anonymous latencies diagnostic reports (Recommended).
+                </label>
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-lg" style="width: 100%;" id="privacy-submit" disabled onclick="handleAuthAction('Privacy Saved!', 'screen-success')">
+              Save Preferences & Continue
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           SCREEN 13: SUCCESS SCREEN
+           ============================================= -->
+      <section class="auth-screen" id="screen-success">
+        <div class="flex-center" style="flex-grow: 1; background-color: var(--bg-primary);">
+          <div class="auth-form-width p-lg" style="text-align: center;">
+            
+            <!-- Checkmark Animation SVG -->
+            <svg class="success-checkmark-svg" viewBox="0 0 52 52">
+              <circle class="success-checkmark-circle" cx="26" cy="26" r="25" fill="none"/>
+              <path class="success-checkmark-check" fill="none" d="M14.1 27.2l7.1 7.2 16.7-16.8"/>
+            </svg>
+
+            <h2 style="margin-bottom: var(--space-xs);" class="text-gradient">Workspace Activated!</h2>
+            <p class="text-body-small text-muted" style="margin-bottom: var(--space-xl); line-height: 1.6;">
+              Your secure pipeline environment is configured and active. Let's redirect to your workspace cluster dashboard.
+            </p>
+
+            <!-- Metadata Info Card -->
+            <div class="card elevation-1" style="text-align: left; margin-bottom: var(--space-2xl); display: flex; flex-direction: column; gap: 8px;">
+              <div class="flex-between">
+                <span class="text-detail text-secondary font-mono">WORKSPACE SUMMARY</span>
+                <span class="badge badge-success">ONLINE</span>
+              </div>
+              <div class="flex-between" style="border-bottom: 1px solid var(--border-default); padding-bottom: 8px; margin-top: 4px;">
+                <span class="text-body-small text-muted">Domain</span>
+                <span class="text-body-small font-bold text-gradient">deepmind-dev.insaas.ai</span>
+              </div>
+              <div class="flex-between" style="border-bottom: 1px solid var(--border-default); padding-bottom: 8px;">
+                <span class="text-body-small text-muted">Subscription</span>
+                <span class="badge badge-info">Growth Pro</span>
+              </div>
+              <div class="flex-between">
+                <span class="text-body-small text-muted">Edge Cluster</span>
+                <span class="text-body-small font-medium font-mono">Frankfurt-DE-1</span>
+              </div>
+            </div>
+
+            <button class="btn btn-primary btn-lg" style="width: 100%; gap: var(--space-xs);" onclick="window.showToast('Redirecting to dashboard...', 'info'); setTimeout(() => { window.location.href = 'dashboard.html'; }, 1000);">
+              Launch Dashboard & Workspace
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-right: 0;"><path stroke-linecap="round" stroke-linejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3"/></svg>
+            </button>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- Toast Notification Wrapper -->
+  <div class="toast-container" id="global-toast-container"></div>
+
+  <!-- Interactive JavaScript Logic -->
+  <script>
+    // 1. Core State Handlers
+    let currentTheme = 'light';
+    let currentViewport = 'desktop';
+    let currentUIState = 'normal';
+
+    const viewportFrame = document.getElementById('viewport-frame');
+    const screenSelector = document.getElementById('screen-selector');
+    const splashStatus = document.getElementById('splash-status');
+
+    // 2. Viewport Switcher
+    const viewportBtns = document.querySelectorAll('[data-viewport]');
+    viewportBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        viewportBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const size = btn.getAttribute('data-viewport');
+        viewportFrame.className = `emulator-viewport ${size}`;
+        currentViewport = size;
+      });
+    });
+
+    // 3. Theme Selector
+    const themeBtn = document.getElementById('theme-toggle');
+    themeBtn.addEventListener('click', () => {
+      const isDark = document.body.classList.toggle('dark');
+      currentTheme = isDark ? 'dark' : 'light';
+      themeBtn.innerHTML = isDark ? 
+        `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 5a7 7 0 100 14 7 7 0 000-14z"/></svg> Light Mode` :
+        `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg> Dark Mode`;
+    });
+
+    // 4. UI States Simulator (Normal, Loading/Skeletons, Error validations)
+    const stateNormalBtn = document.getElementById('state-normal');
+    const stateLoadingBtn = document.getElementById('state-loading');
+    const stateErrorBtn = document.getElementById('state-error');
+
+    stateNormalBtn.addEventListener('click', () => toggleUIState('normal'));
+    stateLoadingBtn.addEventListener('click', () => toggleUIState('loading'));
+    stateErrorBtn.addEventListener('click', () => toggleUIState('error'));
+
+    function toggleUIState(state) {
+      currentUIState = state;
+      stateNormalBtn.classList.remove('active');
+      stateLoadingBtn.classList.remove('active');
+      stateErrorBtn.classList.remove('active');
+
+      if (state === 'normal') {
+        stateNormalBtn.classList.add('active');
+        clearStates();
+      } else if (state === 'loading') {
+        stateLoadingBtn.classList.add('active');
+        applyLoadingState();
+      } else if (state === 'error') {
+        stateErrorBtn.classList.add('active');
+        applyErrorState();
+      }
+    }
+
+    function clearStates() {
+      // Restore inputs, remove skeletons, enable buttons
+      document.querySelectorAll('.input').forEach(input => {
+        input.classList.remove('input-error', 'input-success', 'skeleton');
+        input.disabled = false;
+      });
+      document.querySelectorAll('.btn').forEach(btn => {
+        btn.disabled = false;
+        // remove loading spinner if present
+        const spinner = btn.querySelector('.spinner');
+        if (spinner) spinner.remove();
+        const span = btn.querySelector('span');
+        if (span) span.style.display = '';
+      });
+      document.querySelectorAll('.form-group').forEach(grp => grp.classList.remove('error-state-active'));
+      document.querySelectorAll('.skeleton').forEach(el => el.classList.remove('skeleton-pulse-element'));
+      
+      const otpError = document.getElementById('otp-error-helper');
+      if (otpError) otpError.style.display = 'none';
+    }
+
+    function applyLoadingState() {
+      clearStates();
+      // Replace buttons labels with spinners
+      document.querySelectorAll('.btn-primary').forEach(btn => {
+        btn.disabled = true;
+        const span = btn.querySelector('span');
+        if (span) span.style.display = 'none';
+        const spinner = document.createElement('span');
+        spinner.className = 'spinner';
+        btn.appendChild(spinner);
+      });
+      document.querySelectorAll('.input').forEach(input => {
+        input.disabled = true;
+      });
+      window.showToast("Loading states & action blockers simulated.", "info");
+    }
+
+    function applyErrorState() {
+      clearStates();
+      // Add error classes to inputs & show helper texts
+      document.querySelectorAll('.input').forEach(input => {
+        input.classList.add('input-error');
+      });
+      document.querySelectorAll('.form-group').forEach(grp => {
+        grp.classList.add('error-state-active');
+      });
+      
+      // OTP error state
+      const otpError = document.getElementById('otp-error-helper');
+      if (otpError) otpError.style.display = 'block';
+
+      window.showToast("Error validation borders and logs simulated.", "error");
+    }
+
+    // 5. Screen Selector / Navigation Manager
+    screenSelector.addEventListener('change', (e) => {
+      showScreen(e.target.value);
+    });
+
+    function showScreen(screenId) {
+      document.querySelectorAll('.auth-screen').forEach(scr => {
+        scr.classList.remove('active');
+      });
+      const target = document.getElementById(screenId);
+      if (target) {
+        target.classList.add('active');
+        screenSelector.value = screenId;
+        
+        // Reset timers and requirements if loading specific screens
+        if (screenId === 'screen-otp') {
+          startOTPTimer();
+        }
+      }
+    }
+
+    // Initialize default screen
+    showScreen('screen-login');
+
+    // 6. Onboarding Carousel Logic
+    let activeSlide = 1;
+    const totalSlides = 3;
+    
+    function rotateCarousel() {
+      activeSlide = activeSlide < totalSlides ? activeSlide + 1 : 1;
+      showCarouselSlide(activeSlide);
+    }
+    
+    function showCarouselSlide(index) {
+      document.querySelectorAll('.carousel-slide').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.carousel-dot').forEach(d => d.classList.remove('active'));
+      
+      const slide = document.querySelector(`.carousel-slide[data-slide="${index}"]`);
+      const dot = document.querySelector(`.carousel-dot[data-slide-target="${index}"]`);
+      
+      if (slide && dot) {
+        slide.classList.add('active');
+        dot.classList.add('active');
+        activeSlide = index;
+      }
+    }
+
+    document.querySelectorAll('.carousel-dot').forEach(dot => {
+      dot.addEventListener('click', () => {
+        const target = parseInt(dot.getAttribute('data-slide-target'));
+        showCarouselSlide(target);
+      });
+    });
+
+    // Auto rotate onboarding slides
+    setInterval(rotateCarousel, 4000);
+
+    // 7. Password Strength Meter Evaluation
+    function evaluatePasswordStrength(val) {
+      const fill = document.getElementById('strength-bar-fill');
+      const label = document.getElementById('strength-label');
+      
+      if (!val) {
+        fill.style.width = '0%';
+        label.innerText = 'Password strength';
+        return;
+      }
+
+      let strength = 0;
+      if (val.length >= 8) strength++;
+      if (/[A-Z]/.test(val) && /[a-z]/.test(val)) strength++;
+      if (/[0-9]/.test(val) || /[^A-Za-z0-9]/.test(val)) strength++;
+
+      if (strength === 1) {
+        fill.style.width = '33%';
+        fill.style.backgroundColor = 'var(--accent-red)';
+        label.innerHTML = 'Password strength: <span style="color: var(--accent-red)">Weak</span>';
+      } else if (strength === 2) {
+        fill.style.width = '66%';
+        fill.style.backgroundColor = 'var(--accent-orange)';
+        label.innerHTML = 'Password strength: <span style="color: var(--accent-orange)">Medium</span>';
+      } else if (strength === 3) {
+        fill.style.width = '100%';
+        fill.style.backgroundColor = 'var(--accent-green)';
+        label.innerHTML = 'Password strength: <span style="color: var(--accent-green)">Strong</span>';
+      }
+    }
+
+    // 8. OTP Timer Countdown
+    let timerInterval;
+    function startOTPTimer() {
+      clearInterval(timerInterval);
+      let duration = 300; // 5 minutes
+      const display = document.getElementById('otp-timer');
+      const resendBtn = document.getElementById('resend-otp-btn');
+      
+      resendBtn.style.pointerEvents = 'none';
+      resendBtn.style.opacity = '0.5';
+      resendBtn.innerText = 'Resend Token (in 45s)';
+
+      let resendCountdown = 45;
+
+      timerInterval = setInterval(() => {
+        let minutes = parseInt(duration / 60, 10);
+        let seconds = parseInt(duration % 60, 10);
+
+        minutes = minutes < 10 ? "0" + minutes : minutes;
+        seconds = seconds < 10 ? "0" + seconds : seconds;
+
+        display.textContent = minutes + ":" + seconds;
+        
+        if (resendCountdown > 0) {
+          resendCountdown--;
+          resendBtn.innerText = `Resend Token (in ${resendCountdown}s)`;
+        } else {
+          resendBtn.style.pointerEvents = 'auto';
+          resendBtn.style.opacity = '1';
+          resendBtn.innerText = 'Resend Code Now';
+        }
+
+        if (--duration < 0) {
+          clearInterval(timerInterval);
+          display.textContent = "Expired";
+        }
+      }, 1000);
+    }
+
+    // Resend trigger handler
+    document.getElementById('resend-otp-btn').addEventListener('click', (e) => {
+      e.preventDefault();
+      window.showToast("Verification code resent to email.");
+      startOTPTimer();
+    });
+
+    // 9. OTP Cells Auto-advance focus logic
+    const otpCells = document.querySelectorAll('.otp-cell');
+    otpCells.forEach((cell, idx) => {
+      cell.addEventListener('keyup', (e) => {
+        if (e.key >= 0 && e.key <= 9) {
+          if (idx < otpCells.length - 1) otpCells[idx + 1].focus();
+        } else if (e.key === 'Backspace') {
+          if (idx > 0) otpCells[idx - 1].focus();
+        }
+      });
+    });
+
+    // 10. Workspace selection cards toggles
+    function selectWorkspaceCard(card) {
+      document.querySelectorAll('.workspace-item-card').forEach(c => c.classList.remove('active'));
+      // remove existing checks
+      document.querySelectorAll('.workspace-item-card svg').forEach(svg => svg.remove());
+      
+      card.classList.add('active');
+      
+      if (!card.innerText.includes('New Workspace')) {
+        const checkIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        checkIcon.setAttribute('width', '16');
+        checkIcon.setAttribute('height', '16');
+        checkIcon.setAttribute('fill', 'none');
+        checkIcon.setAttribute('stroke', 'var(--brand-primary)');
+        checkIcon.setAttribute('stroke-width', '2');
+        checkIcon.setAttribute('viewBox', '0 0 24 24');
+        checkIcon.innerHTML = `<path d="M5 13l4 4L19 7"/>`;
+        card.appendChild(checkIcon);
+      }
+    }
+
+    // 11. Subscription billing selector toggles
+    function toggleBillingPeriod(period) {
+      const monBtn = document.getElementById('billing-monthly');
+      const annBtn = document.getElementById('billing-annual');
+      const priceTag = document.getElementById('pro-price-tag');
+
+      monBtn.classList.remove('active');
+      annBtn.classList.remove('active');
+
+      if (period === 'monthly') {
+        monBtn.classList.add('active');
+        priceTag.innerText = '$49';
+      } else {
+        annBtn.classList.add('active');
+        priceTag.innerText = '$39';
+      }
+      window.showToast(`Switched billing to ${period} plans.`, 'info');
+    }
+
+    function selectPricingCard(card) {
+      document.querySelectorAll('.pricing-card').forEach(c => c.classList.remove('popular'));
+      card.classList.add('popular');
+    }
+
+    // 12. Legal scrolls acceptance unlocking logic
+    function handleLegalScroll(box, btnId) {
+      const scrollPercent = (box.scrollTop / (box.scrollHeight - box.clientHeight)) * 100;
+      if (scrollPercent > 90) {
+        if (btnId === 'terms-submit') {
+          document.getElementById('agree-terms').disabled = false;
+          document.getElementById('agree-terms-label').style.opacity = '1';
+          document.getElementById('agree-terms-label').innerText = 'I have read and accept the Terms of Service';
+          document.getElementById('terms-submit').disabled = false;
+        } else if (btnId === 'privacy-submit') {
+          document.getElementById('telemetry-opt-in').disabled = false;
+          document.getElementById('telemetry-label').style.opacity = '1';
+          document.getElementById('privacy-submit').disabled = false;
+        }
+      }
+    }
+
+    // 13. Dynamic Toast Emitter
+    window.showToast = function(message, type = 'success') {
+      const container = document.getElementById('global-toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      
+      let icon = '';
+      if (type === 'success') {
+        icon = `<svg width="18" height="18" fill="none" stroke="var(--accent-green)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      } else if (type === 'error') {
+        icon = `<svg width="18" height="18" fill="none" stroke="var(--accent-red)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      } else {
+        icon = `<svg width="18" height="18" fill="none" stroke="var(--accent-blue)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      }
+
+      toast.innerHTML = `
+        ${icon}
+        <span class="text-body-small font-medium">${message}</span>
+        <button style="background:transparent; border:none; margin-left: auto; color: var(--text-secondary); cursor: pointer; font-size: 1.125rem;" onclick="this.parentElement.remove()">&times;</button>
+      `;
+
+      container.appendChild(toast);
+      
+      // Enter animation trigger
+      setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+      }, 50);
+
+      // Automatic cleanup
+      setTimeout(() => {
+        toast.style.transition = 'opacity 500ms, transform 500ms';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(20px)';
+        setTimeout(() => toast.remove(), 500);
+      }, 4000);
+    };
+
+    // 14. Action workflow simulator
+    function handleAuthAction(toastMsg, nextScreen) {
+      if (currentUIState === 'loading') return;
+      
+      if (currentUIState === 'error') {
+        window.showToast("Validation check failed. Please resolve form errors.", "error");
+        return;
+      }
+
+      window.showToast(toastMsg, "success");
+      
+      // Emulate loading transition
+      const activeScreen = document.querySelector('.auth-screen.active');
+      const submitBtn = activeScreen.querySelector('button[type="submit"]');
+      
+      if (submitBtn) {
+        submitBtn.disabled = true;
+        const span = submitBtn.querySelector('span');
+        if (span) span.style.display = 'none';
+        const spinner = document.createElement('span');
+        spinner.className = 'spinner';
+        submitBtn.appendChild(spinner);
+      }
+
+      setTimeout(() => {
+        if (submitBtn) {
+          submitBtn.disabled = false;
+          const spinner = submitBtn.querySelector('.spinner');
+          if (spinner) spinner.remove();
+          const span = submitBtn.querySelector('span');
+          if (span) span.style.display = '';
+        }
+        showScreen(nextScreen);
+      }, 1500);
+    }
+  </script>
+
+  <script src="design-system.js"></script>
+</body>
+</html>

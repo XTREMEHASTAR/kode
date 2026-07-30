@@ -1,0 +1,35 @@
+[
+  {
+    "timestamp": "2026-07-29T15:52:44.835Z",
+    "stageName": "MODEL_REGISTRY_DISCOVERY",
+    "gpuUtilizationPct": 42,
+    "vramUsedMb": 2450,
+    "vramTotalMb": 4096,
+    "cpuUtilizationPct": 18,
+    "ramUsedMb": 15532,
+    "ramTotalMb": 16105,
+    "deviceModel": "NVIDIA GeForce RTX 2050 (4096MB VRAM)"
+  },
+  {
+    "timestamp": "2026-07-29T15:52:44.859Z",
+    "stageName": "4_PARALLEL_PIPELINES",
+    "gpuUtilizationPct": 42,
+    "vramUsedMb": 2450,
+    "vramTotalMb": 4096,
+    "cpuUtilizationPct": 18,
+    "ramUsedMb": 15592,
+    "ramTotalMb": 16105,
+    "deviceModel": "NVIDIA GeForce RTX 2050 (4096MB VRAM)"
+  },
+  {
+    "timestamp": "2026-07-29T15:57:49.295Z",
+    "stageName": "QWEN_REASONING",
+    "gpuUtilizationPct": 42,
+    "vramUsedMb": 2450,
+    "vramTotalMb": 4096,
+    "cpuUtilizationPct": 18,
+    "ramUsedMb": 15207,
+    "ramTotalMb": 16105,
+    "deviceModel": "NVIDIA GeForce RTX 2050 (4096MB VRAM)"
+  }
+]

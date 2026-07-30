@@ -1,0 +1,19 @@
+{
+  "data": {
+    "videos": [
+      {
+        "id": "real_tt_podcast_106",
+        "create_time": 1776220424,
+        "duration": 31,
+        "view_count": 275520,
+        "like_count": 18152,
+        "comment_count": 950,
+        "share_count": 2372
+      }
+    ]
+  },
+  "error": {
+    "code": "ok",
+    "message": ""
+  }
+}

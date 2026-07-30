@@ -1,0 +1,112 @@
+{
+  "workspaces": [
+    {
+      "id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+      "name": "Pulse Energy",
+      "slug": "pulse-energy",
+      "avatar_text": "PE",
+      "avatar_bg": "var(--brand-primary-glow)",
+      "avatar_color": "var(--brand-primary)",
+      "tagline": "Charging clean Gen-Z visual focus states with zero additives.",
+      "prohibited_terms": "tired, old-fashioned, slow, additives"
+    },
+    {
+      "id": "b2c3d4e5-f67a-8b9c-0d1e-2f3a4b5c6d7e",
+      "name": "Retro Denim",
+      "slug": "retro-denim",
+      "avatar_text": "RD",
+      "avatar_bg": "rgba(245, 158, 11, 0.15)",
+      "avatar_color": "var(--accent-orange)",
+      "tagline": "Sleek retro-streetwear visual aesthetics built for long-duration wear.",
+      "prohibited_terms": "hyper-futuristic, synthetic, neon glow, glitch"
+    },
+    {
+      "id": "c3d4e5f6-7a8b-9c0d-1e2f-3a4b5c6d7e8f",
+      "name": "AuraSmart IoT",
+      "slug": "smart-home",
+      "avatar_text": "AS",
+      "avatar_bg": "rgba(16, 185, 129, 0.15)",
+      "avatar_color": "var(--accent-green)",
+      "tagline": "AuraSmart IoT assistant systems integrating seamlessly with family flow.",
+      "prohibited_terms": "cluttered, complex setup, loud sounds, intrusive"
+    }
+  ],
+  "projects": [
+    {
+      "id": "d4e5f67a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
+      "workspace_id": "a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d",
+      "name": "Pulse Energy Campaign 2026",
+      "description": "Visual assets promoting Pulse Energy drinks."
+    }
+  ],
+  "videos": [
+    {
+      "id": "sql5hvv4g",
+      "project_id": "d4e5f67a-8b9c-0d1e-2f3a-4b5c6d7e8f9a",
+      "title": "test_video.mp4",
+      "filename": "1784447333345-test_video.mp4",
+      "storage_path": "/uploads/1784447333345-test_video.mp4",
+      "status": "completed",
+      "score": 69,
+      "transcript": "[Audio Detected] Volume levels: Mean -21.1dB, Max -17.9dB. Speech patterns are consistent with a marketing explanation covering core features, brand assets, and a clear call-to-action.",
+      "caption": "Exploring video optimization with KONTAGI! Verified under 640:360 (Landscape) aspect ratio format. ⚡ #marketing #shorts #video",
+      "tags": [
+        "marketing",
+        "video"
+      ],
+      "poster_url": "/uploads/frames/sql5hvv4g/frame-0.png",
+      "retention_profile": [
+        {
+          "second": 0,
+          "score": 100,
+          "action": "First Frame Engagement"
+        },
+        {
+          "second": 1,
+          "score": 60,
+          "action": "Early Transition State"
+        },
+        {
+          "second": 2,
+          "score": 51,
+          "action": "Core Message Pacing"
+        },
+        {
+          "second": 3,
+          "score": 45,
+          "action": "Retention Hazard Check"
+        },
+        {
+          "second": 4,
+          "score": 34,
+          "action": "Call-To-Action Frame"
+        },
+        {
+          "second": 5,
+          "score": 26,
+          "action": "End Outro Screen"
+        }
+      ],
+      "hook_score": 60,
+      "hook_analysis": "Visual aspect ratio resolved to 640:360 (Landscape). Horizontal layout is less optimal for mobile vertical feeds but works for landscape player placements. Silence duration: 0.0 seconds.",
+      "visual_score": 70,
+      "visual_analysis": "Resolution is 640x360 running at 25 FPS. Visual encoding is clean. Composition check: grid boundaries align with primary visual anchors.",
+      "audio_score": 80,
+      "audio_analysis": "Audio stream found. Volume statistics indicate a mean level of -21.1 dB. Frequencies are within standard voice distribution bounds.",
+      "thumbnail_suggestions": [
+        "Frame 1 (0.0s): First visual frame representing 640:360 (Landscape) layout.",
+        "Frame 2 (1.0s): Core contrast frame for CTR check.",
+        "Frame 3 (2.5s): Main body highlight frame."
+      ],
+      "created_at": "2026-07-19T07:48:53.352Z"
+    }
+  ],
+  "settings": {
+    "theme": "dark",
+    "border_radius": "12",
+    "language": "en",
+    "timezone": "ist",
+    "date_format": "ddmmyyyy",
+    "user_email": "jaiveer@company.com"
+  }
+}

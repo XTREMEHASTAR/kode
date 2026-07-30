@@ -1,0 +1,35 @@
+[
+  {
+    "stage": "MODEL_REGISTRY_DISCOVERY",
+    "endpoint": "http://127.0.0.1:11434/api/tags",
+    "reasoningModel": "qwen2.5:1.5b",
+    "embeddingModel": "nomic-embed-text:latest",
+    "wallClockMs": 5.45
+  },
+  {
+    "stage": "4_PARALLEL_PIPELINES_EXECUTION",
+    "wallClockMs": 14.89,
+    "visualExtracted": true,
+    "speechExtracted": true,
+    "ocrExtracted": true,
+    "audioExtracted": true
+  },
+  {
+    "stage": "NOMIC_EMBED_TEXT",
+    "modelName": "nomic-embed-text:latest",
+    "vectorLength": 768,
+    "wallClockMs": 501.55
+  },
+  {
+    "stage": "QWEN_REASONING_ENGINE",
+    "modelName": "qwen2.5:1.5b",
+    "topic": "Dynamic Visual & Short-Form Content",
+    "wallClockMs": 522.05
+  },
+  {
+    "stage": "PREDICTION_ENGINE",
+    "predictedViews": 101878,
+    "viralityProbability": 0.581,
+    "wallClockMs": 0.09
+  }
+]

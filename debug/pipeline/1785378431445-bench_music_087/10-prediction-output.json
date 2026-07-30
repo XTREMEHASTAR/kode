@@ -1,0 +1,45 @@
+{
+  "predicted_views": 102205,
+  "virality": 0.583,
+  "hook_retention": 1,
+  "completion_rate": 0.361,
+  "confidence_interval": {
+    "lowerBound": 86874,
+    "upperBound": 117536
+  },
+  "every_intermediate_score": {
+    "predictedWatchTimeMs": 1238724600,
+    "predictedLikes": 2101,
+    "predictedComments": 534,
+    "predictedShares": 1490,
+    "predictedSaves": 473,
+    "predictedFollowers": 238,
+    "peakDistributionWave": 3,
+    "retentionCurveSample": [
+      1,
+      0.967,
+      0.935,
+      0.905,
+      0.875
+    ],
+    "explainability": {
+      "topPositiveFactors": [
+        "Opening Hook score (0.581) derived from Content DNA vector signal (0.257).",
+        "Brand Authority (0.85) driving initial Wave 1 distribution."
+      ],
+      "topNegativePenalties": [
+        "Active platform trend competition count: 1."
+      ],
+      "confidenceScore": 0.92,
+      "alternativeOutcomes": {
+        "worstCaseP10": 45992,
+        "baseCaseP50": 102205,
+        "bestCaseP90": 214631
+      },
+      "improvementSuggestions": [
+        "Add visual pattern interrupts in opening 3s to boost scroll-stop probability.",
+        "Optimize caption hashtags for active platform trend clusters."
+      ]
+    }
+  }
+}

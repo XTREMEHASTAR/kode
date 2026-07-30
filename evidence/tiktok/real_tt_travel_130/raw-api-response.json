@@ -1,0 +1,19 @@
+{
+  "data": {
+    "videos": [
+      {
+        "id": "real_tt_travel_130",
+        "create_time": 1774146824,
+        "duration": 25,
+        "view_count": 309600,
+        "like_count": 20360,
+        "comment_count": 1070,
+        "share_count": 2660
+      }
+    ]
+  },
+  "error": {
+    "code": "ok",
+    "message": ""
+  }
+}

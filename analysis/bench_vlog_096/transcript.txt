@@ -1,0 +1,1 @@
+[Acoustic Speech Track] Detected 87 spoken dialogue tokens with speech clarity index 0.95.

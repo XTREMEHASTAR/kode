@@ -1,0 +1,13 @@
+{
+  "assetId": "real_ig_finance_123",
+  "videoPath": "c:/videos/real_ig_finance_123.mp4",
+  "duration": 18,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "bitrate": 4500000,
+  "keyframe_count": 18,
+  "extracted_frame_count": 18,
+  "extracted_audio_samples": 220500,
+  "contentHash": 1148224529
+}

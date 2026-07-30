@@ -1,0 +1,13 @@
+{
+  "assetId": "bench_podcast_011",
+  "videoPath": "c:/videos/benchmark_podcast_1.mp4",
+  "duration": 48,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "bitrate": 4500000,
+  "keyframe_count": 48,
+  "extracted_frame_count": 48,
+  "extracted_audio_samples": 220500,
+  "contentHash": 1620404712
+}

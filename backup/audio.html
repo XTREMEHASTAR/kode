@@ -1,0 +1,1732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — AI Audio Intelligence Dashboard</title>
+  <link rel="stylesheet" href="design-system.css">
+  <style>
+    /* ==========================================================================
+       SANDBOX CORE LAYOUT FRAMEWORK
+       ========================================================================== */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-smooth);
+    }
+
+    .sandbox-header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-xs) var(--space-lg);
+      z-index: 1000;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .sandbox-brand h1 {
+      font-size: 1.125rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .sandbox-brand span {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .sandbox-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-control-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      background-color: var(--bg-secondary);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+    }
+
+    .sandbox-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sandbox-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .sandbox-btn.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sandbox-workspace {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      position: relative;
+    }
+
+    .emulator-viewport {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      transition: width var(--transition-smooth), height var(--transition-smooth), border-radius var(--transition-smooth);
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .emulator-viewport.desktop {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      border: none;
+    }
+
+    .emulator-viewport.tablet {
+      width: 768px;
+      height: 95%;
+      border-radius: var(--radius-lg);
+    }
+
+    .emulator-viewport.mobile {
+      width: 375px;
+      height: 85%;
+      border-radius: var(--radius-2xl);
+    }
+
+    /* ==========================================================================
+       DASHBOARD AND SIDEBAR STRUCTURE
+       ========================================================================== */
+    .dashboard-shell {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .dashboard-sidebar {
+      width: 260px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      transition: transform var(--transition-smooth), width var(--transition-smooth);
+    }
+
+    .sidebar-header {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .sidebar-nav {
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .sidebar-nav-item:hover, .sidebar-nav-item.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .sidebar-nav-item.active {
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .dashboard-main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-primary);
+    }
+
+    .dashboard-header {
+      height: 64px;
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-lg);
+      flex-shrink: 0;
+    }
+
+    .dashboard-search-bar {
+      display: flex;
+      align-items: center;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 6px 12px;
+      gap: var(--space-xs);
+      width: 240px;
+      max-width: 100%;
+    }
+
+    .dashboard-body {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: var(--space-xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    /* Emulator viewports responsive overrides */
+    .emulator-viewport.tablet .dashboard-sidebar {
+      width: 70px;
+    }
+    .emulator-viewport.tablet .sidebar-text-label,
+    .emulator-viewport.tablet .sidebar-footer {
+      display: none;
+    }
+
+    .emulator-viewport.mobile #sidebar-toggle-btn {
+      display: inline-flex !important;
+    }
+    .emulator-viewport.mobile .dashboard-sidebar {
+      display: none;
+    }
+    .emulator-viewport.mobile .dashboard-sidebar.active {
+      display: flex;
+      position: absolute;
+      left: 0;
+      top: 64px;
+      bottom: 0;
+      z-index: 950;
+      height: calc(100% - 64px);
+      width: 240px;
+      box-shadow: var(--shadow-xl);
+      animation: dropdownEnter var(--transition-fast) forwards;
+    }
+
+    /* Skeleton Loading State Sync */
+    .skeleton-view-panel {
+      display: none;
+      flex-direction: column;
+      gap: var(--space-lg);
+      width: 100%;
+    }
+
+    .loading-state-active .skeleton-view-panel {
+      display: flex !important;
+    }
+    .loading-state-active .real-view-panel {
+      display: none !important;
+    }
+
+    .skeleton-pulse {
+      background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--border-default) 50%, var(--bg-secondary) 75%);
+      background-size: 200% 100%;
+      animation: skeletonGlow 1.5s infinite;
+      border-radius: var(--radius-md);
+    }
+
+    @keyframes skeletonGlow {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ==========================================================================
+       AUDIO INTELLIGENCE CUSTOM MODULE STYLES
+       ========================================================================== */
+    .audio-workspace-grid {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: var(--space-lg);
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .audio-workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Waveform Container styling */
+    .waveform-card {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xl);
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      position: relative;
+    }
+
+    .waveform-visual-container {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      height: 180px;
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .waveform-scrubber-bar {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 2px;
+      background-color: var(--brand-primary);
+      z-index: 10;
+      left: 20%; /* Controlled via JS */
+      pointer-events: none;
+      box-shadow: 0 0 8px var(--brand-primary);
+    }
+
+    .waveform-playback-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: var(--space-sm) var(--space-md);
+    }
+
+    .timeline-ticks {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.6875rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      padding: 0 var(--space-xs);
+      margin-top: -6px;
+    }
+
+    /* Audio Layers Timeline list */
+    .audio-timeline-track {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: var(--space-xs) var(--space-sm);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .audio-layer-fill {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      background-color: var(--brand-primary-glow);
+      opacity: 0.3;
+      border-right: 1px solid var(--brand-primary);
+    }
+
+    /* Noise Hotspot Markers on waveform */
+    .noise-marker {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      background-color: var(--accent-orange-bg);
+      border-left: 1px dashed var(--accent-orange);
+      border-right: 1px dashed var(--accent-orange);
+      opacity: 0.25;
+      z-index: 5;
+    }
+
+    .silence-marker {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      background-color: var(--accent-blue-bg);
+      border-left: 1px dashed var(--accent-blue);
+      border-right: 1px dashed var(--accent-blue);
+      opacity: 0.15;
+      z-index: 5;
+    }
+
+    /* Circular progress score */
+    .score-circle-container {
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+
+    .circular-progress-svg {
+      transform: rotate(-90deg);
+      width: 80px;
+      height: 80px;
+    }
+
+    .circular-bg {
+      fill: none;
+      stroke: var(--border-default);
+      stroke-width: 6;
+    }
+
+    .circular-fill {
+      fill: none;
+      stroke: var(--brand-primary);
+      stroke-width: 6;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.8s ease;
+    }
+
+    .circular-score-text {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--font-display);
+      font-size: 1.375rem;
+      font-weight: 800;
+      color: var(--text-primary);
+    }
+
+    /* Recommendation list cards */
+    .rec-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-left: 3px solid var(--brand-primary);
+      border-radius: var(--radius-md);
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: transform var(--transition-fast);
+    }
+
+    .rec-card:hover {
+      transform: translateX(4px);
+    }
+
+    .rec-card.warning {
+      border-left-color: var(--accent-orange);
+    }
+
+    .rec-card.info {
+      border-left-color: var(--accent-blue);
+    }
+
+    /* Event logs lists */
+    .event-log-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-xs) 0;
+      border-bottom: 1px solid var(--border-muted);
+      font-size: 0.8125rem;
+      cursor: pointer;
+      transition: background var(--transition-fast);
+    }
+
+    .event-log-item:hover {
+      background-color: var(--bg-secondary);
+      padding-left: var(--space-xxs);
+      padding-right: var(--space-xxs);
+    }
+
+    .event-log-item:last-child {
+      border-bottom: none;
+    }
+
+    /* Tone / EQ knobs simulated */
+    .knob-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: var(--space-sm);
+      text-align: center;
+    }
+
+    .knob-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .knob-dial {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background-color: var(--bg-secondary);
+      border: 2px solid var(--border-default);
+      position: relative;
+      cursor: pointer;
+      transition: transform var(--transition-smooth);
+    }
+
+    .knob-dial::after {
+      content: '';
+      position: absolute;
+      top: 4px;
+      left: 20px;
+      width: 4px;
+      height: 12px;
+      background-color: var(--brand-primary);
+      border-radius: var(--radius-full);
+    }
+
+    .slider-input {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: var(--radius-full);
+      background: var(--border-default);
+      outline: none;
+      accent-color: var(--brand-primary);
+    }
+
+    /* Toast notification list */
+    .toast-notifications-container {
+      position: fixed;
+      bottom: var(--space-lg);
+      right: var(--space-lg);
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      pointer-events: none;
+    }
+
+    .toast-alert {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-left: 4px solid var(--brand-primary);
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      color: var(--text-primary);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      animation: slideInRight var(--transition-fast) forwards;
+      pointer-events: auto;
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(120%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* History version cards visibility */
+    .history-view-panel {
+      display: none;
+    }
+    .history-state-active .history-view-panel {
+      display: flex !important;
+    }
+
+    .skeleton-grid-layout {
+      display: grid;
+      grid-template-columns: 1.3fr 1fr;
+      gap: var(--space-lg);
+    }
+
+    .emulator-viewport.tablet .audio-workspace-grid,
+    .emulator-viewport.mobile .audio-workspace-grid,
+    .emulator-viewport.tablet .skeleton-grid-layout,
+    .emulator-viewport.mobile .skeleton-grid-layout {
+      grid-template-columns: 1fr;
+    }
+  </style>
+</head>
+<body class="dark">
+
+  <!-- ==============================================
+       1. SANDBOX HEADER CONTROL PANEL
+       ============================================== -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M16 8L25 13V19L16 24L7 19V13L16 8Z" fill="var(--brand-primary)" opacity="0.15"/>
+        <circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/>
+      </svg>
+      <h1>KONTAGI AI Audio Intelligence</h1>
+      <span>Beta</span>
+    </div>
+
+    <div class="sandbox-controls">
+      <!-- Viewport Emulator buttons -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" data-viewport="desktop" title="Desktop emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 21h12m-9-4l-1 4m8-4l1 4"/></svg>
+          Desktop
+        </button>
+        <button class="sandbox-btn" data-viewport="tablet" title="Tablet emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          Tablet
+        </button>
+        <button class="sandbox-btn" data-viewport="mobile" title="Mobile emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
+          Mobile
+        </button>
+      </div>
+
+      <!-- State Modifiers -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" id="state-normal">Normal</button>
+        <button class="sandbox-btn" id="state-loading">Loading State</button>
+        <button class="sandbox-btn" id="state-history">Mix History</button>
+      </div>
+
+      <!-- Theme Mode Toggles -->
+      <button class="btn btn-tertiary btn-sm" id="theme-toggle">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        Dark Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- ==============================================
+       2. MAIN WORKSPACE WITH VIEWPORT SIMULATOR
+       ============================================== -->
+  <main class="sandbox-workspace">
+    <div class="emulator-viewport desktop" id="viewport-frame">
+      
+      <div class="dashboard-shell" id="dashboard-main-shell">
+        
+        <!-- SIDEBAR COMPONENT -->
+        <aside class="dashboard-sidebar">
+          <!-- Header Workspace Selector -->
+          <div class="sidebar-header">
+              <div class="flex-between select-wrapper" style="width: 100%;">
+                <div class="flex-center" style="gap: var(--space-xs); cursor: pointer;">
+                  <div class="workspace-avatar" style="width: 28px; height: 28px; font-size: 0.75rem; background-color: var(--brand-primary-glow); color: var(--brand-primary);">GD</div>
+                  <span class="text-body-small font-bold sidebar-text-label">Deepmind Dev</span>
+                </div>
+                <svg class="sidebar-text-label" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </div>
+
+            <!-- Sidebar Navigations -->
+                        <nav class="sidebar-nav">
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-bottom: 6px; text-transform: uppercase;">Workspace</span>
+              <a class="sidebar-nav-item" href="dashboard.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="sidebar-text-label">Dashboard</span>
+              </a>
+              <a class="sidebar-nav-item" href="projects.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span class="sidebar-text-label">Projects</span>
+              </a>
+              <a class="sidebar-nav-item" href="library.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+                <span class="sidebar-text-label">Creative Library</span>
+              </a>
+              <a class="sidebar-nav-item" href="hooks.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                <span class="sidebar-text-label">Hook Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="retention.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Retention Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="script.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="sidebar-text-label">Script Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="thumbnail.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15l-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Thumbnail Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="caption.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                <span class="sidebar-text-label">Caption Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item active" href="audio.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                <span class="sidebar-text-label">Audio Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="visual.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-.447.894L15 18.5V10zM5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Visual Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="trend.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <span class="sidebar-text-label">Trend Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="audience.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                <span class="sidebar-text-label">Audience Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="upload.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span class="sidebar-text-label">Upload Center</span>
+              </a>
+              <a class="sidebar-nav-item" href="lab.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                <span class="sidebar-text-label">AI Creative Lab</span>
+              </a>
+              <a class="sidebar-nav-item" href="report.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="sidebar-text-label">AI Reports</span>
+              </a>
+              <a class="sidebar-nav-item" href="creators.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Creators</span>
+              </a>
+              <a class="sidebar-nav-item" href="brand.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17V9h3a2 2 0 110 4H9m0 4h3a2 2 0 100-4"/></svg>
+                <span class="sidebar-text-label">Brand Hub</span>
+              </a>
+              <a class="sidebar-nav-item" href="coach.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="sidebar-text-label">AI Coach</span>
+              </a>
+              <a class="sidebar-nav-item" onclick="window.showToast('Loading database insights...', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                <span class="sidebar-text-label">Analytics</span>
+              </a>
+              <a class="sidebar-nav-item" href="client.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Clients</span>
+              </a>
+              <a class="sidebar-nav-item" href="team.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0zm3 10v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg>
+                <span class="sidebar-text-label">Team Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="billing.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span class="sidebar-text-label">Billing</span>
+              </a>
+              <a class="sidebar-nav-item" href="notifications.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="sidebar-text-label">Notifications</span>
+              </a>
+              <a class="sidebar-nav-item" href="settings.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="sidebar-text-label">Settings</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">System</span>
+              <a class="sidebar-nav-item" href="admin.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="sidebar-text-label">Admin Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="mobile.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Mobile App</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">Design</span>
+              <a class="sidebar-nav-item" href="index.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                <span class="sidebar-text-label">Design System</span>
+              </a>
+            </nav>
+          
+          <div class="sidebar-footer">
+            <div class="user-avatar" style="width: 32px; height: 32px; font-size: 0.875rem;">JH</div>
+            <div>
+              <p class="text-body-small font-bold" style="margin: 0; line-height: 1.2;">Jaiveer Hastar</p>
+              <p class="text-detail text-muted" style="margin: 0; line-height: 1.2;">jaiveer@company.com</p>
+            </div>
+          </div>
+        </aside>
+
+        <!-- MAIN CONTENT WORKSPACE -->
+        <main class="dashboard-main">
+          
+          <!-- Top Shell Header -->
+          <div class="dashboard-header">
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <button class="btn btn-secondary btn-icon" id="sidebar-toggle-btn" style="display: none; height: 36px; width: 36px; padding: 0;">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              <h2 class="text-h4 font-display">Audio Intelligence</h2>
+            </div>
+            
+            <div class="flex-center" style="gap: var(--space-md);">
+              <div class="dashboard-search-bar">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" placeholder="Search audio files..." style="background: transparent; border: none; outline: none; width: 100%; font-size: 0.75rem; color: var(--text-primary);">
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="openA_BModal()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"/></svg>
+                Audio A/B Test
+              </button>
+              <button class="btn btn-primary btn-sm" onclick="openExportModal()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Export Audio Mix
+              </button>
+            </div>
+          </div>
+
+          <!-- Main Scrollable Dashboard Body -->
+          <div class="dashboard-body">
+
+            <!-- ================= SKELETON PANEL ================= -->
+            <div class="skeleton-view-panel">
+              <div class="skeleton-grid-layout">
+                <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                  <div class="skeleton-pulse" style="height: 220px;"></div>
+                  <div class="skeleton-pulse" style="height: 180px;"></div>
+                  <div class="skeleton-pulse" style="height: 150px;"></div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                  <div class="skeleton-pulse" style="height: 120px;"></div>
+                  <div class="skeleton-pulse" style="height: 250px;"></div>
+                  <div class="skeleton-pulse" style="height: 180px;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================= REAL CONTENT PANEL ================= -->
+            <div class="real-view-panel audio-workspace-grid">
+              
+              <!-- Left Column: Waveform, Timeline tracks, EQ, Music Mix -->
+              <div style="display: flex; flex-direction: column; gap: var(--space-lg);">
+                
+                <!-- Card: Interactive Waveform & Controls -->
+                <div class="waveform-card">
+                  <div class="flex-between">
+                    <div>
+                      <h3 class="text-body font-bold font-display">Multi-Track Waveform & Pacing</h3>
+                      <p class="text-detail text-muted">Analyzing vocal overlay & background instrumentation dynamics</p>
+                    </div>
+                    <span class="badge badge-success">STEREO MASTER</span>
+                  </div>
+
+                  <!-- Waveform SVG display -->
+                  <div class="waveform-visual-container" id="waveform-main-container">
+                    <!-- Playback scrubber line -->
+                    <div class="waveform-scrubber-bar" id="playback-scrubber"></div>
+                    
+                    <!-- Noise spikes markers overlay -->
+                    <div class="noise-marker" style="left: 20%; width: 5%;" title="Hiss spike detected"></div>
+                    <div class="silence-marker" style="left: 55%; width: 8%;" title="Empty silence (1.8s)"></div>
+                    <div class="noise-marker" style="left: 85%; width: 4%;" title="Microphone click detected"></div>
+
+                    <!-- Waves SVG -->
+                    <svg width="100%" height="100%" viewBox="0 0 600 120" preserveAspectRatio="none" style="display: block;">
+                      <!-- Vocal Speech layer (Indigo gradient) -->
+                      <defs>
+                        <linearGradient id="vocalGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="#818cf8"/>
+                          <stop offset="100%" stop-color="#4f46e5"/>
+                        </linearGradient>
+                        <linearGradient id="musicGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="#c084fc" stop-opacity="0.6"/>
+                          <stop offset="100%" stop-color="#7c3aed" stop-opacity="0.2"/>
+                        </linearGradient>
+                      </defs>
+                      
+                      <!-- Background Music waveform (Slightly transparent behind speech) -->
+                      <path d="M 0 60 Q 15 20 30 60 T 60 60 T 90 60 T 120 60 T 150 60 T 180 60 T 210 60 T 240 60 T 270 60 T 300 60 T 330 60 T 360 60 T 390 60 T 420 60 T 450 60 T 480 60 T 510 60 T 540 60 T 570 60 T 600 60" fill="none" stroke="url(#musicGrad)" stroke-width="24" stroke-linecap="round"/>
+                      
+                      <!-- Voice Speech Waveform (Vibrant front overlay) -->
+                      <path d="M 0 60 
+                               L 10 40 L 20 85 L 30 50 L 40 70 L 50 30 L 60 95 L 70 60 
+                               L 80 50 L 90 75 L 100 40 L 110 80 L 120 20 L 130 100 L 140 55 
+                               L 150 60 L 160 60 L 170 60 L 180 50 L 190 70 L 200 45 L 210 75 
+                               L 220 35 L 230 90 L 240 65 L 250 55 L 260 70 L 270 45 L 280 80
+                               L 290 60 L 300 60 L 310 60 L 320 60 L 330 30 L 340 95 L 350 50
+                               L 360 75 L 370 40 L 380 85 L 390 55 L 400 60 L 410 60 L 420 60
+                               L 430 40 L 440 80 L 450 50 L 460 70 L 470 30 L 480 90 L 490 60
+                               L 500 50 L 510 75 L 520 40 L 530 80 L 540 60 L 550 60 L 560 60
+                               L 570 35 L 580 85 L 590 50 L 600 60" fill="none" stroke="url(#vocalGrad)" stroke-width="4" stroke-linejoin="round" stroke-linecap="round"/>
+                    </svg>
+                  </div>
+
+                  <!-- Timeline Seconds Marks -->
+                  <div class="timeline-ticks">
+                    <span>0:00</span>
+                    <span>0:03</span>
+                    <span>0:06</span>
+                    <span>0:09</span>
+                    <span>0:12</span>
+                    <span>0:15</span>
+                    <span>0:18</span>
+                    <span>0:21</span>
+                    <span>0:24 (Master)</span>
+                  </div>
+
+                  <!-- Waveform Control Strip -->
+                  <div class="waveform-playback-controls">
+                    <div class="flex-center" style="gap: var(--space-sm);">
+                      <!-- Play/Pause Toggle btn -->
+                      <button class="btn btn-primary btn-icon" id="btn-play-toggle" style="width: 36px; height: 36px; padding: 0;" onclick="toggleAudioPlayback()">
+                        <svg id="svg-play-icon" width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                      </button>
+                      <button class="btn btn-secondary btn-icon" style="width: 32px; height: 32px; padding: 0;" onclick="resetAudioTimeline()">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H18"/></svg>
+                      </button>
+                      <div class="text-detail font-mono font-bold" id="playback-timer">0:04.8 / 0:24.0</div>
+                    </div>
+
+                    <!-- Volume & Audio Mix layer togglers -->
+                    <div class="flex-center" style="gap: var(--space-md); flex-grow: 1; max-width: 300px; justify-content: flex-end;">
+                      <div class="flex-center" style="gap: var(--space-xs); width: 100%;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .9-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                        <input type="range" class="slider-input" min="0" max="100" value="80" oninput="changeMasterVolume(this.value)">
+                      </div>
+                      <span class="badge" id="vol-lbl">80%</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Speech Analysis & Voice Clarity Config Card -->
+                <div class="card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-md);">
+                  <div class="flex-between">
+                    <div>
+                      <h4 class="text-body font-bold text-muted" style="text-transform: uppercase;">Speech Diagnostics & Vocal EQ</h4>
+                      <p class="text-detail text-muted">Real-time parameters detailing vocal delivery & tone curves</p>
+                    </div>
+                    <span class="badge badge-success" style="background-color: var(--accent-green-bg); color: var(--accent-green);">Excellent Clarity</span>
+                  </div>
+
+                  <div class="params-row" style="grid-template-columns: 1.2fr 1fr;">
+                    
+                    <!-- Vocal Clarity Progresses -->
+                    <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                      <div>
+                        <div class="flex-between text-detail" style="margin-bottom: 2px;">
+                          <span>Speech Clarity Index</span>
+                          <span class="font-bold text-success">96% (Ultra Crisp)</span>
+                        </div>
+                        <div class="limit-progress-bar">
+                          <div class="limit-progress-fill" style="width: 96%"></div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div class="flex-between text-detail" style="margin-bottom: 2px;">
+                          <span>Cadence & Pacing Rhythm</span>
+                          <span class="font-bold">145 WPM (Moderate)</span>
+                        </div>
+                        <div class="limit-progress-bar">
+                          <div class="limit-progress-fill" style="width: 82%; background-color: var(--brand-primary);"></div>
+                        </div>
+                      </div>
+
+                      <div>
+                        <div class="flex-between text-detail" style="margin-bottom: 2px;">
+                          <span>Loudness Range consistency</span>
+                          <span class="font-bold text-warning">-14.2 LUFS (Peak High)</span>
+                        </div>
+                        <div class="limit-progress-bar">
+                          <div class="limit-progress-fill warning" style="width: 68%"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Simulated Tone / EQ dials -->
+                    <div style="display: flex; flex-direction: column; gap: var(--space-xs); border-left: 1px solid var(--border-default); padding-left: var(--space-md);">
+                      <p class="text-detail font-bold text-muted" style="margin-bottom: 4px;">Dynamic EQ Boosters</p>
+                      <div class="knob-row">
+                        <div class="knob-container">
+                          <div class="knob-dial" id="dial-bass" style="transform: rotate(45deg);" onclick="rotateDial('dial-bass')"></div>
+                          <span class="text-detail text-muted">Bass</span>
+                        </div>
+                        <div class="knob-container">
+                          <div class="knob-dial" id="dial-presence" style="transform: rotate(120deg);" onclick="rotateDial('dial-presence')"></div>
+                          <span class="text-detail text-muted">Presence</span>
+                        </div>
+                        <div class="knob-container">
+                          <div class="knob-dial" id="dial-de-esser" style="transform: rotate(-30deg);" onclick="rotateDial('dial-de-esser')"></div>
+                          <span class="text-detail text-muted">De-esser</span>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- Background Music & Track Matcher -->
+                <div class="card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-sm);">
+                  <div class="flex-between">
+                    <h4 class="text-body-small font-bold text-muted" style="text-transform: uppercase;">Background Music & Track Alignment</h4>
+                    <span class="badge" style="background-color: var(--accent-purple-bg); color: var(--accent-purple);">Match Score: 92%</span>
+                  </div>
+
+                  <div style="display: flex; flex-direction: column; gap: var(--space-sm); background-color: var(--bg-secondary); padding: var(--space-sm); border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+                    <div class="flex-between" style="align-items: center;">
+                      <div class="flex-center" style="gap: var(--space-sm);">
+                        <div class="workspace-avatar" style="width: 36px; height: 36px; border-radius: var(--radius-md); background: linear-gradient(135deg, var(--accent-purple) 0%, var(--brand-primary) 100%);">
+                          <svg width="16" height="16" fill="currentColor" viewBox="0 0 24 24" style="color: var(--text-inverse);"><path d="M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z"/></svg>
+                        </div>
+                        <div>
+                          <p class="text-body-small font-bold" id="current-bgm-title">Lounge Tech Ambient (Aura Mix)</p>
+                          <p class="text-detail text-muted">Key: A Minor &bull; Tempo: 122 BPM &bull; Synth Focus</p>
+                        </div>
+                      </div>
+                      <div style="text-align: right;">
+                        <p class="text-detail font-bold text-muted">Relative Volume</p>
+                        <p class="text-body-small font-bold text-success">-18 dB (Ideal Ducking)</p>
+                      </div>
+                    </div>
+
+                    <!-- Match Recommendations -->
+                    <div style="border-top: 1px solid var(--border-default); padding-top: var(--space-xs); display: flex; flex-direction: column; gap: var(--space-xxs);">
+                      <p class="text-detail font-bold text-muted" style="text-transform: uppercase;">Audio Track Match Options</p>
+                      <div style="display: flex; flex-direction: column; gap: 4px;">
+                        <div class="flex-between text-detail" style="padding: 4px 6px; background-color: var(--bg-primary); border-radius: var(--radius-sm); border: 1px solid var(--border-muted);">
+                          <span>🔥 Hype Build Up (Electronic Beat)</span>
+                          <span style="color: var(--brand-primary); font-weight: bold; cursor: pointer;" onclick="swapBackgroundMusic('Hype Build Up')">Swap (98% Match)</span>
+                        </div>
+                        <div class="flex-between text-detail" style="padding: 4px 6px; background-color: var(--bg-primary); border-radius: var(--radius-sm); border: 1px solid var(--border-muted);">
+                          <span>💻 Minimalist Lo-Fi Workpad</span>
+                          <span style="color: var(--brand-primary); font-weight: bold; cursor: pointer;" onclick="swapBackgroundMusic('Minimalist Lo-Fi')">Swap (85% Match)</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Mix History Cards Panel -->
+                <div class="card history-view-panel" style="padding: var(--space-md);">
+                  <div class="flex-between">
+                    <div>
+                      <h4 class="text-body font-bold font-display">Mix Version History</h4>
+                      <p class="text-detail text-muted">Restore or compare historical mastered audio outputs</p>
+                    </div>
+                    <span class="badge" style="background-color: var(--bg-secondary); border: 1px solid var(--border-default);">3 Versions</span>
+                  </div>
+                  
+                  <div style="display: flex; flex-direction: column; gap: var(--space-sm); margin-top: var(--space-sm);">
+                    <!-- Version 3 (Active) -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-xs); border-radius: var(--radius-md); border: 1px solid var(--brand-primary); background-color: var(--brand-primary-glow);">
+                      <div>
+                        <div class="flex-center" style="gap: var(--space-xs);">
+                          <span class="text-body-small font-bold">Mix V3 (Current Master)</span>
+                          <span class="badge badge-success">Active</span>
+                        </div>
+                        <span class="text-detail text-muted">Mastered by AI &bull; 10 mins ago</span>
+                      </div>
+                      <div class="flex-center" style="gap: var(--space-sm);">
+                        <span class="text-body-small font-bold text-success">88 Score</span>
+                        <button class="btn btn-secondary btn-sm" disabled style="opacity: 0.5;">Active</button>
+                      </div>
+                    </div>
+
+                    <!-- Version 2 -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-xs); border-radius: var(--radius-md); border: 1px solid var(--border-default); background-color: var(--bg-secondary);">
+                      <div>
+                        <div class="flex-center" style="gap: var(--space-xs);">
+                          <span class="text-body-small font-bold">Mix V2 (High Bass Boost)</span>
+                        </div>
+                        <span class="text-detail text-muted">Edited by Jaiveer &bull; 1 hour ago</span>
+                      </div>
+                      <div class="flex-center" style="gap: var(--space-sm);">
+                        <span class="text-body-small font-bold" style="color: var(--brand-primary);">82 Score</span>
+                        <button class="btn btn-secondary btn-sm" onclick="restoreHistoricalMix('V2', 82)">Restore</button>
+                      </div>
+                    </div>
+
+                    <!-- Version 1 -->
+                    <div style="display: flex; align-items: center; justify-content: space-between; padding: var(--space-xs); border-radius: var(--radius-md); border: 1px solid var(--border-default); background-color: var(--bg-secondary);">
+                      <div>
+                        <div class="flex-center" style="gap: var(--space-xs);">
+                          <span class="text-body-small font-bold">Mix V1 (Raw Track Import)</span>
+                        </div>
+                        <span class="text-detail text-muted">Original Import &bull; Yesterday</span>
+                      </div>
+                      <div class="flex-center" style="gap: var(--space-sm);">
+                        <span class="text-body-small font-bold" style="color: var(--accent-red);">72 Score</span>
+                        <button class="btn btn-secondary btn-sm" onclick="restoreHistoricalMix('V1', 72)">Restore</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- Right Column: Scores, Silence/Noise events, recommendations -->
+              <div style="display: flex; flex-direction: column; gap: var(--space-lg);">
+                
+                <!-- Audio Index overall gauge -->
+                <div class="card" style="padding: var(--space-md);">
+                  <div class="flex-between" style="align-items: center;">
+                    <div style="display: flex; flex-direction: column; gap: 4px;">
+                      <h4 class="text-body-small font-bold text-muted" style="text-transform: uppercase;">Audio Quality Index</h4>
+                      <p class="text-h3 font-display font-bold" id="audio-overall-lbl">EXCELLENT</p>
+                      <span class="text-detail text-muted">Clear resonance with optimal voice EQ ducking.</span>
+                    </div>
+                    <div class="score-circle-container">
+                      <svg class="circular-progress-svg">
+                        <circle class="circular-bg" cx="40" cy="40" r="34" />
+                        <circle class="circular-fill" id="score-circle-fill" cx="40" cy="40" r="34" stroke-dasharray="213.6" stroke-dashoffset="25.6" />
+                      </svg>
+                      <div class="circular-score-text" id="score-circle-val">88</div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Noise & Silence Event Timeline list -->
+                <div class="card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-sm);">
+                  <h4 class="text-body-small font-bold text-muted" style="text-transform: uppercase;">Noise & Silence Hotspots</h4>
+                  
+                  <div>
+                    <div class="event-log-item font-bold" style="border-bottom: 2px solid var(--border-default); cursor: default;">
+                      <span>Detected Issue</span>
+                      <span>Timestamp</span>
+                      <span>Action</span>
+                    </div>
+                    <div id="audio-event-rows">
+                      
+                      <div class="event-log-item" id="row-noise-1" onclick="focusTimelineScrubber(20)">
+                        <div class="flex-center" style="gap: 6px;">
+                          <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background-color: var(--accent-orange);"></span>
+                          <span>Hiss / Fan Static Noise</span>
+                        </div>
+                        <span class="font-mono">0:04.8 (0.4s)</span>
+                        <button class="btn btn-secondary btn-sm" style="padding: 2px 8px; font-size: 0.6875rem;" onclick="fixAudioHotspot('row-noise-1', 'Denoised')">Denoise</button>
+                      </div>
+
+                      <div class="event-log-item" id="row-silence-1" onclick="focusTimelineScrubber(55)">
+                        <div class="flex-center" style="gap: 6px;">
+                          <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background-color: var(--accent-blue);"></span>
+                          <span>Awkward Silence</span>
+                        </div>
+                        <span class="font-mono">0:13.2 (1.8s)</span>
+                        <button class="btn btn-secondary btn-sm" style="padding: 2px 8px; font-size: 0.6875rem;" onclick="fixAudioHotspot('row-silence-1', 'Stripped')">Cut Pause</button>
+                      </div>
+
+                      <div class="event-log-item" id="row-noise-2" onclick="focusTimelineScrubber(85)">
+                        <div class="flex-center" style="gap: 6px;">
+                          <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background-color: var(--accent-orange);"></span>
+                          <span>Plosive Pop Spike</span>
+                        </div>
+                        <span class="font-mono">0:20.4 (0.1s)</span>
+                        <button class="btn btn-secondary btn-sm" style="padding: 2px 8px; font-size: 0.6875rem;" onclick="fixAudioHotspot('row-noise-2', 'De-popped')">De-pop</button>
+                      </div>
+
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Speech Vocal Emotion Tracker -->
+                <div class="card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-md);">
+                  <div class="flex-between">
+                    <h4 class="text-body-small font-bold text-muted" style="text-transform: uppercase;">Vocal Emotion Confidence</h4>
+                    <span class="text-detail font-bold" style="color: var(--brand-primary);">Positive Energy</span>
+                  </div>
+
+                  <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                    <div class="voice-trait-row">
+                      <div class="flex-between text-detail">
+                        <span>Warmth & Friendliness</span>
+                        <span class="font-bold">88%</span>
+                      </div>
+                      <div class="voice-progress-track">
+                        <div class="voice-progress-bar" style="width: 88%"></div>
+                      </div>
+                    </div>
+
+                    <div class="voice-trait-row">
+                      <div class="flex-between text-detail">
+                        <span>Professional Authority</span>
+                        <span class="font-bold">75%</span>
+                      </div>
+                      <div class="voice-progress-track">
+                        <div class="voice-progress-bar" style="width: 75%"></div>
+                      </div>
+                    </div>
+
+                    <div class="voice-trait-row">
+                      <div class="flex-between text-detail">
+                        <span>Excitement / Hype Level</span>
+                        <span class="font-bold">94%</span>
+                      </div>
+                      <div class="voice-progress-track">
+                        <div class="voice-progress-bar" style="width: 94%"></div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Audio AI Recommendations Panel -->
+                <div class="card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-sm);">
+                  <h4 class="text-body-small font-bold text-muted" style="text-transform: uppercase;">AI Master Recommendations</h4>
+                  
+                  <div style="display: flex; flex-direction: column; gap: var(--space-xs);" id="audio-recommendations-list">
+                    
+                    <div class="rec-card warning" id="rec-ducking">
+                      <div class="flex-between">
+                        <span class="text-detail font-bold text-warning">Ducking Compression</span>
+                        <span class="badge" style="background-color: var(--accent-orange-bg); color: var(--accent-orange);">High Priority</span>
+                      </div>
+                      <p class="text-detail text-muted">"Music volume spikes close to voice frequency in the first 5 seconds. Reduce track gain during speech by -3.5dB."</p>
+                      <button class="btn btn-secondary btn-sm" style="width: fit-content;" onclick="applyDuckingFix()">Auto-Damp Track</button>
+                    </div>
+
+                    <div class="rec-card info">
+                      <div class="flex-between">
+                        <span class="text-detail font-bold text-info">EQ Room Tuning</span>
+                        <span class="badge" style="background-color: var(--accent-blue-bg); color: var(--accent-blue);">Optional</span>
+                      </div>
+                      <p class="text-detail text-muted">"Apply a high-pass filter below 90Hz to completely wipe out low-end fan static."</p>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+        </main>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==============================================
+       3. MODAL PANELS (A/B COMPARE, EXPORT)
+       ============================================== -->
+  
+  <!-- Audio Comparison Modal -->
+  <div class="modal-overlay" id="ab-modal">
+    <div class="modal-container" style="max-width: 800px; width: 90%;">
+      <div class="modal-header">
+        <h3 class="text-h5 font-display">Audio Mix Comparison</h3>
+        <button class="btn btn-secondary btn-icon" onclick="closeA_BModal()" style="border: none;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      
+      <div class="modal-body">
+        <div class="ab-compare-split">
+          
+          <div class="ab-preview-container">
+            <div class="flex-between">
+              <span class="badge" style="background-color: var(--bg-tertiary); color: var(--text-muted);">Raw Audio Track</span>
+              <span class="text-body-small font-bold" style="color: var(--accent-red);">72 Quality</span>
+            </div>
+            <p class="text-detail text-muted">Vocal speech is clean but background fan noise creates mid-range muddy resonance. Background track is overpowering speech.</p>
+            <div style="border-top: 1px solid var(--border-default); padding-top: var(--space-xs); display: flex; flex-direction: column; gap: 4px;">
+              <div class="flex-between text-detail"><span>Clarity Index</span><span>74%</span></div>
+              <div class="flex-between text-detail"><span>Relative Noise Ratio</span><span>-32 dB (High)</span></div>
+              <div class="flex-between text-detail"><span>Ducking ducks</span><span>None</span></div>
+            </div>
+          </div>
+
+          <div class="ab-preview-container" style="border-color: var(--brand-primary); box-shadow: 0 0 0 2px var(--brand-primary-glow);">
+            <div class="flex-between">
+              <span class="badge badge-success">AI Mastered Audio Mix (Active)</span>
+              <span class="text-body-small font-bold" style="color: var(--accent-green);">88 Quality</span>
+            </div>
+            <p class="text-detail text-muted">Applied de-noising pass, EQ presence enhancer, and background ducking. Dialogue is fully intelligible over instruments.</p>
+            <div style="border-top: 1px solid var(--border-default); padding-top: var(--space-xs); display: flex; flex-direction: column; gap: 4px;">
+              <div class="flex-between text-detail"><span>Clarity Index</span><span>96%</span></div>
+              <div class="flex-between text-detail"><span>Relative Noise Ratio</span><span>-64 dB (Ideal)</span></div>
+              <div class="flex-between text-detail"><span>Ducking ducks</span><span>-18 dB Ducking active</span></div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+      <div class="modal-footer flex-end" style="gap: var(--space-sm);">
+        <button class="btn btn-secondary" onclick="closeA_BModal()">Close Comparison</button>
+        <button class="btn btn-primary" onclick="closeA_BModal()">Use Mastered Mix</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Audio Modal -->
+  <div class="modal-overlay" id="export-modal">
+    <div class="modal-container" style="max-width: 460px; width: 90%;">
+      <div class="modal-header">
+        <h3 class="text-h5 font-display">Export Mastered Audio Assets</h3>
+        <button class="btn btn-secondary btn-icon" onclick="closeExportModal()" style="border: none;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: var(--space-md);">
+        <p class="text-body-small text-muted">Select output parameters and audio files to compile:</p>
+        
+        <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
+          <label class="flex-center" style="gap: var(--space-sm); cursor: pointer; user-select: none;">
+            <input type="checkbox" checked style="width: 16px; height: 16px; accent-color: var(--brand-primary);">
+            <span class="text-body-small">Full Mastered Stereo Mix (.WAV 24-bit)</span>
+          </label>
+          <label class="flex-center" style="gap: var(--space-sm); cursor: pointer; user-select: none;">
+            <input type="checkbox" checked style="width: 16px; height: 16px; accent-color: var(--brand-primary);">
+            <span class="text-body-small">Isolated Speech Vocal stem (.WAV)</span>
+          </label>
+          <label class="flex-center" style="gap: var(--space-sm); cursor: pointer; user-select: none;">
+            <input type="checkbox" style="width: 16px; height: 16px; accent-color: var(--brand-primary);">
+            <span class="text-body-small">Background Instrumental track (.MP3)</span>
+          </label>
+        </div>
+
+        <div id="export-progress-container" style="display: none; flex-direction: column; gap: var(--space-xxs);">
+          <div class="flex-between text-detail">
+            <span id="export-progress-lbl">Re-sampling stems...</span>
+            <span id="export-progress-pct">0%</span>
+          </div>
+          <div style="height: 6px; background-color: var(--border-default); border-radius: var(--radius-full); overflow: hidden;">
+            <div id="export-progress-fill" style="height: 100%; width: 0%; background-color: var(--brand-primary); transition: width 0.1s linear;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer flex-end" style="gap: var(--space-sm);">
+        <button class="btn btn-secondary" onclick="closeExportModal()">Cancel</button>
+        <button class="btn btn-primary" id="btn-start-export" onclick="startExportProcess()">Start Export</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Toast Container -->
+  <div class="toast-notifications-container" id="toast-container"></div>
+
+  <!-- JavaScript Interactive Logic -->
+  <script>
+    let currentVideo = null;
+
+    document.addEventListener("DOMContentLoaded", async () => {
+      if (window.dbClient) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const videoId = urlParams.get('id');
+        const videos = await window.dbClient.getVideos();
+        currentVideo = videos.find(v => v.id == videoId) || videos[0];
+
+        if (currentVideo) {
+          // Set audio score
+          const scoreVal = currentVideo.audio_score || 88;
+          document.getElementById('score-circle-val').innerText = scoreVal;
+          const fill = document.getElementById('score-circle-fill');
+          const offset = 213.6 - (213.6 * scoreVal / 100);
+          fill.style.strokeDashoffset = offset;
+
+          const overallLbl = document.getElementById('audio-overall-lbl');
+          if (scoreVal >= 90) {
+            overallLbl.innerText = 'PRISTINE';
+            fill.style.stroke = 'var(--accent-green)';
+          } else if (scoreVal >= 80) {
+            overallLbl.innerText = 'EXCELLENT';
+            fill.style.stroke = 'var(--brand-primary)';
+          } else {
+            overallLbl.innerText = 'GOOD';
+            fill.style.stroke = 'var(--accent-orange)';
+          }
+
+          // Trigger real audio analysis API call
+          try {
+            const res = await fetch('/api/ai/analyze-audio', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ videoId: currentVideo.id })
+            });
+            const data = await res.json();
+            if (data && data.ai) {
+              updateRecommendationsUI(data.ai);
+            }
+          } catch (e) {
+            console.error("Failed to fetch real-time audio recommendations:", e);
+          }
+        }
+      }
+    });
+
+    function updateRecommendationsUI(ai) {
+      const container = document.getElementById("audio-recommendations-list");
+      if (!container) return;
+
+      container.innerHTML = "";
+
+      if (ai.recommendations && ai.recommendations.length > 0) {
+        ai.recommendations.forEach((rec, idx) => {
+          const isHigh = idx === 0;
+          const card = document.createElement("div");
+          card.className = `rec-card ${isHigh ? 'warning' : 'info'}`;
+          card.id = isHigh ? 'rec-ducking' : `rec-${idx}`;
+          card.innerHTML = `
+            <div class="flex-between">
+              <span class="text-detail font-bold ${isHigh ? 'text-warning' : 'text-info'}">${isHigh ? 'High Priority' : 'Optimization Advice'}</span>
+              <span class="badge" style="background-color: ${isHigh ? 'var(--accent-orange-bg)' : 'var(--accent-blue-bg)'}; color: ${isHigh ? 'var(--accent-orange)' : 'var(--accent-blue)'};">${isHigh ? 'High Priority' : 'Optional'}</span>
+            </div>
+            <p class="text-detail text-muted">"${rec}"</p>
+            ${isHigh ? `<button class="btn btn-secondary btn-sm" style="width: fit-content;" onclick="applyDuckingFix()">Auto-Damp Track</button>` : ''}
+          `;
+          container.appendChild(card);
+        });
+      } else {
+        container.innerHTML = `
+          <div class="p-md text-center text-detail text-muted">No recommendations generated. Audio quality matches all guidelines.</div>
+        `;
+      }
+    }
+
+    // Theme Manager
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.addEventListener('click', () => {
+      if (document.body.classList.contains('dark')) {
+        document.body.classList.remove('dark');
+        document.body.classList.add('light');
+        themeToggle.innerHTML = `
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 5a7 7 0 100 14 7 7 0 000-14z"/></svg>
+          Light Mode
+        `;
+      } else {
+        document.body.classList.remove('light');
+        document.body.classList.add('dark');
+        themeToggle.innerHTML = `
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          Dark Mode
+        `;
+      }
+    });
+
+    // Viewport emulation scaler
+    const viewportFrame = document.getElementById('viewport-frame');
+    const viewportButtons = document.querySelectorAll('[data-viewport]');
+    
+    viewportButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        viewportButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const vp = btn.getAttribute('data-viewport');
+        viewportFrame.className = 'emulator-viewport ' + vp;
+        showToast(`Switched view to ${vp.toUpperCase()} emulation`);
+      });
+    });
+
+    // Mobile Sidebar toggle
+    const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+    const sidebar = document.querySelector('.dashboard-sidebar');
+    if (sidebarToggleBtn) {
+      sidebarToggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('active');
+      });
+    }
+
+    // State Modifiers Simulation
+    const stateNormal = document.getElementById('state-normal');
+    const stateLoading = document.getElementById('state-loading');
+    const stateHistory = document.getElementById('state-history');
+    const dashboardShell = document.getElementById('dashboard-main-shell');
+
+    stateNormal.addEventListener('click', () => {
+      stateNormal.classList.add('active');
+      stateLoading.classList.remove('active');
+      stateHistory.classList.remove('active');
+      dashboardShell.classList.remove('loading-state-active');
+      dashboardShell.classList.remove('history-state-active');
+      showToast('Loaded active audio analytics');
+    });
+
+    stateLoading.addEventListener('click', () => {
+      stateNormal.classList.remove('active');
+      stateLoading.classList.add('active');
+      stateHistory.classList.remove('active');
+      dashboardShell.classList.add('loading-state-active');
+      dashboardShell.classList.remove('history-state-active');
+      
+      // Return to normal automatically
+      setTimeout(() => {
+        stateNormal.click();
+      }, 2000);
+    });
+
+    stateHistory.addEventListener('click', () => {
+      stateNormal.classList.remove('active');
+      stateLoading.classList.remove('active');
+      stateHistory.classList.add('active');
+      dashboardShell.classList.remove('loading-state-active');
+      dashboardShell.classList.add('history-state-active');
+      showToast('Restored previous Mix draft: V3 (Current Master)');
+    });
+
+    async function restoreHistoricalMix(versionName, scoreVal) {
+      // Recalculate score circle
+      document.getElementById('score-circle-val').innerText = scoreVal;
+      const fill = document.getElementById('score-circle-fill');
+      const offset = 213.6 - (213.6 * scoreVal / 100);
+      fill.style.strokeDashoffset = offset;
+      
+      const overallLbl = document.getElementById('audio-overall-lbl');
+      if (scoreVal >= 90) {
+        overallLbl.innerText = 'PRISTINE';
+        fill.style.stroke = 'var(--accent-green)';
+      } else if (scoreVal >= 80) {
+        overallLbl.innerText = 'EXCELLENT';
+        fill.style.stroke = 'var(--brand-primary)';
+      } else {
+        overallLbl.innerText = 'GOOD';
+        fill.style.stroke = 'var(--accent-orange)';
+      }
+
+      if (currentVideo && window.dbClient) {
+        currentVideo.audio_score = scoreVal;
+        await window.dbClient.updateVideo(currentVideo.id, currentVideo);
+      }
+
+      showToast(`Restored previous Mix draft: ${versionName}`);
+    }
+
+    // Audio Playback simulation state
+    let isPlaying = false;
+    let playProgress = 20; // Starts at 20% scrubber mark
+    let playbackInterval;
+
+    function toggleAudioPlayback() {
+      const playBtn = document.getElementById('btn-play-toggle');
+      isPlaying = !isPlaying;
+
+      if (isPlaying) {
+        playBtn.innerHTML = `<svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+        showToast('Playback started');
+        
+        playbackInterval = setInterval(() => {
+          playProgress += 1.5;
+          if (playProgress >= 100) {
+            playProgress = 0;
+          }
+          updatePlaybackUI();
+        }, 100);
+      } else {
+        playBtn.innerHTML = `<svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+        showToast('Playback paused');
+        clearInterval(playbackInterval);
+      }
+    }
+
+    function resetAudioTimeline() {
+      playProgress = 0;
+      updatePlaybackUI();
+      showToast('Reset timeline to 0:00');
+    }
+
+    function updatePlaybackUI() {
+      const scrubber = document.getElementById('playback-scrubber');
+      scrubber.style.left = `${playProgress}%`;
+      
+      // Calculate timer text
+      const totalSec = 24.0;
+      const currentSec = (totalSec * (playProgress / 100)).toFixed(1);
+      document.getElementById('playback-timer').innerText = `0:${currentSec.padStart(4, '0')} / 0:24.0`;
+    }
+
+    function focusTimelineScrubber(pct) {
+      playProgress = pct;
+      updatePlaybackUI();
+      showToast(`Jumped to time marker`);
+    }
+
+    function changeMasterVolume(val) {
+      document.getElementById('vol-lbl').innerText = `${val}%`;
+    }
+
+    function rotateDial(id) {
+      const dial = document.getElementById(id);
+      // Generate a random rotation between -90 and 150 degrees
+      const rot = Math.floor(Math.random() * 240) - 90;
+      dial.style.transform = `rotate(${rot}deg)`;
+      showToast(`Adjusted ${id.replace('dial-', '')} EQ level`);
+      recalculateAudioScore(5);
+    }
+
+    function swapBackgroundMusic(title) {
+      document.getElementById('current-bgm-title').innerText = title;
+      showToast(`Swapped background track to: ${title}`);
+      recalculateAudioScore(3);
+    }
+
+    function fixAudioHotspot(rowId, status) {
+      const row = document.getElementById(rowId);
+      const actionBtn = row.querySelector('button');
+      
+      actionBtn.innerText = status;
+      actionBtn.disabled = true;
+      actionBtn.style.opacity = '0.5';
+      
+      showToast(`Vocal cleanup applied: ${status}`);
+      recalculateAudioScore(4);
+    }
+
+    function applyDuckingFix() {
+      const card = document.getElementById('rec-ducking');
+      if (card) {
+        card.style.opacity = '0.5';
+        const btn = card.querySelector('button');
+        if (btn) {
+          btn.disabled = true;
+          btn.innerText = 'Applied';
+        }
+      }
+      
+      showToast('Applied Ducking correction (-3.5dB gain)');
+      recalculateAudioScore(6);
+    }
+
+    async function recalculateAudioScore(boost) {
+      let currentVal = parseInt(document.getElementById('score-circle-val').innerText);
+      let newVal = Math.min(100, currentVal + boost);
+      
+      document.getElementById('score-circle-val').innerText = newVal;
+      const fill = document.getElementById('score-circle-fill');
+      const offset = 213.6 - (213.6 * newVal / 100);
+      fill.style.strokeDashoffset = offset;
+
+      const overallLbl = document.getElementById('audio-overall-lbl');
+      if (newVal >= 90) {
+        overallLbl.innerText = 'PRISTINE';
+        fill.style.stroke = 'var(--accent-green)';
+      } else {
+        overallLbl.innerText = 'EXCELLENT';
+        fill.style.stroke = 'var(--brand-primary)';
+      }
+
+      if (currentVideo && window.dbClient) {
+        currentVideo.audio_score = newVal;
+        await window.dbClient.updateVideo(currentVideo.id, currentVideo);
+      }
+    }
+
+    // Modal Control logic
+    function openA_BModal() {
+      document.getElementById('ab-modal').classList.add('active');
+    }
+    
+    function closeA_BModal() {
+      document.getElementById('ab-modal').classList.remove('active');
+    }
+
+    function openExportModal() {
+      document.getElementById('export-modal').classList.add('active');
+    }
+
+    function closeExportModal() {
+      document.getElementById('export-modal').classList.remove('active');
+      document.getElementById('export-progress-container').style.display = 'none';
+      document.getElementById('btn-start-export').innerText = 'Start Export';
+      document.getElementById('btn-start-export').disabled = false;
+    }
+
+    function startExportProcess() {
+      const container = document.getElementById('export-progress-container');
+      const fill = document.getElementById('export-progress-fill');
+      const pct = document.getElementById('export-progress-pct');
+      const lbl = document.getElementById('export-progress-lbl');
+      const btn = document.getElementById('btn-start-export');
+
+      container.style.display = 'flex';
+      btn.innerText = 'Exporting...';
+      btn.disabled = true;
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 10;
+        fill.style.width = `${progress}%`;
+        pct.innerText = `${progress}%`;
+        
+        if (progress === 30) {
+          lbl.innerText = 'Rendering isolated stems...';
+        } else if (progress === 70) {
+          lbl.innerText = 'Compiling Wav Master Mix...';
+        } else if (progress >= 100) {
+          clearInterval(interval);
+          closeExportModal();
+          showToast('Mastered audio stems exported successfully!');
+        }
+      }, 150);
+    }
+
+    // Toast Alert Helper
+    function showToast(message) {
+      const container = document.getElementById('toast-container');
+      
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'toast-alert';
+      alertDiv.innerHTML = `
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>${message}</span>
+      `;
+      
+      container.appendChild(alertDiv);
+      
+      // Auto-remove after 3 seconds
+      setTimeout(() => {
+        alertDiv.style.animation = 'slideOutRight 0.2s forwards';
+        setTimeout(() => {
+          alertDiv.remove();
+        }, 200);
+      }, 3000);
+    }
+  </script>
+  <script src="db-client.js"></script>
+  <script src="design-system.js"></script>
+</body>
+</html>

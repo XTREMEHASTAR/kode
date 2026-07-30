@@ -1,0 +1,22 @@
+{
+  "topic": "AI Organic Growth & Social Media Strategy",
+  "niche": "TECH_EDUCATION",
+  "creatorIntent": "AUTHORITY_BUILDING",
+  "audienceIntent": "LEARNING",
+  "hookExplanation": "Pattern interrupt text overlay \"STOP MAKING THIS AI MISTAKE IN 2026\" agitates creator frustration in first 3s.",
+  "emotionalTriggers": [
+    "FOMO",
+    "Frustration with Low Views",
+    "Aspiration"
+  ],
+  "storytellingStructure": "HOOK -> PROBLEM AGITATION -> ACTIONABLE SOLUTION -> CTA",
+  "ctaQuality": 0.94,
+  "strengths": [
+    "High speech clarity (0.98)",
+    "Clear CTA detection",
+    "High 3s hook score (0.96)"
+  ],
+  "weaknesses": [
+    "Requires high niche follower match for Wave 4 virality"
+  ]
+}

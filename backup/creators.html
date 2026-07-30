@@ -1,0 +1,1985 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — Creator & Campaign Suite</title>
+  <link rel="stylesheet" href="design-system.css">
+  <style>
+    /* ==========================================================================
+       SANDBOX CORE LAYOUT FRAMEWORK
+       ========================================================================== */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-smooth);
+    }
+
+    .sandbox-header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-xs) var(--space-lg);
+      z-index: 1000;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .sandbox-brand h1 {
+      font-size: 1.125rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .sandbox-brand span {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .sandbox-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-control-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      background-color: var(--bg-secondary);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+    }
+
+    .sandbox-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sandbox-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .sandbox-btn.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sandbox-workspace {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      position: relative;
+    }
+
+    .emulator-viewport {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      transition: width var(--transition-smooth), height var(--transition-smooth), border-radius var(--transition-smooth);
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .emulator-viewport.desktop {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      border: none;
+    }
+
+    .emulator-viewport.tablet {
+      width: 768px;
+      height: 95%;
+      border-radius: var(--radius-lg);
+    }
+
+    .emulator-viewport.mobile {
+      width: 375px;
+      height: 85%;
+      border-radius: var(--radius-2xl);
+    }
+
+    /* Dashboard Layout */
+    .dashboard-shell {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .dashboard-sidebar {
+      width: 260px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      transition: transform var(--transition-smooth), width var(--transition-smooth);
+    }
+
+    .sidebar-header {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .sidebar-nav {
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .sidebar-nav-item:hover, .sidebar-nav-item.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .sidebar-nav-item.active {
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .dashboard-main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-primary);
+    }
+
+    .dashboard-header {
+      height: 64px;
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-lg);
+      flex-shrink: 0;
+    }
+
+    .dashboard-body {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    /* Sub Navigation Tabs */
+    .subnav-tabs-wrapper {
+      display: flex;
+      border-bottom: 1px solid var(--border-default);
+      padding: 0 var(--space-lg);
+      background-color: var(--bg-secondary);
+      flex-shrink: 0;
+      gap: var(--space-md);
+      overflow-x: auto;
+    }
+
+    .subnav-tab {
+      padding: 16px 4px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .subnav-tab:hover {
+      color: var(--text-primary);
+    }
+
+    .subnav-tab.active {
+      color: var(--brand-primary);
+      border-bottom-color: var(--brand-primary);
+      font-weight: 600;
+    }
+
+    /* ==========================================================================
+       CREATOR MODULE STYLINGS
+       ========================================================================== */
+    .tab-content-panel {
+      display: none;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .tab-content-panel.active {
+      display: block;
+    }
+
+    /* Creator Grid Layout */
+    .creator-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .creator-card {
+      transition: transform var(--transition-fast), border-color var(--transition-fast), box-shadow var(--transition-fast);
+      position: relative;
+      cursor: pointer;
+    }
+
+    .creator-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--brand-primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    .creator-card-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-sm);
+    }
+
+    .creator-avatar-wrapper {
+      position: relative;
+      width: 48px;
+      height: 48px;
+    }
+
+    .creator-avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: var(--radius-full);
+      object-fit: cover;
+      border: 2px solid var(--border-default);
+    }
+
+    .creator-verified-badge {
+      position: absolute;
+      bottom: -2px;
+      right: -2px;
+      background-color: var(--brand-primary);
+      color: var(--text-inverse);
+      width: 16px;
+      height: 16px;
+      border-radius: var(--radius-full);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.625rem;
+      border: 2px solid var(--bg-primary);
+    }
+
+    .creator-stat-row {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px dashed var(--border-default);
+      padding-top: var(--space-xs);
+      margin-top: var(--space-xs);
+    }
+
+    /* List View Styling */
+    .creator-list-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .creator-list-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+      background-color: var(--bg-elevated);
+      transition: all var(--transition-fast);
+    }
+
+    .creator-list-item:hover {
+      border-color: var(--brand-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Profile Split Grid */
+    .profile-layout-grid {
+      display: grid;
+      grid-template-columns: 320px 1fr;
+      gap: var(--space-lg);
+      align-items: start;
+    }
+
+    /* Analytics Chart Dials */
+    .metric-dial-svg {
+      width: 80px;
+      height: 80px;
+      transform: rotate(-90deg);
+    }
+
+    .metric-dial-bg {
+      fill: none;
+      stroke: var(--bg-tertiary);
+      stroke-width: 8;
+    }
+
+    .metric-dial-fill {
+      fill: none;
+      stroke: var(--brand-primary);
+      stroke-width: 8;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.6s ease-in-out;
+    }
+
+    /* SVG Path Sparks */
+    .sparkline-svg {
+      width: 80px;
+      height: 24px;
+      fill: none;
+      stroke: var(--accent-green);
+      stroke-width: 2;
+    }
+
+    /* Audience demographic bars */
+    .demographic-bar-row {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      margin-bottom: var(--space-xs);
+    }
+
+    .demographic-bar-track {
+      flex-grow: 1;
+      height: 8px;
+      background-color: var(--bg-tertiary);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+
+    .demographic-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      border-radius: var(--radius-full);
+    }
+
+    /* AI Match Results */
+    .ai-match-card {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition-smooth);
+    }
+
+    .ai-match-card.rank-1 {
+      border: 2px solid var(--brand-primary);
+      box-shadow: var(--shadow-glow);
+    }
+
+    .ai-match-ribbon {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.6875rem;
+      font-weight: 700;
+      padding: 4px 12px;
+      border-bottom-left-radius: var(--radius-md);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    /* Invite drawer overlay */
+    .drawer-overlay {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(15, 23, 42, 0.5);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: none;
+      justify-content: flex-end;
+    }
+
+    .drawer-overlay.active {
+      display: flex;
+    }
+
+    .drawer-panel {
+      width: 420px;
+      max-width: 100%;
+      background-color: var(--bg-primary);
+      height: 100%;
+      box-shadow: var(--shadow-2xl);
+      border-left: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      animation: drawerSlide 300ms cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes drawerSlide {
+      from { transform: translateX(100%); }
+      to { transform: translateX(0); }
+    }
+
+    .drawer-header {
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .drawer-body {
+      padding: var(--space-lg);
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .drawer-footer {
+      padding: var(--space-md) var(--space-lg);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-sm);
+    }
+
+    /* Dialog Modals */
+    .dialog-overlay {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+    }
+
+    .dialog-overlay.active {
+      display: flex;
+    }
+
+    .dialog-card {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      max-width: 600px;
+      width: 100%;
+      box-shadow: var(--shadow-2xl);
+    }
+
+    /* Tablet Emulator overrides */
+    .emulator-viewport.tablet .dashboard-sidebar { width: 70px; }
+    .emulator-viewport.tablet .sidebar-text-label,
+    .emulator-viewport.tablet .sidebar-footer { display: none; }
+    .emulator-viewport.tablet .profile-layout-grid {
+      grid-template-columns: 1fr;
+    }
+
+    /* Mobile Emulator overrides */
+    .emulator-viewport.mobile #sidebar-toggle-btn { display: inline-flex !important; }
+    .emulator-viewport.mobile .dashboard-sidebar { display: none; }
+    .emulator-viewport.mobile .dashboard-sidebar.active {
+      display: flex;
+      position: absolute;
+      left: 0;
+      top: 64px;
+      bottom: 0;
+      z-index: 950;
+      height: calc(100% - 64px);
+      width: 240px;
+      box-shadow: var(--shadow-xl);
+    }
+    .emulator-viewport.mobile .profile-layout-grid {
+      grid-template-columns: 1fr;
+    }
+    .emulator-viewport.mobile .drawer-panel {
+      width: 100%;
+    }
+  </style>
+</head>
+<body class="dark">
+
+  <!-- ==============================================
+       1. SANDBOX CONTROL HEADER PANEL
+       ============================================== -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M16 8L25 13V19L16 24L7 19V13L16 8Z" fill="var(--brand-primary)" opacity="0.15"/>
+        <circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/>
+      </svg>
+      <h1>KONTAGI Creator Portal</h1>
+      <span class="version-badge" id="sandbox-version-badge" style="background-color: var(--brand-primary-glow); color: var(--brand-primary);">Creator Manager</span>
+    </div>
+
+    <div class="sandbox-controls">
+      <!-- Active Brief Selection -->
+      <div style="display: flex; align-items: center; gap: var(--space-xxs);">
+        <span class="text-detail font-bold text-muted sidebar-text-label">Active Brief:</span>
+        <select class="select select-sm" style="width: 180px;" onchange="switchCampaignBrief(this.value)">
+          <option value="cyber_drink">Cyber Energy Launch Brief</option>
+          <option value="fashion_retro">Retro Denim Autumn 2026</option>
+          <option value="smart_home">AuraSmart Assistant Hub</option>
+        </select>
+      </div>
+
+      <!-- Viewports Emulator -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" data-viewport="desktop">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 21h12m-9-4l-1 4m8-4l1 4"/></svg>
+          Desktop
+        </button>
+        <button class="sandbox-btn" data-viewport="tablet">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          Tablet
+        </button>
+        <button class="sandbox-btn" data-viewport="mobile">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
+          Mobile
+        </button>
+      </div>
+
+      <!-- Theme Switcher -->
+      <button class="btn btn-tertiary btn-sm" id="theme-toggle" style="box-shadow: none;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        Light Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- ==============================================
+       2. WORKSPACE EMULATOR VIEWPORT FRAME
+       ============================================== -->
+  <main class="sandbox-workspace">
+    <div class="emulator-viewport desktop" id="viewport-frame">
+      
+      <div class="dashboard-shell" id="creator-dashboard-shell">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="dashboard-sidebar">
+          <div>
+            <div class="sidebar-header">
+              <div class="flex-between select-wrapper" style="width: 100%;">
+                <div class="flex-center" style="gap: var(--space-xs); cursor: pointer;">
+                  <div class="workspace-avatar" style="width: 28px; height: 28px; font-size: 0.75rem; background-color: var(--brand-primary-glow); color: var(--brand-primary);">GD</div>
+                  <span class="text-body-small font-bold sidebar-text-label">Deepmind Dev</span>
+                </div>
+                <svg class="sidebar-text-label" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </div>
+
+            <!-- Nav Links -->
+                        <nav class="sidebar-nav">
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-bottom: 6px; text-transform: uppercase;">Workspace</span>
+              <a class="sidebar-nav-item" href="dashboard.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="sidebar-text-label">Dashboard</span>
+              </a>
+              <a class="sidebar-nav-item" href="projects.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span class="sidebar-text-label">Projects</span>
+              </a>
+              <a class="sidebar-nav-item" href="library.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+                <span class="sidebar-text-label">Creative Library</span>
+              </a>
+              <a class="sidebar-nav-item" href="hooks.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                <span class="sidebar-text-label">Hook Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="retention.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Retention Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="script.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="sidebar-text-label">Script Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="thumbnail.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15l-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Thumbnail Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="caption.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                <span class="sidebar-text-label">Caption Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="audio.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                <span class="sidebar-text-label">Audio Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="visual.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-.447.894L15 18.5V10zM5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Visual Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="trend.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <span class="sidebar-text-label">Trend Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="upload.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span class="sidebar-text-label">Upload Center</span>
+              </a>
+              <a class="sidebar-nav-item" href="lab.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                <span class="sidebar-text-label">AI Creative Lab</span>
+              </a>
+              <a class="sidebar-nav-item" href="report.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="sidebar-text-label">AI Reports</span>
+              </a>
+              <a class="sidebar-nav-item active" href="creators.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Creators</span>
+              </a>
+              <a class="sidebar-nav-item" href="brand.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17V9h3a2 2 0 110 4H9m0 4h3a2 2 0 100-4"/></svg>
+                <span class="sidebar-text-label">Brand Hub</span>
+              </a>
+              <a class="sidebar-nav-item" href="coach.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="sidebar-text-label">AI Coach</span>
+              </a>
+              <a class="sidebar-nav-item" onclick="window.showToast('Loading database insights...', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                <span class="sidebar-text-label">Analytics</span>
+              </a>
+              <a class="sidebar-nav-item" href="client.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Clients</span>
+              </a>
+              <a class="sidebar-nav-item" href="team.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0zm3 10v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg>
+                <span class="sidebar-text-label">Team Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="billing.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span class="sidebar-text-label">Billing</span>
+              </a>
+              <a class="sidebar-nav-item" href="notifications.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="sidebar-text-label">Notifications</span>
+              </a>
+              <a class="sidebar-nav-item" href="settings.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="sidebar-text-label">Settings</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">System</span>
+              <a class="sidebar-nav-item" href="admin.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="sidebar-text-label">Admin Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="mobile.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Mobile App</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">Design</span>
+              <a class="sidebar-nav-item" href="index.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                <span class="sidebar-text-label">Design System</span>
+              </a>
+            </nav>
+          </div>
+ 
+          <!-- Sidebar Footer User Profile -->
+          <div class="sidebar-footer">
+            <div class="workspace-avatar" style="background-color: var(--accent-purple-bg); color: var(--accent-purple); width: 32px; height: 32px; font-size: 0.875rem;">JH</div>
+            <div style="flex-grow: 1; overflow: hidden;" class="sidebar-text-label">
+              <span class="text-body-small font-bold" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Jaiveer Hastar</span>
+              <span class="text-detail text-secondary" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">jaiveer@company.com</span>
+            </div>
+          </div>
+        </aside>
+ 
+        <!-- MAIN WORKSPACE -->
+        <div class="dashboard-main">
+          <!-- Main Module Header -->
+          <header class="dashboard-header">
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <button class="btn btn-sm btn-tertiary" style="padding: 4px; display: none;" id="sidebar-toggle-btn">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              <h2 class="text-gradient">Creator & Campaign Suite</h2>
+              <span class="badge badge-indigo">98 Active Matches</span>
+            </div>
+            
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <button class="btn btn-sm btn-secondary" onclick="openInviteDrawer('', '')">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-right: 4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                Invite Creator
+              </button>
+            </div>
+          </header>
+
+          <!-- Navigation Sub tabs -->
+          <div class="subnav-tabs-wrapper">
+            <div class="subnav-tab active" data-tab="directory" onclick="switchSubTab('directory')">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+              Creator Directory
+            </div>
+            <div class="subnav-tab" data-tab="profile" onclick="switchSubTab('profile')">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+              Profile & Deep Analytics
+            </div>
+            <div class="subnav-tab" data-tab="match" onclick="switchSubTab('match')">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+              AI Creator Match
+            </div>
+            <div class="subnav-tab" data-tab="contracts" onclick="switchSubTab('contracts')">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+              Contracts & Documents
+            </div>
+            <div class="subnav-tab" data-tab="payments" onclick="switchSubTab('payments')">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+              Payments Ledger
+            </div>
+          </div>
+
+          <!-- Main Scrollable Body Area -->
+          <div class="dashboard-body" style="padding-top: var(--space-md);">
+            
+            <!-- ==============================================
+                 TAB 1: CREATOR DIRECTORY LISTING
+                 ============================================== -->
+            <div id="tab-directory" class="tab-content-panel active">
+              
+              <!-- Toolbar Filter controls -->
+              <div class="card" style="padding: var(--space-sm); margin-bottom: var(--space-md); background-color: var(--bg-secondary);">
+                <div class="flex-between flex-wrap" style="gap: var(--space-sm);">
+                  
+                  <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap; align-items: center;">
+                    <div class="dashboard-search-bar" style="width: 200px;">
+                      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                      <input type="text" id="directory-search-input" placeholder="Search creators..." style="background:transparent; border:none; color:var(--text-primary); font-size:0.75rem; width:100%; outline:none;" oninput="applyDirectoryFilters()">
+                    </div>
+
+                    <select class="select select-sm" id="filter-platform" onchange="applyDirectoryFilters()">
+                      <option value="all">All Platforms</option>
+                      <option value="TikTok">TikTok Only</option>
+                      <option value="Instagram">Instagram Only</option>
+                      <option value="YouTube">YouTube Only</option>
+                    </select>
+
+                    <select class="select select-sm" id="filter-niche" onchange="applyDirectoryFilters()">
+                      <option value="all">All Niches</option>
+                      <option value="Fashion">Fashion & Apparel</option>
+                      <option value="Tech">Tech & Gadgets</option>
+                      <option value="Fitness">Fitness & Wellness</option>
+                      <option value="Lifestyle">Lifestyle & Travel</option>
+                    </select>
+
+                    <select class="select select-sm" id="filter-engagement" onchange="applyDirectoryFilters()">
+                      <option value="all">Any Engagement</option>
+                      <option value="high">&gt; 5.0% Engagement</option>
+                      <option value="ultra">&gt; 7.0% Engagement</option>
+                    </select>
+                  </div>
+
+                  <!-- View toggles (Grid vs List) -->
+                  <div class="sandbox-control-group">
+                    <button class="sandbox-btn active" id="btn-view-grid" onclick="switchDirectoryView('grid')">
+                      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1V5zM14 5a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1V5zM4 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1H5a1 1 0 01-1-1v-4zM14 15a1 1 0 011-1h4a1 1 0 011 1v4a1 1 0 01-1 1h-4a1 1 0 01-1-1v-4z"/></svg>
+                    </button>
+                    <button class="sandbox-btn" id="btn-view-list" onclick="switchDirectoryView('list')">
+                      <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+                    </button>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Grid View panel -->
+              <div id="directory-grid-view" class="creator-grid">
+                <!-- Javascript will render dynamic creator cards -->
+              </div>
+
+              <!-- List View panel -->
+              <div id="directory-list-view" class="creator-list-container" style="display: none;">
+                <!-- Javascript will render dynamic list rows -->
+              </div>
+
+            </div>
+
+            <!-- ==============================================
+                 TAB 2: PROFILE & DEEP ANALYTICS
+                 ============================================== -->
+            <div id="tab-profile" class="tab-content-panel">
+              <div class="profile-layout-grid">
+                
+                <!-- Left profile summary column -->
+                <div class="flex-column" style="gap: var(--space-md);">
+                  <div class="card text-center" style="padding: var(--space-lg); text-align: center;">
+                    <div class="creator-avatar-wrapper" style="width: 96px; height: 96px; margin: 0 auto var(--space-sm) auto;">
+                      <img id="profile-pic" src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" class="creator-avatar" style="border-width: 3px;" alt="Creator">
+                      <div class="creator-verified-badge" style="width: 24px; height: 24px; font-size: 0.75rem; border-width: 3px;">✓</div>
+                    </div>
+
+                    <h3 class="font-bold text-primary" id="profile-name">Aria Vance</h3>
+                    <p class="text-body-small text-secondary" id="profile-handle">@aria_vance</p>
+                    
+                    <div class="flex-center" style="gap: 4px; margin-top: var(--space-xs);">
+                      <span class="badge badge-indigo" id="profile-platform">TikTok</span>
+                      <span class="badge badge-purple" id="profile-niche">Fashion</span>
+                    </div>
+
+                    <p class="text-body-small text-muted" style="margin-top: var(--space-md); line-height: 1.4;" id="profile-bio">
+                      Sleek retro-streetwear visual designer. Creator of dynamic transition sequences and high-contrast color gradings.
+                    </p>
+
+                    <div style="border-top: 1px solid var(--border-default); margin-top: var(--space-md); padding-top: var(--space-md); text-align: left;">
+                      <span class="text-detail font-bold text-muted block" style="text-transform: uppercase;">Creator Meta</span>
+                      <div class="flex-column" style="gap: 6px; margin-top: var(--space-xs);">
+                        <div class="flex-between">
+                          <span class="text-detail text-secondary">Creative Score</span>
+                          <span class="text-detail font-bold text-gradient" id="profile-creative-score">94/100</span>
+                        </div>
+                        <div class="flex-between">
+                          <span class="text-detail text-secondary">Followers</span>
+                          <span class="text-detail font-mono font-bold text-primary" id="profile-followers">840K</span>
+                        </div>
+                        <div class="flex-between">
+                          <span class="text-detail text-secondary">Engagement Rate</span>
+                          <span class="text-detail font-mono font-bold text-primary" id="profile-engagement-rate">6.8%</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="flex-column" style="gap: var(--space-xs); margin-top: var(--space-lg);">
+                      <button class="btn btn-primary btn-sm" style="width: 100%;" onclick="openInviteDrawerFromProfile()">Send Campaign Invite</button>
+                      <button class="btn btn-secondary btn-sm" style="width: 100%;" onclick="triggerProfileChat()">Ask AI Coach About Aria</button>
+                    </div>
+                  </div>
+
+                  <!-- Reviews & Ratings -->
+                  <div class="card" style="padding: var(--space-md);">
+                    <div class="flex-between" style="margin-bottom: var(--space-xs);">
+                      <span class="text-detail font-bold text-muted" style="text-transform: uppercase;">Campaign Feedback</span>
+                      <div class="flex-center" style="color: var(--accent-orange);">
+                        ★ <span class="font-bold text-primary" style="margin-left: 2px;">4.9</span> <span class="text-secondary" style="font-size:0.6875rem;">/5.0</span>
+                      </div>
+                    </div>
+
+                    <div class="flex-column" style="gap: var(--space-sm); margin-top: var(--space-sm);" id="profile-reviews-list">
+                      <!-- Reviews will load dynamically -->
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Middle/Right Analytics column -->
+                <div class="flex-column" style="gap: var(--space-lg);">
+                  
+                  <!-- Performance Metrics Grid -->
+                  <div class="grid-12" style="gap: var(--space-md);">
+                    <div class="col-span-4 card" style="padding: var(--space-md);">
+                      <span class="text-detail font-bold text-secondary block">Campaign Reach</span>
+                      <div class="flex-between" style="align-items: flex-end; margin-top: 4px;">
+                        <h3 class="font-display font-bold text-primary" id="profile-reach">1.2M</h3>
+                        <span class="text-detail text-success font-mono font-bold">+12% vs last brief</span>
+                      </div>
+                    </div>
+                    <div class="col-span-4 card" style="padding: var(--space-md);">
+                      <span class="text-detail font-bold text-secondary block">Impressions Count</span>
+                      <div class="flex-between" style="align-items: flex-end; margin-top: 4px;">
+                        <h3 class="font-display font-bold text-primary" id="profile-impressions">3.8M</h3>
+                        <svg class="sparkline-svg" viewBox="0 0 100 30">
+                          <path d="M0,25 Q15,10 30,18 T60,5 T90,12 L100,8" />
+                        </svg>
+                      </div>
+                    </div>
+                    <div class="col-span-4 card" style="padding: var(--space-md);">
+                      <span class="text-detail font-bold text-secondary block">Conversion Rate</span>
+                      <div class="flex-between" style="align-items: flex-end; margin-top: 4px;">
+                        <h3 class="font-display font-bold text-primary" id="profile-conversion">3.24%</h3>
+                        <span class="text-detail text-success font-mono font-bold">+0.4% CTR</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Audience & Demographics Card -->
+                  <div class="grid-12" style="gap: var(--space-lg);">
+                    
+                    <!-- Demographic distributions -->
+                    <div class="col-span-7 card" style="padding: var(--space-md);">
+                      <h4 class="font-bold text-primary" style="margin-bottom: var(--space-md);">Audience Demographics</h4>
+                      
+                      <div class="flex-column" style="gap: var(--space-sm);">
+                        <div>
+                          <div class="flex-between text-detail font-bold text-secondary" style="margin-bottom: 2px;">
+                            <span>Age 18-24 (Gen-Z Core)</span>
+                            <span class="text-primary" id="demographic-age-1">54%</span>
+                          </div>
+                          <div class="demographic-bar-row">
+                            <div class="demographic-bar-track"><div class="demographic-bar-fill" id="demographic-fill-1" style="width: 54%;"></div></div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div class="flex-between text-detail font-bold text-secondary" style="margin-bottom: 2px;">
+                            <span>Age 25-34 (Millennials)</span>
+                            <span class="text-primary" id="demographic-age-2">32%</span>
+                          </div>
+                          <div class="demographic-bar-row">
+                            <div class="demographic-bar-track"><div class="demographic-bar-fill" id="demographic-fill-2" style="width: 32%;"></div></div>
+                          </div>
+                        </div>
+
+                        <div>
+                          <div class="flex-between text-detail font-bold text-secondary" style="margin-bottom: 2px;">
+                            <span>Other age demographics</span>
+                            <span class="text-primary" id="demographic-age-3">14%</span>
+                          </div>
+                          <div class="demographic-bar-row">
+                            <div class="demographic-bar-track"><div class="demographic-bar-fill" id="demographic-fill-3" style="width: 14%;"></div></div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div style="border-top: 1px solid var(--border-default); margin-top: var(--space-md); padding-top: var(--space-md);">
+                        <h5 class="text-detail font-bold text-muted block" style="text-transform: uppercase; margin-bottom: var(--space-xs);">Gender Splits</h5>
+                        <div class="flex-between">
+                          <div class="flex-center" style="gap: var(--space-xs);">
+                            <span style="width:10px; height:10px; border-radius:50%; background-color: var(--brand-primary);"></span>
+                            <span class="text-detail text-secondary">Female: <strong class="text-primary" id="gender-split-f">68%</strong></span>
+                          </div>
+                          <div class="flex-center" style="gap: var(--space-xs);">
+                            <span style="width:10px; height:10px; border-radius:50%; background-color: var(--accent-purple);"></span>
+                            <span class="text-detail text-secondary">Male: <strong class="text-primary" id="gender-split-m">32%</strong></span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Geographic splits & sentiment metrics -->
+                    <div class="col-span-5 card" style="padding: var(--space-md);">
+                      <h4 class="font-bold text-primary" style="margin-bottom: var(--space-md);">Top Geos & Sentiment</h4>
+                      
+                      <div class="flex-column" style="gap: var(--space-xs);">
+                        <div class="flex-between">
+                          <span class="text-detail text-secondary">1. United States</span>
+                          <span class="text-detail font-mono font-bold text-primary" id="geo-1">45%</span>
+                        </div>
+                        <div class="flex-between">
+                          <span class="text-detail text-secondary">2. United Kingdom</span>
+                          <span class="text-detail font-mono font-bold text-primary" id="geo-2">18%</span>
+                        </div>
+                        <div class="flex-between">
+                          <span class="text-detail text-secondary">3. Canada</span>
+                          <span class="text-detail font-mono font-bold text-primary" id="geo-3">12%</span>
+                        </div>
+                        <div class="flex-between">
+                          <span class="text-detail text-secondary">4. Germany</span>
+                          <span class="text-detail font-mono font-bold text-primary" id="geo-4">8%</span>
+                        </div>
+                      </div>
+
+                      <div style="border-top: 1px dashed var(--border-default); margin-top: var(--space-md); padding-top: var(--space-md);">
+                        <span class="text-detail font-bold text-secondary block" style="margin-bottom: var(--space-xxs);">Audience Engagement Sentiment</span>
+                        <div class="flex-between" style="align-items: center;">
+                          <div class="metric-dial-wrapper">
+                            <svg class="metric-dial-svg">
+                              <circle class="metric-dial-bg" cx="40" cy="40" r="32"/>
+                              <circle class="metric-dial-fill" id="sentiment-dial" stroke-dasharray="201" stroke-dashoffset="20.1" cx="40" cy="40" r="32"/>
+                            </svg>
+                          </div>
+                          <div class="flex-column" style="gap: 2px;">
+                            <span class="text-detail text-success font-bold" id="sentiment-pos">90% Positive</span>
+                            <span class="text-detail text-secondary" id="sentiment-neu">7% Neutral</span>
+                            <span class="text-detail text-error" id="sentiment-neg">3% Negative</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+
+                  <!-- Past Campaigns Timeline -->
+                  <div class="card" style="padding: var(--space-md);">
+                    <h4 class="font-bold text-primary" style="margin-bottom: var(--space-sm);">Past Collaboration History</h4>
+                    <div class="table-container">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Campaign Name</th>
+                            <th>ROI Multiplier</th>
+                            <th>Total Views</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody id="profile-campaigns-table">
+                          <!-- Campaigns will render dynamically -->
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 TAB 3: AI CREATOR MATCH (RECOMMENDATIONS)
+                 ============================================== -->
+            <div id="tab-match" class="tab-content-panel">
+              <div class="card" style="padding: var(--space-lg); margin-bottom: var(--space-lg); background: linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-tertiary) 100%); border: 1px solid var(--border-default);">
+                <div class="grid-12" style="gap: var(--space-lg); align-items: center;">
+                  <div class="col-span-8">
+                    <span class="badge badge-purple" style="margin-bottom: var(--space-xxs);">Flagship Match Engine v2.0</span>
+                    <h3 class="font-display font-bold text-gradient" style="margin-bottom: var(--space-xs);">Match Best Creators to Campaign Brief</h3>
+                    <p class="text-body-small text-muted" style="line-height: 1.5;">
+                      Upload your campaign visual assets or insert brief guidelines. Our match engine automatically indexes demographic overlaps, visual contrast compatibility, and past audio ROI histories to evaluate the top candidates.
+                    </p>
+                  </div>
+                  <div class="col-span-4" style="text-align: right;">
+                    <button class="btn btn-primary" id="btn-run-match" onclick="runAiMatching()">Run AI Matching Engine</button>
+                  </div>
+                </div>
+
+                <!-- Live scan animation row -->
+                <div id="match-scanning-row" style="display: none; margin-top: var(--space-lg);">
+                  <div class="flex-between text-detail font-bold text-primary" style="margin-bottom: var(--space-xxs);">
+                    <span>Analyzing target demographic distributions against 10,000+ creator profiles...</span>
+                    <span id="scan-progress-label">0%</span>
+                  </div>
+                  <div style="height: 6px; background-color: var(--bg-tertiary); border-radius: var(--radius-full); overflow: hidden; position: relative;">
+                    <div id="scan-progress-bar" style="height: 100%; width: 0%; background: linear-gradient(90deg, var(--brand-primary) 0%, var(--accent-purple) 100%); transition: width 150ms linear;"></div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Recommendation cards results -->
+              <div class="flex-column" style="gap: var(--space-md); display: none;" id="match-results-container">
+                <h4 class="font-bold text-primary">Top Creator Matches for: <strong class="text-gradient" id="match-campaign-label">Cyber Energy Launch Brief</strong></h4>
+                
+                <div class="ai-match-card rank-1">
+                  <div class="ai-match-ribbon">98% Fit</div>
+                  <div class="grid-12" style="gap: var(--space-md); align-items: center;">
+                    <div class="col-span-3 flex-center" style="gap: var(--space-sm); justify-content: flex-start;">
+                      <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80" class="creator-avatar" style="width: 54px; height: 54px;" alt="Aria Vance">
+                      <div>
+                        <span class="font-bold text-primary block">Aria Vance</span>
+                        <span class="text-detail text-secondary">@aria_vance (840K)</span>
+                      </div>
+                    </div>
+                    
+                    <div class="col-span-6">
+                      <span class="text-detail font-bold text-muted block" style="text-transform: uppercase; margin-bottom: 4px;">Why it matches</span>
+                      <ul class="text-body-small text-muted" style="padding-left: 14px; line-height: 1.4;">
+                        <li>Audience demographic overlap of 92% with target Gen-Z profile.</li>
+                        <li>High contrast aesthetic style fits the visual branding parameters of the Neon Drink container.</li>
+                        <li>Past video click-through-rates average 30% higher than baseline benchmarks.</li>
+                      </ul>
+                    </div>
+
+                    <div class="col-span-3" style="text-align: right; display: flex; flex-direction: column; gap: var(--space-xs);">
+                      <button class="btn btn-primary btn-sm" onclick="openInviteDrawer('Aria Vance', 'Cyber Energy Launch Brief')">Initiate Contract</button>
+                      <button class="btn btn-secondary btn-sm" onclick="viewMatchedProfile('Aria Vance')">View Performance</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="ai-match-card">
+                  <div class="ai-match-ribbon" style="background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-default);">91% Fit</div>
+                  <div class="grid-12" style="gap: var(--space-md); align-items: center;">
+                    <div class="col-span-3 flex-center" style="gap: var(--space-sm); justify-content: flex-start;">
+                      <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80" class="creator-avatar" style="width: 54px; height: 54px;" alt="Marcus Thorne">
+                      <div>
+                        <span class="font-bold text-primary block">Marcus Thorne</span>
+                        <span class="text-detail text-secondary">@marcus_t_creative (520K)</span>
+                      </div>
+                    </div>
+                    
+                    <div class="col-span-6">
+                      <span class="text-detail font-bold text-muted block" style="text-transform: uppercase; margin-bottom: 4px;">Why it matches</span>
+                      <ul class="text-body-small text-muted" style="padding-left: 14px; line-height: 1.4;">
+                        <li>Strong alignment with energetic background sound selections (top EDM tracks).</li>
+                        <li>High retention score (avg. 74% retention to CTA) on TikTok ads.</li>
+                      </ul>
+                    </div>
+
+                    <div class="col-span-3" style="text-align: right; display: flex; flex-direction: column; gap: var(--space-xs);">
+                      <button class="btn btn-secondary btn-sm" onclick="openInviteDrawer('Marcus Thorne', 'Cyber Energy Launch Brief')">Initiate Contract</button>
+                      <button class="btn btn-secondary btn-sm" onclick="viewMatchedProfile('Marcus Thorne')">View Performance</button>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="ai-match-card">
+                  <div class="ai-match-ribbon" style="background: var(--bg-tertiary); color: var(--text-primary); border: 1px solid var(--border-default);">87% Fit</div>
+                  <div class="grid-12" style="gap: var(--space-md); align-items: center;">
+                    <div class="col-span-3 flex-center" style="gap: var(--space-sm); justify-content: flex-start;">
+                      <img src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80" class="creator-avatar" style="width: 54px; height: 54px;" alt="Elena Rostova">
+                      <div>
+                        <span class="font-bold text-primary block">Elena Rostova</span>
+                        <span class="text-detail text-secondary">@elena_rostova (980K)</span>
+                      </div>
+                    </div>
+                    
+                    <div class="col-span-6">
+                      <span class="text-detail font-bold text-muted block" style="text-transform: uppercase; margin-bottom: 4px;">Why it matches</span>
+                      <ul class="text-body-small text-muted" style="padding-left: 14px; line-height: 1.4;">
+                        <li>Broad reach segment. Ideal match if brand exposure is prioritized over specific conversion targets.</li>
+                        <li>High-quality comments and highly verified audience tags.</li>
+                      </ul>
+                    </div>
+
+                    <div class="col-span-3" style="text-align: right; display: flex; flex-direction: column; gap: var(--space-xs);">
+                      <button class="btn btn-secondary btn-sm" onclick="openInviteDrawer('Elena Rostova', 'Cyber Energy Launch Brief')">Initiate Contract</button>
+                      <button class="btn btn-secondary btn-sm" onclick="viewMatchedProfile('Elena Rostova')">View Performance</button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- ==============================================
+                 TAB 4: CONTRACTS & DOCUMENTS
+                 ============================================== -->
+            <div id="tab-contracts" class="tab-content-panel">
+              <div class="grid-12" style="gap: var(--space-lg); align-items: start;">
+                
+                <!-- Documents section -->
+                <div class="col-span-4 flex-column" style="gap: var(--space-md);">
+                  <div class="card" style="padding: var(--space-md);">
+                    <h4 class="font-bold text-primary" style="margin-bottom: var(--space-xs);">Document Vault</h4>
+                    <p class="text-detail text-secondary" style="margin-bottom: var(--space-md);">Review required tax documents and business identity declarations.</p>
+                    
+                    <div class="flex-column" style="gap: var(--space-sm);">
+                      <div class="card" style="padding: var(--space-sm); background-color: var(--bg-secondary);">
+                        <div class="flex-between">
+                          <span class="text-body-small font-bold text-primary">W-9 Form (US Tax)</span>
+                          <span class="badge badge-success">Approved</span>
+                        </div>
+                        <span class="text-detail text-secondary block" style="margin-top: 2px;">Last updated: Jan 12, 2026</span>
+                      </div>
+
+                      <div class="card" style="padding: var(--space-sm); background-color: var(--bg-secondary);">
+                        <div class="flex-between">
+                          <span class="text-body-small font-bold text-primary">Identity Check</span>
+                          <span class="badge badge-success">Verified</span>
+                        </div>
+                        <span class="text-detail text-secondary block" style="margin-top: 2px;">Stripe Identity matching OK</span>
+                      </div>
+
+                      <div class="card" style="padding: var(--space-sm); background-color: var(--bg-secondary); opacity: 0.7;">
+                        <div class="flex-between">
+                          <span class="text-body-small font-bold text-primary">Campaign NDA</span>
+                          <span class="badge badge-indigo">Optional</span>
+                        </div>
+                        <span class="text-detail text-secondary block" style="margin-top: 2px;">Pending upload if required</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Contracts List section -->
+                <div class="col-span-8 card" style="padding: var(--space-md);">
+                  <h4 class="font-bold text-primary" style="margin-bottom: var(--space-sm);">Agreement Contracts Registry</h4>
+                  
+                  <div class="table-container">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Contract Agreement</th>
+                          <th>Creator Partner</th>
+                          <th>Value Fee</th>
+                          <th>Status</th>
+                          <th>Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td><span class="font-bold text-primary">KONTAGI Brief #88901</span></td>
+                          <td>Aria Vance</td>
+                          <td class="font-mono">$2,400.00</td>
+                          <td><span class="badge badge-success">Active</span></td>
+                          <td><button class="btn btn-secondary btn-sm" onclick="previewContract('Aria Vance', '$2,400.00', 'KONTAGI Brief #88901')">Preview Contract</button></td>
+                        </tr>
+                        <tr>
+                          <td><span class="font-bold text-primary">KONTAGI Brief #88204</span></td>
+                          <td>Marcus Thorne</td>
+                          <td class="font-mono">$1,850.00</td>
+                          <td><span class="badge badge-indigo">Pending Signature</span></td>
+                          <td><button class="btn btn-primary btn-sm" onclick="previewContract('Marcus Thorne', '$1,850.00', 'KONTAGI Brief #88204')">Preview & Sign</button></td>
+                        </tr>
+                        <tr>
+                          <td><span class="font-bold text-primary">KONTAGI Brief #87910</span></td>
+                          <td>Elena Rostova</td>
+                          <td class="font-mono">$3,000.00</td>
+                          <td><span class="badge badge-success">Active</span></td>
+                          <td><button class="btn btn-secondary btn-sm" onclick="previewContract('Elena Rostova', '$3,000.00', 'KONTAGI Brief #87910')">Preview Contract</button></td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 TAB 5: PAYMENTS LEDGER
+                 ============================================= -->
+            <div id="tab-payments" class="tab-content-panel">
+              
+              <!-- Ledger Summary cards -->
+              <div class="grid-12" style="gap: var(--space-md); margin-bottom: var(--space-lg);">
+                <div class="col-span-4 card" style="padding: var(--space-md);">
+                  <span class="text-detail font-bold text-secondary block">Total Paid Out</span>
+                  <h3 class="font-display font-bold text-primary" style="margin-top: 4px;">$7,250.00</h3>
+                  <span class="text-detail text-muted">Transferred directly to bank via Stripe Connect</span>
+                </div>
+                <div class="col-span-4 card" style="padding: var(--space-md);">
+                  <span class="text-detail font-bold text-secondary block">Committed in Escrow</span>
+                  <h3 class="font-display font-bold text-primary" style="margin-top: 4px;" id="escrow-committed-amount">$4,250.00</h3>
+                  <span class="text-detail text-muted">Milestone protected escrow balances</span>
+                </div>
+                <div class="col-span-4 card" style="padding: var(--space-md);">
+                  <span class="text-detail font-bold text-secondary block">Next Release Date</span>
+                  <h3 class="font-display font-bold text-primary" style="margin-top: 4px;">July 18, 2026</h3>
+                  <span class="text-detail text-muted">Upon milestone deliverables approval</span>
+                </div>
+              </div>
+
+              <!-- Payments Ledger table -->
+              <div class="card" style="padding: var(--space-md);">
+                <h4 class="font-bold text-primary" style="margin-bottom: var(--space-sm);">Escrow Payments Ledger</h4>
+                
+                <div class="table-container">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Transaction ID</th>
+                        <th>Creator Partner</th>
+                        <th>Milestone Description</th>
+                        <th>Milestone Fee</th>
+                        <th>Milestone Status</th>
+                        <th>Escrow Action</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr id="payment-row-1">
+                        <td class="font-mono text-secondary">TX-88029</td>
+                        <td>Aria Vance</td>
+                        <td>Milestone 1: 15s Hook draft submission</td>
+                        <td class="font-mono">$1,200.00</td>
+                        <td><span class="badge badge-success" id="payment-badge-1">Escrow Released</span></td>
+                        <td><button class="btn btn-secondary btn-sm" disabled>Completed</button></td>
+                      </tr>
+                      <tr id="payment-row-2">
+                        <td class="font-mono text-secondary">TX-88030</td>
+                        <td>Aria Vance</td>
+                        <td>Milestone 2: Final Publish Verification</td>
+                        <td class="font-mono">$1,200.00</td>
+                        <td><span class="badge badge-indigo" id="payment-badge-2">Committed in Escrow</span></td>
+                        <td><button class="btn btn-primary btn-sm" id="btn-release-escrow-2" onclick="releaseEscrowPayment('2', '$1,200.00')">Release Escrow</button></td>
+                      </tr>
+                      <tr id="payment-row-3">
+                        <td class="font-mono text-secondary">TX-88210</td>
+                        <td>Marcus Thorne</td>
+                        <td>Milestone 1: Video Deliverables upload</td>
+                        <td class="font-mono">$1,850.00</td>
+                        <td><span class="badge badge-indigo" id="payment-badge-3">Committed in Escrow</span></td>
+                        <td><button class="btn btn-primary btn-sm" id="btn-release-escrow-3" onclick="releaseEscrowPayment('3', '$1,850.00')">Release Escrow</button></td>
+                      </tr>
+                      <tr id="payment-row-4">
+                        <td class="font-mono text-secondary">TX-87944</td>
+                        <td>Elena Rostova</td>
+                        <td>Milestone 1: Raw media asset delivery</td>
+                        <td class="font-mono">$3,000.00</td>
+                        <td><span class="badge badge-success">Escrow Released</span></td>
+                        <td><button class="btn btn-secondary btn-sm" disabled>Completed</button></td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==============================================
+       3. INTERACTIVE SLIDE-OVER INVITE DRAWER
+       ============================================== -->
+  <div class="drawer-overlay" id="invite-drawer">
+    <div class="drawer-panel">
+      <div class="drawer-header">
+        <h3 class="font-bold text-primary">Invite Creator to Campaign</h3>
+        <button class="btn btn-tertiary" style="padding: 4px;" onclick="closeInviteDrawer()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="drawer-body">
+        
+        <div class="flex-column" style="gap: var(--space-xxs);">
+          <label class="text-detail font-bold text-muted">Select Campaign Brief</label>
+          <select class="select" id="drawer-select-campaign">
+            <option value="cyber_drink">Cyber Energy Launch Brief</option>
+            <option value="fashion_retro">Retro Denim Autumn 2026</option>
+            <option value="smart_home">AuraSmart Assistant Hub</option>
+          </select>
+        </div>
+
+        <div class="flex-column" style="gap: var(--space-xxs);">
+          <label class="text-detail font-bold text-muted">Creator Name</label>
+          <input type="text" class="input" id="drawer-creator-name" placeholder="Enter creator name...">
+        </div>
+
+        <div class="flex-column" style="gap: var(--space-xxs);">
+          <label class="text-detail font-bold text-muted">Negotiated Campaign Flat Fee ($)</label>
+          <input type="text" class="input font-mono" id="drawer-fee" placeholder="e.g. 2500">
+        </div>
+
+        <div class="flex-column" style="gap: var(--space-xxs);">
+          <label class="text-detail font-bold text-muted">Required Deliverables</label>
+          <select class="select" id="drawer-deliverables">
+            <option>1x TikTok Video (15s-30s)</option>
+            <option>2x Instagram Stories + Link</option>
+            <option>1x YouTube Video integration</option>
+            <option>Custom Package</option>
+          </select>
+        </div>
+
+        <div class="flex-column" style="gap: var(--space-xxs);">
+          <label class="text-detail font-bold text-muted">Brief Guidelines Summary</label>
+          <textarea class="textarea" style="height: 100px; font-size: 0.8125rem;" placeholder="Outline hooks, product tags, or visual references..."></textarea>
+        </div>
+
+      </div>
+
+      <div class="drawer-footer">
+        <button class="btn btn-secondary btn-sm" onclick="closeInviteDrawer()">Cancel</button>
+        <button class="btn btn-primary btn-sm" onclick="submitCreatorInvite()">Send Campaign Invite</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==============================================
+       4. INTERACTIVE CONTRACT PREVIEW MODAL
+       ============================================== -->
+  <div class="dialog-overlay" id="contract-dialog">
+    <div class="dialog-card">
+      <div class="flex-between" style="border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-xs); margin-bottom: var(--space-md);">
+        <h3 class="font-bold text-primary">Agreement: <span id="contract-dialog-brief">KONTAGI Brief #88901</span></h3>
+        <button class="btn btn-tertiary" style="padding: 4px;" onclick="closeContractDialog()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div style="max-height: 300px; overflow-y: auto; background-color: var(--bg-secondary); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-md); font-family: var(--font-mono); font-size: 0.75rem; line-height: 1.6; color: var(--text-muted);">
+        <h4 class="font-bold text-primary" style="margin-bottom: var(--space-xs); text-align: center;">STANDARD COLLABORATION AGREEMENT</h4>
+        <p>This agreement is entered into between **KONTAGI Platform Operations** and the Partner Creator **<span id="contract-dialog-creator" class="font-bold text-primary">Aria Vance</span>**.</p>
+        <p style="margin-top: 8px;">1. **Deliverables**: Creator shall produce unique digital assets aligning with the guidelines set forth in the active brief. Creator agrees to submit drafts for visual quality checks prior to scheduled deployment.</p>
+        <p style="margin-top: 8px;">2. **Compensation**: KONTAGI agrees to secure a sum of **<span id="contract-dialog-fee" class="font-bold text-primary">$2,400.00</span>** in Escrow milestone protectors. Payout releases are issued within 24 hours of successful delivery audits.</p>
+        <p style="margin-top: 8px;">3. **Usage Rights**: KONTAGI maintains global distribution rights for marketing reuse for a duration of 365 days.</p>
+      </div>
+
+      <!-- Signature block -->
+      <div style="border-top: 1px solid var(--border-default); margin-top: var(--space-md); padding-top: var(--space-md);">
+        <div class="flex-between">
+          <div class="flex-column" style="gap: var(--space-xxs);">
+            <span class="text-detail font-bold text-muted">KONTAGI Platform Signee</span>
+            <span class="font-display font-bold text-primary" style="font-style: italic;">Deepmind Operations</span>
+          </div>
+
+          <div class="flex-column" style="gap: var(--space-xxs);" id="creator-sign-box">
+            <span class="text-detail font-bold text-muted" id="signature-label-status">Creator Signee Status</span>
+            <span class="font-display font-bold text-primary" style="font-style: italic;" id="contract-creator-sign-value">Pending Signature</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="flex-center" style="gap: var(--space-sm); justify-content: flex-end; margin-top: var(--space-lg);">
+        <button class="btn btn-secondary btn-sm" onclick="closeContractDialog()">Close</button>
+        <button class="btn btn-primary btn-sm" id="btn-sign-contract" onclick="signContract()">Sign Agreement</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="global-toast-container"></div>
+
+  <!-- ==============================================
+       5. INTERACTIVE PAGE SCRIPTS & MOCK DATA
+       ============================================== -->
+  <script>
+    // Global State
+    const creatorsData = [
+      {
+        name: "Aria Vance",
+        handle: "@aria_vance",
+        platform: "TikTok",
+        niche: "Fashion",
+        followers: "840K",
+        engagement: "6.8%",
+        score: "94/100",
+        bio: "Sleek retro-streetwear visual designer. Creator of dynamic transition sequences and high-contrast color gradings.",
+        pic: "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=200&auto=format&fit=crop&q=80",
+        status: "Contract Signed",
+        reach: "1.2M",
+        impressions: "3.8M",
+        conversion: "3.24%",
+        age1: "54%", age2: "32%", age3: "14%",
+        genderF: "68%", genderM: "32%",
+        geo1: "45%", geo2: "18%", geo3: "12%", geo4: "8%",
+        sentimentOffset: "20.1",
+        reviews: [
+          { manager: "Brand Lead, Denim Co.", stars: "★★★★★", text: "Exceptional visual framing. Transition hook drove a 40% CTR lift." },
+          { manager: "Operations Director", stars: "★★★★★", text: "Raw files submitted 2 days early. Perfect compliance with safe margins." }
+        ],
+        campaigns: [
+          { name: "Retro Denim Autumn 2026", roi: "4.2x", views: "1.2M", status: "Active" },
+          { name: "Summer Outfit Transition", roi: "3.8x", views: "890K", status: "Completed" }
+        ]
+      },
+      {
+        name: "Marcus Thorne",
+        handle: "@marcus_t_creative",
+        platform: "TikTok",
+        niche: "Fitness",
+        followers: "520K",
+        engagement: "5.4%",
+        score: "88/100",
+        bio: "Energetic lifestyle content builder. Specializes in fast-paced editing beats and high BPM audio integrations.",
+        pic: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=200&auto=format&fit=crop&q=80",
+        status: "Pending Invite",
+        reach: "840K",
+        impressions: "2.1M",
+        conversion: "2.85%",
+        age1: "40%", age2: "45%", age3: "15%",
+        genderF: "42%", genderM: "58%",
+        geo1: "52%", geo2: "14%", geo3: "10%", geo4: "6%",
+        sentimentOffset: "40.2",
+        reviews: [
+          { manager: "Product Lead, FitDrink", stars: "★★★★★", text: "Marcus is a force. Video retention stayed above 70% until CTA." }
+        ],
+        campaigns: [
+          { name: "Cyber Energy Launch", roi: "3.1x", views: "650K", status: "Pending Signature" }
+        ]
+      },
+      {
+        name: "Elena Rostova",
+        handle: "@elena_rostova",
+        platform: "Instagram",
+        niche: "Lifestyle",
+        followers: "980K",
+        engagement: "7.1%",
+        score: "92/100",
+        bio: "Luxury travel and sleek minimalist layouts. Focuses on premium color grading aesthetics and high-fidelity video streams.",
+        pic: "https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=200&auto=format&fit=crop&q=80",
+        status: "Contract Signed",
+        reach: "2.1M",
+        impressions: "5.4M",
+        conversion: "4.12%",
+        age1: "30%", age2: "52%", age3: "18%",
+        genderF: "82%", genderM: "18%",
+        geo1: "38%", geo2: "22%", geo3: "15%", geo4: "9%",
+        sentimentOffset: "30.15",
+        reviews: [
+          { manager: "Aesthetic Manager, LuxHome", stars: "★★★★★", text: "Stunning production quality. Color tone matching with brand guides was absolute perfection." }
+        ],
+        campaigns: [
+          { name: "AuraSmart Hub Launch", roi: "4.8x", views: "2.4M", status: "Completed" }
+        ]
+      },
+      {
+        name: "Devon Chen",
+        handle: "@devon_c_tech",
+        platform: "YouTube",
+        niche: "Tech",
+        followers: "1.4M",
+        engagement: "4.2%",
+        score: "90/100",
+        bio: "Detailed hardware teardowns and interactive tech showcases. Focuses on clarity and high confidence ratings.",
+        pic: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?w=200&auto=format&fit=crop&q=80",
+        status: "Negotiating",
+        reach: "3.1M",
+        impressions: "8.9M",
+        conversion: "2.10%",
+        age1: "25%", age2: "58%", age3: "17%",
+        genderF: "20%", genderM: "80%",
+        geo1: "55%", geo2: "15%", geo3: "12%", geo4: "10%",
+        sentimentOffset: "38.5",
+        reviews: [
+          { manager: "Marketing VP, NextGPU", stars: "★★★★☆", text: "Very detailed analysis. Deliverables drove significant organic developer signups." }
+        ],
+        campaigns: [
+          { name: "Cyberpunk Hardware Hook", roi: "3.6x", views: "1.5M", status: "Active" }
+        ]
+      }
+    ];
+
+    let currentSelectedCreator = "Aria Vance";
+
+    // Toast alerts helper
+    window.showToast = function(message, type = 'info') {
+      const container = document.getElementById('global-toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      
+      let icon = '';
+      if (type === 'success') icon = '✓ ';
+      if (type === 'error') icon = '⚠ ';
+      if (type === 'info') icon = 'ℹ ';
+
+      toast.innerText = icon + message;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.animation = 'toastLeave 250ms ease forwards';
+        setTimeout(() => toast.remove(), 250);
+      }, 3500);
+    };
+
+    // Sub Navigation Tabs
+    function switchSubTab(tabName) {
+      document.querySelectorAll('.subnav-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.getAttribute('data-tab') === tabName);
+      });
+      document.querySelectorAll('.tab-content-panel').forEach(panel => {
+        panel.classList.toggle('active', panel.id === `tab-${tabName}`);
+      });
+      window.showToast(`Navigated to ${tabName.toUpperCase()} section.`, 'info');
+    }
+
+    // Emulator Resizing & Responsive Logic
+    document.querySelectorAll('.sandbox-btn[data-viewport]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sandbox-btn[data-viewport]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const frame = document.getElementById('viewport-frame');
+        const viewport = btn.getAttribute('data-viewport');
+        
+        frame.className = `emulator-viewport ${viewport}`;
+        window.showToast(`Viewport set to ${viewport}`, 'info');
+      });
+    });
+
+    // Theme Toggle Handler
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const body = document.body;
+      const isDark = body.classList.toggle('dark');
+      document.getElementById('theme-toggle').innerText = isDark ? "Light Mode" : "Dark Mode";
+      window.showToast(isDark ? "Switched to Cyber Dark mode." : "Switched to Clean Light mode.", "success");
+    });
+
+    // Render Creator Directory Cards
+    function renderDirectory() {
+      const grid = document.getElementById('directory-grid-view');
+      const list = document.getElementById('directory-list-view');
+      grid.innerHTML = '';
+      list.innerHTML = '';
+
+      creatorsData.forEach(c => {
+        // Render Grid Card
+        const card = document.createElement('div');
+        card.className = 'card creator-card';
+        card.innerHTML = `
+          <div class="creator-card-header">
+            <div class="creator-avatar-wrapper">
+              <img src="${c.pic}" class="creator-avatar" alt="${c.name}">
+              <div class="creator-verified-badge">✓</div>
+            </div>
+            <div>
+              <span class="font-bold text-primary block">${c.name}</span>
+              <span class="text-detail text-secondary block">${c.handle}</span>
+            </div>
+          </div>
+          <div class="flex-column" style="gap: 4px;">
+            <div class="flex-between">
+              <span class="text-detail text-secondary">Followers</span>
+              <span class="text-detail font-mono font-bold text-primary">${c.followers}</span>
+            </div>
+            <div class="flex-between">
+              <span class="text-detail text-secondary">Creative Fit</span>
+              <span class="text-detail font-mono font-bold text-gradient">${c.score}</span>
+            </div>
+            <div class="flex-between">
+              <span class="text-detail text-secondary">Status</span>
+              <span class="badge ${c.status === 'Contract Signed' ? 'badge-success' : c.status === 'Pending Invite' ? 'badge-indigo' : 'badge-warning'}">${c.status}</span>
+            </div>
+          </div>
+          <div class="creator-stat-row">
+            <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); selectCreator('${c.name}')">View Profile</button>
+            <button class="btn btn-primary btn-sm" onclick="event.stopPropagation(); openInviteDrawer('${c.name}', '')">Invite</button>
+          </div>
+        `;
+        card.onclick = () => selectCreator(c.name);
+        grid.appendChild(card);
+
+        // Render List Row
+        const row = document.createElement('div');
+        row.className = 'creator-list-item';
+        row.innerHTML = `
+          <div class="flex-center" style="gap: var(--space-sm);">
+            <div class="creator-avatar-wrapper" style="width:36px; height:36px;">
+              <img src="${c.pic}" class="creator-avatar" alt="${c.name}">
+            </div>
+            <div>
+              <span class="font-bold text-primary block">${c.name}</span>
+              <span class="text-detail text-secondary">${c.handle}</span>
+            </div>
+          </div>
+          <span class="badge badge-purple">${c.niche}</span>
+          <span class="text-detail font-mono font-bold text-primary">${c.followers} followers</span>
+          <span class="text-detail font-mono font-bold text-gradient">${c.score} score</span>
+          <span class="badge ${c.status === 'Contract Signed' ? 'badge-success' : 'badge-indigo'}">${c.status}</span>
+          <div style="display:flex; gap: var(--space-xs);">
+            <button class="btn btn-secondary btn-sm" onclick="selectCreator('${c.name}')">Profile</button>
+            <button class="btn btn-primary btn-sm" onclick="openInviteDrawer('${c.name}', '')">Invite</button>
+          </div>
+        `;
+        list.appendChild(row);
+      });
+    }
+
+    // Filter creators directory dynamically
+    function applyDirectoryFilters() {
+      const searchVal = document.getElementById('directory-search-input').value.toLowerCase();
+      const platformVal = document.getElementById('filter-platform').value;
+      const nicheVal = document.getElementById('filter-niche').value;
+      const engagementVal = document.getElementById('filter-engagement').value;
+
+      const cards = document.querySelectorAll('.creator-card');
+      const items = document.querySelectorAll('.creator-list-item');
+
+      creatorsData.forEach((c, idx) => {
+        let matches = true;
+
+        if (searchVal && !c.name.toLowerCase().includes(searchVal) && !c.handle.toLowerCase().includes(searchVal)) {
+          matches = false;
+        }
+        if (platformVal !== 'all' && c.platform !== platformVal) {
+          matches = false;
+        }
+        if (nicheVal !== 'all' && c.niche !== nicheVal) {
+          matches = false;
+        }
+        if (engagementVal === 'high' && parseFloat(c.engagement) < 5.0) {
+          matches = false;
+        }
+        if (engagementVal === 'ultra' && parseFloat(c.engagement) < 7.0) {
+          matches = false;
+        }
+
+        if (cards[idx]) cards[idx].style.display = matches ? 'block' : 'none';
+        if (items[idx]) items[idx].style.display = matches ? 'flex' : 'none';
+      });
+    }
+
+    // Switch Directory Layout: Grid vs List
+    function switchDirectoryView(viewType) {
+      document.getElementById('btn-view-grid').classList.toggle('active', viewType === 'grid');
+      document.getElementById('btn-view-list').classList.toggle('active', viewType === 'list');
+      
+      document.getElementById('directory-grid-view').style.display = viewType === 'grid' ? 'grid' : 'none';
+      document.getElementById('directory-list-view').style.display = viewType === 'list' ? 'flex' : 'none';
+      
+      window.showToast(`Switched directory to ${viewType} view.`);
+    }
+
+    // Select Creator & Populate Profile
+    function selectCreator(name) {
+      currentSelectedCreator = name;
+      const c = creatorsData.find(creator => creator.name === name);
+      if (!c) return;
+
+      // Populate summary left column
+      document.getElementById('profile-pic').src = c.pic;
+      document.getElementById('profile-name').innerText = c.name;
+      document.getElementById('profile-handle').innerText = c.handle;
+      document.getElementById('profile-platform').innerText = c.platform;
+      document.getElementById('profile-niche').innerText = c.niche;
+      document.getElementById('profile-bio').innerText = c.bio;
+      document.getElementById('profile-creative-score').innerText = c.score;
+      document.getElementById('profile-followers').innerText = c.followers;
+      document.getElementById('profile-engagement-rate').innerText = c.engagement;
+
+      // Populate analytics details
+      document.getElementById('profile-reach').innerText = c.reach;
+      document.getElementById('profile-impressions').innerText = c.impressions;
+      document.getElementById('profile-conversion').innerText = c.conversion;
+
+      // Demographic distribution percentages
+      document.getElementById('demographic-age-1').innerText = c.age1;
+      document.getElementById('demographic-age-2').innerText = c.age2;
+      document.getElementById('demographic-age-3').innerText = c.age3;
+      document.getElementById('demographic-fill-1').style.width = c.age1;
+      document.getElementById('demographic-fill-2').style.width = c.age2;
+      document.getElementById('demographic-fill-3').style.width = c.age3;
+
+      document.getElementById('gender-split-f').innerText = c.genderF;
+      document.getElementById('gender-split-m').innerText = c.genderM;
+
+      // Geo splits
+      document.getElementById('geo-1').innerText = c.geo1;
+      document.getElementById('geo-2').innerText = c.geo2;
+      document.getElementById('geo-3').innerText = c.geo3;
+      document.getElementById('geo-4').innerText = c.geo4;
+
+      // Update Sentiment circular dash offset
+      const dial = document.getElementById('sentiment-dial');
+      dial.style.strokeDashoffset = c.sentimentOffset;
+
+      // Render reviews list
+      const reviewsList = document.getElementById('profile-reviews-list');
+      reviewsList.innerHTML = '';
+      c.reviews.forEach(r => {
+        reviewsList.innerHTML += `
+          <div class="card" style="padding: var(--space-xs); background-color: var(--bg-secondary);">
+            <div class="flex-between">
+              <span class="text-body-small font-bold text-primary">${r.manager}</span>
+              <span style="color: var(--accent-orange); font-size:0.6875rem;">${r.stars}</span>
+            </div>
+            <p class="text-detail text-secondary" style="margin-top:2px;">"${r.text}"</p>
+          </div>
+        `;
+      });
+
+      // Render campaigns history
+      const campaignRows = document.getElementById('profile-campaigns-table');
+      campaignRows.innerHTML = '';
+      c.campaigns.forEach(camp => {
+        campaignRows.innerHTML += `
+          <tr>
+            <td><span class="font-bold text-primary">${camp.name}</span></td>
+            <td class="font-mono">${camp.roi}</td>
+            <td class="font-mono">${camp.views}</td>
+            <td><span class="badge ${camp.status === 'Completed' ? 'badge-success' : 'badge-indigo'}">${camp.status}</span></td>
+          </tr>
+        `;
+      });
+
+      // Switch to profile tab view
+      switchSubTab('profile');
+    }
+
+    // Toggle Invite Drawer
+    function openInviteDrawer(creatorName = '', campaignName = '') {
+      const drawer = document.getElementById('invite-drawer');
+      drawer.classList.add('active');
+      
+      if (creatorName) {
+        document.getElementById('drawer-creator-name').value = creatorName;
+      }
+      if (campaignName) {
+        document.getElementById('drawer-select-campaign').value = "cyber_drink";
+      }
+
+      window.showToast("Opened invitation settings drawer.", "info");
+    }
+
+    function openInviteDrawerFromProfile() {
+      openInviteDrawer(currentSelectedCreator, '');
+    }
+
+    function closeInviteDrawer() {
+      document.getElementById('invite-drawer').classList.remove('active');
+    }
+
+    function submitCreatorInvite() {
+      const creator = document.getElementById('drawer-creator-name').value;
+      const fee = document.getElementById('drawer-fee').value;
+      closeInviteDrawer();
+      window.showToast(`Proposal sent successfully to ${creator || 'creator'} with fee of $${fee || '2,500'}!`, "success");
+    }
+
+    // Switch brief context from dropdown
+    function switchCampaignBrief(val) {
+      window.showToast(`Brief context changed to: ${val.toUpperCase()}`, "info");
+      document.getElementById('match-campaign-label').innerText = val === 'cyber_drink' ? "Cyber Energy Launch Brief" : val === 'fashion_retro' ? "Retro Denim Autumn 2026" : "AuraSmart Assistant Hub";
+    }
+
+    // AI Matching Engine Progress Simulation
+    function runAiMatching() {
+      const scanRow = document.getElementById('match-scanning-row');
+      const bar = document.getElementById('scan-progress-bar');
+      const progressLabel = document.getElementById('scan-progress-label');
+      const results = document.getElementById('match-results-container');
+      const btn = document.getElementById('btn-run-match');
+
+      btn.disabled = true;
+      scanRow.style.display = 'block';
+      results.style.style = 'none';
+
+      let count = 0;
+      const interval = setInterval(() => {
+        count += 5;
+        bar.style.width = `${count}%`;
+        progressLabel.innerText = `${count}%`;
+
+        if (count >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            scanRow.style.display = 'none';
+            results.style.display = 'flex';
+            btn.disabled = false;
+            window.showToast("AI matching engine successfully computed compatibility rankings!", "success");
+          }, 300);
+        }
+      }, 80);
+    }
+
+    // Contract Preview & Sign Actions
+    function previewContract(creatorName, fee, briefId) {
+      document.getElementById('contract-dialog-creator').innerText = creatorName;
+      document.getElementById('contract-dialog-fee').innerText = fee;
+      document.getElementById('contract-dialog-brief').innerText = briefId;
+
+      const signVal = document.getElementById('contract-creator-sign-value');
+      const signLabel = document.getElementById('signature-label-status');
+      const btnSign = document.getElementById('btn-sign-contract');
+
+      if (creatorName === 'Aria Vance' || creatorName === 'Elena Rostova') {
+        signVal.innerText = `${creatorName} (Digitally Signed)`;
+        signLabel.innerText = "Signature Status: Approved";
+        btnSign.style.display = 'none';
+      } else {
+        signVal.innerText = "Pending Signature";
+        signLabel.innerText = "Signature Status: Waiting";
+        btnSign.style.display = 'inline-flex';
+      }
+
+      document.getElementById('contract-dialog').classList.add('active');
+    }
+
+    function closeContractDialog() {
+      document.getElementById('contract-dialog').classList.remove('active');
+    }
+
+    function signContract() {
+      const creator = document.getElementById('contract-dialog-creator').innerText;
+      document.getElementById('contract-creator-sign-value').innerText = `${creator} (Digitally Signed)`;
+      document.getElementById('signature-label-status').innerText = "Signature Status: Approved";
+      document.getElementById('btn-sign-contract').style.display = 'none';
+      window.showToast(`Agreement contract successfully signed by ${creator}!`, "success");
+    }
+
+    // Release Escrow Milestones Payments
+    function releaseEscrowPayment(milestoneId, amount) {
+      const btn = document.getElementById(`btn-release-escrow-${milestoneId}`);
+      const badge = document.getElementById(`payment-badge-${milestoneId}`);
+      
+      btn.innerText = "Processing Release...";
+      btn.disabled = true;
+
+      setTimeout(() => {
+        btn.innerText = "Completed";
+        badge.innerText = "Escrow Released";
+        badge.className = "badge badge-success";
+        
+        // Update committed escrow summary display
+        const totalNode = document.getElementById('escrow-committed-amount');
+        if (milestoneId === '2') {
+          totalNode.innerText = "$3,050.00";
+        } else if (milestoneId === '3') {
+          totalNode.innerText = "$2,400.00";
+        }
+        
+        window.showToast(`Successfully transferred milestone payout of ${amount} to Stripe Connected Account.`, "success");
+      }, 1500);
+    }
+
+    function triggerProfileChat() {
+      window.showToast(`Passing context parameters for ${currentSelectedCreator} to AI Creative Coach... Redirecting.`, "success");
+      setTimeout(() => {
+        window.location.href = "coach.html";
+      }, 1000);
+    }
+
+    function viewMatchedProfile(name) {
+      selectCreator(name);
+    }
+
+    // Initialize Directory View on render load
+    renderDirectory();
+    selectCreator("Aria Vance");
+  </script>
+
+  <script src="design-system.js"></script>
+</body>
+</html>

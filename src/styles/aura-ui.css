@@ -1,0 +1,313 @@
+/* KONTAGI Redesign - Premium Visual Components */
+
+/* 1. Global App Canvas */
+.aura-canvas {
+  position: relative;
+  background-color: var(--bg-app); /* #FCF9F6 */
+  min-height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* 2. Ambient Gradient Glows */
+.aura-ambient-glow {
+  position: absolute;
+  border-radius: 50%;
+  filter: blur(120px);
+  opacity: 0.4;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.aura-ambient-glow.top-right {
+  top: -10%;
+  right: -5%;
+  width: 60vw;
+  height: 60vw;
+  background: radial-gradient(circle, rgba(243, 111, 166, 0.15) 0%, rgba(120, 167, 255, 0.1) 40%, rgba(255, 255, 255, 0) 70%);
+}
+
+.aura-ambient-glow.bottom-left {
+  bottom: -15%;
+  left: -10%;
+  width: 50vw;
+  height: 50vw;
+  background: radial-gradient(circle, rgba(168, 138, 247, 0.12) 0%, rgba(93, 131, 255, 0.08) 50%, rgba(255, 255, 255, 0) 70%);
+}
+
+.aura-dot-pattern {
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(16, 38, 74, 0.03) 1px, transparent 1px);
+  background-size: 24px 24px;
+  opacity: 0.8;
+  pointer-events: none;
+  z-index: 2;
+}
+
+/* 3. Floating App Shell */
+.floating-app-shell {
+  position: relative;
+  z-index: 10;
+  margin: 0;
+  width: 100vw;
+  max-width: 100%;
+  height: 100vh;
+  background: var(--bg-app);
+  border: none;
+  border-radius: 0;
+  box-shadow: none;
+  display: flex;
+  overflow: hidden;
+}
+
+@media (max-width: 1024px) {
+  .floating-app-shell {
+    margin: 0;
+    width: 100%;
+    height: 100vh;
+    border-radius: 0;
+    border: none;
+  }
+}
+
+/* 4. Aura Visual Element (Orb) */
+.aura-gradient-orb {
+  position: relative;
+  width: 180px;
+  height: 180px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto;
+}
+
+.aura-gradient-orb .orb-core {
+  position: absolute;
+  width: 60%;
+  height: 60%;
+  background: radial-gradient(circle at 35% 35%, #F13A1E 0%, #F36A24 50%, #173247 100%);
+  border-radius: 50%;
+  filter: blur(10px);
+  animation: orbFloat 6s ease-in-out infinite;
+  opacity: 0.85;
+}
+
+.aura-gradient-orb .orb-ring {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(241, 58, 30, 0.25);
+  border-radius: 50%;
+  animation: orbSpin 20s linear infinite;
+}
+
+.aura-gradient-orb .orb-ring::before {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  width: 6px;
+  height: 6px;
+  background: #F13A1E;
+  border-radius: 50%;
+  box-shadow: 0 0 10px #F13A1E;
+}
+
+@keyframes orbFloat {
+  0%, 100% { transform: translateY(0) scale(1); }
+  50% { transform: translateY(-10px) scale(1.05); }
+}
+
+@keyframes orbSpin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+/* 5. Shared Design Primitives */
+.aura-card {
+  background: rgba(255, 255, 255, 0.88);
+  border: 1px solid rgba(16, 38, 74, 0.04);
+  border-radius: var(--radius-xl);
+  box-shadow: 0 4px 12px rgba(16, 38, 74, 0.02), 0 1px 2px rgba(16, 38, 74, 0.01);
+  padding: var(--space-lg);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.aura-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(16, 38, 74, 0.04), 0 2px 4px rgba(16, 38, 74, 0.02);
+}
+
+.aura-card-elevated {
+  background: #ffffff;
+  border: 1px solid rgba(16, 38, 74, 0.06);
+  border-radius: var(--radius-2xl);
+  box-shadow: 0 12px 32px rgba(16, 38, 74, 0.06), 0 4px 8px rgba(16, 38, 74, 0.03);
+}
+
+.aura-ai-card {
+  position: relative;
+}
+
+.aura-ai-card::after {
+  content: '';
+  position: absolute;
+  inset: -1px;
+  border-radius: inherit;
+  background: linear-gradient(135deg, rgba(243, 111, 166, 0.3), rgba(168, 138, 247, 0.2), rgba(93, 131, 255, 0.3));
+  z-index: -1;
+  opacity: 0.5;
+}
+
+/* 6. Dashboard App Layout */
+.aura-sidebar {
+  width: 260px;
+  background: transparent;
+  border-right: 1px solid rgba(16, 38, 74, 0.05);
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-md) 0;
+  flex-shrink: 0;
+}
+
+.aura-nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  padding: 10px 16px;
+  margin: 2px var(--space-md);
+  border-radius: var(--radius-md);
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  font-weight: 500;
+  text-decoration: none;
+  transition: all var(--transition-fast);
+}
+
+.aura-nav-item:hover {
+  background: rgba(16, 38, 74, 0.02);
+  color: var(--text-primary);
+}
+
+.aura-nav-item.active {
+  background: rgba(79, 111, 255, 0.08);
+  color: var(--brand-primary);
+}
+
+.aura-header {
+  height: 72px;
+  padding: 0 var(--space-xl);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-bottom: 1px solid rgba(16, 38, 74, 0.03);
+}
+
+.aura-main-content {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: transparent;
+}
+
+.aura-scroll-area {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: var(--space-xl);
+}
+
+/* Pro Upgrade Button */
+.aura-pro-btn {
+  background: linear-gradient(135deg, rgba(79, 111, 255, 0.9), rgba(168, 138, 247, 0.9));
+  color: white;
+  border: none;
+  border-radius: var(--radius-full);
+  padding: 10px 24px;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  transition: all 0.2s ease;
+  box-shadow: 0 4px 12px rgba(168, 138, 247, 0.2);
+}
+
+.aura-pro-btn:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 16px rgba(168, 138, 247, 0.3);
+  background: linear-gradient(135deg, rgba(79, 111, 255, 1), rgba(168, 138, 247, 1));
+}
+
+.aura-pro-btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* 4. Exact Screenshot Shell Theme (Dark Slate Sidebar + Cream Workspace Canvas) */
+.aura-sidebar {
+  width: 240px;
+  background-color: #0B1120 !important;
+  border-right: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: #FFFFFF !important;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  flex-shrink: 0;
+  overflow-y: auto;
+}
+
+.aura-sidebar .sidebar-text-label {
+  color: #94A3B8 !important;
+}
+
+.aura-sidebar .sidebar-nav-item {
+  color: #94A3B8 !important;
+  border-radius: 8px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 500;
+  text-decoration: none;
+  font-size: 13.5px;
+  transition: all 0.15s ease;
+}
+
+.aura-sidebar .sidebar-nav-item:hover {
+  background-color: rgba(255, 255, 255, 0.05) !important;
+  color: #FFFFFF !important;
+}
+
+.aura-sidebar .sidebar-nav-item.active {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: #FFFFFF !important;
+  border-left: 3px solid #F13A1E !important;
+  font-weight: 700;
+}
+
+.aura-sidebar .sidebar-nav-item.active .sidebar-text-label {
+  color: #FFFFFF !important;
+}
+
+.dashboard-main {
+  flex: 1;
+  background-color: #090D16 !important;
+  color: #FFFFFF !important;
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow-y: auto;
+  min-width: 0;
+}
+
+.dashboard-body {
+  padding: 24px;
+  flex: 1;
+  overflow-y: auto;
+}

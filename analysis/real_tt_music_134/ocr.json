@@ -1,0 +1,17 @@
+{
+  "screenText": "[OCR Text Segment] Asset real_tt_music_134 text overlay density: 63.4%.",
+  "captionDensity": 0.6345,
+  "fontSizeEstimatePx": 61,
+  "textTimingSec": [
+    {
+      "start": 0.5,
+      "end": 11.6
+    },
+    {
+      "start": 11.6,
+      "end": 26.1
+    }
+  ],
+  "ctaDetected": true,
+  "emojiCount": 1
+}

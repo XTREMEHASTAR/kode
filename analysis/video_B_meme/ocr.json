@@ -1,0 +1,13 @@
+{
+  "screenText": "WHEN THE CODE WORKS ON FIRST TRY | Me: Refactors everything immediately 😂",
+  "captionDensity": 0.45,
+  "fontSizeEstimatePx": 64,
+  "textTimingSec": [
+    {
+      "start": 0.2,
+      "end": 15
+    }
+  ],
+  "ctaDetected": false,
+  "emojiCount": 1
+}

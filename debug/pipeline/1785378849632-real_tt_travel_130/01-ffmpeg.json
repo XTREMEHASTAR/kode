@@ -1,0 +1,13 @@
+{
+  "assetId": "real_tt_travel_130",
+  "videoPath": "c:/videos/real_tt_travel_130.mp4",
+  "duration": 25,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "bitrate": 4500000,
+  "keyframe_count": 25,
+  "extracted_frame_count": 25,
+  "extracted_audio_samples": 220500,
+  "contentHash": 525910825
+}

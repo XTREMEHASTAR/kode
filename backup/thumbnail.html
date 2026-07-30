@@ -1,0 +1,1803 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — AI Thumbnail Intelligence Dashboard</title>
+  <link rel="stylesheet" href="design-system.css">
+  <style>
+    /* ==========================================================================
+       SANDBOX CORE LAYOUT FRAMEWORK
+       ========================================================================== */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-smooth);
+    }
+
+    .sandbox-header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-xs) var(--space-lg);
+      z-index: 1000;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .sandbox-brand h1 {
+      font-size: 1.125rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .sandbox-brand span {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .sandbox-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-control-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      background-color: var(--bg-secondary);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+    }
+
+    .sandbox-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sandbox-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .sandbox-btn.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sandbox-workspace {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      position: relative;
+    }
+
+    .emulator-viewport {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      transition: width var(--transition-smooth), height var(--transition-smooth), border-radius var(--transition-smooth);
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .emulator-viewport.desktop {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      border: none;
+    }
+
+    .emulator-viewport.tablet {
+      width: 768px;
+      height: 95%;
+      border-radius: var(--radius-lg);
+    }
+
+    .emulator-viewport.mobile {
+      width: 375px;
+      height: 85%;
+      border-radius: var(--radius-2xl);
+    }
+
+    /* ==========================================================================
+       DASHBOARD AND SIDEBAR STRUCTURE
+       ========================================================================== */
+    .dashboard-shell {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .dashboard-sidebar {
+      width: 260px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      transition: transform var(--transition-smooth), width var(--transition-smooth);
+    }
+
+    .sidebar-header {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .sidebar-nav {
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .sidebar-nav-item:hover, .sidebar-nav-item.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .sidebar-nav-item.active {
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .dashboard-main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-primary);
+    }
+
+    .dashboard-header {
+      height: 64px;
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-lg);
+      flex-shrink: 0;
+    }
+
+    .dashboard-search-bar {
+      display: flex;
+      align-items: center;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 6px 12px;
+      gap: var(--space-xs);
+      width: 240px;
+      max-width: 100%;
+    }
+
+    .dashboard-body {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: var(--space-xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    /* Emulator viewports responsive overrides */
+    .emulator-viewport.tablet .dashboard-sidebar {
+      width: 70px;
+    }
+    .emulator-viewport.tablet .sidebar-text-label,
+    .emulator-viewport.tablet .sidebar-footer {
+      display: none;
+    }
+
+    .emulator-viewport.mobile #sidebar-toggle-btn {
+      display: inline-flex !important;
+    }
+    .emulator-viewport.mobile .dashboard-sidebar {
+      display: none;
+    }
+    .emulator-viewport.mobile .dashboard-sidebar.active {
+      display: flex;
+      position: absolute;
+      left: 0;
+      top: 64px;
+      bottom: 0;
+      z-index: 950;
+      height: calc(100% - 64px);
+      width: 240px;
+      box-shadow: var(--shadow-xl);
+      animation: dropdownEnter var(--transition-fast) forwards;
+    }
+
+    /* Skeleton Loading State Sync */
+    .skeleton-view-panel {
+      display: none;
+      flex-direction: column;
+      gap: var(--space-lg);
+      width: 100%;
+    }
+
+    .loading-state-active .skeleton-view-panel {
+      display: flex !important;
+    }
+    .loading-state-active .real-view-panel {
+      display: none !important;
+    }
+
+    .skeleton-pulse {
+      background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--border-default) 50%, var(--bg-secondary) 75%);
+      background-size: 200% 100%;
+      animation: skeletonGlow 1.5s infinite;
+      border-radius: var(--radius-md);
+    }
+
+    @keyframes skeletonGlow {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ==========================================================================
+       THUMBNAIL INTELLIGENCE CUSTOM SPECIFIC STYLE
+       ========================================================================== */
+    .thumbnail-workspace-grid {
+      display: grid;
+      grid-template-columns: 1.2fr 1fr;
+      gap: var(--space-lg);
+      align-items: start;
+    }
+
+    @media (max-width: 1024px) {
+      .thumbnail-workspace-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Active Thumbnail Viewer Canvas */
+    .thumbnail-viewer-card {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xl);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      position: relative;
+    }
+
+    .canvas-container {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      border: 1px solid var(--border-default);
+      background-color: #000;
+    }
+
+    .canvas-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: filter var(--transition-smooth), transform var(--transition-smooth);
+    }
+
+    /* Overlays base structure */
+    .canvas-overlay {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      opacity: 0;
+      transition: opacity var(--transition-smooth);
+      z-index: 10;
+    }
+
+    .canvas-overlay.active-overlay {
+      opacity: 1;
+    }
+
+    /* Face bounding box styles */
+    .face-box {
+      position: absolute;
+      border: 2px solid #10B981;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.4);
+      border-radius: var(--radius-sm);
+    }
+
+    .face-tag {
+      position: absolute;
+      bottom: 100%;
+      left: 0;
+      background-color: #10B981;
+      color: #FFF;
+      font-size: 0.625rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: var(--radius-xs) var(--radius-xs) 0 0;
+      white-space: nowrap;
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+
+    /* Eye contact vector styles */
+    .eye-point {
+      position: absolute;
+      width: 12px;
+      height: 12px;
+      background-color: #3B82F6;
+      border: 2px solid #FFF;
+      border-radius: 50%;
+      box-shadow: 0 0 8px rgba(59, 130, 246, 0.8);
+      transform: translate(-50%, -50%);
+    }
+
+    .gaze-vector {
+      position: absolute;
+      width: 100px;
+      height: 2px;
+      background: linear-gradient(90deg, #3B82F6 0%, rgba(239, 68, 68, 0.8) 100%);
+      transform-origin: left center;
+      transform: translate(-50%, -50%);
+    }
+
+    .gaze-tag {
+      position: absolute;
+      background-color: #3B82F6;
+      color: #FFF;
+      font-size: 0.625rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      transform: translate(-50%, -150%);
+      white-space: nowrap;
+    }
+
+    /* Text visibility indicators */
+    .text-box {
+      position: absolute;
+      border: 2px dashed #F59E0B;
+      border-radius: var(--radius-sm);
+    }
+
+    .text-tag {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      background-color: #F59E0B;
+      color: #000;
+      font-size: 0.625rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 0 0 var(--radius-sm) var(--radius-sm);
+      white-space: nowrap;
+    }
+
+    /* Clutter analysis heatmap overlay */
+    .clutter-canvas {
+      position: absolute;
+      inset: 0;
+      mix-blend-mode: color-dodge;
+      background-image: radial-gradient(circle at 75% 45%, rgba(239, 68, 68, 0.65) 0%, transparent 40%),
+                        radial-gradient(circle at 25% 30%, rgba(245, 158, 11, 0.5) 0%, transparent 35%);
+    }
+
+    .clutter-badge {
+      position: absolute;
+      font-size: 0.625rem;
+      font-weight: 700;
+      background-color: #EF4444;
+      color: #FFF;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      transform: translate(-50%, -50%);
+    }
+
+    /* Contrast highlight overlay */
+    .contrast-overlay-mask {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(15, 23, 42, 0.35);
+    }
+
+    .contrast-highlit-text {
+      position: absolute;
+      border: 2px solid #3B82F6;
+      background-color: rgba(59, 130, 246, 0.15);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 0 16px rgba(59, 130, 246, 0.5);
+    }
+
+    .contrast-highlit-subject {
+      position: absolute;
+      border: 2px solid #8B5CF6;
+      background-color: rgba(139, 92, 246, 0.15);
+      border-radius: var(--radius-sm);
+      box-shadow: 0 0 16px rgba(139, 92, 246, 0.5);
+    }
+
+    /* Toolbar for overlays */
+    .overlay-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      background-color: var(--bg-secondary);
+      padding: 6px;
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-default);
+    }
+
+    .overlay-btn {
+      background-color: transparent;
+      border: none;
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      font-weight: 600;
+      padding: 6px 12px;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--transition-fast);
+      border: 1px solid transparent;
+    }
+
+    .overlay-btn:hover {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .overlay-btn.active-btn {
+      background-color: var(--bg-primary);
+      color: var(--brand-primary);
+      border-color: var(--border-default);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Circular Score widget */
+    .circular-progress-svg {
+      transform: rotate(-90deg);
+    }
+
+    .circular-bg {
+      fill: none;
+      stroke: var(--bg-secondary);
+      stroke-width: 8;
+    }
+
+    .circular-fill {
+      fill: none;
+      stroke: var(--brand-primary);
+      stroke-width: 8;
+      stroke-linecap: round;
+      transition: stroke-dashoffset 0.8s ease;
+    }
+
+    /* Color Palette chip list */
+    .color-chip-list {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+    }
+
+    .color-chip-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+    }
+
+    .color-preview-block {
+      width: 48px;
+      height: 24px;
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border-default);
+    }
+
+    /* Thumbnail Gallery Cards */
+    .thumbnail-gallery-scroll {
+      display: flex;
+      gap: var(--space-sm);
+      overflow-x: auto;
+      padding-bottom: var(--space-xs);
+      scrollbar-width: thin;
+    }
+
+    .gallery-item-card {
+      width: 140px;
+      flex-shrink: 0;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xs);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      position: relative;
+    }
+
+    .gallery-item-card:hover {
+      border-color: var(--brand-primary);
+      transform: translateY(-2px);
+    }
+
+    .gallery-item-card.active-item {
+      border-color: var(--brand-primary);
+      background-color: var(--bg-elevated);
+      box-shadow: 0 0 0 2px var(--brand-primary-glow);
+    }
+
+    .gallery-preview-wrapper {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-default);
+      position: relative;
+    }
+
+    .gallery-preview-image {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .gallery-item-badge {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background-color: var(--brand-primary);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      font-weight: 700;
+      padding: 2px 4px;
+      border-radius: var(--radius-sm);
+    }
+
+    /* A/B Compare Split panel layout */
+    .ab-compare-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+
+    @media (max-width: 640px) {
+      .ab-compare-split {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ab-preview-container {
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background-color: var(--bg-elevated);
+      padding: var(--space-sm);
+    }
+
+    .ab-image-wrapper {
+      position: relative;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      border: 1px solid var(--border-default);
+    }
+
+    /* Dynamic toast alerts */
+    .toast-notifications-container {
+      position: fixed;
+      bottom: var(--space-lg);
+      right: var(--space-lg);
+      z-index: 3000;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      pointer-events: none;
+    }
+
+    .toast-alert {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-left: 4px solid var(--brand-primary);
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      color: var(--text-primary);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      animation: slideInRight var(--transition-fast) forwards;
+      pointer-events: auto;
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(120%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+
+    /* Interactive text options visual changes */
+    .text-styled-canvas {
+      position: absolute;
+      top: 15%;
+      left: 8%;
+      color: #FFF;
+      font-family: 'Impact', 'Arial Black', sans-serif;
+      font-size: 2.25rem;
+      text-transform: uppercase;
+      line-height: 1;
+      text-shadow: 2px 2px 0 #000, -2px 2px 0 #000, 2px -2px 0 #000, -2px -2px 0 #000;
+      pointer-events: none;
+      transition: all var(--transition-smooth);
+    }
+
+    .text-styled-canvas.bordered-text {
+      text-shadow: 0 0 10px #6366F1, 0 0 20px #6366F1;
+      border: 2px solid #6366F1;
+      background-color: rgba(99, 102, 241, 0.25);
+      padding: 4px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 2rem;
+    }
+  </style>
+</head>
+<body class="dark">
+
+  <!-- ==============================================
+       1. SANDBOX HEADER CONTROL PANEL
+       ============================================== -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M16 8L25 13V19L16 24L7 19V13L16 8Z" fill="var(--brand-primary)" opacity="0.15"/>
+        <circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/>
+      </svg>
+      <h1>KONTAGI AI Thumbnail Intelligence</h1>
+      <span>Beta</span>
+    </div>
+
+    <div class="sandbox-controls">
+      <!-- Viewport Emulator buttons -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" data-viewport="desktop" title="Desktop emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 21h12m-9-4l-1 4m8-4l1 4"/></svg>
+          Desktop
+        </button>
+        <button class="sandbox-btn" data-viewport="tablet" title="Tablet emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          Tablet
+        </button>
+        <button class="sandbox-btn" data-viewport="mobile" title="Mobile emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
+          Mobile
+        </button>
+      </div>
+
+      <!-- State Modifiers -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" id="state-normal">Normal</button>
+        <button class="sandbox-btn" id="state-loading">Loading State</button>
+        <button class="sandbox-btn" id="state-variations">Variations Panel</button>
+      </div>
+
+      <!-- Mode Toggles -->
+      <button class="btn btn-tertiary btn-sm" id="theme-toggle" style="box-shadow: none; appearance: none; -webkit-appearance: none;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        Dark Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- ==============================================
+       2. MAIN WORKSPACE WITH VIEWPORT SIMULATOR
+       ============================================== -->
+  <main class="sandbox-workspace">
+    <div class="emulator-viewport desktop" id="viewport-frame">
+      
+      <div class="dashboard-shell" id="dashboard-main-shell">
+        
+        <!-- SIDEBAR COMPONENT -->
+        <aside class="dashboard-sidebar">
+          <div>
+            <!-- Header Workspace Selector -->
+            <div class="sidebar-header">
+              <div class="flex-between select-wrapper" style="width: 100%;">
+                <div class="flex-center" style="gap: var(--space-xs); cursor: pointer;">
+                  <div class="workspace-avatar" style="width: 28px; height: 28px; font-size: 0.75rem; background-color: var(--brand-primary-glow); color: var(--brand-primary);">GD</div>
+                  <span class="text-body-small font-bold sidebar-text-label">Deepmind Dev</span>
+                </div>
+                <svg class="sidebar-text-label" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </div>
+
+            <!-- Sidebar Navigations -->
+                        <nav class="sidebar-nav">
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-bottom: 6px; text-transform: uppercase;">Workspace</span>
+              <a class="sidebar-nav-item" href="dashboard.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="sidebar-text-label">Dashboard</span>
+              </a>
+              <a class="sidebar-nav-item" href="projects.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span class="sidebar-text-label">Projects</span>
+              </a>
+              <a class="sidebar-nav-item" href="library.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+                <span class="sidebar-text-label">Creative Library</span>
+              </a>
+              <a class="sidebar-nav-item" href="hooks.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                <span class="sidebar-text-label">Hook Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="retention.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Retention Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="script.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="sidebar-text-label">Script Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item active" href="thumbnail.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15l-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Thumbnail Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="caption.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                <span class="sidebar-text-label">Caption Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="audio.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                <span class="sidebar-text-label">Audio Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="visual.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-.447.894L15 18.5V10zM5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Visual Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="trend.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <span class="sidebar-text-label">Trend Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="upload.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span class="sidebar-text-label">Upload Center</span>
+              </a>
+              <a class="sidebar-nav-item" href="lab.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                <span class="sidebar-text-label">AI Creative Lab</span>
+              </a>
+              <a class="sidebar-nav-item" href="report.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="sidebar-text-label">AI Reports</span>
+              </a>
+              <a class="sidebar-nav-item" href="creators.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Creators</span>
+              </a>
+              <a class="sidebar-nav-item" href="brand.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17V9h3a2 2 0 110 4H9m0 4h3a2 2 0 100-4"/></svg>
+                <span class="sidebar-text-label">Brand Hub</span>
+              </a>
+              <a class="sidebar-nav-item" href="coach.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="sidebar-text-label">AI Coach</span>
+              </a>
+              <a class="sidebar-nav-item" onclick="window.showToast('Loading database insights...', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                <span class="sidebar-text-label">Analytics</span>
+              </a>
+              <a class="sidebar-nav-item" href="client.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Clients</span>
+              </a>
+              <a class="sidebar-nav-item" href="team.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0zm3 10v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg>
+                <span class="sidebar-text-label">Team Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="billing.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span class="sidebar-text-label">Billing</span>
+              </a>
+              <a class="sidebar-nav-item" href="notifications.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="sidebar-text-label">Notifications</span>
+              </a>
+              <a class="sidebar-nav-item" href="settings.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="sidebar-text-label">Settings</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">System</span>
+              <a class="sidebar-nav-item" href="admin.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="sidebar-text-label">Admin Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="mobile.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Mobile App</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">Design</span>
+              <a class="sidebar-nav-item" href="index.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                <span class="sidebar-text-label">Design System</span>
+              </a>
+            </nav>
+          </div>
+          <div class="sidebar-footer">
+            <div class="user-avatar" style="width: 32px; height: 32px; font-size: 0.875rem;">JH</div>
+            <div>
+              <p class="text-body-small font-bold" style="margin: 0; line-height: 1.2;">Jaiveer Hastar</p>
+              <p class="text-detail text-muted" style="margin: 0; line-height: 1.2;">jaiveer@company.com</p>
+            </div>
+          </div>
+        </aside>
+
+        <!-- MAIN CONTENT WORKSPACE -->
+        <main class="dashboard-main">
+          
+          <!-- Top Shell Header -->
+          <div class="dashboard-header">
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <button class="btn btn-secondary btn-icon" id="sidebar-toggle-btn" style="display: none; height: 36px; width: 36px; padding: 0;">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              <h2 class="text-h4 font-display">Thumbnail Intelligence</h2>
+            </div>
+            
+            <div class="flex-center" style="gap: var(--space-md);">
+              <div class="dashboard-search-bar">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" placeholder="Search thumbnails..." style="background: transparent; border: none; outline: none; width: 100%; font-size: 0.75rem; color: var(--text-primary);">
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="openExportModal()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Export Reports
+              </button>
+            </div>
+          </div>
+
+          <!-- Main Scrollable Dashboard Body -->
+          <div class="dashboard-body">
+
+            <!-- ================= SKELETON PANEL ================= -->
+            <div class="skeleton-view-panel">
+              <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: var(--space-lg);">
+                <div class="skeleton-pulse" style="height: 320px;"></div>
+                <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                  <div class="skeleton-pulse" style="height: 120px;"></div>
+                  <div class="skeleton-pulse" style="height: 180px;"></div>
+                </div>
+              </div>
+              <div class="skeleton-pulse" style="height: 150px; width: 100%;"></div>
+            </div>
+
+            <!-- ================= REAL DASHBOARD CONTENT ================= -->
+            <div class="real-view-panel" style="display: flex; flex-direction: column; gap: var(--space-lg);">
+              
+              <!-- Workspace Grid: Canvas and Analytics -->
+              <div class="thumbnail-workspace-grid">
+                
+                <!-- Left Column: Canvas, Overlays and A/B compare -->
+                <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                  
+                  <!-- Main Visual Viewer Card -->
+                  <div class="thumbnail-viewer-card">
+                    <div class="flex-between">
+                      <div>
+                        <span class="text-detail font-bold text-muted" style="text-transform: uppercase;">Active Workspace</span>
+                        <h3 class="text-body-large font-bold" id="active-thumbnail-title">Hook Master V3 (Optimized)</h3>
+                      </div>
+                      <div class="flex-center" style="gap: var(--space-xs);">
+                        <span class="badge badge-success" id="active-thumbnail-badge">ACTIVE TEST</span>
+                        <span class="text-detail text-muted" id="active-thumbnail-date">Uploaded: 2 hours ago</span>
+                      </div>
+                    </div>
+
+                    <!-- Interactive Canvas Area -->
+                    <div class="canvas-container">
+                      <!-- Base Image -->
+                      <img src="images/thumbnail_creator.png" alt="Thumbnail Preview" class="canvas-image" id="main-canvas-img">
+
+                      <!-- Text Overlay -->
+                      <div class="text-styled-canvas" id="canvas-text-styled">Hook Score 90+</div>
+
+                      <!-- Overlay 1: Face Detection -->
+                      <div class="canvas-overlay" id="overlay-face">
+                        <!-- Green bounding box -->
+                        <div class="face-box" style="top: 25%; left: 58%; width: 28%; height: 50%;">
+                          <div class="face-tag">
+                            <span>FACE DETECTION</span>
+                            <span>Expression: Surprised (94%)</span>
+                            <span>Size: 22.4% of frame</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Overlay 2: Eye Contact Vectors -->
+                      <div class="canvas-overlay" id="overlay-eye">
+                        <!-- Left eye -->
+                        <div class="eye-point" style="top: 44%; left: 69%;"></div>
+                        <div class="gaze-vector" style="top: 44%; left: 69%; transform: rotate(15deg) scale(0.8);"></div>
+                        
+                        <!-- Right eye -->
+                        <div class="eye-point" style="top: 43%; left: 74%;"></div>
+                        <div class="gaze-vector" style="top: 43%; left: 74%; transform: rotate(12deg) scale(0.8);"></div>
+
+                        <!-- Gaze tag indicator -->
+                        <div class="gaze-tag" style="top: 38%; left: 71.5%;">Direct Gaze: 98% Confidence</div>
+                      </div>
+
+                      <!-- Overlay 3: Contrast Mask -->
+                      <div class="canvas-overlay" id="overlay-contrast">
+                        <div class="contrast-overlay-mask"></div>
+                        <!-- Highlit elements -->
+                        <div class="contrast-highlit-text" style="top: 13%; left: 6%; width: 44%; height: 20%;">
+                          <div class="face-tag" style="background-color: #3B82F6;">TEXT: 6.8:1 (EXCELLENT)</div>
+                        </div>
+                        <div class="contrast-highlit-subject" style="top: 23%; left: 56%; width: 32%; height: 55%;">
+                          <div class="face-tag" style="background-color: #8B5CF6;">SUBJECT: 4.4:1 (PASS)</div>
+                        </div>
+                      </div>
+
+                      <!-- Overlay 4: Clutter Heatmap -->
+                      <div class="canvas-overlay" id="overlay-clutter">
+                        <div class="clutter-canvas"></div>
+                        <!-- Hotspots badges -->
+                        <div class="clutter-badge" style="top: 35%; left: 30%;">Dense Background</div>
+                        <div class="clutter-badge" style="top: 75%; left: 78%;">Low Clutter</div>
+                      </div>
+                    </div>
+
+                    <!-- Overlay Controls Toolbar -->
+                    <div class="overlay-toolbar">
+                      <button class="overlay-btn" data-overlay="face" onclick="toggleOverlay('face')">
+                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                        Face Detection
+                      </button>
+                      <button class="overlay-btn" data-overlay="eye" onclick="toggleOverlay('eye')">
+                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><circle cx="12" cy="12" r="9"/></svg>
+                        Eye Contact
+                      </button>
+                      <button class="overlay-btn" data-overlay="contrast" onclick="toggleOverlay('contrast')">
+                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>
+                        Contrast Levels
+                      </button>
+                      <button class="overlay-btn" data-overlay="clutter" onclick="toggleOverlay('clutter')">
+                        <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2a10 10 0 00-10 10h10V2z"/></svg>
+                        Clutter Heatmap
+                      </button>
+                    </div>
+                  </div>
+
+                  <!-- A/B Comparison Preview Panel -->
+                  <div class="card">
+                    <div class="flex-between" style="margin-bottom: var(--space-sm);">
+                      <h4 class="text-body font-bold">Gaze & Heatmap A/B Comparison</h4>
+                      <button class="btn btn-tertiary btn-sm" onclick="triggerCompareModal()" style="appearance: none; -webkit-appearance: none;">Compare Grid View</button>
+                    </div>
+                    
+                    <div class="ab-compare-split">
+                      <!-- Variant A -->
+                      <div class="ab-preview-container">
+                        <div class="flex-between" style="margin-bottom: var(--space-xs);">
+                          <span class="text-body-small font-bold">Variant A (Current)</span>
+                          <span class="text-body-small text-success font-bold" id="compare-score-a">87% CTR</span>
+                        </div>
+                        <div class="ab-image-wrapper">
+                          <img src="images/thumbnail_creator.png" alt="A" style="width:100%; height:100%; object-fit:cover;">
+                        </div>
+                        <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 4px;">
+                          <div class="flex-between text-detail text-muted">
+                            <span>Mobile Clarity:</span>
+                            <span class="text-primary font-bold">High (84%)</span>
+                          </div>
+                          <div class="progress-bar-bg" style="height: 4px;"><div class="progress-bar-fill" style="width: 84%;"></div></div>
+                        </div>
+                      </div>
+
+                      <!-- Variant B -->
+                      <div class="ab-preview-container" id="variant-b-compare-card">
+                        <div class="flex-between" style="margin-bottom: var(--space-xs);">
+                          <span class="text-body-small font-bold" id="compare-title-b">Variant B (Gadget Center)</span>
+                          <span class="text-body-small text-accent font-bold" id="compare-score-b">91% CTR</span>
+                        </div>
+                        <div class="ab-image-wrapper">
+                          <img src="images/thumbnail_gadget.png" alt="B" id="compare-img-b" style="width:100%; height:100%; object-fit:cover;">
+                        </div>
+                        <div style="margin-top: 8px; display: flex; flex-direction: column; gap: 4px;">
+                          <div class="flex-between text-detail text-muted">
+                            <span>Mobile Clarity:</span>
+                            <span class="text-primary font-bold" id="compare-clarity-b">Very High (92%)</span>
+                          </div>
+                          <div class="progress-bar-bg" style="height: 4px;"><div class="progress-bar-fill bg-accent" id="compare-bar-b" style="width: 92%;"></div></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Right Column: Interactive Tabs & Performance details -->
+                <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                  
+                  <!-- Circular AI Score Gauge Card -->
+                  <div class="card" style="display: grid; grid-template-columns: auto 1fr; gap: var(--space-md); align-items: center;">
+                    <!-- Circular Score SVG -->
+                    <div style="position: relative; width: 100px; height: 100px;">
+                      <svg width="100" height="100" class="circular-progress-svg">
+                        <circle cx="50" cy="50" r="42" class="circular-bg" />
+                        <circle cx="50" cy="50" r="42" class="circular-fill" id="score-circle-stroke" stroke-dasharray="264" stroke-dashoffset="31.6" />
+                      </svg>
+                      <!-- Inner Text -->
+                      <div style="position: absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
+                        <span class="text-h4 font-display font-bold" id="score-text-value">88</span>
+                        <span class="text-detail text-muted" style="font-size:0.55rem; text-transform:uppercase;">AI Score</span>
+                      </div>
+                    </div>
+
+                    <!-- Metrics breakdown -->
+                    <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
+                      <h4 class="text-body-large font-bold">CTR Optimization Index</h4>
+                      <p class="text-detail text-muted">Aura AI predicts this layout places in the top 8% of all tech category videos.</p>
+                      
+                      <div class="grid grid-2" style="gap: var(--space-xs); margin-top: 4px;">
+                        <div>
+                          <p class="text-detail text-muted" style="margin:0;">Eye Gaze Pull:</p>
+                          <p class="text-body-small font-bold" id="gaze-score-label">Direct (+14%)</p>
+                        </div>
+                        <div>
+                          <p class="text-detail text-muted" style="margin:0;">Color Saturation:</p>
+                          <p class="text-body-small font-bold text-success" id="saturation-score-label">Optimal</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Detailed Tab Layout -->
+                  <div class="card" style="padding: 0;">
+                    <!-- Tabs Header -->
+                    <div style="display: flex; border-bottom: 1px solid var(--border-default); overflow-x: auto; padding: 0 var(--space-sm);">
+                      <button class="tab-btn active" data-tab="analysis" onclick="switchTab(this, 'analysis')">Contrast & Visibility</button>
+                      <button class="tab-btn" data-tab="color" onclick="switchTab(this, 'color')">Palette & Clutter</button>
+                      <button class="tab-btn" data-tab="recommendations" onclick="switchTab(this, 'recommendations')">AI Recommendations (<span id="recs-count">3</span>)</button>
+                    </div>
+
+                    <!-- Tab panels -->
+                    <div style="padding: var(--space-lg);">
+                      
+                      <!-- PANEL 1: ANALYSIS AND CONTRAST -->
+                      <div class="script-tab-panel active" id="panel-analysis">
+                        <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                          
+                          <!-- Text visibility checks -->
+                          <div>
+                            <div class="flex-between" style="margin-bottom: 4px;">
+                              <span class="text-body-small font-bold">Title Text Contrast (Background vs Title)</span>
+                              <span class="badge badge-success" id="text-contrast-badge">6.8:1 (PASS)</span>
+                            </div>
+                            <p class="text-detail text-muted" style="margin-bottom: 8px;">Minimum AA standard (4.5:1) is exceeded. Typography scale is highly legible on mobile viewports.</p>
+                          </div>
+
+                          <!-- Subject face contrast check -->
+                          <div>
+                            <div class="flex-between" style="margin-bottom: 4px;">
+                              <span class="text-body-small font-bold">Subject Portrait Isolation</span>
+                              <span class="badge badge-warning" id="face-contrast-badge">4.4:1 (MODERATE)</span>
+                            </div>
+                            <p class="text-detail text-muted">Subject blends slightly into the dark neon background. Boosting subject saturation can help portrait pop.</p>
+                          </div>
+
+                          <!-- Gaze focus check -->
+                          <div style="border-top: 1px solid var(--border-default); padding-top: var(--space-sm); display: flex; flex-direction: column; gap: var(--space-xs);">
+                            <span class="text-body-small font-bold">Text Visibility & Length Analyzer</span>
+                            <div style="display: flex; gap: var(--space-xs); flex-wrap: wrap;">
+                              <span class="badge badge-success">Word count: 3 (Optimal)</span>
+                              <span class="badge badge-success">Font size: 36px equivalent</span>
+                              <span class="badge badge-success">Text Area: 11% of canvas</span>
+                            </div>
+                          </div>
+
+                        </div>
+                      </div>
+
+                      <!-- PANEL 2: COLOR AND CLUTTER -->
+                      <div class="script-tab-panel" id="panel-color">
+                        <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                          
+                          <!-- Color chips -->
+                          <div>
+                            <span class="text-body-small font-bold" style="display: block; margin-bottom: var(--space-sm);">Dominant Color Palette</span>
+                            <div class="color-chip-list" id="palette-chips-container">
+                              <div class="color-chip-row">
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                  <div class="color-preview-block" style="background-color: #0F172A;"></div>
+                                  <span class="text-detail font-mono">#0F172A (Slate Dark)</span>
+                                </div>
+                                <span class="text-detail font-bold">42% weight</span>
+                              </div>
+                              <div class="color-chip-row">
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                  <div class="color-preview-block" style="background-color: #6366F1;"></div>
+                                  <span class="text-detail font-mono">#6366F1 (Indigo Neon)</span>
+                                </div>
+                                <span class="text-detail font-bold">35% weight</span>
+                              </div>
+                              <div class="color-chip-row">
+                                <div style="display:flex; align-items:center; gap:8px;">
+                                  <div class="color-preview-block" style="background-color: #10B981;"></div>
+                                  <span class="text-detail font-mono">#10B981 (Emerald green)</span>
+                                </div>
+                                <span class="text-detail font-bold">12% weight</span>
+                              </div>
+                            </div>
+                          </div>
+
+                          <!-- Clutter analysis index gauge -->
+                          <div style="border-top: 1px solid var(--border-default); padding-top: var(--space-sm);">
+                            <div class="flex-between" style="margin-bottom: var(--space-xs);">
+                              <span class="text-body-small font-bold">Visual Clutter & Density Score</span>
+                              <span class="text-body-small font-bold text-success" id="clutter-density-value">18% (LOW)</span>
+                            </div>
+                            <div class="progress-bar-bg"><div class="progress-bar-fill" id="clutter-bar-fill" style="width: 18%;"></div></div>
+                            <p class="text-detail text-muted" style="margin-top: 6px;">Very clean layout. Attention vectors focus cleanly on the primary subject and title text without distraction.</p>
+                          </div>
+
+                        </div>
+                      </div>
+
+                      <!-- PANEL 3: RECOMMENDATIONS FEED -->
+                      <div class="script-tab-panel" id="panel-recommendations">
+                        <div style="display: flex; flex-direction: column; gap: var(--space-sm);" id="recommendations-container">
+                          
+                          <!-- Rec 1 -->
+                          <div class="card" style="padding: var(--space-sm); border-left: 4px solid var(--brand-primary); display: flex; flex-direction: column; gap: 4px;" id="rec-item-1">
+                            <div class="flex-between">
+                              <span class="text-body-small font-bold">Add neon glow to title text</span>
+                              <span class="text-detail font-bold text-success">+3.5% CTR prediction</span>
+                            </div>
+                            <p class="text-detail text-muted">Increase text separation from dark slate elements by adding a subtle drop glow.</p>
+                            <button class="btn btn-tertiary btn-sm" onclick="applyRecommendation(1)" style="margin-top: 4px; align-self: flex-start; appearance: none; -webkit-appearance: none;">Fix Now</button>
+                          </div>
+
+                          <!-- Rec 2 -->
+                          <div class="card" style="padding: var(--space-sm); border-left: 4px solid var(--accent-purple); display: flex; flex-direction: column; gap: 4px;" id="rec-item-2">
+                            <div class="flex-between">
+                              <span class="text-body-small font-bold">Boost subject portrait saturation</span>
+                              <span class="text-detail font-bold text-success">+2.1% CTR prediction</span>
+                            </div>
+                            <p class="text-detail text-muted">Make the creator face stand out from the ambient background lights.</p>
+                            <button class="btn btn-tertiary btn-sm" onclick="applyRecommendation(2)" style="margin-top: 4px; align-self: flex-start; appearance: none; -webkit-appearance: none;">Fix Now</button>
+                          </div>
+
+                          <!-- Rec 3 -->
+                          <div class="card" style="padding: var(--space-sm); border-left: 4px solid var(--accent-orange); display: flex; flex-direction: column; gap: 4px;" id="rec-item-3">
+                            <div class="flex-between">
+                              <span class="text-body-small font-bold">Increase face size to 25% of frame</span>
+                              <span class="text-detail font-bold text-success">+4.2% CTR prediction</span>
+                            </div>
+                            <p class="text-detail text-muted">Enlarge the subject bounding box to improve expression visibility on mobile feeds.</p>
+                            <button class="btn btn-tertiary btn-sm" onclick="applyRecommendation(3)" style="margin-top: 4px; align-self: flex-start; appearance: none; -webkit-appearance: none;">Fix Now</button>
+                          </div>
+
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <!-- Variations & Gallery Row Panel -->
+                  <div class="card">
+                    <h4 class="text-body font-bold" style="margin-bottom: var(--space-sm);">Project Thumbnail Gallery</h4>
+                    
+                    <div class="thumbnail-gallery-scroll" id="gallery-scroller-panel">
+                      <!-- Card 1 -->
+                      <div class="gallery-item-card active-item" onclick="selectGalleryItem('creator', this)">
+                        <div class="gallery-preview-wrapper">
+                          <img src="images/thumbnail_creator.png" alt="Creator" class="gallery-preview-image">
+                          <div class="gallery-item-badge">88</div>
+                        </div>
+                        <p class="text-detail font-bold text-truncate" style="margin-top: 6px; margin-bottom: 2px;">Hook Master V3</p>
+                        <p class="text-detail text-muted" style="margin: 0;">2 hours ago</p>
+                      </div>
+
+                      <!-- Card 2 -->
+                      <div class="gallery-item-card" onclick="selectGalleryItem('gadget', this)">
+                        <div class="gallery-preview-wrapper">
+                          <img src="images/thumbnail_gadget.png" alt="Gadget" class="gallery-preview-image">
+                          <div class="gallery-item-badge" style="background-color: var(--accent-purple);">91</div>
+                        </div>
+                        <p class="text-detail font-bold text-truncate" style="margin-top: 6px; margin-bottom: 2px;">Gadget Bento V2</p>
+                        <p class="text-detail text-muted" style="margin: 0;">Yesterday</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Generate Variations Prompt Console -->
+                  <div class="card" id="variations-generation-card">
+                    <h4 class="text-body font-bold" style="margin-bottom: var(--space-sm);">AI Thumbnail Variation Generator</h4>
+                    
+                    <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                      <div>
+                        <label class="text-detail text-muted font-bold" style="display: block; margin-bottom: 4px;">Concept Prompt</label>
+                        <textarea class="form-input" id="variation-prompt-input" rows="2" style="width: 100%; font-family: var(--font-sans); font-size: 0.8125rem;" placeholder="e.g. Zoom in 20% on creator face and replace text with a bright yellow badge saying '90+ SCORE'"></textarea>
+                      </div>
+
+                      <div class="grid grid-2" style="gap: var(--space-sm);">
+                        <div>
+                          <label class="text-detail text-muted font-bold" style="display: block; margin-bottom: 4px;">Layout Preset</label>
+                          <select class="form-input" id="variation-preset-select" style="width:100%;">
+                            <option value="face-left">Face Left + Text Right</option>
+                            <option value="centered">Centered Subject + Glow</option>
+                            <option value="bento">Gamified Bento Box Grid</option>
+                          </select>
+                        </div>
+                        <div>
+                          <label class="text-detail text-muted font-bold" style="display: block; margin-bottom: 4px;">Background Style</label>
+                          <select class="form-input" id="variation-bg-select" style="width:100%;">
+                            <option value="neon-gradient">Ambient Neon Gradient</option>
+                            <option value="studio-blur">Studio Blurry Depth</option>
+                            <option value="dark-slate">Dark Minimal Slate</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <!-- Progress bar during generation -->
+                      <div id="variation-progress-box" style="display: none; margin-top: 8px;">
+                        <div class="flex-between text-detail text-muted" style="margin-bottom: 4px;">
+                          <span>Generating variations...</span>
+                          <span id="variation-percent-label">0%</span>
+                        </div>
+                        <div class="progress-bar-bg" style="height: 6px;"><div class="progress-bar-fill" id="variation-pbar-fill" style="width: 0%;"></div></div>
+                      </div>
+
+                      <button class="btn btn-primary" onclick="generateVariations()" style="margin-top: 4px; display: inline-flex; align-items: center; justify-content: center; gap: 8px;">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414"/></svg>
+                        Generate 3 Variations
+                      </button>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+        </main>
+        
+      </div>
+    </div>
+  </main>
+
+  <!-- ==============================================
+       3. MODAL DIALOGS AND OVERLAYS
+       ============================================== -->
+
+  <!-- A/B Comparison Grid Modal -->
+  <div class="modal-overlay" id="compare-modal-overlay">
+    <div class="modal-card" style="width: 800px; max-width: 95%;">
+      <div class="flex-between" style="border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-md); margin-bottom: var(--space-lg);">
+        <h3 class="text-h5 font-display font-bold">Split-Screen Gaze A/B Compare</h3>
+        <button class="btn btn-secondary btn-icon" onclick="closeCompareModal()" style="height: 32px; width: 32px; padding: 0;">×</button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-lg);">
+        <div>
+          <div class="flex-between" style="margin-bottom: var(--space-xs);">
+            <span class="text-body font-bold">Variant A (Hook Master)</span>
+            <span class="badge badge-success">88 Score</span>
+          </div>
+          <div style="position: relative; width: 100%; aspect-ratio: 16/9; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-default);">
+            <img src="images/thumbnail_creator.png" alt="A" style="width:100%; height:100%; object-fit:cover;">
+            <!-- Dummy overlay representing gaze map -->
+            <div style="position: absolute; inset:0; background: radial-gradient(circle at 71% 43%, rgba(59, 130, 246, 0.75) 0%, transparent 25%), radial-gradient(circle at 20% 20%, rgba(59,130,246,0.6) 0%, transparent 20%); mix-blend-mode: screen;"></div>
+          </div>
+          <p class="text-detail text-muted" style="margin-top: 8px;">Gaze vectors are highly aligned on the center-right quadrants. Face captures attention first, then flows to text.</p>
+        </div>
+
+        <div>
+          <div class="flex-between" style="margin-bottom: var(--space-xs);">
+            <span class="text-body font-bold">Variant B (Gadget Bento)</span>
+            <span class="badge badge-success" style="background-color: var(--accent-purple);">91 Score</span>
+          </div>
+          <div style="position: relative; width: 100%; aspect-ratio: 16/9; border-radius: var(--radius-md); overflow: hidden; border: 1px solid var(--border-default);">
+            <img src="images/thumbnail_gadget.png" alt="B" style="width:100%; height:100%; object-fit:cover;">
+            <!-- Dummy overlay representing gaze map -->
+            <div style="position: absolute; inset:0; background: radial-gradient(circle at 50% 50%, rgba(139, 92, 246, 0.75) 0%, transparent 30%), radial-gradient(circle at 10% 20%, rgba(139,92,246,0.6) 0%, transparent 15%); mix-blend-mode: screen;"></div>
+          </div>
+          <p class="text-detail text-muted" style="margin-top: 8px;">Gaze points gather strictly on the center gadget asset. Text has strong secondary pull.</p>
+        </div>
+      </div>
+
+      <div style="display: flex; justify-content: flex-end; gap: var(--space-sm); border-top: 1px solid var(--border-default); padding-top: var(--space-md); margin-top: var(--space-lg);">
+        <button class="btn btn-secondary" onclick="closeCompareModal()">Close Comparison</button>
+        <button class="btn btn-primary" onclick="window.showToast('Deploying Variant B to primary A/B slot...', 'success'); closeCompareModal();">Deploy Variant B</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Reports Modal -->
+  <div class="modal-overlay" id="export-modal-overlay">
+    <div class="modal-card">
+      <div class="flex-between" style="border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-md); margin-bottom: var(--space-lg);">
+        <h3 class="text-h5 font-display font-bold">Export Thumbnail Assets</h3>
+        <button class="btn btn-secondary btn-icon" onclick="closeExportModal()" style="height: 32px; width: 32px; padding: 0;">×</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+        <p class="text-body-small text-muted">Choose your export formats for Hook Master V3 analytical results and rendered visual variations.</p>
+        
+        <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 0.8125rem;">
+            <input type="checkbox" checked> High-Res Thumbnail Image (1920x1080 PNG)
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 0.8125rem;">
+            <input type="checkbox" checked> Full A/B Gaze Analytics PDF Report
+          </label>
+          <label style="display: flex; align-items: center; gap: 8px; font-size: 0.8125rem;">
+            <input type="checkbox"> Metadata & Clutter Heatmap coordinates JSON
+          </label>
+        </div>
+
+        <div id="export-loader-box" style="display: none; margin-top: 8px;">
+          <div class="progress-bar-bg" style="height: 6px;"><div class="progress-bar-fill" id="export-pbar-fill" style="width: 0%;"></div></div>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: var(--space-sm); margin-top: var(--space-md);">
+          <button class="btn btn-secondary" onclick="closeExportModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="triggerExportAction()">Start Export</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-notifications-container" id="toast-container"></div>
+
+  <!-- ==============================================
+       4. INTERACTIVE JAVASCRIPT ACTIONS LOGIC
+       ============================================== -->
+  <script>
+    // System Theme Mode toggle
+    const themeToggleBtn = document.getElementById('theme-toggle');
+    themeToggleBtn.addEventListener('click', () => {
+      document.body.classList.toggle('light');
+      document.body.classList.toggle('dark');
+      if (document.body.classList.contains('light')) {
+        themeToggleBtn.innerHTML = `
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1M4.929 4.929l.707.707m12.728 12.728l.707.707M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414M6.343 17.657l-1.414 1.414M12 7a5 5 0 100 10 5 5 0 000-10z"/></svg>
+          Light Mode
+        `;
+        showToast('Switched to Light Aura theme', 'success');
+      } else {
+        themeToggleBtn.innerHTML = `
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          Dark Mode
+        `;
+        showToast('Switched to Dark Space theme', 'success');
+      }
+    });
+
+    // Viewport Emulation switches
+    document.querySelectorAll('[data-viewport]').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        const viewport = btn.getAttribute('data-viewport');
+        const frame = document.getElementById('viewport-frame');
+        
+        document.querySelectorAll('[data-viewport]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        frame.className = `emulator-viewport ${viewport}`;
+        showToast(`Emulating ${viewport} screen size`, 'info');
+      });
+    });
+
+    // State Modifiers Simulator
+    document.getElementById('state-normal').addEventListener('click', () => {
+      document.getElementById('state-normal').classList.add('active');
+      document.getElementById('state-loading').classList.remove('active');
+      document.getElementById('state-variations').classList.remove('active');
+      document.body.classList.remove('loading-state-active');
+      showToast('Dashboard normal state loaded', 'info');
+    });
+
+    document.getElementById('state-loading').addEventListener('click', () => {
+      document.getElementById('state-loading').classList.add('active');
+      document.getElementById('state-normal').classList.remove('active');
+      document.getElementById('state-variations').classList.remove('active');
+      document.body.classList.add('loading-state-active');
+      showToast('Simulating skeleton loaders...', 'info');
+      setTimeout(() => {
+        document.body.classList.remove('loading-state-active');
+        document.getElementById('state-normal').classList.add('active');
+        document.getElementById('state-loading').classList.remove('active');
+        showToast('Dashboard details synced', 'success');
+      }, 1500);
+    });
+
+    document.getElementById('state-variations').addEventListener('click', () => {
+      document.getElementById('state-variations').classList.add('active');
+      document.getElementById('state-normal').classList.remove('active');
+      document.getElementById('state-loading').classList.remove('active');
+      document.body.classList.remove('loading-state-active');
+      
+      // Scroll smoothly to AI variations panel
+      document.getElementById('variations-generation-card').scrollIntoView({ behavior: 'smooth' });
+      document.getElementById('variation-prompt-input').focus();
+      showToast('AI Variation Generator ready', 'info');
+    });
+
+    // Sidebar navigation trigger logic
+    document.getElementById('sidebar-toggle-btn').addEventListener('click', () => {
+      document.querySelector('.dashboard-sidebar').classList.toggle('active');
+    });
+
+    // Toast manager helper
+    window.showToast = function(message, type = 'info') {
+      const container = document.getElementById('toast-container');
+      const alertDiv = document.createElement('div');
+      alertDiv.className = `toast-alert`;
+      if (type === 'success') alertDiv.style.borderLeftColor = 'var(--accent-green)';
+      else if (type === 'warning') alertDiv.style.borderLeftColor = 'var(--accent-orange)';
+      alertDiv.innerHTML = `
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>${message}</span>
+      `;
+      container.appendChild(alertDiv);
+      setTimeout(() => {
+        alertDiv.style.animation = 'slideInRight var(--transition-fast) reverse forwards';
+        setTimeout(() => alertDiv.remove(), 400);
+      }, 3000);
+    }
+
+    // Toggle active canvas overlays
+    function toggleOverlay(overlayId) {
+      const overlayEl = document.getElementById(`overlay-${overlayId}`);
+      const btn = document.querySelector(`[data-overlay="${overlayId}"]`);
+      
+      overlayEl.classList.toggle('active-overlay');
+      btn.classList.toggle('active-btn');
+      
+      if (overlayEl.classList.contains('active-overlay')) {
+        showToast(`Enabled ${overlayId} analysis overlay`, 'info');
+      } else {
+        showToast(`Disabled ${overlayId} overlay`, 'info');
+      }
+    }
+
+    // Switch right panels tabs
+    function switchTab(btn, tabId) {
+      document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      document.querySelectorAll('.script-tab-panel').forEach(p => p.classList.remove('active'));
+      document.getElementById(`panel-${tabId}`).classList.add('active');
+    }
+
+    // Switch between gallery thumbnails
+    const thumbnailData = {
+      creator: {
+        title: 'Hook Master V3 (Optimized)',
+        badge: 'ACTIVE TEST',
+        date: 'Uploaded: 2 hours ago',
+        imgSrc: 'images/thumbnail_creator.png',
+        textValue: 'Hook Score 90+',
+        score: 88,
+        gaze: 'Direct (+14%)',
+        saturation: 'Optimal',
+        textContrast: '6.8:1 (PASS)',
+        faceContrast: '4.4:1 (MODERATE)',
+        clutter: '18% (LOW)',
+        recsCount: 3,
+        recsHtml: `
+          <div class="card" style="padding: var(--space-sm); border-left: 4px solid var(--brand-primary); display: flex; flex-direction: column; gap: 4px;" id="rec-item-1">
+            <div class="flex-between">
+              <span class="text-body-small font-bold">Add neon glow to title text</span>
+              <span class="text-detail font-bold text-success">+3.5% CTR prediction</span>
+            </div>
+            <p class="text-detail text-muted">Increase text separation from dark slate elements by adding a subtle drop glow.</p>
+            <button class="btn btn-tertiary btn-sm" onclick="applyRecommendation(1)" style="margin-top: 4px; align-self: flex-start; appearance: none; -webkit-appearance: none;">Fix Now</button>
+          </div>
+          <div class="card" style="padding: var(--space-sm); border-left: 4px solid var(--accent-purple); display: flex; flex-direction: column; gap: 4px;" id="rec-item-2">
+            <div class="flex-between">
+              <span class="text-body-small font-bold">Boost subject portrait saturation</span>
+              <span class="text-detail font-bold text-success">+2.1% CTR prediction</span>
+            </div>
+            <p class="text-detail text-muted">Make the creator face stand out from the ambient background lights.</p>
+            <button class="btn btn-tertiary btn-sm" onclick="applyRecommendation(2)" style="margin-top: 4px; align-self: flex-start; appearance: none; -webkit-appearance: none;">Fix Now</button>
+          </div>
+          <div class="card" style="padding: var(--space-sm); border-left: 4px solid var(--accent-orange); display: flex; flex-direction: column; gap: 4px;" id="rec-item-3">
+            <div class="flex-between">
+              <span class="text-body-small font-bold">Increase face size to 25% of frame</span>
+              <span class="text-detail font-bold text-success">+4.2% CTR prediction</span>
+            </div>
+            <p class="text-detail text-muted">Enlarge the subject bounding box to improve expression visibility on mobile feeds.</p>
+            <button class="btn btn-tertiary btn-sm" onclick="applyRecommendation(3)" style="margin-top: 4px; align-self: flex-start; appearance: none; -webkit-appearance: none;">Fix Now</button>
+          </div>
+        `
+      },
+      gadget: {
+        title: 'Gadget Bento V2',
+        badge: 'COMPLETED TEST',
+        date: 'Uploaded: Yesterday',
+        imgSrc: 'images/thumbnail_gadget.png',
+        textValue: 'New Tech Review',
+        score: 91,
+        gaze: 'Focused Center (+9%)',
+        saturation: 'Slightly High',
+        textContrast: '7.8:1 (EXCELLENT)',
+        faceContrast: '3.1:1 (LOW)',
+        clutter: '24% (MODERATE)',
+        recsCount: 2,
+        recsHtml: `
+          <div class="card" style="padding: var(--space-sm); border-left: 4px solid var(--accent-orange); display: flex; flex-direction: column; gap: 4px;" id="rec-item-4">
+            <div class="flex-between">
+              <span class="text-body-small font-bold">Decrease clutter in upper-left corner</span>
+              <span class="text-detail font-bold text-success">+1.8% CTR prediction</span>
+            </div>
+            <p class="text-detail text-muted">Remove overlapping minor gadget labels to clear up peripheral distractions.</p>
+            <button class="btn btn-tertiary btn-sm" onclick="applyRecommendation(4)" style="margin-top: 4px; align-self: flex-start; appearance: none; -webkit-appearance: none;">Fix Now</button>
+          </div>
+          <div class="card" style="padding: var(--space-sm); border-left: 4px solid var(--brand-primary); display: flex; flex-direction: column; gap: 4px;" id="rec-item-5">
+            <div class="flex-between">
+              <span class="text-body-small font-bold">Swap font to outfit weight</span>
+              <span class="text-detail font-bold text-success">+2.4% CTR prediction</span>
+            </div>
+            <p class="text-detail text-muted">Increase headline thickness to boost contrast with grid lines.</p>
+            <button class="btn btn-tertiary btn-sm" onclick="applyRecommendation(5)" style="margin-top: 4px; align-self: flex-start; appearance: none; -webkit-appearance: none;">Fix Now</button>
+          </div>
+        `
+      }
+    };
+
+    function selectGalleryItem(key, cardEl) {
+      document.querySelectorAll('.gallery-item-card').forEach(c => c.classList.remove('active-item'));
+      cardEl.classList.add('active-item');
+
+      // Trigger a light reload state
+      const mainFrame = document.getElementById('dashboard-main-shell');
+      mainFrame.style.opacity = '0.5';
+      showToast(`Loading details for ${thumbnailData[key].title}...`, 'info');
+
+      setTimeout(() => {
+        mainFrame.style.opacity = '1';
+        
+        // Update Canvas fields
+        document.getElementById('active-thumbnail-title').innerText = thumbnailData[key].title;
+        document.getElementById('active-thumbnail-badge').innerText = thumbnailData[key].badge;
+        document.getElementById('active-thumbnail-date').innerText = thumbnailData[key].date;
+        document.getElementById('main-canvas-img').src = thumbnailData[key].imgSrc;
+        document.getElementById('canvas-text-styled').innerText = thumbnailData[key].textValue;
+
+        // Reset text adjustments
+        document.getElementById('canvas-text-styled').className = "text-styled-canvas";
+        document.getElementById('main-canvas-img').style.filter = "none";
+
+        // Update Score Gauge
+        const score = thumbnailData[key].score;
+        document.getElementById('score-text-value').innerText = score;
+        const strokeOffset = 264 - (264 * score / 100);
+        document.getElementById('score-circle-stroke').style.strokeDashoffset = strokeOffset;
+
+        // Update basic label values
+        document.getElementById('gaze-score-label').innerText = thumbnailData[key].gaze;
+        document.getElementById('saturation-score-label').innerText = thumbnailData[key].saturation;
+        document.getElementById('text-contrast-badge').innerText = thumbnailData[key].textContrast;
+        document.getElementById('face-contrast-badge').innerText = thumbnailData[key].faceContrast;
+        document.getElementById('clutter-density-value').innerText = thumbnailData[key].clutter;
+        
+        // Update progress bar width
+        const densityVal = parseInt(thumbnailData[key].clutter);
+        document.getElementById('clutter-bar-fill').style.width = `${densityVal}%`;
+
+        // Update recommendations
+        document.getElementById('recs-count').innerText = thumbnailData[key].recsCount;
+        document.getElementById('recommendations-container').innerHTML = thumbnailData[key].recsHtml;
+
+        showToast('Thumbnail analysis loaded', 'success');
+      }, 500);
+    }
+
+    // Apply recommendations mockup fixes
+    function applyRecommendation(id) {
+      showToast('Processing AI graphic optimization...', 'info');
+      const scoreValueEl = document.getElementById('score-text-value');
+      let score = parseInt(scoreValueEl.innerText);
+
+      setTimeout(() => {
+        if (id === 1) {
+          // Glow to text
+          const textEl = document.getElementById('canvas-text-styled');
+          textEl.classList.add('bordered-text');
+          score = Math.min(100, score + 4);
+          showToast('Applied neon glow border styling', 'success');
+        } else if (id === 2) {
+          // Saturation boost
+          const imgEl = document.getElementById('main-canvas-img');
+          imgEl.style.filter = "saturate(1.35)";
+          score = Math.min(100, score + 2);
+          showToast('Increased subject color saturation by 15%', 'success');
+        } else if (id === 3) {
+          // Enlarge face
+          const imgEl = document.getElementById('main-canvas-img');
+          imgEl.style.transform = "scale(1.1) translateX(3%)";
+          score = Math.min(100, score + 4);
+          showToast('Enlarged face coordinates scale', 'success');
+        } else {
+          score = Math.min(100, score + 3);
+          showToast('Applied layout clutter corrections', 'success');
+        }
+
+        // Update Score UI
+        scoreValueEl.innerText = score;
+        const strokeOffset = 264 - (264 * score / 100);
+        document.getElementById('score-circle-stroke').style.strokeDashoffset = strokeOffset;
+
+        // Hide applied item
+        const recCard = document.getElementById(`rec-item-${id}`);
+        if (recCard) {
+          recCard.style.opacity = '0.3';
+          recCard.querySelector('button').disabled = true;
+          recCard.querySelector('button').innerText = 'Applied';
+        }
+      }, 800);
+    }
+
+    // Generate variations simulation
+    function generateVariations() {
+      const prompt = document.getElementById('variation-prompt-input').value;
+      if (!prompt.trim()) {
+        showToast('Please type a visual concept prompt first', 'warning');
+        return;
+      }
+
+      const progBox = document.getElementById('variation-progress-box');
+      const pbar = document.getElementById('variation-pbar-fill');
+      const plabel = document.getElementById('variation-percent-label');
+
+      progBox.style.display = 'block';
+      let progress = 0;
+
+      const interval = setInterval(() => {
+        progress += 10;
+        pbar.style.width = `${progress}%`;
+        plabel.innerText = `${progress}%`;
+
+        if (progress >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            progBox.style.display = 'none';
+            pbar.style.width = '0%';
+            
+            // Add a new item to gallery scroller
+            const scroller = document.getElementById('gallery-scroller-panel');
+            const newItem = document.createElement('div');
+            newItem.className = 'gallery-item-card';
+            newItem.onclick = function() { selectGalleryItem('gadget', newItem); };
+            newItem.innerHTML = `
+              <div class="gallery-preview-wrapper">
+                <img src="images/thumbnail_gadget.png" alt="Variant" class="gallery-preview-image" style="filter: hue-rotate(90deg);">
+                <div class="gallery-item-badge" style="background-color: var(--brand-primary);">93</div>
+              </div>
+              <p class="text-detail font-bold text-truncate" style="margin-top: 6px; margin-bottom: 2px;">AI Variation V3</p>
+              <p class="text-detail text-muted" style="margin: 0;">Just now</p>
+            `;
+            scroller.appendChild(newItem);
+            
+            // Update AB Compare variant b card to point to new variation
+            document.getElementById('compare-title-b').innerText = 'AI Variant V3';
+            document.getElementById('compare-score-b').innerText = '93% CTR';
+            document.getElementById('compare-img-b').src = 'images/thumbnail_gadget.png';
+            document.getElementById('compare-img-b').style.filter = "hue-rotate(90deg)";
+            document.getElementById('compare-clarity-b').innerText = 'Excellent (94%)';
+            document.getElementById('compare-bar-b').style.width = '94%';
+
+            showToast('Generated 3 custom AI thumbnail variations', 'success');
+          }, 400);
+        }
+      }, 150);
+    }
+
+    // Modal dialog utilities
+    function triggerCompareModal() {
+      document.getElementById('compare-modal-overlay').classList.add('active');
+    }
+    function closeCompareModal() {
+      document.getElementById('compare-modal-overlay').classList.remove('active');
+    }
+
+    function openExportModal() {
+      document.getElementById('export-modal-overlay').classList.add('active');
+    }
+    function closeExportModal() {
+      document.getElementById('export-modal-overlay').classList.remove('active');
+    }
+
+    function triggerExportAction() {
+      const loader = document.getElementById('export-loader-box');
+      const pbar = document.getElementById('export-pbar-fill');
+      
+      loader.style.display = 'block';
+      let progress = 0;
+      
+      const interval = setInterval(() => {
+        progress += 20;
+        pbar.style.width = `${progress}%`;
+        
+        if (progress >= 100) {
+          clearInterval(interval);
+          setTimeout(() => {
+            loader.style.display = 'none';
+            closeExportModal();
+            showToast('Analytics summary exported as PNG/PDF successfully', 'success');
+          }, 3000);
+        }
+      }, 150);
+    }
+  </script>
+</body>
+</html>

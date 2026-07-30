@@ -1,0 +1,142 @@
+[
+  {
+    "id": "tc-01",
+    "category": "Weak generic hook",
+    "language": "English",
+    "script": "Hey guys, welcome back to my channel. Today I want to talk about productivity tools. So basically there are three apps I use every single day to get things done.",
+    "factAnchors": ["three apps"]
+  },
+  {
+    "id": "tc-02",
+    "category": "Strong hook",
+    "language": "English",
+    "script": "If you are still using ChatGPT for writing code, you are working 10 times slower than you should be. Here is the AI tool that replaces 8 hours of coding with 5 minutes.",
+    "factAnchors": ["10 times", "8 hours", "5 minutes"]
+  },
+  {
+    "id": "tc-03",
+    "category": "Educational Reel",
+    "language": "English",
+    "script": "Did you know that 80% of Instagram Reels fail because of the first 2 seconds? In this video, I will show you how to structure your video script so viewers watch until the end.",
+    "factAnchors": ["80%", "2 seconds"]
+  },
+  {
+    "id": "tc-04",
+    "category": "Product advertisement",
+    "language": "English",
+    "script": "Meet the ErgoDesk Pro. Adjustable height in 1.5 seconds, dual motor stability, and built-in wireless charging. Get 30% off today at ergodesk.com for $299.",
+    "factAnchors": ["ErgoDesk Pro", "1.5 seconds", "30%", "ergodesk.com", "$299"]
+  },
+  {
+    "id": "tc-05",
+    "category": "UGC",
+    "language": "English",
+    "script": "Okay so I bought this viral hair serum on TikTok because everyone was talking about it. After 14 days of using it, here is my honest review.",
+    "factAnchors": ["14 days"]
+  },
+  {
+    "id": "tc-06",
+    "category": "Storytelling",
+    "language": "English",
+    "script": "In 2021, I was down to $42 in my bank account and living on instant noodles. Three years later, my SaaS company reached $1.2M in annual revenue. Here is what changed.",
+    "factAnchors": ["2021", "$42", "Three years", "$1.2M"]
+  },
+  {
+    "id": "tc-07",
+    "category": "Founder/business content",
+    "language": "English",
+    "script": "Most founders waste 6 months building features nobody asked for. We built a minimal landing page in 24 hours, pre-sold 50 units, and raised $100k seed funding.",
+    "factAnchors": ["6 months", "24 hours", "50 units", "$100k"]
+  },
+  {
+    "id": "tc-08",
+    "category": "Personal brand",
+    "language": "English",
+    "script": "I spent 10,000 hours studying top creators on YouTube. Here are 3 subtle habits that separate 10k follower accounts from 1M follower channels.",
+    "factAnchors": ["10,000 hours", "3 subtle habits", "10k", "1M"]
+  },
+  {
+    "id": "tc-09",
+    "category": "Informational/news-style",
+    "language": "English",
+    "script": "Breaking update: Google just released Gemini 2.5 with 2x speed boost and 50% lower API pricing. Here is how it impacts developers right now.",
+    "factAnchors": ["Google", "Gemini 2.5", "2x", "50%"]
+  },
+  {
+    "id": "tc-10",
+    "category": "CTA-heavy",
+    "language": "English",
+    "script": "Stop scrolling right now! Click the link below, sign up for our free masterclass, and download your 50-page cheat sheet before registration closes tonight at 11:59 PM.",
+    "factAnchors": ["50-page", "11:59 PM"]
+  },
+  {
+    "id": "tc-11",
+    "category": "No CTA",
+    "language": "English",
+    "script": "The secret behind Apple's packaging design isn't aesthetics. It's sensory anticipation. When you slide open an iPhone box, it takes exactly 7 seconds due to controlled air pressure.",
+    "factAnchors": ["Apple", "iPhone", "7 seconds"]
+  },
+  {
+    "id": "tc-12",
+    "category": "Hindi local business",
+    "language": "Hindi",
+    "script": "क्या आप भी मुंबई में सबसे बढ़िया वड़ा पाव की तलाश में हैं? दादर मार्केट की यह ५० साल पुरानी दुकान आपको असली स्वाद देगी। केवल ₹२० में गरम-गरम वड़ा पाव!",
+    "factAnchors": ["मुंबई", "दादर", "५० साल", "₹२०"]
+  },
+  {
+    "id": "tc-13",
+    "category": "Hinglish creator content",
+    "language": "Hinglish",
+    "script": "Bhai agar tum bhi reels daal daal ke thak gaye ho aur views 500 pe stuck hain, toh ye 1 setting instantly change karo. Maine try kiya aur 10k views aaye in 24 hours.",
+    "factAnchors": ["500", "1 setting", "10k", "24 hours"]
+  },
+  {
+    "id": "tc-14",
+    "category": "Short script",
+    "language": "English",
+    "script": "Stop wasting money on Meta ads until you fix your landing page speed. Under 2 seconds or zero conversions.",
+    "factAnchors": ["Meta", "2 seconds"]
+  },
+  {
+    "id": "tc-15",
+    "category": "Long script",
+    "language": "English",
+    "script": "If you're running a boutique digital agency in 2026, client retention is your biggest struggle. Most agency owners think clients leave because of pricing, but our audit of 45 agencies proved that 82% of cancellations happen due to poor weekly reporting. When clients don't see clear ROI breakdowns every Friday, they lose trust. To fix this, implement a automated 3-metric dashboard that updates every 24 hours. Send them a 60-second video walkthrough every Monday morning. You'll instantly see retention jump from 4 months to over 14 months.",
+    "factAnchors": ["2026", "45 agencies", "82%", "Friday", "24 hours", "60-second", "Monday", "4 months", "14 months"]
+  },
+  {
+    "id": "tc-16",
+    "category": "Already optimized script",
+    "language": "English",
+    "script": "Don't post your next Reel until you check this 3-second hook test. 9 out of 10 creators miss step #2. Save this post before it gets buried.",
+    "factAnchors": ["3-second", "9 out of 10", "step #2"]
+  },
+  {
+    "id": "tc-17",
+    "category": "Script containing prices/numbers",
+    "language": "Hinglish",
+    "script": "Aaj hum compare karne waile hain ₹499 wali smartwatch aur ₹4999 wali Apple Watch lookalike. Kya 10x price difference worth hai?",
+    "factAnchors": ["₹499", "₹4999", "Apple Watch", "10x"]
+  },
+  {
+    "id": "tc-18",
+    "category": "Script with brand names",
+    "language": "English",
+    "script": "We tested Nike Pegasus 40 against Adidas Ultraboost 5 on a 15km trail run in rainy conditions. Here is the winner.",
+    "factAnchors": ["Nike Pegasus 40", "Adidas Ultraboost 5", "15km"]
+  },
+  {
+    "id": "tc-19",
+    "category": "Poor grammar / messy user input",
+    "language": "Hinglish",
+    "script": "plz help me my reel view not comming i make food video in delhi cost rs 100 fast food but zero like. how to viral fast bro tell me tips",
+    "factAnchors": ["delhi", "rs 100"]
+  },
+  {
+    "id": "tc-20",
+    "category": "Real estate Reel",
+    "language": "Hinglish",
+    "script": "Mumbai ke Seawoods location mein 2 BHK luxury flat only ₹85 Lakhs mein. Prime location, 5 mins from station, ready possession. Direct builder deal!",
+    "factAnchors": ["Mumbai", "Seawoods", "2 BHK", "₹85 Lakhs", "5 mins"]
+  }
+]

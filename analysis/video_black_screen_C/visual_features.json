@@ -1,0 +1,35 @@
+{
+  "sceneCount": 1,
+  "shotLengthSec": 30,
+  "motionIntensity": 0,
+  "brightness": 0.1495,
+  "saturation": 0.4,
+  "contrast": 0.3333,
+  "faceCount": 0,
+  "faceSizePct": 0,
+  "cameraMovement": "STATIC",
+  "editingRhythmScore": 0.05,
+  "thumbnailQualityScore": 0.223,
+  "visualNoveltyScore": 0.2666,
+  "colorHistogram": [
+    0.5,
+    0,
+    0,
+    0,
+    0.5,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0,
+    0
+  ],
+  "detectedObjects": [
+    "high_contrast_foreground"
+  ]
+}

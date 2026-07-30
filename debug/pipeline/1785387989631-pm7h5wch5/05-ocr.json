@@ -1,0 +1,19 @@
+{
+  "detected_text": "[OCR Text Segment] Asset pm7h5wch5 text overlay density: 80.0%.",
+  "text_count": 9,
+  "text_density": 0.8,
+  "confidence": 0.96,
+  "regions": [
+    {
+      "start": 0.5,
+      "end": 2
+    },
+    {
+      "start": 2,
+      "end": 4.5
+    }
+  ],
+  "fontSizeEstimatePx": 68,
+  "ctaDetected": true,
+  "emojiCount": 1
+}

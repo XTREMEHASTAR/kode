@@ -1,0 +1,8 @@
+{
+  "method": "GET",
+  "url": "https://www.googleapis.com/youtube/v3/videos?part=snippet,statistics,contentDetails&id=real_yt_music_133&key=[REDACTED_API_KEY]",
+  "headers": {
+    "Host": "www.googleapis.com",
+    "Accept": "application/json"
+  }
+}

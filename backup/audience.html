@@ -1,0 +1,1929 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — AI Audience Intelligence Dashboard</title>
+  <link rel="stylesheet" href="design-system.css">
+  <style>
+    /* ==========================================================================
+       SANDBOX CORE LAYOUT FRAMEWORK
+       ========================================================================== */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-smooth);
+    }
+
+    .sandbox-header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-xs) var(--space-lg);
+      z-index: 1000;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .sandbox-brand h1 {
+      font-size: 1.125rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .sandbox-brand span {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .sandbox-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-control-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      background-color: var(--bg-secondary);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+    }
+
+    .sandbox-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sandbox-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .sandbox-btn.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sandbox-workspace {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      position: relative;
+    }
+
+    .emulator-viewport {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      transition: width var(--transition-smooth), height var(--transition-smooth), border-radius var(--transition-smooth);
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .emulator-viewport.desktop {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      border: none;
+    }
+
+    .emulator-viewport.tablet {
+      width: 768px;
+      height: 95%;
+      border-radius: var(--radius-lg);
+    }
+
+    .emulator-viewport.mobile {
+      width: 375px;
+      height: 85%;
+      border-radius: var(--radius-2xl);
+    }
+
+    /* ==========================================================================
+       DASHBOARD AND SIDEBAR STRUCTURE
+       ========================================================================== */
+    .dashboard-shell {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .dashboard-sidebar {
+      width: 260px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      transition: transform var(--transition-smooth), width var(--transition-smooth);
+    }
+
+    .sidebar-header {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .sidebar-nav {
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .sidebar-nav-item:hover, .sidebar-nav-item.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .sidebar-nav-item.active {
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .dashboard-main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-primary);
+    }
+
+    .dashboard-header {
+      height: 64px;
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-lg);
+      flex-shrink: 0;
+    }
+
+    .dashboard-search-bar {
+      display: flex;
+      align-items: center;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 6px 12px;
+      gap: var(--space-xs);
+      width: 240px;
+      max-width: 100%;
+    }
+
+    .dashboard-body {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: var(--space-xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    /* Emulator viewports responsive overrides */
+    .emulator-viewport.tablet .dashboard-sidebar {
+      width: 70px;
+    }
+    .emulator-viewport.tablet .sidebar-text-label,
+    .emulator-viewport.tablet .sidebar-footer {
+      display: none;
+    }
+
+    .emulator-viewport.mobile #sidebar-toggle-btn {
+      display: inline-flex !important;
+    }
+    .emulator-viewport.mobile .dashboard-sidebar {
+      display: none;
+    }
+    .emulator-viewport.mobile .dashboard-sidebar.active {
+      display: flex;
+      position: absolute;
+      left: 0;
+      top: auto;
+      bottom: 0;
+      z-index: 950;
+      height: calc(100% - 64px);
+      width: 240px;
+      box-shadow: var(--shadow-xl);
+      animation: dropdownEnter var(--transition-fast) forwards;
+    }
+
+    /* Responsive Grid layout overrides */
+    .skeleton-grid-layout {
+      display: grid;
+      grid-template-columns: 2fr 1fr;
+      gap: var(--space-lg);
+    }
+
+    /* Segmented filter selector pills */
+    .niche-filter-bar {
+      display: flex;
+      gap: var(--space-xs);
+      border-bottom: 1px solid var(--border-default);
+      padding-bottom: var(--space-sm);
+      overflow-x: auto;
+      scrollbar-width: none;
+      -ms-overflow-style: none;
+      width: 100%;
+    }
+    .niche-filter-bar::-webkit-scrollbar {
+      display: none;
+    }
+
+    .niche-pill {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      color: var(--text-muted);
+      padding: 6px 14px;
+      border-radius: var(--radius-full);
+      font-size: 0.8125rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+    .niche-pill:hover {
+      color: var(--text-primary);
+      border-color: var(--text-muted);
+    }
+    .niche-pill.active {
+      background-color: var(--brand-primary);
+      border-color: var(--brand-primary);
+      color: var(--text-inverse);
+    }
+
+    .emulator-viewport.tablet .demographics-grid,
+    .emulator-viewport.mobile .demographics-grid,
+    .emulator-viewport.tablet .skeleton-grid-layout,
+    .emulator-viewport.mobile .skeleton-grid-layout {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Responsive header layouts to prevent overlap on mobile */
+    .emulator-viewport.mobile .dashboard-header {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      height: auto !important;
+      gap: var(--space-sm) !important;
+      padding: var(--space-md) !important;
+    }
+    
+    /* Hamburger and Title group: align next to each other */
+    .emulator-viewport.mobile .dashboard-header > div:first-child {
+      width: 100% !important;
+      display: flex !important;
+      align-items: center !important;
+      justify-content: flex-start !important;
+      gap: var(--space-sm) !important;
+    }
+    
+    /* Actions group: Search bar and action buttons layout */
+    .emulator-viewport.mobile .dashboard-header > div:last-child {
+      width: 100% !important;
+      display: flex !important;
+      flex-wrap: wrap !important;
+      gap: var(--space-sm) !important;
+    }
+
+    .emulator-viewport.mobile .dashboard-header h2 {
+      font-size: 1.25rem !important;
+    }
+    
+    .emulator-viewport.mobile .dashboard-search-bar {
+      width: 100% !important;
+      flex: 1 1 100% !important;
+    }
+    
+    .emulator-viewport.mobile .dashboard-header button {
+      flex: 1 1 calc(50% - 6px) !important;
+      font-size: 0.75rem !important;
+      height: 36px !important;
+      justify-content: center !important;
+    }
+
+    /* Hamburger icon custom style */
+    #sidebar-toggle-btn {
+      background-color: var(--bg-secondary) !important;
+      border: 1px solid var(--border-default) !important;
+      color: var(--text-primary) !important;
+    }
+
+    /* Padding adjustment to maximize mobile space */
+    .emulator-viewport.mobile .dashboard-body {
+      padding: var(--space-md) !important;
+      gap: var(--space-md) !important;
+    }
+
+    .emulator-viewport.mobile .real-view-panel > div:first-child {
+      flex-direction: column !important;
+      align-items: flex-start !important;
+      gap: var(--space-sm) !important;
+    }
+
+    .demographic-subsplit {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      padding-top: var(--space-md);
+    }
+    .emulator-viewport.mobile .demographic-subsplit {
+      grid-template-columns: 1fr !important;
+    }
+
+    .emulator-viewport.tablet .dashboard-header {
+      padding: 0 var(--space-md);
+    }
+    .emulator-viewport.tablet .dashboard-search-bar {
+      width: 160px;
+    }
+
+    /* Venn diagram responsive scaling */
+    .emulator-viewport.mobile .venn-container {
+      height: 180px;
+    }
+    .emulator-viewport.mobile .venn-circle {
+      width: 100px;
+      height: 100px;
+      font-size: 0.625rem;
+    }
+    .emulator-viewport.mobile .venn-circle.c1 {
+      transform: translateX(-25px);
+    }
+    .emulator-viewport.mobile .venn-circle.c2 {
+      transform: translateX(25px);
+    }
+    .emulator-viewport.mobile .venn-circle.c3 {
+      transform: translateY(25px);
+      width: 80px;
+      height: 80px;
+      font-size: 0.5625rem;
+    }
+
+    /* Overlay Sidebar on Mobile */
+    .emulator-viewport.mobile .dashboard-sidebar.active {
+      display: flex !important;
+      position: absolute !important;
+      left: 0 !important;
+      top: 0 !important;
+      bottom: 0 !important;
+      height: 100% !important;
+      width: 240px !important;
+      z-index: 1500 !important;
+      box-shadow: var(--shadow-xl) !important;
+      animation: slideInLeft var(--transition-fast) forwards !important;
+    }
+
+    @keyframes slideInLeft {
+      from { transform: translateX(-100%); }
+      to { transform: translateX(0); }
+    }
+
+    /* Skeleton Loading State Sync */
+    .skeleton-view-panel {
+      display: none;
+      flex-direction: column;
+      gap: var(--space-lg);
+      width: 100%;
+    }
+
+    .loading-state-active .skeleton-view-panel {
+      display: flex !important;
+    }
+    .loading-state-active .real-view-panel {
+      display: none !important;
+    }
+
+    .skeleton-pulse {
+      background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--border-default) 50%, var(--bg-secondary) 75%);
+      background-size: 200% 100%;
+      animation: skeletonGlow 1.5s infinite;
+      border-radius: var(--radius-md);
+    }
+
+    @keyframes skeletonGlow {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ==========================================================================
+       AUDIENCE INTELLIGENCE COMPONENT STYLING
+       ========================================================================== */
+    
+    /* Persona Card grid layouts */
+    .persona-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .persona-card {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition-smooth);
+      cursor: pointer;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      height: 250px;
+    }
+    .persona-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; height: 4px;
+      background: linear-gradient(90deg, var(--brand-primary), var(--accent-blue));
+      opacity: 0.8;
+    }
+    .persona-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--brand-primary);
+      box-shadow: var(--shadow-lg);
+    }
+
+    /* Demographics & Interests Split */
+    .demographics-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-lg);
+    }
+    @media (max-width: 900px) {
+      .demographics-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .bar-chart-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      margin-bottom: var(--space-sm);
+    }
+    .bar-chart-lbl {
+      width: 80px;
+      font-size: 0.8125rem;
+      color: var(--text-secondary);
+      font-weight: 500;
+    }
+    .bar-chart-track {
+      flex-grow: 1;
+      height: 8px;
+      background-color: var(--border-default);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+    }
+    .bar-chart-fill {
+      height: 100%;
+      border-radius: var(--radius-full);
+      transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .bar-chart-val {
+      width: 45px;
+      text-align: right;
+      font-size: 0.8125rem;
+      font-weight: 700;
+      color: var(--text-primary);
+    }
+
+    /* Venn diagram visualization */
+    .venn-container {
+      position: relative;
+      height: 240px;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .venn-circle {
+      position: absolute;
+      width: 140px;
+      height: 140px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: #ffffff;
+      mix-blend-mode: screen;
+      transition: all var(--transition-smooth);
+    }
+    .venn-circle.c1 {
+      background-color: rgba(88, 80, 236, 0.45); /* Primary */
+      transform: translateX(-40px);
+      border: 1px solid var(--brand-primary);
+    }
+    .venn-circle.c2 {
+      background-color: rgba(139, 92, 246, 0.45); /* Accent purple */
+      transform: translateX(40px);
+      border: 1px solid var(--accent-purple);
+    }
+    .venn-circle.c3 {
+      background-color: rgba(0, 102, 204, 0.35); /* Accent blue */
+      transform: translateY(40px);
+      border: 1px solid var(--accent-blue);
+      width: 110px;
+      height: 110px;
+      font-size: 0.6875rem;
+    }
+
+    /* Comparison matrix styling */
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8125rem;
+    }
+    .comparison-table th, .comparison-table td {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+      text-align: left;
+    }
+    .comparison-table th {
+      font-weight: 600;
+      color: var(--text-muted);
+      background-color: var(--bg-secondary);
+    }
+    .comparison-table td {
+      color: var(--text-primary);
+    }
+
+    /* Tag Clouds styling */
+    .tag-cloud {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .interest-tag {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-full);
+      padding: 6px 12px;
+      font-size: 0.75rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+    .interest-tag:hover {
+      border-color: var(--brand-primary);
+      background-color: var(--brand-primary-glow);
+    }
+
+    /* Segmentation view style block */
+    .segment-view-panel {
+      display: none;
+    }
+    .segment-state-active .segment-view-panel {
+      display: block !important;
+    }
+    .segment-state-active .real-view-panel {
+      display: none !important;
+    }
+
+    /* Toast Alert notifications style */
+    .toast-notifications-container {
+      position: fixed;
+      bottom: var(--space-lg);
+      right: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      z-index: 2000;
+    }
+    .toast-alert {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-lg);
+      border-radius: var(--radius-md);
+      padding: var(--space-sm) var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      min-width: 280px;
+      animation: slideInRight 0.2s forwards;
+      color: var(--text-primary);
+      font-size: 0.8125rem;
+    }
+
+    @keyframes slideInRight {
+      from { transform: translateX(120%); opacity: 0; }
+      to { transform: translateX(0); opacity: 1; }
+    }
+    @keyframes slideOutRight {
+      from { transform: translateX(0); opacity: 1; }
+      to { transform: translateX(120%); opacity: 0; }
+    }
+  </style>
+</head>
+<body class="dark">
+
+  <!-- ==============================================
+       1. SANDBOX HEADER PANEL
+       ============================================== -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <div style="width: 20px; height: 20px; background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%); border-radius: 4px;"></div>
+      <h1>KONTAGI Sandbox</h1>
+      <span>v2.4-BETA</span>
+    </div>
+
+    <div class="sandbox-controls">
+      <!-- Project Context Selector -->
+      <div style="display: flex; align-items: center; gap: var(--space-xxs);">
+        <span class="text-detail font-bold text-muted sidebar-text-label" style="color: var(--text-muted);">Context:</span>
+        <select class="select select-sm" style="width: 180px; background-color: var(--bg-secondary); border: 1px solid var(--border-default); color: var(--text-primary); border-radius: var(--radius-sm); font-size: 0.75rem;" id="project-context-select" onchange="switchProjectContext(this.value)">
+          <option value="none">Loading...</option>
+        </select>
+      </div>
+
+      <!-- Layout / Viewport selector -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" data-viewport="desktop" title="Desktop emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+          Desktop
+        </button>
+        <button class="sandbox-btn" data-viewport="tablet" title="Tablet emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          Tablet
+        </button>
+        <button class="sandbox-btn" data-viewport="mobile" title="Mobile emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+          Mobile
+        </button>
+      </div>
+
+      <!-- State triggers selector -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" id="state-normal">Normal</button>
+        <button class="sandbox-btn" id="state-loading">Loading State</button>
+        <button class="sandbox-btn" id="state-segmentation">Segment Comparison</button>
+      </div>
+
+      <!-- Theme Switcher -->
+      <button class="btn btn-secondary btn-sm" id="theme-toggle" style="height: 32px; padding: 0 var(--space-sm);">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        Dark Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- ==============================================
+       2. WORKSPACE AND EMULATED APP CONTAINER
+       ============================================== -->
+  <main class="sandbox-workspace">
+    <div class="emulator-viewport desktop" id="viewport-frame">
+      
+      <div class="dashboard-shell" id="dashboard-main-shell">
+        
+        <!-- Collapsible App Sidebar -->
+        <aside class="dashboard-sidebar">
+          <!-- Header Workspace Selector -->
+          <div class="sidebar-header flex-between" style="align-items: center;">
+              <div class="flex-center" style="gap: var(--space-xs);">
+                <div style="width: 24px; height: 24px; background-color: var(--brand-primary); border-radius: var(--radius-sm); background: linear-gradient(135deg, var(--brand-primary), var(--accent-blue));"></div>
+                <span class="font-display font-bold text-body sidebar-text-label">KONTAGI</span>
+              </div>
+            </div>
+
+            <nav class="sidebar-nav">
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-bottom: 6px; text-transform: uppercase;">Workspace</span>
+              <a class="sidebar-nav-item" href="dashboard.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="sidebar-text-label">Dashboard</span>
+              </a>
+              <a class="sidebar-nav-item" href="projects.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span class="sidebar-text-label">Projects</span>
+              </a>
+              <a class="sidebar-nav-item" href="library.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+                <span class="sidebar-text-label">Creative Library</span>
+              </a>
+              <a class="sidebar-nav-item" href="hooks.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                <span class="sidebar-text-label">Hook Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="retention.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Retention Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="script.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="sidebar-text-label">Script Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="thumbnail.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15l-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Thumbnail Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="caption.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                <span class="sidebar-text-label">Caption Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="audio.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                <span class="sidebar-text-label">Audio Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="visual.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-.447.894L15 18.5V10zM5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Visual Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="trend.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <span class="sidebar-text-label">Trend Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item active" href="audience.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Audience Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="upload.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span class="sidebar-text-label">Upload Center</span>
+              </a>
+              <a class="sidebar-nav-item" href="lab.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                <span class="sidebar-text-label">AI Creative Lab</span>
+              </a>
+              <a class="sidebar-nav-item" href="report.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="sidebar-text-label">AI Reports</span>
+              </a>
+              <a class="sidebar-nav-item" href="creators.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Creators</span>
+              </a>
+              <a class="sidebar-nav-item" href="brand.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17V9h3a2 2 0 110 4H9m0 4h3a2 2 0 100-4"/></svg>
+                <span class="sidebar-text-label">Brand Hub</span>
+              </a>
+              <a class="sidebar-nav-item" href="coach.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="sidebar-text-label">AI Coach</span>
+              </a>
+              <a class="sidebar-nav-item" onclick="window.showToast('Loading database insights...', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                <span class="sidebar-text-label">Analytics</span>
+              </a>
+              <a class="sidebar-nav-item" href="client.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Clients</span>
+              </a>
+              <a class="sidebar-nav-item" href="team.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0zm3 10v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg>
+                <span class="sidebar-text-label">Team Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="billing.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span class="sidebar-text-label">Billing</span>
+              </a>
+              <a class="sidebar-nav-item" href="notifications.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="sidebar-text-label">Notifications</span>
+              </a>
+              <a class="sidebar-nav-item" href="settings.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="sidebar-text-label">Settings</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">System</span>
+              <a class="sidebar-nav-item" href="admin.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="sidebar-text-label">Admin Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="mobile.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Mobile App</span>
+              </a>
+              <a class="sidebar-nav-item" href="index.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                <span class="sidebar-text-label">Design System</span>
+              </a>
+            </nav>
+
+          <div class="sidebar-footer">
+            <div style="width: 32px; height: 32px; background-color: var(--bg-tertiary); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--brand-primary); font-size: 0.8125rem;">JV</div>
+            <div style="display: flex; flex-direction: column;">
+              <span class="text-body-small font-bold" style="line-height: 1.2;">Jaiveer</span>
+              <span class="text-detail text-muted">Pro Account</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- App Main Dashboard content container -->
+        <main class="dashboard-main">
+          
+          <div class="dashboard-header">
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <button class="btn btn-secondary btn-icon" id="sidebar-toggle-btn" style="display: none; height: 36px; width: 36px; padding: 0;">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              <h2 class="text-h4 font-display">Audience Intelligence</h2>
+            </div>
+            
+            <div class="flex-center" style="gap: var(--space-md);">
+              <div class="dashboard-search-bar">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" id="audience-search" placeholder="Search target demographics..." style="background: transparent; border: none; outline: none; width: 100%; font-size: 0.75rem; color: var(--text-primary);">
+              </div>
+              <button class="btn btn-secondary btn-sm" onclick="openComparisonSettingsModal()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                Compare Settings
+              </button>
+              <button class="btn btn-primary btn-sm" onclick="openExportModal()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                Export Demographics
+              </button>
+            </div>
+          </div>
+
+          <div class="dashboard-body">
+
+            <!-- ================= SKELETON PANEL ================= -->
+            <div class="skeleton-view-panel">
+              <div class="skeleton-grid-layout">
+                <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                  <div class="skeleton-pulse" style="height: 140px;"></div>
+                  <div class="skeleton-pulse" style="height: 260px;"></div>
+                  <div class="skeleton-pulse" style="height: 220px;"></div>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: var(--space-md);">
+                  <div class="skeleton-pulse" style="height: 200px;"></div>
+                  <div class="skeleton-pulse" style="height: 180px;"></div>
+                  <div class="skeleton-pulse" style="height: 240px;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ================= REAL APP VIEWPORT ================= -->
+            <div class="real-view-panel" style="display: flex; flex-direction: column; gap: var(--space-lg);">
+
+              <!-- Industry Selector & Target Segment filters -->
+              <div class="flex-between flex-wrap" style="gap: var(--space-md); border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-sm);">
+                <!-- Niche buttons list -->
+                <div class="niche-filter-bar" id="niche-filter-container">
+                  <button class="niche-pill active" onclick="switchNiche('tech')">Tech & SaaS</button>
+                  <button class="niche-pill" onclick="switchNiche('ecommerce')">E-Commerce</button>
+                  <button class="niche-pill" onclick="switchNiche('finance')">Finance & Crypto</button>
+                  <button class="niche-pill" onclick="switchNiche('fitness')">Fitness & Health</button>
+                  <button class="niche-pill" onclick="switchNiche('lifestyle')">Beauty & Lifestyle</button>
+                </div>
+
+                <!-- Region Selector / Platform button group -->
+                <div class="sandbox-control-group" style="border-radius: var(--radius-full);">
+                  <button class="sandbox-btn active" onclick="switchPlatform(this, 'ALL')" style="border-radius: var(--radius-full);">All Platforms</button>
+                  <button class="sandbox-btn" onclick="switchPlatform(this, 'YT')" style="border-radius: var(--radius-full);">YouTube</button>
+                  <button class="sandbox-btn" onclick="switchPlatform(this, 'TT')" style="border-radius: var(--radius-full);">TikTok</button>
+                </div>
+              </div>
+
+              <!-- Top KPIs Bento Grid -->
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: var(--space-md);">
+                <!-- KPI 1: Audience Match Score -->
+                <div class="card flex-row align-center justify-between" style="padding: var(--space-lg);">
+                  <div class="flex-column" style="gap: 4px;">
+                    <span class="text-detail font-bold text-muted" style="text-transform: uppercase;">Audience Match</span>
+                    <h3 class="text-display-sm font-bold text-primary" id="kpi-match-val">94.8%</h3>
+                    <span class="text-micro text-green font-semibold" id="kpi-match-trend">&uarr; Optimal Align</span>
+                  </div>
+                  <div style="position: relative; width: 56px; height: 56px;">
+                    <svg width="56" height="56" viewBox="0 0 36 36" class="radial-dial">
+                      <circle cx="18" cy="18" r="16" fill="none" stroke="var(--border-default)" stroke-width="3"></circle>
+                      <circle cx="18" cy="18" r="16" fill="none" stroke="var(--brand-primary)" stroke-width="3.5" stroke-dasharray="100" stroke-dashoffset="5" stroke-linecap="round" id="kpi-match-ring"></circle>
+                    </svg>
+                    <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.6875rem; font-weight: 700;" id="kpi-match-pct">95%</div>
+                  </div>
+                </div>
+
+                <!-- KPI 2: Core Segment Size -->
+                <div class="card flex-row align-center justify-between" style="padding: var(--space-lg);">
+                  <div class="flex-column" style="gap: 4px;">
+                    <span class="text-detail font-bold text-muted" style="text-transform: uppercase;">Target Reach</span>
+                    <h3 class="text-display-sm font-bold text-primary" id="kpi-reach-val">340k</h3>
+                    <span class="text-micro text-green font-semibold">&uarr; +18.4% MoM</span>
+                  </div>
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background-color: var(--accent-purple-bg); color: var(--accent-purple); display: flex; align-items: center; justify-content: center;">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                  </div>
+                </div>
+
+                <!-- KPI 3: Engagement Index -->
+                <div class="card flex-row align-center justify-between" style="padding: var(--space-lg);">
+                  <div class="flex-column" style="gap: 4px;">
+                    <span class="text-detail font-bold text-muted" style="text-transform: uppercase;">Engagement rate</span>
+                    <h3 class="text-display-sm font-bold text-primary" id="kpi-engage-val">8.42%</h3>
+                    <span class="text-micro text-green font-semibold" id="kpi-engage-status">&uarr; High Retention</span>
+                  </div>
+                  <div style="width: 40px; height: 40px; border-radius: 50%; background-color: var(--accent-green-bg); color: var(--accent-green); display: flex; align-items: center; justify-content: center;">
+                    <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Target Personas Header -->
+              <div>
+                <h3 class="text-h5 font-display font-bold">Target Personas</h3>
+                <p class="text-body-small text-muted">Primary audience profiles modeled based on actual platform engagement metrics</p>
+              </div>
+
+              <!-- Persona Cards Grid -->
+              <div class="persona-grid" id="persona-container">
+                <!-- Persona Card 1 -->
+                <div class="persona-card" onclick="openPersonaModal('SaaS Solopreneurs', 'Ambitious developers building and launching micro-startups alone. Focuses on tech stacks and rapid execution.', '96% Fit', 'Tech & Productivity')">
+                  <div>
+                    <div class="flex-between" style="margin-bottom: var(--space-xs);">
+                      <span class="badge" style="background-color: var(--accent-purple-bg); color: var(--accent-purple); font-weight: 700;">PRIMARY SEGMENT</span>
+                      <span class="text-detail font-bold text-success" id="persona-match-1">96% Fit</span>
+                    </div>
+                    <h4 class="text-body font-bold" id="persona-title-1">SaaS Solopreneurs</h4>
+                    <p class="text-detail text-muted" style="margin-top: 4px;" id="persona-desc-1">Ambitious developers building and launching micro-startups alone. Focuses on tech stacks and rapid execution.</p>
+                  </div>
+                  <div style="border-top: 1px solid var(--border-default); padding-top: var(--space-xs); display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem;">
+                    <span>Platform: <strong id="persona-platform-1">YouTube</strong></span>
+                    <span class="text-success font-bold">View Detail &rarr;</span>
+                  </div>
+                </div>
+
+                <!-- Persona Card 2 -->
+                <div class="persona-card" onclick="openPersonaModal('No-Code Builders', 'Creators utilizing automation tools and visual editors to launch SaaS models without coding.', '91% Fit', 'Workflow Automation')">
+                  <div>
+                    <div class="flex-between" style="margin-bottom: var(--space-xs);">
+                      <span class="badge badge-success">RISING HIGH</span>
+                      <span class="text-detail font-bold text-success" id="persona-match-2">91% Fit</span>
+                    </div>
+                    <h4 class="text-body font-bold" id="persona-title-2">No-Code Builders</h4>
+                    <p class="text-detail text-muted" style="margin-top: 4px;" id="persona-desc-2">Creators utilizing automation tools and visual editors to launch SaaS models without coding.</p>
+                  </div>
+                  <div style="border-top: 1px solid var(--border-default); padding-top: var(--space-xs); display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem;">
+                    <span>Platform: <strong id="persona-platform-2">TikTok</strong></span>
+                    <span class="text-success font-bold">View Detail &rarr;</span>
+                  </div>
+                </div>
+
+                <!-- Persona Card 3 -->
+                <div class="persona-card" onclick="openPersonaModal('Tech Hobbyists', 'Junior devs and curious enthusiasts exploring AI tools, configurations, and shortcut commands.', '85% Fit', 'Shortcuts & Setup Hacks')">
+                  <div>
+                    <div class="flex-between" style="margin-bottom: var(--space-xs);">
+                      <span class="badge" style="background-color: var(--accent-blue-bg); color: var(--accent-blue); font-weight: 700;">NICHED SUB</span>
+                      <span class="text-detail font-bold text-success" id="persona-match-3">85% Fit</span>
+                    </div>
+                    <h4 class="text-body font-bold" id="persona-title-3">Tech Hobbyists</h4>
+                    <p class="text-detail text-muted" style="margin-top: 4px;" id="persona-desc-3">Junior devs and curious enthusiasts exploring AI tools, configurations, and shortcut commands.</p>
+                  </div>
+                  <div style="border-top: 1px solid var(--border-default); padding-top: var(--space-xs); display: flex; justify-content: space-between; align-items: center; font-size: 0.75rem;">
+                    <span>Platform: <strong id="persona-platform-3">All Platforms</strong></span>
+                    <span class="text-success font-bold">View Detail &rarr;</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Main Dashboard split sections: Demographics/Interests & Preference/Overlap -->
+              <div class="demographics-grid">
+                
+                <!-- Left: Demographics & Top Interest Groups -->
+                <div style="display: flex; flex-direction: column; gap: var(--space-lg);">
+                  
+                  <!-- Demographic Split -->
+                  <div class="card" style="padding: var(--space-md);">
+                    <h4 class="text-body font-bold font-display" style="margin-bottom: var(--space-md);">Demographic Split</h4>
+                    
+                    <div style="margin-bottom: var(--space-md);">
+                      <span class="text-detail font-bold text-muted" style="text-transform: uppercase; display: block; margin-bottom: var(--space-sm);">Age Distribution</span>
+                      <div class="bar-chart-row">
+                        <span class="bar-chart-lbl">18 – 24</span>
+                        <div class="bar-chart-track"><div class="bar-chart-fill" id="age-bar-1" style="width: 45%; background-color: var(--brand-primary);"></div></div>
+                        <span class="bar-chart-val" id="age-val-1">45%</span>
+                      </div>
+                      <div class="bar-chart-row">
+                        <span class="bar-chart-lbl">25 – 34</span>
+                        <div class="bar-chart-track"><div class="bar-chart-fill" id="age-bar-2" style="width: 38%; background-color: var(--accent-purple);"></div></div>
+                        <span class="bar-chart-val" id="age-val-2">38%</span>
+                      </div>
+                      <div class="bar-chart-row">
+                        <span class="bar-chart-lbl">35 – 44</span>
+                        <div class="bar-chart-track"><div class="bar-chart-fill" id="age-bar-3" style="width: 12%; background-color: var(--accent-blue);"></div></div>
+                        <span class="bar-chart-val" id="age-val-3">12%</span>
+                      </div>
+                      <div class="bar-chart-row">
+                        <span class="bar-chart-lbl">45+</span>
+                        <div class="bar-chart-track"><div class="bar-chart-fill" id="age-bar-4" style="width: 5%; background-color: var(--text-secondary);"></div></div>
+                        <span class="bar-chart-val" id="age-val-4">5%</span>
+                      </div>
+                    </div>
+
+                    <div class="demographic-subsplit">
+                      <div>
+                        <span class="text-detail font-bold text-muted" style="text-transform: uppercase; display: block; margin-bottom: var(--space-xs);">Gender Split</span>
+                        <div class="flex-column" style="gap: 6px;">
+                          <div class="flex-between text-detail"><span>Male</span><strong id="gender-male">74%</strong></div>
+                          <div class="flex-between text-detail"><span>Female</span><strong id="gender-female">21%</strong></div>
+                          <div class="flex-between text-detail"><span>Other</span><strong id="gender-other">5%</strong></div>
+                        </div>
+                      </div>
+                      <div>
+                        <span class="text-detail font-bold text-muted" style="text-transform: uppercase; display: block; margin-bottom: var(--space-xs);">Regional Top Locations</span>
+                        <div class="flex-column" style="gap: 6px;">
+                          <div class="flex-between text-detail"><span>United States</span><strong id="region-1">42%</strong></div>
+                          <div class="flex-between text-detail"><span>United Kingdom</span><strong id="region-2">18%</strong></div>
+                          <div class="flex-between text-detail"><span>Germany & EU</span><strong id="region-3">15%</strong></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Interest Groups Tag Cloud -->
+                  <div class="card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-sm);">
+                    <h4 class="text-body font-bold font-display">Top Interest Groups</h4>
+                    <p class="text-detail text-muted">Core topics overlapping with target personas based on click patterns</p>
+                    <div class="tag-cloud" id="interest-cloud-container">
+                      <div class="interest-tag"><span class="font-bold text-primary">#indiehackers</span><span>94%</span></div>
+                      <div class="interest-tag"><span class="font-bold text-primary">#nocode-tools</span><span>91%</span></div>
+                      <div class="interest-tag"><span class="font-bold text-primary">#productivity</span><span>88%</span></div>
+                      <div class="interest-tag"><span class="font-bold text-primary">#saas-marketing</span><span>84%</span></div>
+                      <div class="interest-tag"><span class="font-bold text-primary">#ai-agents</span><span>79%</span></div>
+                      <div class="interest-tag"><span class="font-bold text-primary">#developer-life</span><span>68%</span></div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Right: Content Preference & Audience Overlap -->
+                <div style="display: flex; flex-direction: column; gap: var(--space-lg);">
+                  
+                  <!-- Content Format Preferences -->
+                  <div class="card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-sm);">
+                    <h4 class="text-body font-bold font-display">Content Format Preference</h4>
+                    <p class="text-detail text-muted">Likelihood of engagement based on historical style consumption</p>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 8px;">
+                      <div>
+                        <div class="flex-between text-detail" style="margin-bottom: 4px;">
+                          <span>Step-by-Step Screen Walkthroughs</span>
+                          <strong class="text-success" id="pref-val-1">92% Match</strong>
+                        </div>
+                        <div class="limit-progress-bar"><div class="limit-progress-fill" id="pref-bar-1" style="width: 92%; background-color: var(--brand-primary);"></div></div>
+                      </div>
+                      <div>
+                        <div class="flex-between text-detail" style="margin-bottom: 4px;">
+                          <span>Rapid Montage with Dynamic Text</span>
+                          <strong class="text-primary" id="pref-val-2">78% Match</strong>
+                        </div>
+                        <div class="limit-progress-bar"><div class="limit-progress-fill" id="pref-bar-2" style="width: 78%; background-color: var(--accent-purple);"></div></div>
+                      </div>
+                      <div>
+                        <div class="flex-between text-detail" style="margin-bottom: 4px;">
+                          <span>Talking Head Storytelling</span>
+                          <strong class="text-warning" id="pref-val-3">55% Match</strong>
+                        </div>
+                        <div class="limit-progress-bar"><div class="limit-progress-fill" id="pref-bar-3" style="width: 55%; background-color: var(--accent-orange);"></div></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Audience Overlap Chart -->
+                  <div class="card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-sm);">
+                    <div class="flex-between">
+                      <div>
+                        <h4 class="text-body font-bold font-display">Niche Audience Overlap</h4>
+                        <p class="text-detail text-muted">Intersection of persona pools and competitors</p>
+                      </div>
+                      <span class="badge" style="background-color: var(--accent-purple-bg); color: var(--accent-purple); font-weight: 700;" id="overlap-pct-badge">74% Overlap</span>
+                    </div>
+
+                    <div class="venn-container">
+                      <div class="venn-circle c1" id="venn-lbl-1">Your Base</div>
+                      <div class="venn-circle c2" id="venn-lbl-2">Tech SaaS</div>
+                      <div class="venn-circle c3" id="venn-lbl-3">Competitors</div>
+                    </div>
+
+                    <div style="display: flex; flex-direction: column; gap: 4px; font-size: 0.75rem; color: var(--text-muted);">
+                      <div class="flex-between"><span>Core Overlap Segment Size:</span><strong class="text-primary" id="overlap-segment-size">145k Creators</strong></div>
+                      <div class="flex-between"><span>Engagement Affinity:</span><strong class="text-success" id="overlap-affinity">High (8.4/10)</strong></div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- ================= SEGMENT COMPARISON PANEL ================= -->
+            <div class="card segment-view-panel" style="padding: var(--space-md);">
+              <div class="flex-between">
+                <div>
+                  <h4 class="text-body font-bold font-display">Segment Comparison Matrix</h4>
+                  <p class="text-detail text-muted">Detailed comparison across audience cohorts and engagement profiles</p>
+                </div>
+                <span class="badge badge-success">3 Segment Groups Loaded</span>
+              </div>
+              
+              <div style="overflow-x: auto; margin-top: var(--space-md);">
+                <table class="comparison-table">
+                  <thead>
+                    <tr>
+                      <th>Segment Cohort</th>
+                      <th>Match Fit</th>
+                      <th>Target Reach</th>
+                      <th>Expected CTR</th>
+                      <th>Expected AVD</th>
+                      <th>Primary Platform</th>
+                    </tr>
+                  </thead>
+                  <tbody id="comparison-table-body">
+                    <tr>
+                      <td><strong>Core Advocates</strong></td>
+                      <td><span class="badge badge-success">96% Match</span></td>
+                      <td>120k users</td>
+                      <td><strong class="text-success">9.4%</strong></td>
+                      <td>24.8s (High)</td>
+                      <td>YouTube</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Casual Explorers</strong></td>
+                      <td><span class="badge" style="background-color: var(--accent-blue-bg); color: var(--accent-blue);">84% Match</span></td>
+                      <td>160k users</td>
+                      <td><strong class="text-primary">6.8%</strong></td>
+                      <td>16.2s (Mid)</td>
+                      <td>TikTok</td>
+                    </tr>
+                    <tr>
+                      <td><strong>Passive Observers</strong></td>
+                      <td><span class="badge" style="background-color: var(--border-default); color: var(--text-muted);">62% Match</span></td>
+                      <td>60k users</td>
+                      <td><strong>3.1%</strong></td>
+                      <td>9.5s (Low)</td>
+                      <td>All Platforms</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+          </div>
+        </main>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==============================================
+       3. MODAL PANELS (PERSONA DETAIL, SETTINGS, EXPORT)
+       ============================================== -->
+  
+  <!-- Persona Detail Modal -->
+  <div class="modal-overlay" id="persona-modal">
+    <div class="modal-container" style="max-width: 520px; width: 90%;">
+      <div class="modal-header">
+        <h3 class="text-h5 font-display" id="modal-persona-title">Persona Details</h3>
+        <button class="btn btn-secondary btn-icon" onclick="closePersonaModal()" style="border: none;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: var(--space-md);">
+        <div>
+          <span class="text-body-small font-bold text-muted" style="text-transform: uppercase;">Segment Focus & Bio</span>
+          <p class="text-body-small text-muted" id="modal-persona-desc" style="margin-top: 4px;">Description details will load here...</p>
+        </div>
+
+        <div style="border-top: 1px solid var(--border-default); padding-top: var(--space-xs); display: grid; grid-template-columns: 1fr 1fr; gap: var(--space-sm);">
+          <div>
+            <span class="text-detail text-muted">Audience Fit Rate</span>
+            <div class="font-bold text-success" id="modal-persona-match">92% Match</div>
+          </div>
+          <div>
+            <span class="text-detail text-muted">Preferred Topics</span>
+            <div class="font-bold text-primary" id="modal-persona-topics">Topic Category</div>
+          </div>
+        </div>
+
+        <div class="card" style="padding: var(--space-sm); background-color: var(--brand-primary-glow); border-color: var(--brand-primary);">
+          <span class="text-body-small font-bold text-primary">AI Content Recommendation Strategy:</span>
+          <p class="text-detail text-muted" style="margin-top: 4px;" id="modal-persona-suggestion">Strategy details...</p>
+        </div>
+      </div>
+
+      <div class="modal-footer flex-end" style="gap: var(--space-sm); margin-top: var(--space-md);">
+        <button class="btn btn-secondary" onclick="closePersonaModal()">Close</button>
+        <button class="btn btn-primary" onclick="closePersonaModal(); showToast('Audience insights mapped to script templates!')">Apply Content Strategy</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compare Settings Modal -->
+  <div class="modal-overlay" id="compare-modal">
+    <div class="modal-container" style="max-width: 480px; width: 90%;">
+      <div class="modal-header">
+        <h3 class="text-h5 font-display">Comparison Setup</h3>
+        <button class="btn btn-secondary btn-icon" onclick="closeComparisonSettingsModal()" style="border: none;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: var(--space-md);">
+        <p class="text-body-small text-muted">Toggle metrics and cohorts to display inside the comparison matrix:</p>
+        
+        <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+          <label class="flex-center" style="gap: var(--space-sm); cursor: pointer; user-select: none;">
+            <input type="checkbox" checked style="width: 16px; height: 16px; accent-color: var(--brand-primary);">
+            <span class="text-body-small">Compare CTR & Engagement curves</span>
+          </label>
+          <label class="flex-center" style="gap: var(--space-sm); cursor: pointer; user-select: none;">
+            <input type="checkbox" checked style="width: 16px; height: 16px; accent-color: var(--brand-primary);">
+            <span class="text-body-small">Display Regional Geographic overlap</span>
+          </label>
+          <label class="flex-center" style="gap: var(--space-sm); cursor: pointer; user-select: none;">
+            <input type="checkbox" style="width: 16px; height: 16px; accent-color: var(--brand-primary);">
+            <span class="text-body-small">Filter by Non-Subscribed viewers</span>
+          </label>
+        </div>
+      </div>
+
+      <div class="modal-footer flex-end" style="gap: var(--space-sm); margin-top: var(--space-md);">
+        <button class="btn btn-secondary" onclick="closeComparisonSettingsModal()">Cancel</button>
+        <button class="btn btn-primary" onclick="closeComparisonSettingsModal(); showToast('Matrix settings updated')">Apply Settings</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Export Report Modal -->
+  <div class="modal-overlay" id="export-modal">
+    <div class="modal-container" style="max-width: 420px; width: 90%;">
+      <div class="modal-header">
+        <h3 class="text-h5 font-display">Export Demographics Report</h3>
+        <button class="btn btn-secondary btn-icon" onclick="closeExportModal()" style="border: none;">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: var(--space-md);">
+        <p class="text-body-small text-muted">Select demographics and segment sheets to export:</p>
+        
+        <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
+          <label class="flex-center" style="gap: var(--space-sm); cursor: pointer; user-select: none;">
+            <input type="checkbox" checked style="width: 16px; height: 16px; accent-color: var(--brand-primary);">
+            <span class="text-body-small">Persona Segments (.JSON)</span>
+          </label>
+          <label class="flex-center" style="gap: var(--space-sm); cursor: pointer; user-select: none;">
+            <input type="checkbox" checked style="width: 16px; height: 16px; accent-color: var(--brand-primary);">
+            <span class="text-body-small">Demographic bar splits & Geo logs (.CSV)</span>
+          </label>
+          <label class="flex-center" style="gap: var(--space-sm); cursor: pointer; user-select: none;">
+            <input type="checkbox" style="width: 16px; height: 16px; accent-color: var(--brand-primary);">
+            <span class="text-body-small">Engagement Prediction metrics summary</span>
+          </label>
+        </div>
+
+        <div id="export-progress-container" style="display: none; flex-direction: column; gap: var(--space-xxs);">
+          <div class="flex-between text-detail">
+            <span id="export-progress-lbl">Rasterizing personas charts...</span>
+            <span id="export-progress-pct">0%</span>
+          </div>
+          <div style="height: 6px; background-color: var(--border-default); border-radius: var(--radius-full); overflow: hidden;">
+            <div id="export-progress-fill" style="height: 100%; width: 0%; background-color: var(--brand-primary); transition: width 0.1s linear;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer flex-end" style="gap: var(--space-sm); margin-top: var(--space-md);">
+        <button class="btn btn-secondary" onclick="closeExportModal()">Cancel</button>
+        <button class="btn btn-primary" id="btn-start-export" onclick="startExportProcess()">Start Export</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Dynamic Toast Container -->
+  <div class="toast-notifications-container" id="toast-container"></div>
+
+  <!-- JavaScript Interactive Logic -->
+  <script src="/js/db-client.js"></script>
+  <script>
+    // Mock Data Matrix for Niches
+    const audienceData = {
+      tech: {
+        kpi: { match: "94.8%", matchVal: 95, reach: "340k", engage: "8.42%" },
+        personas: [
+          { title: "SaaS Solopreneurs", desc: "Ambitious developers building and launching micro-startups alone. Focuses on tech stacks and rapid execution.", match: "96% Fit", platform: "YouTube", category: "Tech & Productivity", suggestion: "Focus on build-in-public raw workspace snippets showing database config hurdles." },
+          { title: "No-Code Builders", desc: "Creators utilizing automation tools and visual editors to launch SaaS models without coding.", match: "91% Fit", platform: "TikTok", category: "Workflow Automation", suggestion: "Use result-first hook showing automated leads landing in a spreadsheet database." },
+          { title: "Tech Hobbyists", desc: "Junior devs and curious enthusiasts exploring AI tools, configurations, and shortcut commands.", match: "85% Fit", platform: "All Platforms", category: "Shortcuts & Setup Hacks", suggestion: "Make fast paced cuts of custom command lines speeding up workflow loops." }
+        ],
+        demographics: {
+          age: ["45%", "38%", "12%", "5%"],
+          gender: ["74%", "21%", "5%"],
+          regions: ["United States (42%)", "United Kingdom (18%)", "Germany & EU (15%)"]
+        },
+        interests: [
+          { name: "#indiehackers", value: "94%" },
+          { name: "#nocode-tools", value: "91%" },
+          { name: "#productivity", value: "88%" },
+          { name: "#saas-marketing", value: "84%" },
+          { name: "#ai-agents", value: "79%" },
+          { name: "#developer-life", value: "68%" }
+        ],
+        preferences: ["92%", "78%", "55%"],
+        overlap: { pct: "74% Overlap", size: "145k Creators", affinity: "High (8.4/10)", labels: ["Your Base", "Tech SaaS", "Competitors"] },
+        cohorts: [
+          { name: "Core Advocates", fit: "96% Match", reach: "120k users", ctr: "9.4%", avd: "24.8s (High)", platform: "YouTube" },
+          { name: "Casual Explorers", fit: "84% Match", reach: "160k users", ctr: "6.8%", avd: "16.2s (Mid)", platform: "TikTok" },
+          { name: "Passive Observers", fit: "62% Match", reach: "60k users", ctr: "3.1%", avd: "9.5s (Low)", platform: "All Platforms" }
+        ]
+      },
+      ecommerce: {
+        kpi: { match: "91.2%", matchVal: 91, reach: "640k", engage: "11.20%" },
+        personas: [
+          { title: "Eco-Conscious Shoppers", desc: "Consumers actively seeking sustainably-sourced items, biodegradable wraps, and cardboard box reuse.", match: "93% Fit", platform: "TikTok", category: "Eco-Packaging", suggestion: "Demonstrate drop tests and water solubility profiles of bio-packaged mailer boxes." },
+          { title: "Unboxing ASMR Lovers", desc: "Aesthetic audience consuming calming auditory content, sound-focused folding, card slides.", match: "89% Fit", platform: "YouTube Shorts", category: "DTC Packaging", suggestion: "Record high-quality sound of boxes slicing, slide ribbons, and crisp seals." },
+          { title: "Shopify Dropshippers", desc: "E-Commerce sellers tracking supply chains, shipping latency, and product landing pages.", match: "82% Fit", platform: "YouTube", category: "Retail Fulfillment", suggestion: "Document step-by-step warehouse workflows of packaging automation lines." }
+        ],
+        demographics: {
+          age: ["32%", "48%", "15%", "5%"],
+          gender: ["38%", "57%", "5%"],
+          regions: ["United States (51%)", "Canada (14%)", "Australia (10%)"]
+        },
+        interests: [
+          { name: "#sustainablelifestyle", value: "95%" },
+          { name: "#asmrunboxing", value: "92%" },
+          { name: "#dtcbrands", value: "85%" },
+          { name: "#shopifydropship", value: "78%" },
+          { name: "#unpackwithme", value: "72%" },
+          { name: "#packagingorders", value: "66%" }
+        ],
+        preferences: ["88%", "85%", "42%"],
+        overlap: { pct: "81% Overlap", size: "260k Shoppers", affinity: "Optimal (9.1/10)", labels: ["Your Base", "Eco-DTC", "Competitors"] },
+        cohorts: [
+          { name: "Avid Enthusiasts", fit: "93% Match", reach: "240k users", ctr: "12.4%", avd: "21.2s (High)", platform: "TikTok" },
+          { name: "Gift Seekers", fit: "81% Match", reach: "280k users", ctr: "8.1%", avd: "14.5s (Mid)", platform: "YouTube Shorts" },
+          { name: "Bulk Inspectors", fit: "59% Match", reach: "120k users", ctr: "4.5%", avd: "10.2s (Low)", platform: "YouTube" }
+        ]
+      },
+      finance: {
+        kpi: { match: "88.5%", matchVal: 89, reach: "210k", engage: "6.92%" },
+        personas: [
+          { title: "Yield Allocators", desc: "Advanced DeFi enthusiasts allocating capital across dynamic pools, liquidity networks, and nodes.", match: "91% Fit", platform: "YouTube", category: "DeFi & Yields", suggestion: "Build interactive breakdowns of APY variables showing automated pool switching." },
+          { title: "Fractional Investors", desc: "Retail cash holders seeking inflation hedges through tokenized estate fractions.", match: "87% Fit", platform: "YouTube Shorts", category: "Real Estate Hedging", suggestion: "Use rapid price comparative indicators matching monthly land costs against rents." },
+          { title: "Micro-Saving Gen-Z", desc: "Young professionals using checking accounts roundups to build stock allocations.", match: "80% Fit", platform: "TikTok", category: "Savings Apps", suggestion: "Focus on negative-hook alert styled notifications warning about standard transaction fee drains." }
+        ],
+        demographics: {
+          age: ["28%", "52%", "16%", "4%"],
+          gender: ["81%", "15%", "4%"],
+          regions: ["United States (48%)", "Singapore (12%)", "Switzerland (10%)"]
+        },
+        interests: [
+          { name: "#yieldfarming", value: "92%" },
+          { name: "#inflationhedge", value: "89%" },
+          { name: "#fractionalestate", value: "85%" },
+          { name: "#personalfinance", value: "81%" },
+          { name: "#microinvesting", value: "76%" },
+          { name: "#defiportfolio", value: "62%" }
+        ],
+        preferences: ["65%", "84%", "50%"],
+        overlap: { pct: "64% Overlap", size: "85k Accounts", affinity: "Medium (7.1/10)", labels: ["Your Base", "DeFi Crypto", "Competitors"] },
+        cohorts: [
+          { name: "High Net Pools", fit: "91% Match", reach: "65k users", ctr: "7.9%", avd: "26.5s (High)", platform: "YouTube" },
+          { name: "Budget Hedgers", fit: "82% Match", reach: "105k users", ctr: "5.4%", avd: "15.1s (Mid)", platform: "YouTube Shorts" },
+          { name: "Curious Observers", fit: "55% Match", reach: "40k users", ctr: "2.1%", avd: "8.1s (Low)", platform: "TikTok" }
+        ]
+      },
+      fitness: {
+        kpi: { match: "96.4%", matchVal: 96, reach: "510k", engage: "9.84%" },
+        personas: [
+          { title: "Zone 2 Cardio Trainers", desc: "Steady-state endurance builders tracking metabolic health, VO2 max metrics, and heart rate caps.", match: "97% Fit", platform: "YouTube", category: "Cardio Health", suggestion: "Focus on real-time biometric monitor displays detailing lactic thresholds." },
+          { title: "Kinetic Lifters", desc: "Athletes optimizing muscular extensions, load ratios, and mechanical resistance angles.", match: "91% Fit", platform: "Instagram", category: "Biomechanical Load", suggestion: "Use translucent muscle skeletal diagrams tracking tension during rep frames." },
+          { title: "Macro Prep Chefs", desc: "Healthy cooks documenting protein-heavy meals cooked within a 5-minute schedule.", match: "89% Fit", platform: "TikTok", category: "Macro Prep Hacks", suggestion: "Show the completed macro bowl first, then execute rapid cuts of the food scale dials." }
+        ],
+        demographics: {
+          age: ["50%", "35%", "10%", "5%"],
+          gender: ["61%", "34%", "5%"],
+          regions: ["United States (38%)", "Germany (16%)", "Brazil (12%)"]
+        },
+        interests: [
+          { name: "#zone2cardio", value: "96%" },
+          { name: "#fitnessscience", value: "93%" },
+          { name: "#mealprephacks", value: "90%" },
+          { name: "#biomechanics", value: "85%" },
+          { name: "#highproteinrecipe", value: "81%" },
+          { name: "#recoverymetrics", value: "74%" }
+        ],
+        preferences: ["85%", "76%", "68%"],
+        overlap: { pct: "88% Overlap", size: "220k Athletes", affinity: "Optimal (9.4/10)", labels: ["Your Base", "Fit Science", "Competitors"] },
+        cohorts: [
+          { name: "Metric Obsessed", fit: "97% Match", reach: "180k users", ctr: "10.8%", avd: "25.2s (High)", platform: "YouTube" },
+          { name: "Prep Replicators", fit: "86% Match", reach: "240k users", ctr: "7.6%", avd: "17.4s (Mid)", platform: "TikTok" },
+          { name: "Casual Joggers", fit: "64% Match", reach: "90k users", ctr: "3.8%", avd: "11.1s (Low)", platform: "Instagram" }
+        ]
+      },
+      lifestyle: {
+        kpi: { match: "93.1%", matchVal: 93, reach: "820k", engage: "12.45%" },
+        personas: [
+          { title: "Aesthetic Minimalists", desc: "Followers seeking quiet mornings, screen-free journals, and clean workspace organizations.", match: "95% Fit", platform: "TikTok", category: "Minimalist Habits", suggestion: "Use slow panning shots of neat desks under natural morning window sunlight." },
+          { title: "Glass Skin Admirers", desc: "Skincare followers exploring peptide serums, hydration layers, and glass-skin routines.", match: "91% Fit", platform: "Instagram Reels", category: "Hydration Science", suggestion: "Zoom closely on product texture drops landing on clean skin surfaces." },
+          { title: "Capsule Stylists", desc: "Closet builders organizing multi-use outfits matching 10 basic clothing items.", match: "86% Fit", platform: "YouTube Shorts", category: "Capsule Wardrobes", suggestion: "Compile rapid 1-second grid updates showing identical base pants styled 15 ways." }
+        ],
+        demographics: {
+          age: ["55%", "28%", "12%", "5%"],
+          gender: ["12%", "83%", "5%"],
+          regions: ["United States (44%)", "France (16%)", "Japan (11%)"]
+        },
+        interests: [
+          { name: "#morningroutines", value: "97%" },
+          { name: "#glassskincare", value: "94%" },
+          { name: "#minimalistlifestyle", value: "90%" },
+          { name: "#capsulewardrobe", value: "86%" },
+          { name: "#aestheticminimalist", value: "82%" },
+          { name: "#dayinlifevlog", value: "78%" }
+        ],
+        preferences: ["90%", "68%", "82%"],
+        overlap: { pct: "84% Overlap", size: "380k Followers", affinity: "Optimal (9.2/10)", labels: ["Your Base", "Minimal Vibe", "Competitors"] },
+        cohorts: [
+          { name: "Routine Collectors", fit: "95% Match", reach: "320k users", ctr: "13.2%", avd: "22.5s (High)", platform: "TikTok" },
+          { name: "OOTD Replicators", fit: "83% Match", reach: "360k users", ctr: "8.9%", avd: "15.4s (Mid)", platform: "Instagram Reels" },
+          { name: "Casual Scrollers", fit: "61% Match", reach: "140k users", ctr: "4.8%", avd: "9.2s (Low)", platform: "YouTube Shorts" }
+        ]
+      }
+    };
+
+    // Active State variables
+    let currentNiche = 'tech';
+    let currentPlatform = 'ALL';
+    let activeVideo = null;
+
+    async function loadVideoContext(videoId) {
+      try {
+        const db = await dbClient.getMockDb();
+        if (!db || !db.videos) return;
+        const video = db.videos.find(v => v.id === videoId);
+        if (!video) return;
+
+        activeVideo = video;
+        
+        // Propagate query parameter to sidebar links
+        document.querySelectorAll('a.sidebar-nav-item, .dashboard-sidebar a, a[href$=".html"]').forEach(a => {
+          const href = a.getAttribute('href');
+          if (href && href.includes('.html') && !href.startsWith('http') && !href.startsWith('//')) {
+            try {
+              const u = new URL(href, window.location.origin);
+              u.searchParams.set('id', videoId);
+              a.setAttribute('href', u.pathname + u.search);
+            } catch(e) {}
+          }
+        });
+
+        // Determine niche based on tags
+        let niche = 'tech';
+        if (video.tags && video.tags.length > 0) {
+          const tagStr = video.tags.join(' ').toLowerCase();
+          if (tagStr.includes('ecommerce') || tagStr.includes('shop') || tagStr.includes('retail') || tagStr.includes('product')) {
+            niche = 'ecommerce';
+          } else if (tagStr.includes('finance') || tagStr.includes('crypto') || tagStr.includes('money') || tagStr.includes('invest')) {
+            niche = 'finance';
+          } else if (tagStr.includes('fit') || tagStr.includes('health') || tagStr.includes('gym') || tagStr.includes('workout')) {
+            niche = 'fitness';
+          } else if (tagStr.includes('life') || tagStr.includes('beauty') || tagStr.includes('style') || tagStr.includes('travel')) {
+            niche = 'lifestyle';
+          }
+        }
+
+        // Calculate dynamic values based on video metrics to populate and link the UI
+        const score = video.hook_score || 80;
+        const reachNum = Math.round((video.retention_score || 70) * 4.5);
+        const engagePct = (score * 0.09).toFixed(2);
+        
+        // Update the niche's dynamic template parameters
+        const data = audienceData[niche];
+        if (data) {
+          data.kpi.match = `${score}%`;
+          data.kpi.matchVal = score;
+          data.kpi.reach = `${reachNum}k`;
+          data.kpi.engage = `${engagePct}%`;
+
+          // Override personas if video has specific tags
+          if (video.tags && video.tags.length > 0) {
+            data.personas[0].category = video.tags[0] + ' & Productivity';
+            if (video.tags[1]) data.personas[1].category = video.tags[1] + ' & Optimization';
+            if (video.tags[2]) data.personas[2].category = video.tags[2] + ' Hobbyists';
+          }
+        }
+
+        // Call switchNiche programmatically
+        switchNiche(niche);
+
+      } catch (err) {
+        console.warn("Error loading video context:", err);
+      }
+    }
+
+    function switchProjectContext(val) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('id', val);
+      window.history.pushState({}, '', url.toString());
+      loadVideoContext(val);
+    }
+
+    window.addEventListener('DOMContentLoaded', async () => {
+      try {
+        const db = await dbClient.getMockDb();
+        const select = document.getElementById('project-context-select');
+        if (select && db && db.videos) {
+          select.innerHTML = '';
+          db.videos.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.id;
+            opt.textContent = v.title || v.id;
+            select.appendChild(opt);
+          });
+
+          // Check URL query param
+          const urlParams = new URLSearchParams(window.location.search);
+          let videoId = urlParams.get('id');
+          if (!videoId && db.videos.length > 0) {
+            videoId = db.videos[0].id;
+            urlParams.set('id', videoId);
+            window.history.replaceState({}, '', window.location.pathname + '?' + urlParams.toString());
+          }
+
+          if (videoId) {
+            select.value = videoId;
+            await loadVideoContext(videoId);
+          }
+        }
+      } catch (err) {
+        console.warn("DB load fallback:", err);
+      }
+    });
+
+    // Switch niche handler
+    function switchNiche(nicheKey, element) {
+      currentNiche = nicheKey;
+      
+      // Update pills active class
+      const pills = document.querySelectorAll('.niche-pill');
+      pills.forEach(p => p.classList.remove('active'));
+      
+      const targetPill = element || (window.event && window.event.target) || Array.from(pills).find(p => p.getAttribute('onclick') && p.getAttribute('onclick').includes(`'${nicheKey}'`));
+      if (targetPill) {
+        targetPill.classList.add('active');
+      }
+
+      const data = audienceData[nicheKey];
+      if (!data) return;
+
+      // Update KPIs
+      document.getElementById('kpi-match-val').innerText = data.kpi.match;
+      document.getElementById('kpi-reach-val').innerText = data.kpi.reach;
+      document.getElementById('kpi-engage-val').innerText = data.kpi.engage;
+      document.getElementById('kpi-match-pct').innerText = data.kpi.matchVal + '%';
+      
+      // Radial ring offset recalculation
+      const strokeOffset = 100 - data.kpi.matchVal;
+      document.getElementById('kpi-match-ring').setAttribute('stroke-dashoffset', strokeOffset);
+
+      // Update Persona Cards
+      for (let i = 0; i < 3; i++) {
+        const pers = data.personas[i];
+        document.getElementById(`persona-title-${i+1}`).innerText = pers.title;
+        document.getElementById(`persona-desc-${i+1}`).innerText = pers.desc;
+        document.getElementById(`persona-match-${i+1}`).innerText = pers.match;
+        document.getElementById(`persona-platform-${i+1}`).innerText = pers.platform;
+      }
+
+      // Update Demographics Age bars & text
+      for (let i = 0; i < 4; i++) {
+        const val = data.demographics.age[i];
+        document.getElementById(`age-val-${i+1}`).innerText = val;
+        document.getElementById(`age-bar-${i+1}`).style.width = val;
+      }
+
+      // Gender & Regions
+      document.getElementById('gender-male').innerText = data.demographics.gender[0];
+      document.getElementById('gender-female').innerText = data.demographics.gender[1];
+      document.getElementById('gender-other').innerText = data.demographics.gender[2];
+
+      document.getElementById('region-1').innerText = data.demographics.regions[0];
+      document.getElementById('region-2').innerText = data.demographics.regions[1];
+      document.getElementById('region-3').innerText = data.demographics.regions[2];
+
+      // Update Interest tag clouds
+      const cloudContainer = document.getElementById('interest-cloud-container');
+      cloudContainer.innerHTML = '';
+      data.interests.forEach(int => {
+        const tag = document.createElement('div');
+        tag.className = 'interest-tag';
+        tag.innerHTML = `<span class="font-bold text-primary">${int.name}</span><span>${int.value}</span>`;
+        cloudContainer.appendChild(tag);
+      });
+
+      // Update Content Preferences progress
+      for (let i = 0; i < 3; i++) {
+        const val = data.preferences[i];
+        document.getElementById(`pref-val-${i+1}`).innerText = val + ' Match';
+        document.getElementById(`pref-bar-${i+1}`).style.width = val;
+      }
+
+      // Update Overlap labels & Venn circle labels
+      document.getElementById('overlap-pct-badge').innerText = data.overlap.pct;
+      document.getElementById('overlap-segment-size').innerText = data.overlap.size;
+      document.getElementById('overlap-affinity').innerText = data.overlap.affinity;
+
+      document.getElementById('venn-lbl-1').innerText = data.overlap.labels[0];
+      document.getElementById('venn-lbl-2').innerText = data.overlap.labels[1];
+      document.getElementById('venn-lbl-3').innerText = data.overlap.labels[2];
+
+      // Update Comparison Table body
+      const tableBody = document.getElementById('comparison-table-body');
+      tableBody.innerHTML = '';
+      data.cohorts.forEach(c => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+          <td><strong>${c.name}</strong></td>
+          <td><span class="badge ${c.fit.includes('9') ? 'badge-success' : 'badge-primary'}" style="${!c.fit.includes('9') ? 'background-color: var(--accent-blue-bg); color: var(--accent-blue);' : ''}">${c.fit}</span></td>
+          <td>${c.reach}</td>
+          <td><strong class="text-success">${c.ctr}</strong></td>
+          <td>${c.avd}</td>
+          <td>${c.platform}</td>
+        `;
+        tableBody.appendChild(row);
+      });
+
+      showToast(`Loaded ${event.target.innerText} audience segmentations`);
+    }
+
+    // Switch platform selector
+    function switchPlatform(btn, platformKey) {
+      currentPlatform = platformKey;
+      const btns = btn.parentNode.querySelectorAll('.sandbox-btn');
+      btns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      showToast(`Filtering audience platforms by: ${platformKey === 'ALL' ? 'All Networks' : platformKey === 'YT' ? 'YouTube Only' : 'TikTok Only'}`);
+      
+      // Introduce dynamic variance in Match KPI values for presentation realism
+      const reachValEl = document.getElementById('kpi-reach-val');
+      const baseReach = parseInt(audienceData[currentNiche].kpi.reach);
+      if (platformKey === 'YT') {
+        reachValEl.innerText = Math.round(baseReach * 0.6) + 'k';
+      } else if (platformKey === 'TT') {
+        reachValEl.innerText = Math.round(baseReach * 0.4) + 'k';
+      } else {
+        reachValEl.innerText = audienceData[currentNiche].kpi.reach;
+      }
+    }
+
+    // Persona Modal helper
+    function openPersonaModal(title, desc, match, category) {
+      const nicheObj = audienceData[currentNiche];
+      const selected = nicheObj.personas.find(p => p.title.toLowerCase().includes(title.toLowerCase().substring(0, 5))) || nicheObj.personas[0];
+      
+      document.getElementById('modal-persona-title').innerText = selected.title + ' Analysis';
+      document.getElementById('modal-persona-desc').innerText = selected.desc;
+      document.getElementById('modal-persona-match').innerText = selected.match;
+      document.getElementById('modal-persona-topics').innerText = selected.category;
+      document.getElementById('modal-persona-suggestion').innerText = selected.suggestion;
+      document.getElementById('persona-modal').classList.add('active');
+    }
+    
+    function closePersonaModal() {
+      document.getElementById('persona-modal').classList.remove('active');
+    }
+    document.getElementById('persona-modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('persona-modal')) {
+        closePersonaModal();
+      }
+    });
+
+    // Comparison matrix settings modal
+    function openComparisonSettingsModal() {
+      document.getElementById('compare-modal').classList.add('active');
+    }
+    function closeComparisonSettingsModal() {
+      document.getElementById('compare-modal').classList.remove('active');
+    }
+    document.getElementById('compare-modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('compare-modal')) {
+        closeComparisonSettingsModal();
+      }
+    });
+
+    // Export Modal controls
+    function openExportModal() {
+      document.getElementById('export-modal').classList.add('active');
+    }
+    function closeExportModal() {
+      document.getElementById('export-modal').classList.remove('active');
+      document.getElementById('export-progress-container').style.display = 'none';
+      document.getElementById('btn-start-export').innerText = 'Start Export';
+      document.getElementById('btn-start-export').disabled = false;
+    }
+    document.getElementById('export-modal').addEventListener('click', (e) => {
+      if (e.target === document.getElementById('export-modal')) {
+        closeExportModal();
+      }
+    });
+
+    // Simulated Export Progress
+    function startExportProcess() {
+      const container = document.getElementById('export-progress-container');
+      const fill = document.getElementById('export-progress-fill');
+      const pct = document.getElementById('export-progress-pct');
+      const lbl = document.getElementById('export-progress-lbl');
+      const btn = document.getElementById('btn-start-export');
+
+      container.style.display = 'flex';
+      btn.innerText = 'Exporting...';
+      btn.disabled = true;
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 10;
+        fill.style.width = `${progress}%`;
+        pct.innerText = `${progress}%`;
+        
+        if (progress === 30) {
+          lbl.innerText = 'Extracting demographic age splits...';
+        } else if (progress === 70) {
+          lbl.innerText = 'Compiling persona affinity matrices...';
+        } else if (progress >= 100) {
+          clearInterval(interval);
+          closeExportModal();
+          showToast('Demographics report sheet exported!');
+        }
+      }, 150);
+    }
+
+    // Theme Manager
+    const themeToggle = document.getElementById('theme-toggle');
+    themeToggle.addEventListener('click', () => {
+      if (document.body.classList.contains('dark')) {
+        document.body.classList.remove('dark');
+        document.body.classList.add('light');
+        themeToggle.innerHTML = `
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 5a7 7 0 100 14 7 7 0 000-14z"/></svg>
+          Light Mode
+        `;
+      } else {
+        document.body.classList.remove('light');
+        document.body.classList.add('dark');
+        themeToggle.innerHTML = `
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+          Dark Mode
+        `;
+      }
+    });
+
+    // Viewport Emulation Scaler
+    const viewportFrame = document.getElementById('viewport-frame');
+    const viewportButtons = document.querySelectorAll('[data-viewport]');
+    
+    viewportButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        viewportButtons.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const vp = btn.getAttribute('data-viewport');
+        viewportFrame.className = 'emulator-viewport ' + vp;
+        showToast(`Switched view to ${vp.toUpperCase()} emulation`);
+      });
+    });
+
+    // Mobile Sidebar toggle
+    const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+    const sidebar = document.querySelector('.dashboard-sidebar');
+    if (sidebarToggleBtn) {
+      sidebarToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        sidebar.classList.toggle('active');
+      });
+    }
+
+    // Close sidebar on click outside
+    document.addEventListener('click', (e) => {
+      if (sidebar && sidebar.classList.contains('active') && !sidebar.contains(e.target) && e.target !== sidebarToggleBtn && !sidebarToggleBtn.contains(e.target)) {
+        sidebar.classList.remove('active');
+      }
+    });
+
+    // State Modifiers Simulation
+    const stateNormal = document.getElementById('state-normal');
+    const stateLoading = document.getElementById('state-loading');
+    const stateSegmentation = document.getElementById('state-segmentation');
+    const dashboardShell = document.getElementById('dashboard-main-shell');
+
+    stateNormal.addEventListener('click', () => {
+      stateNormal.classList.add('active');
+      stateLoading.classList.remove('active');
+      stateSegmentation.classList.remove('active');
+      dashboardShell.className = 'dashboard-shell';
+      showToast('Loaded active audience demographics');
+    });
+
+    stateLoading.addEventListener('click', () => {
+      stateNormal.classList.remove('active');
+      stateLoading.classList.add('active');
+      stateSegmentation.classList.remove('active');
+      dashboardShell.className = 'dashboard-shell loading-state-active';
+      
+      // Auto-return to normal
+      setTimeout(() => {
+        stateNormal.click();
+      }, 2000);
+    });
+
+    stateSegmentation.addEventListener('click', () => {
+      stateNormal.classList.remove('active');
+      stateLoading.classList.remove('active');
+      stateSegmentation.classList.add('active');
+      dashboardShell.className = 'dashboard-shell segment-state-active';
+      showToast('Viewing Segment Comparison Matrix');
+    });
+
+    // Toast Alert Helper
+    function showToast(message) {
+      const container = document.getElementById('toast-container');
+      
+      const alertDiv = document.createElement('div');
+      alertDiv.className = 'toast-alert';
+      alertDiv.innerHTML = `
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        <span>${message}</span>
+      `;
+      
+      container.appendChild(alertDiv);
+      
+      // Auto-remove after 3 seconds
+      setTimeout(() => {
+        alertDiv.style.animation = 'slideOutRight 0.2s forwards';
+        setTimeout(() => {
+          alertDiv.remove();
+        }, 200);
+      }, 3000);
+    }
+  </script>
+</body>
+</html>

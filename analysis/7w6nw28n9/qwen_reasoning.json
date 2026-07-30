@@ -1,0 +1,23 @@
+{
+  "topic": "Educational & Thought Leadership Narrative",
+  "niche": "TECH_EDUCATION",
+  "creatorIntent": "AUTHORITY_BUILDING",
+  "audienceIntent": "LEARNING",
+  "hookExplanation": "Opening segment evaluates visual rhythm score (0.07) and speech clarity (0.48).",
+  "emotionalTriggers": [
+    "Curiosity",
+    "Aspiration",
+    "Learning"
+  ],
+  "storytellingStructure": "PROBLEM -> SOLUTION -> CTA",
+  "ctaQuality": 0.43,
+  "strengths": [
+    "Editing Rhythm Score: 0.07",
+    "Speech Clarity: 0.48",
+    "Audio Energy RMS: 0.21"
+  ],
+  "weaknesses": [
+    "Motion Intensity Variance: 0.10",
+    "Silence Ratio: 0.04"
+  ]
+}

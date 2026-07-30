@@ -1,0 +1,1460 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — Enterprise Billing & Subscriptions</title>
+  <meta name="description" content="Manage subscriptions, invoices, credit card payments, AI token limits, and credits usage reports for your enterprise workspace.">
+  <link rel="stylesheet" href="design-system.css">
+  <script defer src="design-system.js"></script>
+  
+  <style>
+    /* ==========================================================================
+       SANDBOX CORE LAYOUT FRAMEWORK & BILLING STYLES
+       ========================================================================== */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-smooth);
+    }
+
+    .sandbox-header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-xs) var(--space-lg);
+      z-index: 1000;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .sandbox-brand h1 {
+      font-size: 1.125rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .sandbox-brand span {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .sandbox-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-control-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      background-color: var(--bg-secondary);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+    }
+
+    .sandbox-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sandbox-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .sandbox-btn.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sandbox-workspace {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      position: relative;
+    }
+
+    .emulator-viewport {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      transition: width var(--transition-smooth), height var(--transition-smooth), border-radius var(--transition-smooth);
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .emulator-viewport.desktop {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      border: none;
+    }
+
+    .emulator-viewport.tablet {
+      width: 768px;
+      height: 95%;
+      border-radius: var(--radius-lg);
+    }
+
+    .emulator-viewport.mobile {
+      width: 375px;
+      height: 85%;
+      border-radius: var(--radius-2xl);
+    }
+
+    /* Shell Layout */
+    .dashboard-shell {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .dashboard-sidebar {
+      width: 260px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      transition: transform var(--transition-smooth), width var(--transition-smooth);
+    }
+
+    .sidebar-header {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .sidebar-nav {
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .sidebar-nav-item:hover, .sidebar-nav-item.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .sidebar-nav-item.active {
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .dashboard-main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-primary);
+    }
+
+    .dashboard-header {
+      height: 64px;
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-lg);
+      flex-shrink: 0;
+    }
+
+    .dashboard-body {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    /* Sub Navigation Tabs */
+    .subnav-tabs-wrapper {
+      display: flex;
+      border-bottom: 1px solid var(--border-default);
+      padding: 0 var(--space-lg);
+      background-color: var(--bg-secondary);
+      flex-shrink: 0;
+      gap: var(--space-md);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .subnav-tab {
+      padding: 16px 4px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all var(--transition-fast);
+    }
+
+    .subnav-tab:hover, .subnav-tab.active {
+      color: var(--text-primary);
+    }
+
+    .subnav-tab.active {
+      border-bottom-color: var(--brand-primary);
+      font-weight: 600;
+    }
+
+    /* Sections wrapper */
+    .billing-section {
+      display: none;
+      animation: fadeIn var(--transition-smooth);
+    }
+
+    .billing-section.active {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Cards overrides & custom styles */
+    .pricing-card {
+      border: 1px solid var(--border-default);
+      background-color: var(--bg-elevated);
+      border-radius: var(--radius-xl);
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: var(--space-md);
+      transition: all var(--transition-smooth);
+      position: relative;
+    }
+
+    .pricing-card.active {
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 1px var(--brand-primary), var(--shadow-lg);
+    }
+
+    .pricing-card.premium {
+      border-color: var(--accent-purple);
+    }
+
+    .pricing-card.premium.active {
+      box-shadow: 0 0 0 1px var(--accent-purple), var(--shadow-lg);
+    }
+
+    .pricing-badge {
+      position: absolute;
+      top: -10px;
+      right: 20px;
+      font-size: 0.625rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      background-color: var(--brand-primary);
+      color: var(--text-inverse);
+    }
+
+    .progress-bar-container {
+      width: 100%;
+      height: 8px;
+      background-color: var(--border-default);
+      border-radius: var(--radius-full);
+      overflow: hidden;
+      margin: var(--space-xs) 0;
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      border-radius: var(--radius-full);
+      transition: width var(--transition-smooth);
+    }
+
+    .card-payment-brand {
+      width: 48px;
+      height: 32px;
+      background-color: var(--bg-secondary);
+      border-radius: var(--radius-xs);
+      border: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.75rem;
+      letter-spacing: -0.05em;
+      color: var(--text-primary);
+    }
+
+    /* Drawer structure */
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: -420px;
+      width: 400px;
+      height: 100%;
+      background-color: var(--bg-elevated);
+      border-left: 1px solid var(--border-default);
+      box-shadow: var(--shadow-2xl);
+      z-index: 2000;
+      transition: right var(--transition-smooth);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .drawer.active {
+      right: 0;
+    }
+
+    .drawer-header {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .drawer-body {
+      padding: var(--space-md);
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .drawer-footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-xs);
+    }
+
+    /* Responsive Viewports */
+    .emulator-viewport.tablet .dashboard-sidebar { width: 70px; }
+    .emulator-viewport.tablet .sidebar-text-label,
+    .emulator-viewport.tablet .sidebar-footer { display: none; }
+    
+    .emulator-viewport.mobile #sidebar-toggle-btn { display: inline-flex !important; }
+    .emulator-viewport.mobile .dashboard-sidebar { display: none; }
+    .emulator-viewport.mobile .dashboard-sidebar.active {
+      display: flex;
+      position: absolute;
+      left: 0;
+      top: 64px;
+      bottom: 0;
+      z-index: 950;
+      height: calc(100% - 64px);
+      width: 240px;
+      box-shadow: var(--shadow-xl);
+    }
+  </style>
+</head>
+<body class="dark">
+
+  <!-- ==============================================
+       1. SANDBOX HEADER CONTROL PANEL
+       ============================================== -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M16 8L25 13V19L16 24L7 19V13L16 8Z" fill="var(--brand-primary)" opacity="0.15"/>
+        <circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/>
+      </svg>
+      <h1>KONTAGI Portal</h1>
+      <span class="version-badge">Billing Admin</span>
+    </div>
+
+    <div class="sandbox-controls">
+      <!-- Active Brand Selector -->
+      <div style="display: flex; align-items: center; gap: var(--space-xxs);">
+        <span class="text-detail font-bold text-muted sidebar-text-label">Active Account:</span>
+        <select class="select select-sm" style="width: 170px;" id="workspace-dropdown-select" onchange="switchWorkspaceBrand(this.value)">
+          <option value="pulse_energy">Pulse Energy Corp</option>
+          <option value="retro_denim">Retro Denim Apparel</option>
+          <option value="smart_home">AuraSmart IoT Hub</option>
+        </select>
+      </div>
+
+      <!-- Viewports Emulator -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" data-viewport="desktop">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 21h12m-9-4l-1 4m8-4l1 4"/></svg>
+          Desktop
+        </button>
+        <button class="sandbox-btn" data-viewport="tablet">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          Tablet
+        </button>
+        <button class="sandbox-btn" data-viewport="mobile">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
+          Mobile
+        </button>
+      </div>
+
+      <!-- Theme Switcher -->
+      <button class="btn btn-tertiary btn-sm" id="theme-toggle" style="box-shadow: none;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        Light Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- ==============================================
+       2. WORKSPACE EMULATOR VIEWPORT FRAME
+       ============================================== -->
+  <main class="sandbox-workspace">
+    <div class="emulator-viewport desktop" id="viewport-frame">
+      
+      <div class="dashboard-shell" id="billing-portal-shell">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="dashboard-sidebar">
+          <div>
+            <div class="sidebar-header">
+              <div class="flex-between select-wrapper" style="width: 100%;">
+                <div class="flex-center" style="gap: var(--space-xs); cursor: pointer;">
+                  <div class="workspace-avatar" id="billing-sidebar-avatar" style="width: 28px; height: 28px; font-size: 0.75rem; background-color: var(--brand-primary-glow); color: var(--brand-primary);">PE</div>
+                  <div class="sidebar-text-label" style="display: flex; flex-direction: column;">
+                    <span class="text-body-small font-bold" style="line-height: 1.2;" id="billing-sidebar-brand-name">Pulse Energy</span>
+                    <span class="text-detail text-muted">Workspace Admin</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Nav Links -->
+                        <nav class="sidebar-nav">
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-bottom: 6px; text-transform: uppercase;">Workspace</span>
+              <a class="sidebar-nav-item" href="dashboard.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="sidebar-text-label">Dashboard</span>
+              </a>
+              <a class="sidebar-nav-item" href="projects.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span class="sidebar-text-label">Projects</span>
+              </a>
+              <a class="sidebar-nav-item" href="library.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+                <span class="sidebar-text-label">Creative Library</span>
+              </a>
+              <a class="sidebar-nav-item" href="hooks.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                <span class="sidebar-text-label">Hook Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="retention.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Retention Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="script.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="sidebar-text-label">Script Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="thumbnail.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15l-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Thumbnail Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="caption.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                <span class="sidebar-text-label">Caption Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="audio.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                <span class="sidebar-text-label">Audio Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="visual.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-.447.894L15 18.5V10zM5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Visual Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="trend.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <span class="sidebar-text-label">Trend Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="upload.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span class="sidebar-text-label">Upload Center</span>
+              </a>
+              <a class="sidebar-nav-item" href="lab.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                <span class="sidebar-text-label">AI Creative Lab</span>
+              </a>
+              <a class="sidebar-nav-item" href="report.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="sidebar-text-label">AI Reports</span>
+              </a>
+              <a class="sidebar-nav-item" href="creators.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Creators</span>
+              </a>
+              <a class="sidebar-nav-item" href="brand.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17V9h3a2 2 0 110 4H9m0 4h3a2 2 0 100-4"/></svg>
+                <span class="sidebar-text-label">Brand Hub</span>
+              </a>
+              <a class="sidebar-nav-item" href="coach.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="sidebar-text-label">AI Coach</span>
+              </a>
+              <a class="sidebar-nav-item" onclick="window.showToast('Loading database insights...', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                <span class="sidebar-text-label">Analytics</span>
+              </a>
+              <a class="sidebar-nav-item" href="client.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Clients</span>
+              </a>
+              <a class="sidebar-nav-item" href="team.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0zm3 10v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg>
+                <span class="sidebar-text-label">Team Portal</span>
+              </a>
+              <a class="sidebar-nav-item active" href="billing.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span class="sidebar-text-label">Billing</span>
+              </a>
+              <a class="sidebar-nav-item" href="notifications.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="sidebar-text-label">Notifications</span>
+              </a>
+              <a class="sidebar-nav-item" href="settings.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="sidebar-text-label">Settings</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">System</span>
+              <a class="sidebar-nav-item" href="admin.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="sidebar-text-label">Admin Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="mobile.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Mobile App</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">Design</span>
+              <a class="sidebar-nav-item" href="index.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                <span class="sidebar-text-label">Design System</span>
+              </a>
+            </nav>
+          </div>
+
+          <div class="sidebar-footer">
+            <div class="avatar avatar-md font-bold" style="background-color: var(--brand-secondary); color: var(--text-inverse);">JH</div>
+            <div class="sidebar-text-label" style="display: flex; flex-direction: column;">
+              <span class="text-body-small font-bold" style="line-height: 1.2;">Jaiveer Hastar</span>
+              <span class="text-detail text-secondary">jaiveer@company.com</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- MAIN WORKSPACE -->
+        <div class="dashboard-main">
+          
+          <!-- Main Module Header -->
+          <header class="dashboard-header">
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <button class="btn btn-sm btn-tertiary" style="padding: 4px; display: none;" id="sidebar-toggle-btn">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              <h2 class="text-gradient" id="billing-header-title">Billing & Subscription Management</h2>
+              <span class="badge badge-indigo" id="billing-workspace-badge">Pulse Workspace active</span>
+            </div>
+
+            <div class="flex-center" style="gap: var(--space-xs);">
+              <span class="text-detail font-bold text-success flex-center" style="gap: 4px;">
+                <span style="width: 8px; height: 8px; border-radius: 50%; background-color: var(--accent-green); display: inline-block;"></span>
+                Payment Systems Online
+              </span>
+              <button class="btn btn-primary btn-sm flex-center" style="gap: var(--space-xxs);" onclick="openPaymentDrawer()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                Add Card
+              </button>
+            </div>
+          </header>
+
+          <!-- Tab Selector Bar -->
+          <div class="subnav-tabs-wrapper">
+            <div class="subnav-tab active" onclick="switchBillingTab('subscription', this)">Subscription Plan & Upgrade</div>
+            <div class="subnav-tab" onclick="switchBillingTab('usage', this)">Usage Analytics & Credits</div>
+            <div class="subnav-tab" onclick="switchBillingTab('payments', this)">Payment Methods</div>
+            <div class="subnav-tab" onclick="switchBillingTab('invoices', this)">Invoices & History</div>
+          </div>
+
+          <!-- Dashboard Content Body -->
+          <div class="dashboard-body">
+
+            <!-- ==============================================
+                 A. TAB: SUBSCRIPTION PLAN & UPGRADE
+                 ============================================== -->
+            <div class="billing-section active" id="sec-subscription">
+              
+              <!-- Current Subscription summary row -->
+              <div class="card p-lg flex-between" style="align-items: center; background: linear-gradient(135deg, var(--bg-elevated) 60%, var(--brand-primary-glow) 100%);">
+                <div class="flex-column" style="gap: var(--space-xs);">
+                  <div class="flex-center" style="gap: var(--space-xs); justify-content: flex-start;">
+                    <span class="text-body-large font-bold text-primary" id="current-tier-title">Growth Pro Plan</span>
+                    <span class="badge badge-indigo">Active Plan</span>
+                  </div>
+                  <p class="text-body-small text-muted">Your workspace is currently operating on our flagship pro tier. Renewing automatically on <span class="font-bold text-primary" id="renewal-date-lbl">August 14, 2026</span>.</p>
+                </div>
+                <div style="text-align: right;" class="flex-column">
+                  <h3 class="text-display-sm font-bold text-gradient" id="current-tier-cost">$49.00 / mo</h3>
+                  <div class="flex-center" style="gap: var(--space-xs); margin-top: var(--space-xs);">
+                    <button class="btn btn-secondary btn-sm" onclick="cancelSubscription()">Cancel Auto-Renew</button>
+                    <button class="btn btn-primary btn-sm" onclick="switchBillingTab('usage', document.querySelectorAll('.subnav-tab')[1])">View Usage</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Billing Toggle Pill -->
+              <div class="flex-center" style="margin: var(--space-sm) 0; flex-direction: column; gap: var(--space-xs);">
+                <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-default); border-radius: var(--radius-full); padding: 4px; display: inline-flex; gap: 4px;">
+                  <button class="btn btn-sm btn-tertiary active" id="btn-period-monthly" onclick="toggleBillingPeriod('monthly')">Monthly Billing</button>
+                  <button class="btn btn-sm btn-tertiary" id="btn-period-annually" onclick="toggleBillingPeriod('annually')">
+                    Annually Billing
+                    <span class="badge badge-success" style="padding: 1px 6px; font-size: 0.625rem; margin-left: 4px;">Save 20%</span>
+                  </button>
+                </div>
+              </div>
+
+              <!-- Pricing Comparison Grid -->
+              <div class="grid-12" style="gap: var(--space-lg);">
+                
+                <!-- Plan 1: Starter -->
+                <div class="col-span-4 pricing-card" id="card-tier-starter">
+                  <div>
+                    <span class="text-detail text-secondary font-mono" style="text-transform: uppercase;">Starter Tier</span>
+                    <div style="margin-top: var(--space-xs);">
+                      <span class="text-display-md font-bold text-primary">$0</span>
+                      <span class="text-detail text-muted font-medium">/ month</span>
+                    </div>
+                    <p class="text-body-small text-muted" style="margin-top: var(--space-xs);">Perfect for local prototyping and personal creative assets.</p>
+                  </div>
+
+                  <ul style="padding-left: 18px; margin: var(--space-xs) 0;" class="text-detail text-muted flex-column">
+                    <li style="margin-bottom: 6px;">500 Neural Credits per month</li>
+                    <li style="margin-bottom: 6px;">1 Content Creator profile</li>
+                    <li style="margin-bottom: 6px;">7-Day Creative Library retention</li>
+                    <li style="margin-bottom: 6px;">Standard AI Coach assistant</li>
+                  </ul>
+
+                  <button class="btn btn-secondary btn-md" style="width: 100%;" id="btn-action-starter" onclick="downgradeToStarter()">Downgrade to Starter</button>
+                </div>
+
+                <!-- Plan 2: Growth Pro -->
+                <div class="col-span-4 pricing-card active" id="card-tier-pro">
+                  <div class="pricing-badge">Popular Choice</div>
+                  <div>
+                    <span class="text-detail font-mono" style="text-transform: uppercase; color: var(--brand-primary);">Growth Pro</span>
+                    <div style="margin-top: var(--space-xs);">
+                      <span class="text-display-md font-bold text-primary" id="pro-cost-value">$49</span>
+                      <span class="text-detail text-muted font-medium">/ month</span>
+                    </div>
+                    <p class="text-body-small text-muted" style="margin-top: var(--space-xs);">Our most popular tier for fast-growing content creators & brands.</p>
+                  </div>
+
+                  <ul style="padding-left: 18px; margin: var(--space-xs) 0;" class="text-detail text-muted flex-column">
+                    <li style="margin-bottom: 6px; color: var(--text-primary);"><strong>10,000</strong> Neural Credits per month</li>
+                    <li style="margin-bottom: 6px;">Unlimited Brand profiles</li>
+                    <li style="margin-bottom: 6px;">Unlimited Creative Library storage</li>
+                    <li style="margin-bottom: 6px;">Priority AI Coach & advanced suggestions</li>
+                    <li style="margin-bottom: 6px;">Detailed Analytics & PDF Reports</li>
+                  </ul>
+
+                  <button class="btn btn-primary btn-md" style="width: 100%;" id="btn-action-pro" disabled>Current Subscription</button>
+                </div>
+
+                <!-- Plan 3: Enterprise -->
+                <div class="col-span-4 pricing-card premium" id="card-tier-enterprise">
+                  <div>
+                    <span class="text-detail font-mono" style="text-transform: uppercase; color: var(--accent-purple);">Enterprise Scale</span>
+                    <div style="margin-top: var(--space-xs);">
+                      <span class="text-display-md font-bold text-primary">$299</span>
+                      <span class="text-detail text-muted font-medium">/ month</span>
+                    </div>
+                    <p class="text-body-small text-muted" style="margin-top: var(--space-xs);">Custom dedicated node clusters for agencies and large scale teams.</p>
+                  </div>
+
+                  <ul style="padding-left: 18px; margin: var(--space-xs) 0;" class="text-detail text-muted flex-column">
+                    <li style="margin-bottom: 6px; color: var(--text-primary);"><strong>100,000+</strong> Neural Credits per month</li>
+                    <li style="margin-bottom: 6px;">Dedicated VPC node host clusters</li>
+                    <li style="margin-bottom: 6px;">Custom SAML/SSO integration</li>
+                    <li style="margin-bottom: 6px;">Dedicated account manager (SLA)</li>
+                    <li style="margin-bottom: 6px;">Custom API token auto-rotation configs</li>
+                  </ul>
+
+                  <button class="btn btn-secondary btn-md" style="width: 100%;" id="btn-action-enterprise" onclick="upgradeToEnterprise()">Upgrade to Enterprise</button>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 B. TAB: USAGE ANALYTICS & CREDITS
+                 ============================================== -->
+            <div class="billing-section" id="sec-usage">
+              
+              <!-- Credit Balance Summary cards -->
+              <div class="grid-12" style="gap: var(--space-md);">
+                
+                <div class="col-span-4 card p-md">
+                  <span class="text-detail font-bold text-muted block" style="text-transform: uppercase;">Total Credits Balance</span>
+                  <div class="flex-between" style="align-items: baseline; margin-top: var(--space-xs);">
+                    <h3 class="text-display-sm font-bold text-primary" id="credits-balance-label">7,420 / 10,000</h3>
+                    <span class="text-detail text-muted">Credits Available</span>
+                  </div>
+                  <div class="progress-bar-container">
+                    <div class="progress-bar-fill" id="credits-progress-fill" style="width: 74.2%;"></div>
+                  </div>
+                  <span class="text-detail text-muted block" style="margin-top: 4px;">Credits cycle refreshes on <strong class="text-primary" id="credits-refresh-date">Aug 14, 2026</strong></span>
+                </div>
+
+                <div class="col-span-4 card p-md flex-between" style="align-items: center;">
+                  <div>
+                    <span class="text-detail font-bold text-muted block" style="text-transform: uppercase;">Credit Threshold Alert</span>
+                    <p class="text-detail text-muted" style="margin-top: var(--space-xxs);">Alert when available credits drop below 10%.</p>
+                  </div>
+                  <input type="checkbox" checked style="accent-color: var(--brand-primary); width: 18px; height: 18px;" onchange="showToast('Usage threshold warnings config updated.', 'info')">
+                </div>
+
+                <div class="col-span-4 card p-md flex-between" style="align-items: center;">
+                  <div>
+                    <span class="text-detail font-bold text-muted block" style="text-transform: uppercase;">Auto-Refill Pack</span>
+                    <p class="text-detail text-muted" style="margin-top: var(--space-xxs);">Automatically purchase 1,000 credits for $10 when balance reaches 0.</p>
+                  </div>
+                  <input type="checkbox" id="auto-refill-chk" style="accent-color: var(--brand-primary); width: 18px; height: 18px;" onchange="toggleAutoRefill(this.checked)">
+                </div>
+
+              </div>
+
+              <!-- Dynamic Interactive Slider for purchasing extra credits -->
+              <div class="card p-md">
+                <h4 class="text-body-base font-bold text-primary" style="margin-bottom: var(--space-xxs);">Purchase Ad-Hoc Neural Credits</h4>
+                <p class="text-detail text-muted" style="margin-bottom: var(--space-md);">Need extra compute? Scale up instantly using our dynamic credit calculator.</p>
+                
+                <div class="flex-column" style="gap: var(--space-sm);">
+                  <div class="flex-between">
+                    <span class="text-body-small font-bold text-primary">Extra Neural Credits</span>
+                    <span class="text-body-small font-bold text-gradient" id="slider-credits-label">5,000 Credits</span>
+                  </div>
+                  <input type="range" min="1000" max="25000" step="1000" value="5000" style="width: 100%; accent-color: var(--brand-primary);" id="credits-slider" oninput="updateCreditsCalculator(this.value)">
+                  <div class="flex-between" style="align-items: center; background-color: var(--bg-secondary); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-sm); margin-top: var(--space-xs);">
+                    <div class="flex-column">
+                      <span class="text-detail text-muted">Total Cost ($2.00 per 1,000 credits)</span>
+                      <h3 class="text-body-large font-bold text-primary" id="slider-cost-label">$10.00 USD</h3>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="purchaseExtraCredits()">Purchase Now</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Granular AI Usage Telemetry breakdown -->
+              <div class="card p-md">
+                <h4 class="text-body-base font-bold text-primary" style="margin-bottom: var(--space-md);">Neural Compute Breakdown (AI Usage)</h4>
+                
+                <div class="grid-12" style="gap: var(--space-md);" id="ai-telemetry-holder">
+                  <!-- Loaded dynamically via JS -->
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ==============================================
+                 C. TAB: PAYMENT METHODS
+                 ============================================== -->
+            <div class="billing-section" id="sec-payments">
+              
+              <div class="card p-md">
+                <div class="flex-between" style="margin-bottom: var(--space-md); flex-wrap: wrap; gap: var(--space-sm);">
+                  <div>
+                    <h4 class="text-body-base font-bold text-primary">Saved Payment Cards</h4>
+                    <p class="text-detail text-muted" style="margin-top: 2px;">Manage credit cards configured for subscription renewal and ad-hoc credit transactions.</p>
+                  </div>
+                  <button class="btn btn-primary btn-sm" onclick="openPaymentDrawer()">+ Add Payment Card</button>
+                </div>
+
+                <div class="flex-column" style="gap: var(--space-sm);" id="payment-cards-list-holder">
+                  <!-- Loaded dynamically via JS -->
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ==============================================
+                 D. TAB: INVOICES & HISTORY
+                 ============================================== -->
+            <div class="billing-section" id="sec-invoices">
+              
+              <div class="card p-md" style="overflow: hidden;">
+                <div class="flex-between" style="margin-bottom: var(--space-md); flex-wrap: wrap; gap: var(--space-sm);">
+                  <div>
+                    <h4 class="text-body-base font-bold text-primary">Invoices & Receipts</h4>
+                    <p class="text-detail text-muted" style="margin-top: 2px;">Chronological transaction receipts generated for subscription charges and credit refills.</p>
+                  </div>
+                  <div style="position: relative; width: 100%; max-width: 240px;">
+                    <input type="text" class="input input-sm" placeholder="Filter invoices by keyword..." id="invoice-search-input" onkeyup="filterInvoicesTable()">
+                  </div>
+                </div>
+
+                <div style="overflow-x: auto; width: 100%;">
+                  <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                      <tr>
+                        <th>Invoice ID</th>
+                        <th>Billing Date</th>
+                        <th>Purchase Details</th>
+                        <th>Amount Paid</th>
+                        <th>Payment Status</th>
+                        <th style="width: 140px; text-align: right;">Receipt PDF</th>
+                      </tr>
+                    </thead>
+                    <tbody id="invoices-table-body">
+                      <!-- Rendered dynamically via JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ==============================================
+           3. DRAWERS & MODALS (INTERACTIVE WORKFLOWS)
+           ============================================== -->
+      
+      <!-- Drawer: Add Payment Method -->
+      <div class="drawer" id="payment-method-drawer">
+        <div class="drawer-header">
+          <h4 class="text-body-base font-bold text-primary">Configure Payment Card</h4>
+          <button class="btn btn-tertiary btn-sm" onclick="closePaymentDrawer()">&times;</button>
+        </div>
+        <div class="drawer-body">
+          
+          <div class="flex-column" style="gap: 4px;">
+            <label class="text-detail font-bold text-muted">Cardholder Full Name</label>
+            <input type="text" class="input" placeholder="e.g. Jaiveer Hastar" id="card-name-input">
+          </div>
+
+          <div class="flex-column" style="gap: 4px;">
+            <label class="text-detail font-bold text-muted">Credit Card Number</label>
+            <input type="text" class="input" placeholder="•••• •••• •••• 4242" id="card-num-input" maxlength="19" oninput="formatCardNumber(this)">
+          </div>
+
+          <div class="grid-12" style="gap: var(--space-sm); margin-top: var(--space-xxs);">
+            <div class="col-span-6 flex-column" style="gap: 4px;">
+              <label class="text-detail font-bold text-muted">Expiration Date</label>
+              <input type="text" class="input" placeholder="MM/YY" id="card-exp-input" maxlength="5" oninput="formatCardExpiry(this)">
+            </div>
+            <div class="col-span-6 flex-column" style="gap: 4px;">
+              <label class="text-detail font-bold text-muted">Security Code (CVC)</label>
+              <input type="password" class="input" placeholder="•••" id="card-cvc-input" maxlength="4">
+            </div>
+          </div>
+
+          <div class="flex-center" style="gap: var(--space-xs); justify-content: flex-start; margin-top: var(--space-xs);">
+            <input type="checkbox" id="card-default-chk" style="accent-color: var(--brand-primary); width: 16px; height: 16px;">
+            <label for="card-default-chk" class="text-detail font-bold text-muted">Configure as default payment method</label>
+          </div>
+
+          <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-sm); margin-top: var(--space-xs);" class="flex-center">
+            <svg width="18" height="18" fill="none" stroke="var(--brand-primary)" stroke-width="2.5" viewBox="0 0 24 24" style="margin-right: 8px; flex-shrink: 0;"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+            <span class="text-detail text-muted">Credit card credentials are fully encrypted and securely stored via Stripe PCI-DSS tokens.</span>
+          </div>
+        </div>
+        <div class="drawer-footer">
+          <button class="btn btn-secondary btn-sm" onclick="closePaymentDrawer()">Cancel</button>
+          <button class="btn btn-primary btn-sm" id="btn-submit-payment" onclick="submitAddPaymentCard()">Configure Card</button>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==============================================
+       4. CLIENT SIDE INTERACTIVE LOGIC SCRIPT
+       ============================================== -->
+  <script>
+    // Mock Workspace Data Store
+    const brandWorkspaces = {
+      pulse_energy: {
+        code: "PE",
+        name: "Pulse Energy",
+        tier: "Growth Pro Plan",
+        cost: "$49.00 / mo",
+        billingPeriod: "monthly",
+        renewalDate: "August 14, 2026",
+        creditsAvailable: 7420,
+        creditsLimit: 10000,
+        autoRefill: false,
+        cards: [
+          { id: 1, brand: "VISA", last4: "4242", name: "Jaiveer Hastar", exp: "12/28", default: true },
+          { id: 2, brand: "MC", last4: "8899", name: "Pulse Energy Corp", exp: "05/27", default: false }
+        ],
+        invoices: [
+          { id: "INV-2026-0912", date: "2026-07-14", desc: "Growth Pro Subscription Renewal", amount: "$49.00", status: "Paid" },
+          { id: "INV-2026-0810", date: "2026-07-10", desc: "Ad-hoc Neural Credits Bundle (5,000)", amount: "$10.00", status: "Paid" },
+          { id: "INV-2026-0614", date: "2026-06-14", desc: "Growth Pro Subscription Renewal", amount: "$49.00", status: "Paid" },
+          { id: "INV-2026-0514", date: "2026-05-14", desc: "Growth Pro Subscription Renewal", amount: "$49.00", status: "Paid" }
+        ],
+        usage: {
+          video: { label: "AI Video Generation", used: 120, limit: 180, unit: "mins", cost: 3600 },
+          script: { label: "AI Script Writing", used: 45000, limit: 80000, unit: "words", cost: 1800 },
+          coach: { label: "AI Coach Sessions", used: 84, limit: 150, unit: "queries", cost: 1020 },
+          search: { label: "AI Search Telemetry", used: 250, limit: 500, unit: "searches", cost: 1000 }
+        }
+      },
+      retro_denim: {
+        code: "RD",
+        name: "Retro Denim",
+        tier: "Starter Plan",
+        cost: "$0.00 / mo",
+        billingPeriod: "monthly",
+        renewalDate: "N/A - Free Tier",
+        creditsAvailable: 150,
+        creditsLimit: 500,
+        autoRefill: false,
+        cards: [
+          { id: 3, brand: "VISA", last4: "9911", name: "Zendaya Coleman", exp: "09/29", default: true }
+        ],
+        invoices: [],
+        usage: {
+          video: { label: "AI Video Generation", used: 8, limit: 15, unit: "mins", cost: 240 },
+          script: { label: "AI Script Writing", used: 2100, limit: 5000, unit: "words", cost: 84 },
+          coach: { label: "AI Coach Sessions", used: 12, limit: 20, unit: "queries", cost: 26 },
+          search: { label: "AI Search Telemetry", used: 0, limit: 50, unit: "searches", cost: 0 }
+        }
+      },
+      smart_home: {
+        code: "AS",
+        name: "AuraSmart IoT",
+        tier: "Enterprise Scale Plan",
+        cost: "$299.00 / mo",
+        billingPeriod: "monthly",
+        renewalDate: "August 20, 2026",
+        creditsAvailable: 91420,
+        creditsLimit: 100000,
+        autoRefill: true,
+        cards: [
+          { id: 4, brand: "AMEX", last4: "1002", name: "AuraSmart Inc", exp: "01/31", default: true }
+        ],
+        invoices: [
+          { id: "INV-2026-0920", date: "2026-07-20", desc: "Enterprise Scale Plan - VPC Node Setups", amount: "$299.00", status: "Paid" }
+        ],
+        usage: {
+          video: { label: "AI Video Generation", used: 840, limit: 2000, unit: "mins", cost: 5860 },
+          script: { label: "AI Script Writing", used: 240000, limit: 500000, unit: "words", cost: 1200 },
+          coach: { label: "AI Coach Sessions", used: 312, limit: 1000, unit: "queries", cost: 940 },
+          search: { label: "AI Search Telemetry", used: 640, limit: 2000, unit: "searches", cost: 600 }
+        }
+      }
+    };
+
+    let activeWorkspace = "pulse_energy";
+
+    // On Load Initializer
+    document.addEventListener("DOMContentLoaded", () => {
+      loadWorkspaceBilling(activeWorkspace);
+
+      // Setup Viewport Resizing
+      document.querySelectorAll('.sandbox-btn[data-viewport]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.sandbox-btn[data-viewport]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const frame = document.getElementById('viewport-frame');
+          const viewport = btn.getAttribute('data-viewport');
+          frame.className = `emulator-viewport ${viewport}`;
+          window.showToast(`Viewport set to ${viewport}`, 'info');
+        });
+      });
+
+      // Setup Mobile Sidebar Toggle
+      const toggleBtn = document.getElementById('sidebar-toggle-btn');
+      const sidebar = document.querySelector('.dashboard-sidebar');
+      if (toggleBtn && sidebar) {
+        toggleBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          sidebar.classList.toggle('active');
+        });
+        document.addEventListener('click', () => {
+          sidebar.classList.remove('active');
+        });
+      }
+    });
+
+    // Switch workspaces dynamically
+    function switchWorkspaceBrand(value) {
+      activeWorkspace = value;
+      loadWorkspaceBilling(activeWorkspace);
+      showToast(`Switched billing profile to ${brandWorkspaces[activeWorkspace].name}`, "success");
+    }
+
+    // Load workspace data into billing UI
+    function loadWorkspaceBilling(key) {
+      const data = brandWorkspaces[key];
+      
+      // Update sidebar avatar & brand names
+      const avatar = document.getElementById('billing-sidebar-avatar');
+      avatar.innerText = data.code;
+      document.getElementById('billing-sidebar-brand-name').innerText = data.name;
+      
+      // Update headers
+      document.getElementById('billing-header-title').innerText = `${data.name} Billing & Credits`;
+      document.getElementById('billing-workspace-badge').innerText = `${data.name} Active`;
+
+      // Update current plan row info
+      document.getElementById('current-tier-title').innerText = data.tier;
+      document.getElementById('current-tier-cost').innerText = data.cost;
+      document.getElementById('renewal-date-lbl').innerText = data.renewalDate;
+
+      // Update Credit balances
+      document.getElementById('credits-balance-label').innerText = `${data.creditsAvailable.toLocaleString()} / ${data.creditsLimit.toLocaleString()}`;
+      const percentage = (data.creditsAvailable / data.creditsLimit) * 100;
+      document.getElementById('credits-progress-fill').style.width = `${percentage}%`;
+      document.getElementById('credits-refresh-date').innerText = data.renewalDate;
+
+      // Toggle auto refill checkbox
+      document.getElementById('auto-refill-chk').checked = data.autoRefill;
+
+      // Pricing tables active states matching current workspace plans
+      document.querySelectorAll('.pricing-card').forEach(c => c.classList.remove('active'));
+      const actionStarter = document.getElementById('btn-action-starter');
+      const actionPro = document.getElementById('btn-action-pro');
+      const actionEnterprise = document.getElementById('btn-action-enterprise');
+
+      actionStarter.disabled = false;
+      actionStarter.innerText = "Downgrade to Starter";
+      actionPro.disabled = false;
+      actionPro.innerText = "Select Growth Pro";
+      actionEnterprise.disabled = false;
+      actionEnterprise.innerText = "Upgrade to Enterprise";
+
+      if (data.tier.includes("Starter")) {
+        document.getElementById('card-tier-starter').classList.add('active');
+        actionStarter.disabled = true;
+        actionStarter.innerText = "Current Plan";
+      } else if (data.tier.includes("Growth Pro")) {
+        document.getElementById('card-tier-pro').classList.add('active');
+        actionPro.disabled = true;
+        actionPro.innerText = "Current Plan";
+      } else if (data.tier.includes("Enterprise")) {
+        document.getElementById('card-tier-enterprise').classList.add('active');
+        actionEnterprise.disabled = true;
+        actionEnterprise.innerText = "Current Plan";
+      }
+
+      // Render items
+      renderAIUsageTelemetry();
+      renderPaymentCards();
+      renderInvoices();
+    }
+
+    // Toggle Tab router
+    function switchBillingTab(target, tabElement) {
+      document.querySelectorAll('.subnav-tab').forEach(el => el.classList.remove('active'));
+      tabElement.classList.add('active');
+
+      document.querySelectorAll('.billing-section').forEach(el => el.classList.remove('active'));
+      const sec = document.getElementById(`sec-${target}`);
+      if (sec) sec.classList.add('active');
+    }
+
+    // Render granular compute usage metrics
+    function renderAIUsageTelemetry() {
+      const holder = document.getElementById('ai-telemetry-holder');
+      holder.innerHTML = '';
+      
+      const workspace = brandWorkspaces[activeWorkspace];
+      
+      Object.keys(workspace.usage).forEach(k => {
+        const item = workspace.usage[k];
+        const pct = (item.used / item.limit) * 100;
+        
+        holder.innerHTML += `
+          <div class="col-span-6 card p-sm flex-column" style="gap: var(--space-xxs);">
+            <div class="flex-between">
+              <span class="text-body-small font-bold text-primary">${item.label}</span>
+              <span class="text-detail text-muted font-mono">${item.used.toLocaleString()} / ${item.limit.toLocaleString()} ${item.unit}</span>
+            </div>
+            <div class="progress-bar-container" style="height: 6px;">
+              <div class="progress-bar-fill" style="width: ${pct}%; background: linear-gradient(90deg, var(--brand-primary) 0%, var(--accent-purple) 100%);"></div>
+            </div>
+            <div class="flex-between text-detail text-muted" style="margin-top: 4px;">
+              <span>Compute Usage: ${Math.round(pct)}%</span>
+              <span>Spent: <strong class="text-primary">${item.cost.toLocaleString()} credits</strong></span>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Render credit cards list
+    function renderPaymentCards() {
+      const holder = document.getElementById('payment-cards-list-holder');
+      holder.innerHTML = '';
+
+      const workspace = brandWorkspaces[activeWorkspace];
+      workspace.cards.forEach(c => {
+        holder.innerHTML += `
+          <div class="card p-sm flex-between" style="align-items: center; border: 1px solid ${c.default ? 'var(--brand-primary)' : 'var(--border-default)'}; background-color: ${c.default ? 'var(--brand-primary-glow)' : 'var(--bg-elevated)'};">
+            <div class="flex-center" style="gap: var(--space-sm); justify-content: flex-start;">
+              <div class="card-payment-brand">${c.brand}</div>
+              <div class="flex-column" style="align-items: flex-start; gap: 2px;">
+                <span class="text-body-small font-bold text-primary">${c.brand} ending in ${c.last4} ${c.default ? '<span class="badge badge-indigo" style="margin-left: var(--space-xs); font-size: 0.625rem; padding: 2px 6px;">Default</span>' : ''}</span>
+                <span class="text-detail text-muted">${c.name} • Expires ${c.exp}</span>
+              </div>
+            </div>
+            <div class="flex-center" style="gap: var(--space-xs);">
+              ${!c.default ? `<button class="btn btn-secondary btn-sm" onclick="setCardAsDefault(${c.id})">Set Default</button>` : ''}
+              <button class="btn btn-tertiary btn-sm text-danger" onclick="removePaymentCard(${c.id})">Remove</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Set a card as default payment method
+    function setCardAsDefault(cardId) {
+      const workspace = brandWorkspaces[activeWorkspace];
+      workspace.cards.forEach(c => {
+        c.default = (c.id === cardId);
+      });
+      showToast("Default payment card configuration updated.", "success");
+      renderPaymentCards();
+    }
+
+    // Remove saved card
+    function removePaymentCard(cardId) {
+      const workspace = brandWorkspaces[activeWorkspace];
+      const index = workspace.cards.findIndex(c => c.id === cardId);
+      if (index > -1) {
+        const card = workspace.cards[index];
+        if (card.default) {
+          showToast("Cannot remove your default payment card. Configure a new default card first.", "error");
+          return;
+        }
+        workspace.cards.splice(index, 1);
+        showToast("Payment method successfully removed.", "success");
+        renderPaymentCards();
+      }
+    }
+
+    // Render historical invoices
+    function renderInvoices() {
+      const tbody = document.getElementById('invoices-table-body');
+      tbody.innerHTML = '';
+
+      const workspace = brandWorkspaces[activeWorkspace];
+      if (workspace.invoices.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="6" style="text-align: center; padding: var(--space-xl); color: var(--text-muted);">
+              No invoices generated for this workspace yet.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      workspace.invoices.forEach(i => {
+        tbody.innerHTML += `
+          <tr>
+            <td><span class="text-body-small font-mono text-primary font-bold">${i.id}</span></td>
+            <td><span class="text-detail">${i.date}</span></td>
+            <td><span class="text-body-small font-medium">${i.desc}</span></td>
+            <td><span class="text-body-small font-bold text-primary">${i.amount}</span></td>
+            <td><span class="badge badge-success">${i.status}</span></td>
+            <td style="text-align: right;">
+              <button class="btn btn-secondary btn-sm flex-center" style="gap: 4px; display: inline-flex;" onclick="downloadReceiptMock('${i.id}')">
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/></svg>
+                PDF
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    // Filter invoices by keyword search
+    function filterInvoicesTable() {
+      const searchVal = document.getElementById('invoice-search-input').value.toLowerCase();
+      const tbody = document.getElementById('invoices-table-body');
+      const rows = tbody.getElementsByTagName('tr');
+
+      for (let i = 0; i < rows.length; i++) {
+        const text = rows[i].textContent.toLowerCase();
+        if (text.includes(searchVal)) {
+          rows[i].style.display = '';
+        } else {
+          rows[i].style.display = 'none';
+        }
+      }
+    }
+
+    // Mock receipt downloader
+    function downloadReceiptMock(invoiceId) {
+      showToast(`Generating receipt PDF file for ${invoiceId}...`, "info");
+      setTimeout(() => {
+        showToast(`Downloaded receipt_${invoiceId}.pdf successfully.`, "success");
+      }, 1000);
+    }
+
+    // Toggle Auto Refill Settings
+    function toggleAutoRefill(checked) {
+      const workspace = brandWorkspaces[activeWorkspace];
+      workspace.autoRefill = checked;
+      showToast(checked ? "Auto-Refill credits triggers enabled." : "Auto-Refill deactivated.", "info");
+    }
+
+    // Update dynamically credits calculator slider values
+    function updateCreditsCalculator(value) {
+      document.getElementById('slider-credits-label').innerText = `${parseInt(value).toLocaleString()} Credits`;
+      const cost = (value / 1000) * 2;
+      document.getElementById('slider-cost-label').innerText = `$${cost.toFixed(2)} USD`;
+    }
+
+    // Purchase extra credits transaction
+    function purchaseExtraCredits() {
+      const slider = document.getElementById('credits-slider');
+      const val = parseInt(slider.value);
+      const cost = (val / 1000) * 2;
+
+      showToast(`Processing credit purchase transaction for $${cost.toFixed(2)} USD...`, "info");
+      
+      setTimeout(() => {
+        const workspace = brandWorkspaces[activeWorkspace];
+        workspace.creditsAvailable += val;
+        workspace.creditsLimit += val; // adjust limit contextually
+
+        // Generate dynamic invoice
+        const invId = `INV-2026-${Math.floor(1000 + Math.random() * 9000)}`;
+        workspace.invoices.unshift({
+          id: invId,
+          date: "2026-07-14",
+          desc: `Ad-hoc Neural Credits Bundle (${val.toLocaleString()})`,
+          amount: `$${cost.toFixed(2)}`,
+          status: "Paid"
+        });
+
+        loadWorkspaceBilling(activeWorkspace);
+        showToast(`Successfully purchased and credited ${val.toLocaleString()} credits.`, "success");
+      }, 1500);
+    }
+
+    // Billing period toggler (monthly vs annually)
+    function toggleBillingPeriod(period) {
+      document.getElementById('btn-period-monthly').classList.toggle('active', period === 'monthly');
+      document.getElementById('btn-period-annually').classList.toggle('active', period === 'annually');
+
+      const proCost = period === 'monthly' ? '$49' : '$39';
+      document.getElementById('pro-cost-value').innerText = proCost;
+
+      showToast(`Switched pricing structure to ${period} cycles.`, "info");
+    }
+
+    // Subscription actions: Cancel Auto-renew
+    function cancelSubscription() {
+      if (confirm("Are you sure you want to deactivate subscription auto-renewal? Your compute limits will downgrade to Starter tier next cycle.")) {
+        const workspace = brandWorkspaces[activeWorkspace];
+        workspace.renewalDate = "Auto-renew Disabled";
+        loadWorkspaceBilling(activeWorkspace);
+        showToast("Subscription auto-renewal has been cancelled.", "error");
+      }
+    }
+
+    // Plan downgrade Starter
+    function downgradeToStarter() {
+      if (confirm("Are you sure you want to downgrade immediately to the Starter plan? This will set your credit pool limit to 500.")) {
+        const workspace = brandWorkspaces[activeWorkspace];
+        workspace.tier = "Starter Plan";
+        workspace.cost = "$0.00 / mo";
+        workspace.renewalDate = "N/A - Free Tier";
+        workspace.creditsAvailable = Math.min(workspace.creditsAvailable, 500);
+        workspace.creditsLimit = 500;
+        
+        loadWorkspaceBilling(activeWorkspace);
+        showToast("Plan downgraded to Starter successfully.", "success");
+      }
+    }
+
+    // Plan upgrade Enterprise
+    function upgradeToEnterprise() {
+      if (confirm("Confirm upgrade of workspace to Enterprise Scale for $299.00/month? This increases limit to 100,000 credits.")) {
+        const workspace = brandWorkspaces[activeWorkspace];
+        workspace.tier = "Enterprise Scale Plan";
+        workspace.cost = "$299.00 / mo";
+        workspace.renewalDate = "August 14, 2026";
+        workspace.creditsAvailable += 90000;
+        workspace.creditsLimit = 100000;
+
+        // Generate invoice
+        workspace.invoices.unshift({
+          id: `INV-2026-${Math.floor(1000 + Math.random() * 9000)}`,
+          date: "2026-07-14",
+          desc: "Enterprise Scale Subscription Upgrade",
+          amount: "$299.00",
+          status: "Paid"
+        });
+
+        loadWorkspaceBilling(activeWorkspace);
+        showToast("Workspace successfully upgraded to Enterprise plan!", "success");
+      }
+    }
+
+    // Drawer workflows: Configure credit card
+    function openPaymentDrawer() {
+      document.getElementById('payment-method-drawer').classList.add('active');
+    }
+
+    function closePaymentDrawer() {
+      document.getElementById('payment-method-drawer').classList.remove('active');
+      document.getElementById('card-name-input').value = '';
+      document.getElementById('card-num-input').value = '';
+      document.getElementById('card-exp-input').value = '';
+      document.getElementById('card-cvc-input').value = '';
+      document.getElementById('card-default-chk').checked = false;
+    }
+
+    // Helper inputs auto-formatting
+    function formatCardNumber(input) {
+      let v = input.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+      let matches = v.match(/\d{4,16}/g);
+      let match = matches && matches[0] || '';
+      let parts = [];
+
+      for (let i = 0, len = match.length; i < len; i += 4) {
+        parts.push(match.substring(i, i + 4));
+      }
+
+      if (parts.length > 0) {
+        input.value = parts.join(' ');
+      } else {
+        input.value = v;
+      }
+    }
+
+    function formatCardExpiry(input) {
+      let v = input.value.replace(/\s+/g, '').replace(/[^0-9]/gi, '');
+      if (v.length >= 2) {
+        input.value = v.substring(0, 2) + '/' + v.substring(2, 4);
+      } else {
+        input.value = v;
+      }
+    }
+
+    // Submit payment card configuration
+    function submitAddPaymentCard() {
+      const name = document.getElementById('card-name-input').value.trim();
+      const num = document.getElementById('card-num-input').value.trim();
+      const exp = document.getElementById('card-exp-input').value.trim();
+      const cvc = document.getElementById('card-cvc-input').value.trim();
+      const setAsDefault = document.getElementById('card-default-chk').checked;
+
+      if (!name || num.length < 15 || exp.length < 5 || cvc.length < 3) {
+        showToast("Please supply correct credit card credentials.", "error");
+        return;
+      }
+
+      const submitBtn = document.getElementById('btn-submit-payment');
+      const origText = submitBtn.innerText;
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Authorizing...";
+
+      setTimeout(() => {
+        const workspace = brandWorkspaces[activeWorkspace];
+        const last4 = num.substring(num.length - 4);
+        
+        // determine brand
+        let brand = "VISA";
+        if (num.startsWith("5") || num.startsWith("2")) brand = "MC";
+        if (num.startsWith("3")) brand = "AMEX";
+
+        const newId = workspace.cards.length + 1;
+        const newCard = { id: newId, brand: brand, last4: last4, name: name, exp: exp, default: setAsDefault };
+
+        if (setAsDefault) {
+          workspace.cards.forEach(c => c.default = false);
+        }
+        workspace.cards.push(newCard);
+
+        submitBtn.disabled = false;
+        submitBtn.innerText = origText;
+        
+        closePaymentDrawer();
+        renderPaymentCards();
+        showToast(`Card ending in ${last4} authorized and saved.`, "success");
+      }, 1200);
+    }
+  </script>
+</body>
+</html>

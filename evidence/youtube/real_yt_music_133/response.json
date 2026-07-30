@@ -1,0 +1,26 @@
+{
+  "kind": "youtube#videoListResponse",
+  "etag": "yt_etag_real_yt_music_133",
+  "items": [
+    {
+      "kind": "youtube#video",
+      "id": "real_yt_music_133",
+      "snippet": {
+        "publishedAt": "2026-03-19T02:33:44.643Z",
+        "channelId": "UC_creator_yt_9",
+        "title": "Music Benchmark Short Reel",
+        "categoryId": "27"
+      },
+      "contentDetails": {
+        "duration": "PT28S",
+        "dimension": "2d",
+        "definition": "hd"
+      },
+      "statistics": {
+        "viewCount": "313860",
+        "likeCount": "20636",
+        "commentCount": "1085"
+      }
+    }
+  ]
+}

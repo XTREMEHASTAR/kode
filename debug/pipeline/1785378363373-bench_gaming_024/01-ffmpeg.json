@@ -1,0 +1,13 @@
+{
+  "assetId": "bench_gaming_024",
+  "videoPath": "c:/videos/benchmark_gaming_4.mp4",
+  "duration": 42,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "bitrate": 4500000,
+  "keyframe_count": 42,
+  "extracted_frame_count": 42,
+  "extracted_audio_samples": 220500,
+  "contentHash": 1550290200
+}

@@ -1,0 +1,19 @@
+{
+  "detected_text": "[OCR Text Segment] Asset real_yt_music_133 text overlay density: 62.9%.",
+  "text_count": 9,
+  "text_density": 0.6286,
+  "confidence": 0.96,
+  "regions": [
+    {
+      "start": 0.5,
+      "end": 11.2
+    },
+    {
+      "start": 11.2,
+      "end": 25.2
+    }
+  ],
+  "fontSizeEstimatePx": 61,
+  "ctaDetected": true,
+  "emojiCount": 1
+}

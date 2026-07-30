@@ -1,0 +1,2168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — Enterprise Administration Portal</title>
+  <meta name="description" content="Centralized system console for user directory auditing, subscription tiers, agency billing ledger, feature flags, real-time analytics, and content moderation queues.">
+  
+  <!-- KONTAGI CSS Design System -->
+  <link rel="stylesheet" href="design-system.css">
+  
+  <!-- KONTAGI JS Engine -->
+  <script defer src="design-system.js"></script>
+
+  <style>
+    /* ==========================================================================
+       SANDBOX LAYOUT FRAMEWORK & ADMIN SPECIFIC STYLE SYSTEM
+       ========================================================================== */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-smooth);
+    }
+
+    .sandbox-header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-xs) var(--space-lg);
+      z-index: 1000;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .sandbox-brand h1 {
+      font-size: 1.125rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .sandbox-brand span {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .sandbox-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-control-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      background-color: var(--bg-secondary);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+    }
+
+    .sandbox-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sandbox-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .sandbox-btn.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sandbox-workspace {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      position: relative;
+    }
+
+    .emulator-viewport {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      transition: width var(--transition-smooth), height var(--transition-smooth), border-radius var(--transition-smooth);
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .emulator-viewport.desktop {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      border: none;
+    }
+
+    .emulator-viewport.tablet {
+      width: 768px;
+      height: 95%;
+      border-radius: var(--radius-lg);
+    }
+
+    .emulator-viewport.mobile {
+      width: 375px;
+      height: 85%;
+      border-radius: var(--radius-2xl);
+    }
+
+    /* Shell Layout */
+    .dashboard-shell {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .dashboard-sidebar {
+      width: 260px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      transition: transform var(--transition-smooth), width var(--transition-smooth);
+    }
+
+    .sidebar-header {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .sidebar-nav {
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .sidebar-nav-item:hover, .sidebar-nav-item.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .sidebar-nav-item.active {
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .dashboard-main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .dashboard-header {
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .dashboard-body {
+      flex-grow: 1;
+      overflow: hidden;
+      padding: var(--space-lg);
+      display: flex;
+    }
+
+    /* Emulator controls for responsive layout */
+    .emulator-viewport.tablet .dashboard-sidebar { width: 70px; }
+    .emulator-viewport.tablet .sidebar-text-label,
+    .emulator-viewport.tablet .sidebar-footer { display: none; }
+    
+    .emulator-viewport.mobile #sidebar-toggle-btn { display: inline-flex !important; }
+    .emulator-viewport.mobile .dashboard-sidebar { display: none; }
+    .emulator-viewport.mobile .dashboard-sidebar.active {
+      display: flex;
+      position: absolute;
+      left: 0;
+      top: 64px;
+      bottom: 0;
+      z-index: 950;
+      height: calc(100% - 64px);
+      width: 240px;
+      box-shadow: var(--shadow-xl);
+    }
+
+    /* Admin SPA Container */
+    .admin-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      gap: var(--space-lg);
+      overflow: hidden;
+    }
+
+    .admin-nav {
+      width: 240px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      border-right: 1px solid var(--border-default);
+      padding-right: var(--space-md);
+      overflow-y: auto;
+    }
+
+    .admin-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      border: 1px solid transparent;
+    }
+
+    .admin-nav-item:hover {
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .admin-nav-item.active {
+      background-color: var(--brand-primary-glow);
+      color: var(--brand-primary);
+      font-weight: 600;
+      border-color: rgba(99, 102, 241, 0.15);
+    }
+
+    .admin-content-wrapper {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding-right: var(--space-xs);
+      height: 100%;
+    }
+
+    .admin-panel {
+      display: none;
+      animation: tabFadeIn var(--transition-smooth) forwards;
+    }
+
+    .admin-panel.active {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Support ticket layout styles */
+    .ticket-view-layout {
+      display: grid;
+      grid-template-columns: 350px 1fr;
+      gap: var(--space-md);
+      height: 500px;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background-color: var(--bg-elevated);
+    }
+    
+    .ticket-list-column {
+      border-right: 1px solid var(--border-default);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .ticket-detail-column {
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .ticket-item-card {
+      padding: var(--space-sm);
+      border-bottom: 1px solid var(--border-default);
+      cursor: pointer;
+      transition: background var(--transition-fast);
+    }
+
+    .ticket-item-card:hover {
+      background-color: var(--bg-secondary);
+    }
+
+    .ticket-item-card.active {
+      background-color: var(--brand-primary-glow);
+      border-left: 3px solid var(--brand-primary);
+    }
+
+    .chat-thread-container {
+      flex-grow: 1;
+      padding: var(--space-md);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      background-color: var(--bg-secondary);
+    }
+
+    .chat-bubble {
+      max-width: 80%;
+      padding: var(--space-sm) var(--space-md);
+      border-radius: var(--radius-lg);
+      font-size: 0.875rem;
+    }
+
+    .chat-bubble-user {
+      align-self: flex-start;
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      color: var(--text-primary);
+    }
+
+    .chat-bubble-agent {
+      align-self: flex-end;
+      background-color: var(--brand-primary);
+      color: var(--text-inverse);
+    }
+
+    /* System Health Gauge dials */
+    .health-gauge-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: var(--space-md);
+    }
+
+    @media (max-width: 768px) {
+      .health-gauge-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .health-gauge-card {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .gauge-circle-container {
+      position: relative;
+      width: 100px;
+      height: 100px;
+    }
+
+    .gauge-circle-bg {
+      fill: none;
+      stroke: var(--border-default);
+      stroke-width: 8;
+    }
+
+    .gauge-circle-fill {
+      fill: none;
+      stroke-width: 8;
+      stroke-linecap: round;
+      stroke-dasharray: 282.6;
+      transition: stroke-dashoffset 0.8s ease-in-out;
+    }
+
+    /* Modal Form Overlay style overrides */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.5);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-md);
+    }
+
+    .modal.active {
+      display: flex;
+    }
+
+    .modal-content {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xl);
+      width: 500px;
+      max-width: 100%;
+      padding: var(--space-lg);
+      box-shadow: var(--shadow-xl);
+      animation: modalSlideUp 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    @keyframes modalSlideUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Mobile/Responsive Overrides for Admin Panel */
+    @media (max-width: 768px) {
+      .admin-container {
+        flex-direction: column;
+      }
+      .admin-nav {
+        width: 100% !important;
+        border-right: none;
+        border-bottom: 1px solid var(--border-default);
+        flex-direction: row !important;
+        overflow-x: auto;
+        padding-right: 0;
+        padding-bottom: var(--space-xs);
+        scrollbar-width: none;
+        white-space: nowrap;
+      }
+      .admin-nav::-webkit-scrollbar {
+        display: none;
+      }
+      .admin-nav-item {
+        padding: 6px 12px;
+      }
+      .ticket-view-layout {
+        grid-template-columns: 1fr !important;
+        height: auto !important;
+      }
+      .ticket-list-column {
+        border-right: none;
+        border-bottom: 1px solid var(--border-default);
+        max-height: 200px;
+      }
+      #sidebar-toggle-btn {
+        display: inline-flex !important;
+      }
+    }
+
+    /* Emulator Mobile specific overrides */
+    .emulator-viewport.mobile .admin-container {
+      flex-direction: column;
+    }
+    .emulator-viewport.mobile .admin-nav {
+      width: 100% !important;
+      border-right: none;
+      border-bottom: 1px solid var(--border-default);
+      flex-direction: row !important;
+      overflow-x: auto;
+      padding-right: 0;
+      padding-bottom: var(--space-xs);
+      scrollbar-width: none;
+      white-space: nowrap;
+    }
+    .emulator-viewport.mobile .admin-nav::-webkit-scrollbar {
+      display: none;
+    }
+    .emulator-viewport.mobile .admin-nav-item {
+      padding: 6px 12px;
+    }
+    .emulator-viewport.mobile .ticket-view-layout {
+      grid-template-columns: 1fr !important;
+      height: auto !important;
+    }
+    .emulator-viewport.mobile .ticket-list-column {
+      border-right: none;
+      border-bottom: 1px solid var(--border-default);
+      max-height: 200px;
+    }
+    .emulator-viewport.mobile .health-gauge-grid {
+      grid-template-columns: repeat(2, 1fr) !important;
+    }
+    .emulator-viewport.mobile .grid-12 {
+      grid-template-columns: 1fr !important;
+    }
+    .emulator-viewport.mobile .grid-12 > * {
+      grid-column: span 1 !important;
+    }
+    .emulator-viewport.mobile .bento-grid {
+      grid-template-columns: 1fr !important;
+    }
+    .emulator-viewport.mobile #sidebar-toggle-btn {
+      display: inline-flex !important;
+    }
+
+    /* Emulator Tablet specific overrides */
+    .emulator-viewport.tablet .bento-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    .emulator-viewport.tablet .health-gauge-grid {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  </style>
+</head>
+<body class="dark">
+
+  <!-- Sandbox Frame Header -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--brand-primary)" stroke-width="2.5">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+      <h1>KONTAGI System Shell</h1>
+      <span>ADMIN</span>
+    </div>
+    
+    <div class="sandbox-controls">
+      <div style="font-size: 13px; font-weight: 500; color: var(--text-muted);">
+        Active Workspace: <strong id="header-workspace-label">Retro Denim Appa</strong>
+      </div>
+      
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" id="viewport-desktop-btn" onclick="setDeviceViewport('desktop')">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
+          Desktop
+        </button>
+        <button class="sandbox-btn" id="viewport-tablet-btn" onclick="setDeviceViewport('tablet')">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          Tablet
+        </button>
+        <button class="sandbox-btn" id="viewport-mobile-btn" onclick="setDeviceViewport('mobile')">
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          Mobile
+        </button>
+      </div>
+
+      <button class="btn btn-sm btn-tertiary" id="theme-toggle" style="gap: var(--space-xxs);">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/>
+        </svg>
+        Dark Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- Device Emulator Workspace -->
+  <div class="sandbox-workspace">
+    
+    <!-- Emulator Viewport Frame -->
+    <div class="emulator-viewport desktop" id="viewport-frame">
+      
+      <!-- Inside Main Shell -->
+      <div class="dashboard-shell">
+        
+        <!-- Standard Left Navigation Sidebar -->
+        <aside class="dashboard-sidebar">
+          <div style="display: flex; flex-direction: column; height: 100%;">
+            <div class="sidebar-header">
+              <!-- Workspace Context Dropdown Selector -->
+              <div class="form-group" style="margin-bottom: 0;">
+                <div class="select-wrapper">
+                  <select class="select" id="workspace-dropdown-select" style="padding: 6px 30px 6px 10px; font-size: 0.8125rem;">
+                    <option value="pulse_energy">Pulse Energy</option>
+                    <option value="retro_denim" selected>Retro Denim</option>
+                    <option value="smart_home">Smart Home Inc</option>
+                  </select>
+                  <svg class="select-arrow" style="width: 14px; height: 14px;" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                </div>
+              </div>
+            </div>
+
+            <!-- Sidebar Navigation Links -->
+                        <nav class="sidebar-nav">
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-bottom: 6px; text-transform: uppercase;">Workspace</span>
+              <a class="sidebar-nav-item" href="dashboard.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="sidebar-text-label">Dashboard</span>
+              </a>
+              <a class="sidebar-nav-item" href="projects.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span class="sidebar-text-label">Projects</span>
+              </a>
+              <a class="sidebar-nav-item" href="library.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+                <span class="sidebar-text-label">Creative Library</span>
+              </a>
+              <a class="sidebar-nav-item" href="hooks.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                <span class="sidebar-text-label">Hook Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="retention.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Retention Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="script.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="sidebar-text-label">Script Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="thumbnail.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15l-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Thumbnail Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="caption.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                <span class="sidebar-text-label">Caption Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="audio.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                <span class="sidebar-text-label">Audio Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="visual.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-.447.894L15 18.5V10zM5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Visual Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="trend.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <span class="sidebar-text-label">Trend Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="upload.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span class="sidebar-text-label">Upload Center</span>
+              </a>
+              <a class="sidebar-nav-item" href="lab.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                <span class="sidebar-text-label">AI Creative Lab</span>
+              </a>
+              <a class="sidebar-nav-item" href="report.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="sidebar-text-label">AI Reports</span>
+              </a>
+              <a class="sidebar-nav-item" href="creators.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Creators</span>
+              </a>
+              <a class="sidebar-nav-item" href="brand.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17V9h3a2 2 0 110 4H9m0 4h3a2 2 0 100-4"/></svg>
+                <span class="sidebar-text-label">Brand Hub</span>
+              </a>
+              <a class="sidebar-nav-item" href="coach.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="sidebar-text-label">AI Coach</span>
+              </a>
+              <a class="sidebar-nav-item" onclick="window.showToast('Loading database insights...', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                <span class="sidebar-text-label">Analytics</span>
+              </a>
+              <a class="sidebar-nav-item" href="client.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Clients</span>
+              </a>
+              <a class="sidebar-nav-item" href="team.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0zm3 10v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg>
+                <span class="sidebar-text-label">Team Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="billing.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span class="sidebar-text-label">Billing</span>
+              </a>
+              <a class="sidebar-nav-item" href="notifications.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="sidebar-text-label">Notifications</span>
+              </a>
+              <a class="sidebar-nav-item" href="settings.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="sidebar-text-label">Settings</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">System</span>
+              <a class="sidebar-nav-item active" href="admin.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="sidebar-text-label">Admin Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="mobile.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Mobile App</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">Design</span>
+              <a class="sidebar-nav-item" href="index.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                <span class="sidebar-text-label">Design System</span>
+              </a>
+            </nav>
+          </div>
+
+          <!-- Sidebar Footer User Profile Panel -->
+          <div class="sidebar-footer">
+            <div class="avatar avatar-md font-bold" style="background-color: var(--brand-secondary); color: var(--text-inverse);">JH</div>
+            <div class="sidebar-text-label" style="display: flex; flex-direction: column;">
+              <span class="text-body-small font-semibold">Jaiveer Hastar</span>
+              <span class="text-detail text-muted">Workspace Admin</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- Main Dashboard View Container -->
+        <main class="dashboard-main">
+          
+          <header class="dashboard-header">
+            <div style="display: flex; align-items: center; gap: var(--space-sm);">
+              <button class="btn btn-sm btn-tertiary" style="padding: 6px; display: none;" id="sidebar-toggle-btn">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              <div>
+                <h2 class="text-gradient font-bold" style="font-size: 1.5rem; letter-spacing: -0.02em;">Admin Operations Console</h2>
+                <p class="text-body-small text-muted">Manage global user permissions, subscriptions ledger, active feature flag configurations, and system infrastructure uptime node routing.</p>
+              </div>
+            </div>
+            
+            <div style="display: flex; gap: var(--space-xs);">
+              <button class="btn btn-tertiary" onclick="simulateClusterReload()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 4v5h.582m15.356 2A8.001 8.001 0 1121.21 8H17m-.5 4h5v-5"/></svg>
+                Reload Telemetry
+              </button>
+            </div>
+          </header>
+
+          <div class="dashboard-body">
+            
+            <!-- Admin SPA Shell -->
+            <div class="admin-container">
+              
+              <!-- 12-Item Settings Sub Nav Sidebar -->
+              <nav class="admin-nav">
+                <div class="admin-nav-item active" onclick="switchAdminPanel('users', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                  Users Directory
+                </div>
+                <div class="admin-nav-item" onclick="switchAdminPanel('agencies', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                  Partner Agencies
+                </div>
+                <div class="admin-nav-item" onclick="switchAdminPanel('creators', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  Creators Network
+                </div>
+                <div class="admin-nav-item" onclick="switchAdminPanel('subscriptions', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/></svg>
+                  Subscription Plans
+                </div>
+                <div class="admin-nav-item" onclick="switchAdminPanel('payments', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  Payments Ledger
+                </div>
+                <div class="admin-nav-item" onclick="switchAdminPanel('support', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M18.364 5.636l-3.536 3.536m0 0A3 3 0 1012.727 12l3.536-3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  Support Queue
+                </div>
+                <div class="admin-nav-item" onclick="switchAdminPanel('featureflags', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6V4m0 2a2 2 0 100 4m0-4a2 2 0 110 4m-6 8a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4m6 6v10m6-2a2 2 0 100-4m0 4a2 2 0 110-4m0 4v2m0-6V4"/></svg>
+                  Feature Flags
+                </div>
+                <div class="admin-nav-item" onclick="switchAdminPanel('analytics', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                  Global Analytics
+                </div>
+                <div class="admin-nav-item" onclick="switchAdminPanel('auditlogs', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  Security Audit Logs
+                </div>
+                <div class="admin-nav-item" onclick="switchAdminPanel('systemhealth', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                  System Node Health
+                </div>
+                <div class="admin-nav-item" onclick="switchAdminPanel('aiusage', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                  AI Token Usage
+                </div>
+                <div class="admin-nav-item" onclick="switchAdminPanel('moderation', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                  Content Moderation
+                </div>
+              </nav>
+
+              <!-- Panel Content Display Wrapper -->
+              <div class="admin-content-wrapper">
+                
+                <!-- 1. PANEL: USERS -->
+                <div class="admin-panel active" id="panel-users">
+                  <div class="card-settings-header flex-between">
+                    <div>
+                      <h3>Users Directory</h3>
+                      <p class="text-body-small text-muted font-normal">Audit, search, suspend, or invite administrator personnel and tenant administrators.</p>
+                    </div>
+                    <button class="btn btn-primary btn-sm" onclick="openInviteModal()">
+                      <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+                      Invite Admin / Staff
+                    </button>
+                  </div>
+                  
+                  <!-- Bento KPI Row -->
+                  <div class="grid-12">
+                    <div class="card col-span-4 p-md">
+                      <span class="text-detail font-semibold text-secondary">Total Tenant Users</span>
+                      <h4 class="text-display-xl font-bold" style="font-size: 1.75rem; margin-top: 4px;">142,504</h4>
+                      <p class="text-micro font-bold text-accent-green" style="margin-top: 4px;">+12% vs last month</p>
+                    </div>
+                    <div class="card col-span-4 p-md">
+                      <span class="text-detail font-semibold text-secondary">Active Sessions Today</span>
+                      <h4 class="text-display-xl font-bold" style="font-size: 1.75rem; margin-top: 4px;">12,893</h4>
+                      <p class="text-micro font-bold text-accent-blue" style="margin-top: 4px;">87% completion rate</p>
+                    </div>
+                    <div class="card col-span-4 p-md">
+                      <span class="text-detail font-semibold text-secondary">Suspended Accounts</span>
+                      <h4 class="text-display-xl font-bold" id="suspended-users-count" style="font-size: 1.75rem; margin-top: 4px;">32</h4>
+                      <p class="text-micro font-bold text-secondary" style="margin-top: 4px;">0.02% of user base</p>
+                    </div>
+                  </div>
+
+                  <!-- Table filters -->
+                  <div style="display: flex; gap: var(--space-sm); align-items: center;">
+                    <div class="input-container" style="flex: 1;">
+                      <svg class="input-icon-left" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                      <input type="text" class="input input-with-icon" id="user-search-input" placeholder="Search by name, email, or tenant registry..." oninput="filterUsersTable()">
+                    </div>
+                    <div class="select-wrapper" style="width: 200px;">
+                      <select class="select" id="user-role-filter" onchange="filterUsersTable()">
+                        <option value="ALL">All Roles</option>
+                        <option value="Admin">Admin</option>
+                        <option value="Agency">Agency Owner</option>
+                        <option value="Creator">Creator Profile</option>
+                        <option value="Client">Client Representative</option>
+                      </select>
+                      <svg class="select-arrow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                    </div>
+                  </div>
+
+                  <!-- Data Table -->
+                  <div class="table-container">
+                    <table class="table" id="users-table">
+                      <thead>
+                        <tr>
+                          <th>User</th>
+                          <th>Role</th>
+                          <th>Created Date</th>
+                          <th>Status</th>
+                          <th style="text-align: right;">Actions</th>
+                        </tr>
+                      </thead>
+                      <tbody id="users-table-body">
+                        <!-- Rendered by JS -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- 2. PANEL: AGENCIES -->
+                <div class="admin-panel" id="panel-agencies">
+                  <div class="card-settings-header">
+                    <h3>Partner Agencies Directory</h3>
+                    <p class="text-body-small text-muted font-normal">Approve, monitor, and override workspace seat limits for affiliated advertising partners.</p>
+                  </div>
+                  
+                  <div class="grid-12">
+                    <div class="card col-span-4 p-md">
+                      <span class="text-detail font-semibold text-secondary">Verified Agencies</span>
+                      <h4 class="text-display-xl font-bold" style="font-size: 1.75rem; margin-top: 4px;">842</h4>
+                    </div>
+                    <div class="card col-span-4 p-md">
+                      <span class="text-detail font-semibold text-secondary">Managed Workspaces</span>
+                      <h4 class="text-display-xl font-bold" style="font-size: 1.75rem; margin-top: 4px;">2,109</h4>
+                    </div>
+                    <div class="card col-span-4 p-md">
+                      <span class="text-detail font-semibold text-secondary">Pending Verifications</span>
+                      <h4 class="text-display-xl font-bold" id="pending-agencies-count" style="font-size: 1.75rem; margin-top: 4px;">5</h4>
+                    </div>
+                  </div>
+
+                  <div class="table-container">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Agency Name</th>
+                          <th>Owner Email</th>
+                          <th>Linked Workspaces</th>
+                          <th>Subscribed Plan</th>
+                          <th>Verification</th>
+                          <th style="text-align: right;">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody id="agencies-table-body">
+                        <!-- Rendered by JS -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- 3. PANEL: CREATORS -->
+                <div class="admin-panel" id="panel-creators">
+                  <div class="card-settings-header">
+                    <h3>Creators Network Hub</h3>
+                    <p class="text-body-small text-muted font-normal">Manage content creators, verify social connections, and process pending creator balance payouts.</p>
+                  </div>
+                  
+                  <!-- Pending Payments ledgers -->
+                  <h4 class="text-body-small font-bold" style="margin-bottom: var(--space-xs);">Pending Payout Requests</h4>
+                  <div class="table-container" style="margin-bottom: var(--space-lg);">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Creator</th>
+                          <th>Platform Linked</th>
+                          <th>Payout Method</th>
+                          <th>Amount</th>
+                          <th>Status</th>
+                          <th style="text-align: right;">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody id="creator-payouts-body">
+                        <!-- JS render -->
+                      </tbody>
+                    </table>
+                  </div>
+
+                  <!-- Creator Registry -->
+                  <h4 class="text-body-small font-bold" style="margin-bottom: var(--space-xs);">Verified Creator Directory</h4>
+                  <div class="table-container">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Creator Name</th>
+                          <th>Social Reach</th>
+                          <th>Engagement Rate</th>
+                          <th>Content Scraped</th>
+                          <th>Uptime Status</th>
+                        </tr>
+                      </thead>
+                      <tbody id="creator-directory-body">
+                        <!-- JS render -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- 4. PANEL: SUBSCRIPTIONS -->
+                <div class="admin-panel" id="panel-subscriptions">
+                  <div class="card-settings-header">
+                    <h3>Subscription Tiers & Plan Manager</h3>
+                    <p class="text-body-small text-muted font-normal">Configure subscription prices, override resource quotas, and update features matrix dynamically.</p>
+                  </div>
+                  
+                  <div class="bento-grid">
+                    <!-- Tier Card Starter -->
+                    <div class="card flex-between" style="flex-direction: column; gap: var(--space-md);">
+                      <div style="width: 100%;">
+                        <span class="badge badge-info" style="margin-bottom: var(--space-xs);">Starter</span>
+                        <div class="form-group">
+                          <label class="form-label">Base Monthly Fee ($)</label>
+                          <input type="number" class="input" id="sub-starter-fee" value="49">
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label">Workspaces Quota</label>
+                          <input type="number" class="input" id="sub-starter-seats" value="3">
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label">AI Generation Limit (Tokens)</label>
+                          <input type="text" class="input" id="sub-starter-tokens" value="500,000">
+                        </div>
+                      </div>
+                      <button class="btn btn-tertiary btn-sm" style="width: 100%;" onclick="updatePlanTier('starter')">Save Tier Specs</button>
+                    </div>
+
+                    <!-- Tier Card Pro -->
+                    <div class="card flex-between" style="flex-direction: column; gap: var(--space-md); border-color: var(--brand-primary);">
+                      <div style="width: 100%;">
+                        <span class="badge badge-success" style="margin-bottom: var(--space-xs);">Professional</span>
+                        <div class="form-group">
+                          <label class="form-label">Base Monthly Fee ($)</label>
+                          <input type="number" class="input" id="sub-pro-fee" value="199">
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label">Workspaces Quota</label>
+                          <input type="number" class="input" id="sub-pro-seats" value="10">
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label">AI Generation Limit (Tokens)</label>
+                          <input type="text" class="input" id="sub-pro-tokens" value="2,500,000">
+                        </div>
+                      </div>
+                      <button class="btn btn-primary btn-sm" style="width: 100%;" onclick="updatePlanTier('pro')">Save Tier Specs</button>
+                    </div>
+
+                    <!-- Tier Card Enterprise -->
+                    <div class="card flex-between" style="flex-direction: column; gap: var(--space-md);">
+                      <div style="width: 100%;">
+                        <span class="badge badge-warning" style="margin-bottom: var(--space-xs);">Enterprise</span>
+                        <div class="form-group">
+                          <label class="form-label">Base Monthly Fee ($)</label>
+                          <input type="number" class="input" id="sub-enterprise-fee" value="999">
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label">Workspaces Quota</label>
+                          <input type="number" class="input" id="sub-enterprise-seats" value="50">
+                        </div>
+                        <div class="form-group">
+                          <label class="form-label">AI Generation Limit (Tokens)</label>
+                          <input type="text" class="input" id="sub-enterprise-tokens" value="10,000,000">
+                        </div>
+                      </div>
+                      <button class="btn btn-tertiary btn-sm" style="width: 100%;" onclick="updatePlanTier('enterprise')">Save Tier Specs</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 5. PANEL: PAYMENTS -->
+                <div class="admin-panel" id="panel-payments">
+                  <div class="card-settings-header">
+                    <h3>Payments Ledger</h3>
+                    <p class="text-body-small text-muted font-normal">Audit transactions, review monthly MRR gains, and execute billing refund commands.</p>
+                  </div>
+                  
+                  <div class="grid-12">
+                    <div class="card col-span-3 p-md">
+                      <span class="text-detail font-semibold text-secondary">Monthly Recurring (MRR)</span>
+                      <h4 class="text-display-xl font-bold" style="font-size: 1.5rem; margin-top: 4px;">$148,250</h4>
+                      <p class="text-micro font-bold text-accent-green" style="margin-top: 4px;">+4.5% MoM increase</p>
+                    </div>
+                    <div class="card col-span-3 p-md">
+                      <span class="text-detail font-semibold text-secondary">Annual Recurring (ARR)</span>
+                      <h4 class="text-display-xl font-bold" style="font-size: 1.5rem; margin-top: 4px;">$1,779,000</h4>
+                    </div>
+                    <div class="card col-span-3 p-md">
+                      <span class="text-detail font-semibold text-secondary">Refund Rate</span>
+                      <h4 class="text-display-xl font-bold" style="font-size: 1.5rem; margin-top: 4px;">0.8%</h4>
+                      <p class="text-micro font-bold text-accent-green" style="margin-top: 4px;">Within target bounds</p>
+                    </div>
+                    <div class="card col-span-3 p-md">
+                      <span class="text-detail font-semibold text-secondary">Average LTV</span>
+                      <h4 class="text-display-xl font-bold" style="font-size: 1.5rem; margin-top: 4px;">$2,480</h4>
+                    </div>
+                  </div>
+
+                  <!-- sleak SVG line chart -->
+                  <div class="card">
+                    <span class="text-body-small font-bold" style="margin-bottom: var(--space-sm);">Monthly Volume Growth Ledger (USD)</span>
+                    <svg class="svg-line-chart" viewBox="0 0 800 180">
+                      <defs>
+                        <linearGradient id="revenue-gradient" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="var(--brand-primary)" stop-opacity="0.25" />
+                          <stop offset="100%" stop-color="var(--brand-primary)" stop-opacity="0" />
+                        </linearGradient>
+                      </defs>
+                      <line x1="50" y1="20" x2="750" y2="20" class="svg-grid-line" />
+                      <line x1="50" y1="70" x2="750" y2="70" class="svg-grid-line" />
+                      <line x1="50" y1="120" x2="750" y2="120" class="svg-grid-line" />
+                      
+                      <!-- Area shape under curve -->
+                      <path d="M 50 140 L 50 110 Q 150 70 250 90 T 450 40 T 650 30 L 750 10 L 750 150 L 50 150 Z" fill="url(#revenue-gradient)" />
+                      <!-- Curve stroke -->
+                      <path d="M 50 110 Q 150 70 250 90 T 450 40 T 650 30 L 750 10" class="svg-trend-path" style="stroke: var(--brand-primary);" />
+                      
+                      <!-- Data dots -->
+                      <circle cx="50" cy="110" r="4" fill="var(--bg-primary)" stroke="var(--brand-primary)" stroke-width="2" />
+                      <circle cx="250" cy="90" r="4" fill="var(--bg-primary)" stroke="var(--brand-primary)" stroke-width="2" />
+                      <circle cx="450" cy="40" r="4" fill="var(--bg-primary)" stroke="var(--brand-primary)" stroke-width="2" />
+                      <circle cx="650" cy="30" r="4" fill="var(--bg-primary)" stroke="var(--brand-primary)" stroke-width="2" />
+                      <circle cx="750" cy="10" r="4" fill="var(--bg-primary)" stroke="var(--brand-primary)" stroke-width="2" />
+                    </svg>
+                  </div>
+
+                  <!-- Payments list -->
+                  <h4 class="text-body-small font-bold" style="margin-bottom: var(--space-xs);">Transaction Ledger</h4>
+                  <div class="table-container">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Transaction ID</th>
+                          <th>Customer</th>
+                          <th>Amount</th>
+                          <th>Status</th>
+                          <th>Created Date</th>
+                          <th style="text-align: right;">Action</th>
+                        </tr>
+                      </thead>
+                      <tbody id="payments-table-body">
+                        <!-- JS render -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- 6. PANEL: SUPPORT -->
+                <div class="admin-panel" id="panel-support">
+                  <div class="card-settings-header">
+                    <h3>Customer Support Queue</h3>
+                    <p class="text-body-small text-muted font-normal">Audit, assign, and respond directly to customer ticket escalations.</p>
+                  </div>
+
+                  <div class="ticket-view-layout">
+                    <!-- Left column ticket cards -->
+                    <div class="ticket-list-column" id="support-tickets-list">
+                      <!-- Rendered by JS -->
+                    </div>
+
+                    <!-- Right Column Ticket view chat -->
+                    <div class="ticket-detail-column" id="ticket-detail-pane">
+                      <!-- Rendered dynamically by JS -->
+                      <div class="flex-center" style="height: 100%; flex-direction: column; color: var(--text-secondary);">
+                        <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                        <p class="font-medium style-body-small" style="margin-top: var(--space-xs);">Select a support ticket from the list to reply.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 7. PANEL: FEATURE FLAGS -->
+                <div class="admin-panel" id="panel-featureflags">
+                  <div class="card-settings-header flex-between">
+                    <div>
+                      <h3>System Feature Flags</h3>
+                      <p class="text-body-small text-muted font-normal">Manage runtime feature triggers, targeting rules, and gradual rollout allocations.</p>
+                    </div>
+                    <button class="btn btn-secondary btn-sm" onclick="openFeatureFlagModal()">
+                      Create Feature Flag
+                    </button>
+                  </div>
+
+                  <!-- Flags Grid -->
+                  <div class="grid-12" id="feature-flags-container">
+                    <!-- Rendered by JS -->
+                  </div>
+                </div>
+
+                <!-- 8. PANEL: ANALYTICS -->
+                <div class="admin-panel" id="panel-analytics">
+                  <div class="card-settings-header">
+                    <h3>Global System Analytics</h3>
+                    <p class="text-body-small text-muted font-normal">Real-time charts of user session rates, API request telemetry, and database latencies.</p>
+                  </div>
+
+                  <div class="bento-grid">
+                    
+                    <!-- Session rates -->
+                    <div class="card flex-between" style="flex-direction: column; gap: var(--space-md);">
+                      <div style="width: 100%;">
+                        <div class="flex-between">
+                          <span class="text-detail font-semibold text-secondary">Active User Sessions</span>
+                          <span class="badge badge-success">Live</span>
+                        </div>
+                        <h4 class="text-display-xl font-bold" id="live-active-sessions" style="font-size: 1.5rem; margin-top: 4px;">4,289</h4>
+                      </div>
+                      <svg class="svg-line-chart" style="height: 100px;" viewBox="0 0 200 60">
+                        <path d="M 0 50 Q 30 20 60 40 T 120 10 T 180 30 L 200 20" fill="none" stroke="var(--brand-primary)" stroke-width="2"/>
+                      </svg>
+                    </div>
+
+                    <!-- API request volumes -->
+                    <div class="card flex-between" style="flex-direction: column; gap: var(--space-md);">
+                      <div style="width: 100%;">
+                        <span class="text-detail font-semibold text-secondary">API Requests / min</span>
+                        <h4 class="text-display-xl font-bold" id="live-api-rate" style="font-size: 1.5rem; margin-top: 4px;">32,940</h4>
+                      </div>
+                      <svg class="svg-line-chart" style="height: 100px;" viewBox="0 0 200 60">
+                        <path d="M 0 45 Q 40 45 80 20 T 160 35 L 200 15" fill="none" stroke="var(--accent-purple)" stroke-width="2"/>
+                      </svg>
+                    </div>
+
+                    <!-- DB latencies -->
+                    <div class="card flex-between" style="flex-direction: column; gap: var(--space-md);">
+                      <div style="width: 100%;">
+                        <span class="text-detail font-semibold text-secondary">Avg DB Query Latency</span>
+                        <h4 class="text-display-xl font-bold" id="live-db-latency" style="font-size: 1.5rem; margin-top: 4px;">14.2 ms</h4>
+                      </div>
+                      <svg class="svg-line-chart" style="height: 100px;" viewBox="0 0 200 60">
+                        <path d="M 0 30 Q 50 10 100 40 T 200 25" fill="none" stroke="var(--accent-blue)" stroke-width="2"/>
+                      </svg>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 9. PANEL: AUDIT LOGS -->
+                <div class="admin-panel" id="panel-auditlogs">
+                  <div class="card-settings-header flex-between">
+                    <div>
+                      <h3>Security Audit Logs</h3>
+                      <p class="text-body-small text-muted font-normal">Real-time immutable ledger of console logins, pricing updates, and user modifications.</p>
+                    </div>
+                    <button class="btn btn-tertiary btn-sm" onclick="clearAuditLogsMock()">
+                      Clear Log View
+                    </button>
+                  </div>
+
+                  <div style="display: flex; gap: var(--space-sm); align-items: center;">
+                    <div class="input-container" style="flex: 1;">
+                      <svg class="input-icon-left" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                      <input type="text" class="input input-with-icon" id="audit-search-input" placeholder="Search actor email, module, or specific action key..." oninput="filterAuditTable()">
+                    </div>
+                  </div>
+
+                  <div class="table-container">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>Timestamp</th>
+                          <th>Actor</th>
+                          <th>Module</th>
+                          <th>Action Description</th>
+                          <th>IP Address</th>
+                          <th>Status</th>
+                        </tr>
+                      </thead>
+                      <tbody id="audit-logs-body">
+                        <!-- JS render -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- 10. PANEL: SYSTEM HEALTH -->
+                <div class="admin-panel" id="panel-systemhealth">
+                  <div class="card-settings-header">
+                    <h3>System Node Health</h3>
+                    <p class="text-body-small text-muted font-normal">Real-time uptime percentages, server CPU cores utilization, and worker queues latency.</p>
+                  </div>
+
+                  <!-- Health dials -->
+                  <div class="health-gauge-grid">
+                    <div class="health-gauge-card">
+                      <span class="text-body-small font-bold">API Gateway</span>
+                      <div class="gauge-circle-container">
+                        <svg viewBox="0 0 100 100" style="transform: rotate(-90deg); width:100%; height:100%;">
+                          <circle cx="50" cy="50" r="45" class="gauge-circle-bg"/>
+                          <circle cx="50" cy="50" r="45" class="gauge-circle-fill" id="gateway-gauge" stroke="var(--accent-green)" stroke-dashoffset="0"/>
+                        </svg>
+                        <div style="position:absolute; inset:0;" class="flex-center font-bold text-body-small">99.9%</div>
+                      </div>
+                      <span class="badge badge-success">Healthy</span>
+                    </div>
+
+                    <div class="health-gauge-card">
+                      <span class="text-body-small font-bold">Scraping Workers</span>
+                      <div class="gauge-circle-container">
+                        <svg viewBox="0 0 100 100" style="transform: rotate(-90deg); width:100%; height:100%;">
+                          <circle cx="50" cy="50" r="45" class="gauge-circle-bg"/>
+                          <circle cx="50" cy="50" r="45" class="gauge-circle-fill" id="scraping-gauge" stroke="var(--accent-green)" stroke-dashoffset="20"/>
+                        </svg>
+                        <div style="position:absolute; inset:0;" class="flex-center font-bold text-body-small">96.8%</div>
+                      </div>
+                      <span class="badge badge-success">Healthy</span>
+                    </div>
+
+                    <div class="health-gauge-card">
+                      <span class="text-body-small font-bold">Database Cluster</span>
+                      <div class="gauge-circle-container">
+                        <svg viewBox="0 0 100 100" style="transform: rotate(-90deg); width:100%; height:100%;">
+                          <circle cx="50" cy="50" r="45" class="gauge-circle-bg"/>
+                          <circle cx="50" cy="50" r="45" class="gauge-circle-fill" id="db-gauge" stroke="var(--accent-green)" stroke-dashoffset="5"/>
+                        </svg>
+                        <div style="position:absolute; inset:0;" class="flex-center font-bold text-body-small">99.8%</div>
+                      </div>
+                      <span class="badge badge-success">Healthy</span>
+                    </div>
+
+                    <div class="health-gauge-card">
+                      <span class="text-body-small font-bold">Auth Services</span>
+                      <div class="gauge-circle-container">
+                        <svg viewBox="0 0 100 100" style="transform: rotate(-90deg); width:100%; height:100%;">
+                          <circle cx="50" cy="50" r="45" class="gauge-circle-bg"/>
+                          <circle cx="50" cy="50" r="45" class="gauge-circle-fill" id="auth-gauge" stroke="var(--accent-orange)" stroke-dashoffset="60"/>
+                        </svg>
+                        <div style="position:absolute; inset:0;" class="flex-center font-bold text-body-small">89.4%</div>
+                      </div>
+                      <span class="badge badge-warning">Delayed</span>
+                    </div>
+                  </div>
+
+                  <!-- Live Resource Utilization -->
+                  <div class="card">
+                    <span class="text-body-small font-bold">Telemetry Live Nodes Dashboard</span>
+                    <div class="grid-12" style="margin-top: var(--space-md);">
+                      <div class="col-span-6">
+                        <span class="text-detail font-medium text-secondary">Infrastructure CPU load</span>
+                        <div style="height: 10px; background-color: var(--border-default); border-radius: var(--radius-full); overflow: hidden; margin-top: 4px;">
+                          <div id="cpu-health-bar" style="height:100%; width: 42%; background-color: var(--brand-primary); transition: width 0.5s;"></div>
+                        </div>
+                      </div>
+                      <div class="col-span-6">
+                        <span class="text-detail font-medium text-secondary">Cluster Memory allocation</span>
+                        <div style="height: 10px; background-color: var(--border-default); border-radius: var(--radius-full); overflow: hidden; margin-top: 4px;">
+                          <div id="mem-health-bar" style="height:100%; width: 68%; background-color: var(--accent-purple); transition: width 0.5s;"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 11. PANEL: AI USAGE -->
+                <div class="admin-panel" id="panel-aiusage">
+                  <div class="card-settings-header">
+                    <h3>AI Generation Cost Tracker</h3>
+                    <p class="text-body-small text-muted font-normal">Track token consumption, configure routing preferences, and view custom models mapping.</p>
+                  </div>
+
+                  <div class="grid-12">
+                    <div class="card col-span-4 p-md">
+                      <span class="text-detail font-semibold text-secondary">Claude 3.5 Token Count</span>
+                      <h4 class="text-display-xl font-bold" style="font-size: 1.5rem; margin-top: 4px;">18,294,500</h4>
+                    </div>
+                    <div class="card col-span-4 p-md">
+                      <span class="text-detail font-semibold text-secondary">GPT-4o Token Count</span>
+                      <h4 class="text-display-xl font-bold" style="font-size: 1.5rem; margin-top: 4px;">8,452,000</h4>
+                    </div>
+                    <div class="card col-span-4 p-md">
+                      <span class="text-detail font-semibold text-secondary">Accrued AI cost (MTD)</span>
+                      <h4 class="text-display-xl font-bold" style="font-size: 1.5rem; margin-top: 4px;">$412.82</h4>
+                    </div>
+                  </div>
+
+                  <!-- Model router configurations -->
+                  <div class="card">
+                    <h4 class="text-body-small font-bold" style="margin-bottom: var(--space-md);">Routing Rules configuration</h4>
+                    
+                    <div class="form-group">
+                      <label class="form-label">AI Coach Inference Node</label>
+                      <div class="select-wrapper">
+                        <select class="select" onchange="showToast('AI Coach node router shifted.', 'info')">
+                          <option value="claude">Claude 3.5 Sonnet (Default)</option>
+                          <option value="gpt">GPT-4o Advanced</option>
+                          <option value="custom">KONTAGI-Custom Fine-tuned</option>
+                        </select>
+                        <svg class="select-arrow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                      </div>
+                    </div>
+
+                    <div class="form-group" style="margin-top: var(--space-sm);">
+                      <label class="form-label">Scraped Video Transcriptions Engine</label>
+                      <div class="select-wrapper">
+                        <select class="select" onchange="showToast('Transcription engine updated.', 'info')">
+                          <option value="whisper">Whisper Large v3 (Fast-path)</option>
+                          <option value="assembly">AssemblyAI Custom Node</option>
+                        </select>
+                        <svg class="select-arrow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- 12. PANEL: MODERATION -->
+                <div class="admin-panel" id="panel-moderation">
+                  <div class="card-settings-header">
+                    <h3>Content Safety Moderation</h3>
+                    <p class="text-body-small text-muted font-normal">Review uploads flagged by the automated content safety classification engines.</p>
+                  </div>
+
+                  <div class="bento-grid" id="moderation-queue-container">
+                    <!-- Rendered by JS -->
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            
+          </div>
+        </main>
+        
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal: Invite Admin -->
+  <div class="modal" id="invite-admin-modal">
+    <div class="modal-content">
+      <div class="flex-between" style="border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-sm); margin-bottom: var(--space-md);">
+        <h4 class="font-bold text-body-base">Invite Administrator Personnel</h4>
+        <button class="modal-close" style="font-size: 24px; cursor: pointer; background:none; border:none; color: var(--text-secondary);" onclick="closeInviteModal()">&times;</button>
+      </div>
+      <form id="invite-admin-form" onsubmit="handleInviteSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Full Name</label>
+          <input type="text" class="input" id="invite-name" placeholder="John Doe" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email Address</label>
+          <input type="email" class="input" id="invite-email" placeholder="john@kontagi.com" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Console Role</label>
+          <div class="select-wrapper">
+            <select class="select" id="invite-role" required>
+              <option value="Admin">Super Administrator</option>
+              <option value="Moderator">System Moderator</option>
+              <option value="Auditor">Security Auditor</option>
+            </select>
+            <svg class="select-arrow" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: var(--space-md);">Send Credentials Invite</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Modal: Create Feature Flag -->
+  <div class="modal" id="create-flag-modal">
+    <div class="modal-content">
+      <div class="flex-between" style="border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-sm); margin-bottom: var(--space-md);">
+        <h4 class="font-bold text-body-base">Create System Feature Flag</h4>
+        <button class="modal-close" style="font-size: 24px; cursor: pointer; background:none; border:none; color: var(--text-secondary);" onclick="closeFeatureFlagModal()">&times;</button>
+      </div>
+      <form id="create-flag-form" onsubmit="handleFeatureFlagSubmit(event)">
+        <div class="form-group">
+          <label class="form-label">Flag Key (Slug)</label>
+          <input type="text" class="input" id="flag-key" placeholder="enable-gpu-scrapers" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Description</label>
+          <input type="text" class="input" id="flag-desc" placeholder="Routes scrapers through high priority GPU cluster nodes" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Rollout Allocation (%)</label>
+          <input type="number" class="input" id="flag-rollout" min="0" max="100" value="0" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: var(--space-md);">Register Flag</button>
+      </form>
+    </div>
+  </div>
+
+  <!-- Dynamic JS Engine for Admin Portal Simulation -->
+  <script>
+    // --- Mock Registries ---
+    let usersData = [
+      { id: 1, name: "Jaiveer Hastar", email: "jaiveer@company.com", role: "Admin", created: "2026-01-12", status: "Active" },
+      { id: 2, name: "Marcus Thorne", email: "marcus@agency.com", role: "Agency Owner", created: "2026-03-22", status: "Active" },
+      { id: 3, name: "Devon Chen", email: "devon@creators.net", role: "Creator Profile", created: "2026-04-05", status: "Active" },
+      { id: 4, name: "Zara Patel", email: "zara@client.com", role: "Client Representative", created: "2026-05-18", status: "Active" },
+      { id: 5, name: "Caleb Vance", email: "caleb@malicious.xyz", role: "Creator Profile", created: "2026-06-01", status: "Suspended" },
+      { id: 6, name: "Serena Wu", email: "serena@agency.com", role: "Agency Owner", created: "2026-06-15", status: "Active" }
+    ];
+
+    let agenciesData = [
+      { id: 1, name: "Apex Media Group", owner: "serena@agency.com", workspaces: 14, plan: "Enterprise", verified: true },
+      { id: 2, name: "Hyperion Digital", owner: "marcus@agency.com", workspaces: 8, plan: "Pro", verified: true },
+      { id: 3, name: "Omni Labs LLC", owner: "hello@omnilabs.com", workspaces: 2, plan: "Starter", verified: false },
+      { id: 4, name: "Vortex PR", owner: "vortex@pr.net", workspaces: 5, plan: "Pro", verified: false }
+    ];
+
+    let creatorPayouts = [
+      { id: 1, name: "Devon Chen", platform: "YouTube", method: "Stripe Connect", amount: "$1,450.00", status: "Pending" },
+      { id: 2, name: "Lucas Vance", platform: "Instagram", method: "PayPal Escrow", amount: "$820.00", status: "Pending" },
+      { id: 3, name: "Elena Rostova", platform: "TikTok", method: "Direct Bank Transfer", amount: "$2,100.00", status: "Paid" }
+    ];
+
+    let creatorDirectory = [
+      { name: "Devon Chen", reach: "1.2M", engagement: "5.8%", content: 142, status: "Healthy" },
+      { name: "Elena Rostova", reach: "840k", engagement: "8.2%", content: 290, status: "Healthy" },
+      { name: "Mia Takahashi", reach: "2.5M", engagement: "3.4%", content: 84, status: "Warning" },
+      { name: "Lucas Vance", reach: "310k", engagement: "4.1%", content: 12, status: "Healthy" }
+    ];
+
+    let featureFlags = [
+      { key: "ai-creative-lab-v2", desc: "Enables advanced image editing inside the AI lab page context.", rollout: 25, active: true },
+      { key: "bulk-reel-scraping", desc: "Routes automated video requests through secondary proxies network.", rollout: 100, active: true },
+      { key: "realtime-voice-auth", desc: "Requires voice signature pattern verification for security console adjustments.", rollout: 0, active: false }
+    ];
+
+    let auditLogs = [
+      { time: "22:01:14", actor: "jaiveer@company.com", module: "AUTH", desc: "Security console administrator session authenticated", ip: "192.168.1.42", status: "SUCCESS" },
+      { time: "21:40:02", actor: "marcus@agency.com", module: "WORKSPACE", desc: "Workspace 'Hyperion Pro' details updated", ip: "103.42.11.90", status: "SUCCESS" },
+      { time: "19:15:33", actor: "system-cron", module: "SCRAPER", desc: "Creator content scraper task initialized for Devon Chen", ip: "127.0.0.1", status: "SUCCESS" },
+      { time: "18:04:12", actor: "admin-bot", module: "BILLING", desc: "Subscription status verification executed automatically", ip: "127.0.0.1", status: "SUCCESS" }
+    ];
+
+    let supportTickets = [
+      { id: "TCK-4819", customer: "Marcus Thorne", subject: "Inference response latency threshold crossed", category: "AI Error", priority: "High", status: "Open", msgs: [
+        { sender: "user", text: "Hi, I am noticing that when querying the AI Coach with long transcripts, response latencies exceed 15 seconds. Is this standard?" }
+      ]},
+      { id: "TCK-4820", customer: "Serena Wu", subject: "SAML connection configuration error", category: "Workspace Access", priority: "Urgent", status: "Open", msgs: [
+        { sender: "user", text: "We configured SAML/SSO using Okta, but workspace administrators are locked out. Please review." }
+      ]},
+      { id: "TCK-4821", customer: "Devon Chen", subject: "Invoice billing details override request", category: "Billing", priority: "Medium", status: "Closed", msgs: [
+        { sender: "user", text: "I need to update my VAT registration number on the last transaction invoice." },
+        { sender: "agent", text: "Hi Devon, this invoice details update has been processed. You can download the refreshed PDF." }
+      ]}
+    ];
+
+    let moderationQueue = [
+      { id: 1, title: "Summer swimwear branding catalog", creator: "Mia Takahashi", adult: "0.89", violence: "0.02", hate: "0.01", status: "Flagged" },
+      { id: 2, title: "Crypto arbitrage hack secrets!", creator: "caleb@malicious.xyz", adult: "0.10", violence: "0.05", hate: "0.92", status: "Flagged" }
+    ];
+
+    // --- DOM Initializations ---
+    document.addEventListener('DOMContentLoaded', () => {
+      renderUsersTable();
+      renderAgenciesTable();
+      renderCreatorPayouts();
+      renderCreatorDirectory();
+      renderFeatureFlags();
+      renderAuditLogs();
+      renderSupportTickets();
+      renderModerationQueue();
+      initHealthAnimation();
+
+      // Sidebar Mobile Toggle
+      const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+      if (sidebarToggleBtn) {
+        sidebarToggleBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const sidebar = document.querySelector('.dashboard-sidebar');
+          if (sidebar) sidebar.classList.toggle('active');
+        });
+      }
+      window.addEventListener('click', () => {
+        const sidebar = document.querySelector('.dashboard-sidebar');
+        if (sidebar) sidebar.classList.remove('active');
+      });
+    });
+
+    // --- Device Emulator Controller ---
+    function setDeviceViewport(viewport) {
+      const frame = document.getElementById('viewport-frame');
+      const desktopBtn = document.getElementById('viewport-desktop-btn');
+      const tabletBtn = document.getElementById('viewport-tablet-btn');
+      const mobileBtn = document.getElementById('viewport-mobile-btn');
+
+      // Clear active states
+      desktopBtn.classList.remove('active');
+      tabletBtn.classList.remove('active');
+      mobileBtn.classList.remove('active');
+
+      // Clear viewport classes
+      frame.classList.remove('desktop', 'tablet', 'mobile');
+
+      // Apply selection
+      if (viewport === 'desktop') {
+        frame.classList.add('desktop');
+        desktopBtn.classList.add('active');
+      } else if (viewport === 'tablet') {
+        frame.classList.add('tablet');
+        tabletBtn.classList.add('active');
+      } else if (viewport === 'mobile') {
+        frame.classList.add('mobile');
+        mobileBtn.classList.add('active');
+      }
+      
+      if (typeof window.showToast === 'function') {
+        window.showToast(`Viewport set to ${viewport} simulator.`, 'info');
+      }
+    }
+
+    // --- Admin panel navigation ---
+    function switchAdminPanel(panelId, element) {
+      // Toggle nav active classes
+      document.querySelectorAll('.admin-nav-item').forEach(item => item.classList.remove('active'));
+      element.classList.add('active');
+
+      // Toggle panel active classes
+      document.querySelectorAll('.admin-panel').forEach(panel => panel.classList.remove('active'));
+      const activePanel = document.getElementById(`panel-${panelId}`);
+      if (activePanel) {
+        activePanel.classList.add('active');
+      }
+    }
+
+    // --- 1. Users panel functions ---
+    function renderUsersTable(data = usersData) {
+      const tbody = document.getElementById('users-table-body');
+      tbody.innerHTML = '';
+      data.forEach(user => {
+        const initials = user.name.split(' ').map(n => n[0]).join('');
+        const statusBadge = user.status === 'Active' ? 'badge-success' : 'badge-danger';
+        tbody.innerHTML += `
+          <tr>
+            <td>
+              <div style="display: flex; align-items: center; gap: var(--space-sm);">
+                <div class="avatar avatar-sm font-bold" style="background-color: var(--brand-secondary); color: var(--text-inverse); width: 32px; height: 32px; font-size: 0.75rem;">${initials}</div>
+                <div style="display: flex; flex-direction: column;">
+                  <span class="font-semibold">${user.name}</span>
+                  <span class="text-detail text-muted">${user.email}</span>
+                </div>
+              </div>
+            </td>
+            <td><span class="font-medium">${user.role}</span></td>
+            <td class="text-mono text-detail">${user.created}</td>
+            <td><span class="badge ${statusBadge}">${user.status}</span></td>
+            <td style="text-align: right;">
+              <button class="btn btn-tertiary btn-sm" onclick="toggleUserStatus(${user.id})">
+                ${user.status === 'Active' ? 'Suspend' : 'Activate'}
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+      
+      // Update suspended count badge
+      const suspendedCount = usersData.filter(u => u.status === 'Suspended').length;
+      document.getElementById('suspended-users-count').innerText = suspendedCount;
+    }
+
+    function filterUsersTable() {
+      const searchVal = document.getElementById('user-search-input').value.toLowerCase();
+      const roleVal = document.getElementById('user-role-filter').value;
+      
+      const filtered = usersData.filter(user => {
+        const matchesSearch = user.name.toLowerCase().includes(searchVal) || user.email.toLowerCase().includes(searchVal);
+        const matchesRole = roleVal === 'ALL' || user.role.includes(roleVal);
+        return matchesSearch && matchesRole;
+      });
+      
+      renderUsersTable(filtered);
+    }
+
+    function toggleUserStatus(userId) {
+      const user = usersData.find(u => u.id === userId);
+      if (user) {
+        user.status = user.status === 'Active' ? 'Suspended' : 'Active';
+        showToast(`User status for ${user.name} toggled to ${user.status}.`, user.status === 'Active' ? 'success' : 'error');
+        filterUsersTable();
+        
+        // Log to audit logs
+        logSystemEvent(user.email, "USER", `User status deactivation/activation modified to ${user.status}`);
+      }
+    }
+
+    function openInviteModal() {
+      document.getElementById('invite-admin-modal').classList.add('active');
+    }
+    
+    function closeInviteModal() {
+      document.getElementById('invite-admin-modal').classList.remove('active');
+    }
+
+    function handleInviteSubmit(e) {
+      e.preventDefault();
+      const name = document.getElementById('invite-name').value;
+      const email = document.getElementById('invite-email').value;
+      const role = document.getElementById('invite-role').value;
+      
+      // Add new admin to mock data
+      const newId = usersData.length + 1;
+      const today = new Date().toISOString().split('T')[0];
+      usersData.push({ id: newId, name, email, role, created: today, status: "Active" });
+      
+      showToast(`Credentials invitation sent to ${email} for role ${role}.`, 'success');
+      logSystemEvent("jaiveer@company.com", "AUTH", `Invited admin staff: ${email}`);
+      
+      closeInviteModal();
+      renderUsersTable();
+      
+      // reset form
+      document.getElementById('invite-admin-form').reset();
+    }
+
+    // --- 2. Agencies panel functions ---
+    function renderAgenciesTable() {
+      const tbody = document.getElementById('agencies-table-body');
+      tbody.innerHTML = '';
+      agenciesData.forEach(agency => {
+        const badge = agency.verified ? 
+          `<span class="badge badge-success">Verified</span>` : 
+          `<span class="badge badge-warning">Pending Approval</span>`;
+        
+        tbody.innerHTML += `
+          <tr>
+            <td class="font-semibold">${agency.name}</td>
+            <td class="text-mono text-detail">${agency.owner}</td>
+            <td class="font-medium">${agency.workspaces} workspaces</td>
+            <td><span class="badge badge-info">${agency.plan}</span></td>
+            <td>${badge}</td>
+            <td style="text-align: right;">
+              <button class="btn btn-tertiary btn-sm" onclick="toggleAgencyVerification(${agency.id})">
+                ${agency.verified ? 'Revoke Verify' : 'Approve Verify'}
+              </button>
+            </td>
+          </tr>
+        `;
+      });
+      document.getElementById('pending-agencies-count').innerText = agenciesData.filter(a => !a.verified).length;
+    }
+
+    function toggleAgencyVerification(agencyId) {
+      const agency = agenciesData.find(a => a.id === agencyId);
+      if (agency) {
+        agency.verified = !agency.verified;
+        showToast(`Agency verification state updated for ${agency.name}.`, 'success');
+        logSystemEvent("jaiveer@company.com", "AGENCY", `Toggled verification status for agency ${agency.name}`);
+        renderAgenciesTable();
+      }
+    }
+
+    // --- 3. Creators panel functions ---
+    function renderCreatorPayouts() {
+      const tbody = document.getElementById('creator-payouts-body');
+      tbody.innerHTML = '';
+      creatorPayouts.forEach(p => {
+        const statusBadge = p.status === 'Paid' ? 'badge-success' : 'badge-warning';
+        const actionBtn = p.status === 'Pending' ? 
+          `<button class="btn btn-primary btn-sm" onclick="approveCreatorPayout(${p.id})">Approve Payout</button>` :
+          `<span class="text-detail text-muted">Complete</span>`;
+        tbody.innerHTML += `
+          <tr>
+            <td class="font-semibold">${p.name}</td>
+            <td><span class="badge badge-info">${p.platform}</span></td>
+            <td class="text-detail">${p.method}</td>
+            <td class="font-semibold">${p.amount}</td>
+            <td><span class="badge ${statusBadge}">${p.status}</span></td>
+            <td style="text-align: right;">${actionBtn}</td>
+          </tr>
+        `;
+      });
+    }
+
+    function approveCreatorPayout(payoutId) {
+      const p = creatorPayouts.find(item => item.id === payoutId);
+      if (p) {
+        p.status = 'Paid';
+        showToast(`Payout of ${p.amount} to creator ${p.name} was approved.`, 'success');
+        logSystemEvent("jaiveer@company.com", "PAYMENTS", `Approved creator payout balance release for ${p.name}`);
+        renderCreatorPayouts();
+      }
+    }
+
+    function renderCreatorDirectory() {
+      const tbody = document.getElementById('creator-directory-body');
+      tbody.innerHTML = '';
+      creatorDirectory.forEach(c => {
+        const badge = c.status === 'Healthy' ? 'badge-success' : 'badge-warning';
+        tbody.innerHTML += `
+          <tr>
+            <td class="font-semibold">${c.name}</td>
+            <td class="font-medium">${c.reach}</td>
+            <td class="text-mono">${c.engagement}</td>
+            <td class="font-medium">${c.content} videos</td>
+            <td><span class="badge ${badge}">${c.status}</span></td>
+          </tr>
+        `;
+      });
+    }
+
+    // --- 4. Subscriptions panel functions ---
+    function updatePlanTier(tierSlug) {
+      const fee = document.getElementById(`sub-${tierSlug}-fee`).value;
+      const seats = document.getElementById(`sub-${tierSlug}-seats`).value;
+      const tokens = document.getElementById(`sub-${tierSlug}-tokens`).value;
+
+      showToast(`Subscription configuration specs updated for tier '${tierSlug}'.`, 'success');
+      logSystemEvent("jaiveer@company.com", "BILLING", `Modified subscription metadata specs: tier ${tierSlug}, fee $${fee}`);
+    }
+
+    // --- 5. Payments panel functions ---
+    let paymentsData = [
+      { id: "TXN-90241", customer: "Hyperion Digital", amount: "$199.00", status: "Paid", date: "2026-07-14 21:05" },
+      { id: "TXN-90240", customer: "Apex Media Group", amount: "$999.00", status: "Paid", date: "2026-07-14 18:32" },
+      { id: "TXN-90239", customer: "Omni Labs LLC", amount: "$49.00", status: "Paid", date: "2026-07-14 12:12" },
+      { id: "TXN-90238", customer: "Caleb Vance", amount: "$199.00", status: "Refunded", date: "2026-07-13 09:14" }
+    ];
+
+    function renderPaymentsTable() {
+      const tbody = document.getElementById('payments-table-body');
+      tbody.innerHTML = '';
+      paymentsData.forEach(p => {
+        const badge = p.status === 'Paid' ? 'badge-success' : 'badge-danger';
+        const actionBtn = p.status === 'Paid' ? 
+          `<button class="btn btn-tertiary btn-sm" onclick="refundTransaction('${p.id}')">Refund</button>` : 
+          `<span class="text-detail text-muted">Refunded</span>`;
+        tbody.innerHTML += `
+          <tr>
+            <td class="text-mono text-detail font-bold">${p.id}</td>
+            <td class="font-semibold">${p.customer}</td>
+            <td class="font-semibold">${p.amount}</td>
+            <td><span class="badge ${badge}">${p.status}</span></td>
+            <td class="text-detail">${p.date}</td>
+            <td style="text-align: right;">${actionBtn}</td>
+          </tr>
+        `;
+      });
+    }
+    renderPaymentsTable();
+
+    function refundTransaction(txnId) {
+      if (confirm(`Are you sure you want to issue a full refund for transaction ${txnId}?`)) {
+        const txn = paymentsData.find(p => p.id === txnId);
+        if (txn) {
+          txn.status = 'Refunded';
+          showToast(`Transaction ${txnId} was fully refunded.`, 'success');
+          logSystemEvent("jaiveer@company.com", "BILLING", `Refunded transaction ledger entry: ID ${txnId}`);
+          renderPaymentsTable();
+        }
+      }
+    }
+
+    // --- 6. Support panel functions ---
+    function renderSupportTickets() {
+      const container = document.getElementById('support-tickets-list');
+      container.innerHTML = '';
+      supportTickets.forEach(t => {
+        const priorityBadge = t.priority === 'Urgent' ? 'badge-danger' : (t.priority === 'High' ? 'badge-warning' : 'badge-info');
+        const activeClass = t.id === activeTicketId ? 'active' : '';
+        container.innerHTML += `
+          <div class="ticket-item-card ${activeClass}" onclick="selectSupportTicket('${t.id}')">
+            <div class="flex-between">
+              <span class="text-mono text-detail font-bold" style="color: var(--brand-primary);">${t.id}</span>
+              <span class="badge ${priorityBadge}">${t.priority}</span>
+            </div>
+            <p class="font-semibold text-body-small" style="margin-top: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${t.subject}</p>
+            <div class="flex-between" style="margin-top: 8px;">
+              <span class="text-detail text-muted">${t.customer}</span>
+              <span class="text-detail font-bold ${t.status === 'Open' ? 'text-accent-green' : 'text-disabled'}">${t.status}</span>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    let activeTicketId = null;
+    function selectSupportTicket(ticketId) {
+      activeTicketId = ticketId;
+      renderSupportTickets();
+      
+      const ticket = supportTickets.find(t => t.id === ticketId);
+      const detailPane = document.getElementById('ticket-detail-pane');
+      
+      if (!ticket) return;
+
+      let chatHTML = '';
+      ticket.msgs.forEach(msg => {
+        const bubbleClass = msg.sender === 'user' ? 'chat-bubble-user' : 'chat-bubble-agent';
+        const senderName = msg.sender === 'user' ? ticket.customer : 'Support Specialist';
+        chatHTML += `
+          <div class="chat-bubble ${bubbleClass}">
+            <div class="text-micro font-bold" style="opacity: 0.7; margin-bottom: 2px;">${senderName}</div>
+            <div>${msg.text}</div>
+          </div>
+        `;
+      });
+
+      detailPane.innerHTML = `
+        <div class="flex-between" style="padding: var(--space-sm) var(--space-md); border-bottom: 1px solid var(--border-default); background-color: var(--bg-elevated);">
+          <div>
+            <h4 class="text-body-small font-bold">${ticket.subject}</h4>
+            <span class="text-detail text-muted">Customer: ${ticket.customer} | Module: ${ticket.category}</span>
+          </div>
+          <div>
+            <span class="badge badge-info">${ticket.status}</span>
+          </div>
+        </div>
+        <div class="chat-thread-container" id="ticket-chat-thread">
+          ${chatHTML}
+        </div>
+        <div style="padding: var(--space-sm); border-top: 1px solid var(--border-default); background-color: var(--bg-elevated);">
+          <div style="display: flex; gap: var(--space-xs);">
+            <input type="text" class="input" id="support-reply-input" placeholder="Draft ticket resolution response..." onkeydown="if(event.key === 'Enter') sendSupportReply()">
+            <button class="btn btn-primary btn-sm" onclick="sendSupportReply()">Send Reply</button>
+          </div>
+        </div>
+      `;
+      
+      // Auto-scroll chat thread to bottom
+      const thread = document.getElementById('ticket-chat-thread');
+      if (thread) thread.scrollTop = thread.scrollHeight;
+    }
+
+    function sendSupportReply() {
+      const input = document.getElementById('support-reply-input');
+      if (!input || input.value.trim() === '') return;
+
+      const ticket = supportTickets.find(t => t.id === activeTicketId);
+      if (ticket) {
+        ticket.msgs.push({ sender: 'agent', text: input.value.trim() });
+        ticket.status = 'Closed'; // Auto-resolve simulation
+        showToast("Support reply transmitted successfully. Ticket marked as Closed.", "success");
+        logSystemEvent("jaiveer@company.com", "SUPPORT", `Responded to and closed customer ticket ${ticket.id}`);
+        
+        selectSupportTicket(activeTicketId);
+        renderSupportTickets();
+      }
+    }
+
+    // --- 7. Feature flags panel functions ---
+    function renderFeatureFlags() {
+      const container = document.getElementById('feature-flags-container');
+      container.innerHTML = '';
+      featureFlags.forEach((flag, index) => {
+        const toggleClass = flag.active ? 'active' : '';
+        const statusLabel = flag.active ? 'Active' : 'Inactive';
+        container.innerHTML += `
+          <div class="card col-span-6 p-md flex-between" style="flex-direction: column; align-items: stretch; gap: var(--space-sm);">
+            <div class="flex-between">
+              <div style="display: flex; flex-direction: column;">
+                <span class="text-mono font-bold text-body-small">${flag.key}</span>
+                <span class="text-detail text-muted" style="margin-top: 2px;">${flag.desc}</span>
+              </div>
+              <div class="form-group" style="align-items: center; margin-bottom: 0;">
+                <button class="btn btn-sm ${flag.active ? 'btn-primary' : 'btn-tertiary'}" onclick="toggleFeatureFlag(${index})">
+                  ${statusLabel}
+                </button>
+              </div>
+            </div>
+            
+            <div style="margin-top: var(--space-xs);">
+              <div class="flex-between" style="margin-bottom: 4px;">
+                <span class="text-detail text-secondary">Target Rollout Allocation</span>
+                <span class="text-detail font-bold text-mono">${flag.rollout}%</span>
+              </div>
+              <input type="range" class="input" style="padding: 0; cursor: pointer; height: 6px; accent-color: var(--brand-primary);" min="0" max="100" value="${flag.rollout}" onchange="adjustRollout(${index}, this.value)">
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function toggleFeatureFlag(idx) {
+      const flag = featureFlags[idx];
+      flag.active = !flag.active;
+      showToast(`Feature flag ${flag.key} status modified to ${flag.active ? 'Active' : 'Inactive'}.`, 'success');
+      logSystemEvent("jaiveer@company.com", "INFRASTRUCTURE", `Toggled feature flag: ${flag.key} -> ${flag.active}`);
+      renderFeatureFlags();
+    }
+
+    function adjustRollout(idx, val) {
+      const flag = featureFlags[idx];
+      flag.rollout = parseInt(val);
+      showToast(`Feature flag rollout targeted to ${val}% users.`, 'info');
+      logSystemEvent("jaiveer@company.com", "INFRASTRUCTURE", `Modified feature flag rollout ratio: ${flag.key} -> ${val}%`);
+      renderFeatureFlags();
+    }
+
+    function openFeatureFlagModal() {
+      document.getElementById('create-flag-modal').classList.add('active');
+    }
+
+    function closeFeatureFlagModal() {
+      document.getElementById('create-flag-modal').classList.remove('active');
+    }
+
+    function handleFeatureFlagSubmit(e) {
+      e.preventDefault();
+      const key = document.getElementById('flag-key').value;
+      const desc = document.getElementById('flag-desc').value;
+      const rollout = parseInt(document.getElementById('flag-rollout').value);
+
+      featureFlags.push({ key, desc, rollout, active: true });
+      showToast(`Feature flag '${key}' has been registered.`, 'success');
+      logSystemEvent("jaiveer@company.com", "INFRASTRUCTURE", `Created system feature flag key: ${key}`);
+
+      closeFeatureFlagModal();
+      renderFeatureFlags();
+      
+      document.getElementById('create-flag-form').reset();
+    }
+
+    // --- 9. Audit Logs panel functions ---
+    function renderAuditLogs(data = auditLogs) {
+      const tbody = document.getElementById('audit-logs-body');
+      tbody.innerHTML = '';
+      data.forEach(log => {
+        const badge = log.status === 'SUCCESS' ? 'badge-success' : 'badge-danger';
+        tbody.innerHTML += `
+          <tr>
+            <td class="text-detail text-secondary text-mono">${log.time}</td>
+            <td class="font-medium text-detail">${log.actor}</td>
+            <td><span class="badge badge-info">${log.module}</span></td>
+            <td class="font-medium text-body-small">${log.desc}</td>
+            <td class="text-mono text-detail text-secondary">${log.ip}</td>
+            <td><span class="badge ${badge}">${log.status}</span></td>
+          </tr>
+        `;
+      });
+    }
+
+    function logSystemEvent(actor, module, desc, status = "SUCCESS") {
+      const today = new Date().toTimeString().split(' ')[0];
+      auditLogs.unshift({ time: today, actor, module, desc, ip: "192.168.1.42", status });
+      renderAuditLogs();
+    }
+
+    function filterAuditTable() {
+      const val = document.getElementById('audit-search-input').value.toLowerCase();
+      const filtered = auditLogs.filter(log => {
+        return log.actor.toLowerCase().includes(val) || 
+               log.module.toLowerCase().includes(val) || 
+               log.desc.toLowerCase().includes(val);
+      });
+      renderAuditLogs(filtered);
+    }
+
+    function clearAuditLogsMock() {
+      auditLogs = [];
+      showToast("Console log buffer cleared.", "info");
+      renderAuditLogs();
+    }
+
+    // --- 10. System Health Telemetry simulations ---
+    function initHealthAnimation() {
+      setInterval(() => {
+        // CPU load animation
+        const cpuBar = document.getElementById('cpu-health-bar');
+        if (cpuBar) {
+          const newVal = Math.floor(Math.random() * 30) + 30; // 30% - 60%
+          cpuBar.style.width = `${newVal}%`;
+        }
+
+        // Mem load animation
+        const memBar = document.getElementById('mem-health-bar');
+        if (memBar) {
+          const newVal = Math.floor(Math.random() * 15) + 60; // 60% - 75%
+          memBar.style.width = `${newVal}%`;
+        }
+
+        // Live analytics updates
+        const activeSess = document.getElementById('live-active-sessions');
+        if (activeSess) {
+          const delta = Math.floor(Math.random() * 40) - 20;
+          activeSess.innerText = (parseInt(activeSess.innerText.replace(',', '')) + delta).toLocaleString();
+        }
+
+        const apiRate = document.getElementById('live-api-rate');
+        if (apiRate) {
+          const delta = Math.floor(Math.random() * 200) - 100;
+          apiRate.innerText = (parseInt(apiRate.innerText.replace(',', '')) + delta).toLocaleString();
+        }
+        
+        const dbLat = document.getElementById('live-db-latency');
+        if (dbLat) {
+          const newVal = (Math.random() * 3 + 12).toFixed(1);
+          dbLat.innerText = `${newVal} ms`;
+        }
+
+      }, 3000);
+    }
+
+    function simulateClusterReload() {
+      showToast("Reloading cluster nodes status...", "info");
+      setTimeout(() => {
+        showToast("Cluster telemetry buffer synced.", "success");
+        logSystemEvent("system-scheduler", "SYSTEM", "Telemetry buffer re-aligned across US West and Asia-Pacific gateways");
+      }, 1000);
+    }
+
+    // --- 12. Moderation queue functions ---
+    function renderModerationQueue() {
+      const container = document.getElementById('moderation-queue-container');
+      container.innerHTML = '';
+      if (moderationQueue.length === 0) {
+        container.innerHTML = `
+          <div class="col-span-12 flex-center" style="height: 200px; flex-direction: column; color: var(--text-secondary);">
+            <svg width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            <p class="font-medium text-body-small" style="margin-top: 8px;">Content safety queue is empty. No flagged items.</p>
+          </div>
+        `;
+        return;
+      }
+      moderationQueue.forEach(item => {
+        container.innerHTML += `
+          <div class="card col-span-6 p-md flex-between" style="flex-direction: column; align-items: stretch; gap: var(--space-md);">
+            <div>
+              <div class="flex-between">
+                <span class="font-bold text-body-small">${item.title}</span>
+                <span class="badge badge-danger">${item.status}</span>
+              </div>
+              <span class="text-detail text-muted" style="margin-top: 2px; display:block;">Scraped from creator: <strong>${item.creator}</strong></span>
+            </div>
+            
+            <div style="background-color: var(--bg-secondary); padding: var(--space-sm); border-radius: var(--radius-md); font-size: 0.8125rem;">
+              <div class="flex-between" style="margin-bottom: 2px;">
+                <span>NSFW/Adult content score:</span>
+                <span class="font-bold text-mono ${parseFloat(item.adult) > 0.5 ? 'text-accent-red' : ''}">${item.adult}</span>
+              </div>
+              <div class="flex-between" style="margin-bottom: 2px;">
+                <span>Violence score:</span>
+                <span class="font-bold text-mono ${parseFloat(item.violence) > 0.5 ? 'text-accent-red' : ''}">${item.violence}</span>
+              </div>
+              <div class="flex-between">
+                <span>Scam/Copyright match score:</span>
+                <span class="font-bold text-mono ${parseFloat(item.hate) > 0.5 ? 'text-accent-red' : ''}">${item.hate}</span>
+              </div>
+            </div>
+
+            <div style="display: flex; gap: var(--space-xs); justify-content: flex-end;">
+              <button class="btn btn-tertiary btn-sm" onclick="moderateAction(${item.id}, 'reject')">Delete Content</button>
+              <button class="btn btn-primary btn-sm" onclick="moderateAction(${item.id}, 'approve')">Approve Content</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    function moderateAction(itemId, action) {
+      const idx = moderationQueue.findIndex(i => i.id === itemId);
+      if (idx !== -1) {
+        const item = moderationQueue[idx];
+        moderationQueue.splice(idx, 1);
+        if (action === 'approve') {
+          showToast(`Asset '${item.title}' approved and published.`, 'success');
+          logSystemEvent("jaiveer@company.com", "MODERATION", `Manually override approved safety flag for item: ${item.title}`);
+        } else {
+          showToast(`Asset '${item.title}' deleted from workspace records.`, 'error');
+          logSystemEvent("jaiveer@company.com", "MODERATION", `Deleted unsafe asset from database ledger: ${item.title}`);
+        }
+        renderModerationQueue();
+      }
+    }
+
+    // --- Global Active Workspace Switcher Integration ---
+    window.switchWorkspaceBrand = function(workspaceKey) {
+      const label = document.getElementById('header-workspace-label');
+      const wsSelect = document.getElementById('workspace-dropdown-select');
+      
+      const workspaces = {
+        pulse_energy: "Pulse Energy",
+        retro_denim: "Retro Denim",
+        smart_home: "Smart Home Inc"
+      };
+
+      const title = workspaces[workspaceKey] || "KONTAGI Portal";
+      
+      if (label) label.innerText = title;
+      if (wsSelect && wsSelect.value !== workspaceKey) wsSelect.value = workspaceKey;
+      
+      // Log event
+      logSystemEvent("jaiveer@company.com", "WORKSPACE", `Switched active dashboard workspace focus context: -> ${title}`);
+    };
+  </script>
+</body>
+</html>

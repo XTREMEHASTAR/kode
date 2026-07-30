@@ -1,0 +1,19 @@
+{
+  "detected_text": "[OCR Text Segment] Asset 54650dgu4 text overlay density: 7.3%.",
+  "text_count": 9,
+  "text_density": 0.0727,
+  "confidence": 0.96,
+  "regions": [
+    {
+      "start": 0.5,
+      "end": 4.4
+    },
+    {
+      "start": 4.4,
+      "end": 9.9
+    }
+  ],
+  "fontSizeEstimatePx": 39,
+  "ctaDetected": false,
+  "emojiCount": 0
+}

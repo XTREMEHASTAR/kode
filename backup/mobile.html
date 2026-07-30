@@ -1,0 +1,1949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — Mobile App Interactive Simulator</title>
+  <link rel="stylesheet" href="design-system.css">
+  <style>
+    /* ==========================================================================
+       MOBILE EMULATORS GENERAL WORKSPACE STYLING
+       ========================================================================== */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-smooth);
+    }
+
+    .sandbox-header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-xs) var(--space-lg);
+      z-index: 1000;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .sandbox-brand h1 {
+      font-size: 1.125rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .sandbox-brand span {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .sandbox-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-control-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      background-color: var(--bg-secondary);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+    }
+
+    .sandbox-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sandbox-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .sandbox-btn.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .simulator-workspace {
+      flex-grow: 1;
+      display: flex;
+      padding: var(--space-lg);
+      gap: var(--space-lg);
+      overflow-y: auto;
+      justify-content: center;
+      align-items: flex-start;
+      position: relative;
+    }
+
+    /* Left Control Sidebar */
+    .controls-sidebar {
+      width: 300px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      position: sticky;
+      top: 0;
+    }
+
+    .device-showcase-container {
+      display: flex;
+      gap: var(--space-xl);
+      flex-grow: 1;
+      justify-content: center;
+      align-items: center;
+      flex-wrap: wrap;
+      max-width: 1000px;
+    }
+
+    /* ==========================================================================
+       NATIVE IPHONE 15 PRO DEVICE MOCKUP
+       ========================================================================== */
+    .phone-frame {
+      width: 375px;
+      height: 780px;
+      background-color: #000000;
+      border-radius: 48px;
+      padding: 12px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 4px #262626;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      flex-shrink: 0;
+      user-select: none;
+    }
+
+    /* iOS Fonts & Standard Elements */
+    .ios-screen {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      width: 100%;
+      height: 100%;
+      border-radius: 38px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* iPhone Dynamic Island */
+    .dynamic-island {
+      position: absolute;
+      top: 11px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 110px;
+      height: 28px;
+      background-color: #000000;
+      border-radius: 20px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 12px;
+      transition: width 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    /* iOS Status Bar */
+    .ios-status-bar {
+      height: 44px;
+      padding: 14px 24px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 13px;
+      font-weight: 600;
+      z-index: 900;
+      background-color: var(--bg-primary);
+    }
+
+    .ios-status-bar-icons {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+    }
+
+    .ios-battery {
+      width: 20px;
+      height: 10px;
+      border: 1px solid var(--text-primary);
+      border-radius: 3px;
+      padding: 1px;
+      position: relative;
+    }
+
+    .ios-battery::after {
+      content: '';
+      position: absolute;
+      right: -3px;
+      top: 2px;
+      width: 2px;
+      height: 4px;
+      background-color: var(--text-primary);
+      border-radius: 0 1px 1px 0;
+    }
+
+    .ios-battery-fill {
+      height: 100%;
+      background-color: var(--text-primary);
+      border-radius: 1px;
+      width: 85%;
+    }
+
+    /* iOS Safe Area Bar Indicator */
+    .ios-home-indicator {
+      position: absolute;
+      bottom: 8px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 130px;
+      height: 5px;
+      background-color: var(--text-primary);
+      border-radius: 10px;
+      z-index: 990;
+      opacity: 0.8;
+    }
+
+    /* iOS Bottom Tab Bar */
+    .ios-tab-bar {
+      height: 83px;
+      border-top: 1px solid var(--border-default);
+      background-color: var(--glass-bg);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      display: flex;
+      justify-content: space-around;
+      padding-top: var(--space-xs);
+      padding-bottom: 24px;
+      z-index: 850;
+      flex-shrink: 0;
+    }
+
+    .ios-tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-secondary);
+      font-size: 10px;
+      font-weight: 500;
+      cursor: pointer;
+      gap: 4px;
+    }
+
+    .ios-tab-item.active {
+      color: #007AFF; /* Native Apple Blue */
+    }
+
+    .ios-tab-item svg {
+      width: 22px;
+      height: 22px;
+      stroke-width: 2;
+    }
+
+    /* iOS Content Screens Wrapper */
+    .ios-content-view {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: var(--space-md);
+      padding-bottom: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      scrollbar-width: none;
+    }
+
+    .ios-content-view::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* iOS Header style */
+    .ios-header {
+      padding-top: var(--space-xs);
+      margin-bottom: var(--space-sm);
+    }
+
+    .ios-header h2 {
+      font-size: 28px;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+      margin: 0;
+    }
+
+    .ios-card {
+      background-color: var(--bg-elevated);
+      border-radius: 14px;
+      padding: var(--space-md);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* ==========================================================================
+       NATIVE ANDROID PIXEL 8 DEVICE MOCKUP
+       ========================================================================== */
+    .phone-frame.android {
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.4), 0 0 0 4px #333333;
+    }
+
+    .android-screen {
+      font-family: var(--font-sans);
+      background-color: var(--bg-primary);
+      color: var(--text-primary);
+      width: 100%;
+      height: 100%;
+      border-radius: 38px;
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Android Camera Hole */
+    .android-camera {
+      position: absolute;
+      top: 13px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 14px;
+      height: 14px;
+      background-color: #000000;
+      border-radius: 50%;
+      z-index: 1000;
+    }
+
+    /* Android Status Bar */
+    .android-status-bar {
+      height: 40px;
+      padding: 12px 20px 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 500;
+      z-index: 900;
+      background-color: var(--bg-primary);
+    }
+
+    .android-status-icons {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+
+    /* Android 3-Button System Nav Bar */
+    .android-sys-bar {
+      height: 48px;
+      background-color: var(--bg-primary);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 0 60px;
+      z-index: 990;
+      flex-shrink: 0;
+      border-top: 1px solid var(--border-muted);
+    }
+
+    .android-sys-btn {
+      width: 16px;
+      height: 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Android Navigation Bar (Material 3 style) */
+    .android-tab-bar {
+      height: 80px;
+      background-color: var(--bg-secondary);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding-bottom: 4px;
+      z-index: 850;
+      flex-shrink: 0;
+    }
+
+    .android-tab-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      color: var(--text-secondary);
+      font-size: 11px;
+      font-weight: 500;
+      cursor: pointer;
+      gap: 6px;
+      width: 64px;
+    }
+
+    .android-tab-pill {
+      height: 32px;
+      width: 56px;
+      border-radius: 16px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color var(--transition-fast);
+    }
+
+    .android-tab-item.active {
+      color: var(--text-primary);
+      font-weight: 600;
+    }
+
+    .android-tab-item.active .android-tab-pill {
+      background-color: #D3E2FD; /* Material 3 Tonal active indicator */
+      color: #0B57D0;
+    }
+
+    .dark .android-tab-item.active .android-tab-pill {
+      background-color: #004A77;
+      color: #C2E7FF;
+    }
+
+    .android-tab-item svg {
+      width: 20px;
+      height: 20px;
+    }
+
+    /* Android Content View */
+    .android-content-view {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      scrollbar-width: none;
+    }
+
+    .android-content-view::-webkit-scrollbar {
+      display: none;
+    }
+
+    /* Material 3 Top App Bar */
+    .android-header {
+      padding-top: var(--space-xs);
+      margin-bottom: var(--space-xs);
+    }
+
+    .android-header h2 {
+      font-size: 22px;
+      font-weight: 400; /* Material 3 standard headers */
+      margin: 0;
+      letter-spacing: 0;
+    }
+
+    .android-card {
+      background-color: var(--bg-elevated);
+      border-radius: 16px; /* Material 3 Medium radius */
+      padding: var(--space-md);
+      border: 1px solid var(--border-default);
+    }
+
+    /* Material 3 Floating Action Button */
+    .android-fab {
+      position: absolute;
+      bottom: 96px;
+      right: 16px;
+      width: 56px;
+      height: 56px;
+      border-radius: 16px;
+      background-color: #D3E2FD;
+      color: #0B57D0;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      z-index: 800;
+      transition: transform 0.2s;
+    }
+
+    .dark .android-fab {
+      background-color: #004A77;
+      color: #C2E7FF;
+    }
+
+    .android-fab:active {
+      transform: scale(0.95);
+    }
+
+    /* ==========================================================================
+       GESTURE: SWIPE TO ACTION (iOS & Android details)
+       ========================================================================== */
+    .swipe-container {
+      position: relative;
+      overflow: hidden;
+      border-radius: 14px;
+      background-color: var(--accent-red);
+      touch-action: pan-y;
+    }
+
+    .swipe-item-bg-actions {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: flex-end;
+      align-items: center;
+      z-index: 1;
+    }
+
+    .swipe-action-button {
+      height: 100%;
+      width: 70px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      font-size: 10px;
+      font-weight: 600;
+      cursor: pointer;
+      gap: 4px;
+    }
+
+    .swipe-action-button.archive {
+      background-color: #8E8E93; /* Apple Gray */
+    }
+
+    .swipe-action-button.delete {
+      background-color: #FF3B30; /* Apple Red */
+    }
+
+    .android .swipe-action-button.archive {
+      background-color: #475569;
+    }
+    .android .swipe-action-button.delete {
+      background-color: #B3261E; /* Material 3 Red */
+    }
+
+    .swipe-item-content-card {
+      position: relative;
+      z-index: 2;
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: 14px;
+      padding: var(--space-md);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: grab;
+    }
+
+    .swipe-item-content-card:active {
+      cursor: grabbing;
+    }
+
+    /* ==========================================================================
+       GESTURE: LONG PRESS / CONTEXT MENU / BOTTOM SHEET
+       ========================================================================== */
+    /* iOS Context Menu Overlay */
+    .ios-context-overlay {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.3);
+      backdrop-filter: blur(15px);
+      -webkit-backdrop-filter: blur(15px);
+      z-index: 1000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+    }
+
+    .ios-context-overlay.active {
+      display: flex;
+    }
+
+    .ios-context-menu {
+      width: 250px;
+      background-color: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(25px);
+      -webkit-backdrop-filter: blur(25px);
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 15px 30px rgba(0,0,0,0.15);
+      animation: iosScaleIn 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    .dark .ios-context-menu {
+      background-color: rgba(30, 30, 30, 0.85);
+    }
+
+    .ios-context-item {
+      padding: var(--space-sm) var(--space-md);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      color: var(--text-primary);
+      border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+      cursor: pointer;
+    }
+
+    .dark .ios-context-item {
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .ios-context-item:last-child {
+      border-bottom: none;
+      color: #FF3B30; /* Danger option */
+    }
+
+    .ios-context-item:active {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
+
+    @keyframes iosScaleIn {
+      from { transform: scale(0.85); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* Android Bottom Sheet Drawer */
+    .android-sheet-overlay {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.4);
+      z-index: 1000;
+      display: none;
+      justify-content: flex-end;
+      flex-direction: column;
+    }
+
+    .android-sheet-overlay.active {
+      display: flex;
+    }
+
+    .android-bottom-sheet {
+      background-color: var(--bg-elevated);
+      border-radius: 28px 28px 0 0;
+      padding: var(--space-md) var(--space-md) 24px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      animation: androidSlideUp 0.3s cubic-bezier(0.05, 0.7, 0.1, 1);
+      box-shadow: 0 -10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .android-sheet-handle {
+      width: 32px;
+      height: 4px;
+      background-color: var(--text-disabled);
+      border-radius: 2px;
+      align-self: center;
+      margin-bottom: var(--space-xs);
+    }
+
+    .android-sheet-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      padding: var(--space-sm);
+      border-radius: 12px;
+      font-size: 15px;
+      cursor: pointer;
+      color: var(--text-primary);
+    }
+
+    .android-sheet-item:active {
+      background-color: var(--bg-secondary);
+    }
+
+    @keyframes androidSlideUp {
+      from { transform: translateY(100%); }
+      to { transform: translateY(0); }
+    }
+
+    /* ==========================================================================
+       GESTURE: PUSH NOTIFICATION BANNERS
+       ========================================================================== */
+    .push-banner-ios {
+      position: absolute;
+      top: 50px;
+      left: 10px;
+      right: 10px;
+      background-color: rgba(255, 255, 255, 0.85);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      border-radius: 20px;
+      padding: 12px var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+      z-index: 1500;
+      transform: translateY(-150%);
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .dark .push-banner-ios {
+      background-color: rgba(30, 30, 30, 0.85);
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .push-banner-ios.active {
+      transform: translateY(0);
+    }
+
+    .push-banner-android {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: 28px;
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: var(--space-md);
+      box-shadow: var(--shadow-lg);
+      z-index: 1500;
+      transform: translateY(-150%);
+      transition: transform 0.3s cubic-bezier(0.05, 0.7, 0.1, 1);
+    }
+
+    .push-banner-android.active {
+      transform: translateY(0);
+    }
+
+    /* ==========================================================================
+       PAGE SPECIFIC COMPONENT STYLING
+       ========================================================================== */
+    /* Waveform voice transcription visualizer */
+    .waveform-visualizer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      height: 48px;
+      margin-top: var(--space-sm);
+    }
+
+    .waveform-bar {
+      width: 4px;
+      background: linear-gradient(to top, var(--brand-primary), var(--accent-purple));
+      border-radius: 2px;
+      height: 10%;
+      transition: height 0.15s ease-in-out;
+    }
+
+    /* Charts details */
+    .svg-mini-chart {
+      width: 100%;
+      height: 120px;
+      margin-top: var(--space-xs);
+    }
+
+    .mini-chart-path {
+      fill: none;
+      stroke-width: 2.5;
+      stroke-linecap: round;
+    }
+
+    .mini-chart-gradient-fill {
+      opacity: 0.15;
+    }
+
+    /* Active panels control display */
+    .app-screen-panel {
+      display: none;
+      flex-direction: column;
+      gap: var(--space-sm);
+      height: 100%;
+      animation: screenFadeIn 0.3s ease;
+    }
+
+    .app-screen-panel.active {
+      display: flex;
+    }
+
+    @keyframes screenFadeIn {
+      from { opacity: 0; transform: translateY(5px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Upload mock file anim */
+    .progress-bar-container {
+      height: 6px;
+      background-color: var(--border-default);
+      border-radius: 10px;
+      overflow: hidden;
+      margin-top: var(--space-xs);
+    }
+
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background-color: var(--brand-primary);
+      transition: width 0.1s linear;
+    }
+
+    /* Badge numbers */
+    .app-badge {
+      background-color: var(--accent-red);
+      color: #FFFFFF;
+      font-size: 10px;
+      font-weight: 700;
+      padding: 1px 5px;
+      border-radius: var(--radius-full);
+      display: inline-block;
+      text-align: center;
+    }
+  </style>
+</head>
+<body class="dark">
+
+  <!-- Sandbox Frame Header -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="var(--brand-primary)" stroke-width="2.5">
+        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+      </svg>
+      <h1>KONTAGI Mobile App Simulator</h1>
+      <span>SIMULATOR</span>
+    </div>
+    
+    <div class="sandbox-controls">
+      <a href="dashboard.html" class="sandbox-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px; font-weight: 500; margin-right: var(--space-xs);">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 19l-7-7m0 0l7-7m-7 7h18"/></svg>
+        Back to Dashboard
+      </a>
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" id="view-dual-btn" onclick="toggleSimulatorsView('dual')">
+          Dual View
+        </button>
+        <button class="sandbox-btn" id="view-ios-btn" onclick="toggleSimulatorsView('ios')">
+          iOS Only
+        </button>
+        <button class="sandbox-btn" id="view-android-btn" onclick="toggleSimulatorsView('android')">
+          Android Only
+        </button>
+      </div>
+
+      <button class="btn btn-sm btn-tertiary" id="theme-toggle" style="gap: var(--space-xxs);">
+        Dark Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- Main Simulator Workspace -->
+  <div class="simulator-workspace">
+    
+    <!-- Sidebar Controls -->
+    <div class="controls-sidebar">
+      <div class="card p-md">
+        <h3 class="font-bold text-body-base" style="margin-bottom: var(--space-xs);">Interactive Controller</h3>
+        <p class="text-detail text-muted" style="margin-bottom: var(--space-md);">Trigger global animations and verify responsive mobile app features on both viewports.</p>
+        
+        <div style="display: flex; flex-direction: column; gap: var(--space-sm);">
+          <button class="btn btn-primary" onclick="triggerSimulatorNotification()" style="width: 100%;">
+            Trigger Push Notification
+          </button>
+          
+          <button class="btn btn-secondary" onclick="runUploadSimulation()" style="width: 100%;">
+            Simulate Video Upload
+          </button>
+
+          <button class="btn btn-tertiary" onclick="resetSimulatorState()" style="width: 100%;">
+            Reset Data Records
+          </button>
+        </div>
+      </div>
+
+      <div class="card p-md">
+        <h4 class="font-bold text-body-small" style="margin-bottom: var(--space-xs);">Gestures Demo Guide</h4>
+        <ul style="padding-left: var(--space-md); font-size: 12px; line-height: 1.6;" class="text-secondary">
+          <li><strong>Swipe-to-Action:</strong> Drag or swipe any project card leftwards on the projects screen to reveal archive/delete buttons.</li>
+          <li><strong>Long-Press Menu:</strong> Tap and hold down any project card for 0.7s to summon the native iOS action menu or Android bottom sheet.</li>
+          <li><strong>Bottom Navigation:</strong> Use bottom tabs inside the frames to jump between views.</li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Center Mockups Frame Showcase -->
+    <div class="device-showcase-container">
+      
+      <!-- ==========================================
+           1. MOCKUP: NATIVE iOS FRAME
+           ========================================== -->
+      <div class="phone-frame" id="ios-device-frame">
+        <div class="ios-screen">
+          
+          <!-- Dynamic Island -->
+          <div class="dynamic-island" id="ios-dynamic-island">
+            <span style="font-size: 8px; color: var(--accent-green); font-weight: 700; opacity: 0;" id="ios-island-dot">•</span>
+            <span style="font-size: 9px; color: #FFFFFF; font-weight: 600; display:none;" id="ios-island-text">Upload complete</span>
+          </div>
+
+          <!-- Status Bar -->
+          <div class="ios-status-bar">
+            <span class="ios-time">9:41</span>
+            <div class="ios-status-bar-icons">
+              <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.07 19.66 10.48 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>
+              <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M2 22h20V2z"/></svg>
+              <div class="ios-battery">
+                <div class="ios-battery-fill"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide down push alert -->
+          <div class="push-banner-ios" id="ios-push-banner">
+            <div style="background-color: var(--brand-primary); padding: 6px; border-radius: 6px; color: white;">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+            </div>
+            <div style="flex: 1; display:flex; flex-direction:column; gap: 2px;">
+              <span class="text-mono font-bold" style="font-size: 11px;">KONTAGI MONITOR</span>
+              <span style="font-size: 12px; color: var(--text-primary); font-weight: 500;">High load detected on scraper cluster.</span>
+            </div>
+          </div>
+
+          <!-- iOS Main scrollable content window -->
+          <div class="ios-content-view">
+            
+            <!-- VIEW: PROJECTS -->
+            <div class="app-screen-panel active" id="ios-screen-projects">
+              <div class="ios-header flex-between" style="align-items: center;">
+                <h2>Projects</h2>
+                <svg width="24" height="24" fill="none" stroke="#007AFF" stroke-width="2" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+              </div>
+              
+              <div class="input-container">
+                <svg class="input-icon-left" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" class="input input-with-icon" placeholder="Search campaign assets..." style="border-radius: 10px; background-color: var(--bg-secondary);">
+              </div>
+
+              <!-- List of project items with Swipe actions -->
+              <div style="display:flex; flex-direction:column; gap: var(--space-xs);" id="ios-projects-list-container">
+                <!-- Javascript will load this dynamically -->
+              </div>
+            </div>
+
+            <!-- VIEW: AI LAB -->
+            <div class="app-screen-panel" id="ios-screen-lab">
+              <div class="ios-header">
+                <h2>AI Creative Lab</h2>
+              </div>
+
+              <div class="ios-card">
+                <span class="text-detail font-bold text-muted">ROUTING INFERENCE ENGINE</span>
+                <div style="display: flex; gap: 2px; background-color: var(--bg-secondary); padding: 2px; border-radius: 8px; margin-top: 6px;">
+                  <button class="btn btn-sm btn-ghost" style="flex:1; border-radius: 6px; background-color: var(--bg-elevated); font-size: 11px; padding: 4px;" onclick="showToast('Inference set to Claude', 'info')">Claude 3.5</button>
+                  <button class="btn btn-sm btn-ghost" style="flex:1; border-radius: 6px; font-size: 11px; padding: 4px;" onclick="showToast('Inference set to GPT-4o', 'info')">GPT-4o</button>
+                </div>
+              </div>
+
+              <div class="ios-card flex-between" style="flex-direction: column; gap: var(--space-xs); align-items: stretch;">
+                <span class="text-body-small font-bold">Transcription Node</span>
+                <div style="background-color: var(--bg-secondary); padding: var(--space-sm); border-radius: 10px;">
+                  <div class="flex-between">
+                    <span class="text-micro font-bold text-accent-green">VOICE ACTIVE</span>
+                    <span class="text-micro text-secondary" id="ios-voice-timer">00:04</span>
+                  </div>
+                  <p style="font-size: 13px; font-weight: 500; margin-top: 4px; line-height: 1.4;">"So the overall conversion metric of this ad should spike once we route the hook..."</p>
+                  
+                  <!-- Transcription wave visualizer -->
+                  <div class="waveform-visualizer" id="ios-waveform">
+                    <!-- Bars loaded dynamically -->
+                  </div>
+                </div>
+              </div>
+
+              <button class="btn btn-primary" style="background-color: #007AFF; width: 100%; border-radius: 12px; font-weight: 600; font-size: 14px;" onclick="simulateAIGeneration('ios')">
+                Generate Video Draft
+              </button>
+            </div>
+
+            <!-- VIEW: UPLOAD -->
+            <div class="app-screen-panel" id="ios-screen-upload">
+              <div class="ios-header">
+                <h2>Upload Queue</h2>
+              </div>
+
+              <div class="ios-card flex-center" style="flex-direction: column; height: 180px; border-style: dashed; border-width: 2px; gap: var(--space-xs); cursor: pointer;" onclick="runUploadSimulation()">
+                <svg width="32" height="32" fill="none" stroke="#007AFF" stroke-width="1.5" viewBox="0 0 24 24"><path d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5h10.5a2.25 2.25 0 002.25-2.25V6.75A2.25 2.25 0 0017.25 4.5H6.75A2.25 2.25 0 004.5 6.75v10.5a2.25 2.25 0 002.25 2.25z"/></svg>
+                <span class="font-bold text-body-small">Select Video Assets</span>
+                <span class="text-detail text-muted">Supports MP4, MOV up to 500MB</span>
+              </div>
+
+              <div id="ios-uploads-container" style="display:flex; flex-direction:column; gap: var(--space-xs);">
+                <!-- Dynamic upload progress cards -->
+              </div>
+            </div>
+
+            <!-- VIEW: REPORTS -->
+            <div class="app-screen-panel" id="ios-screen-reports">
+              <div class="ios-header">
+                <h2>Analytics</h2>
+              </div>
+
+              <div class="ios-card">
+                <span class="text-detail font-semibold text-secondary">Token Spending Growth</span>
+                <h3 style="font-size: 24px; font-weight: 700; margin-top: 2px;">$1,842.12</h3>
+                
+                <svg class="svg-mini-chart" viewBox="0 0 280 120">
+                  <path d="M 0 100 Q 40 70 80 90 T 160 40 T 240 30 L 280 20" class="mini-chart-path" style="stroke: #007AFF;" />
+                  <path d="M 0 100 Q 40 70 80 90 T 160 40 T 240 30 L 280 20 L 280 120 L 0 120 Z" fill="url(#ios-chart-gradient)" class="mini-chart-gradient-fill" />
+                  <defs>
+                    <linearGradient id="ios-chart-gradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#007AFF" stop-opacity="0.3"/>
+                      <stop offset="100%" stop-color="#007AFF" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+
+              <div class="grid-12">
+                <div class="ios-card col-span-6">
+                  <span class="text-detail text-secondary">CTR Rate</span>
+                  <div class="font-bold" style="font-size: 18px; margin-top: 2px;">8.42%</div>
+                </div>
+                <div class="ios-card col-span-6">
+                  <span class="text-detail text-secondary">Conversions</span>
+                  <div class="font-bold" style="font-size: 18px; margin-top: 2px;">1,280</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- VIEW: NOTIFICATIONS -->
+            <div class="app-screen-panel" id="ios-screen-notifications">
+              <div class="ios-header flex-between" style="align-items: center;">
+                <h2>Inbox</h2>
+                <span class="text-detail font-semibold" style="color: #007AFF; cursor:pointer;" onclick="clearNotifications('ios')">Clear All</span>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap: var(--space-xs);" id="ios-notifications-container">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Context Menu overlay (Long press demo) -->
+          <div class="ios-context-overlay" id="ios-context-menu-pane" onclick="closeContextMenus()">
+            <div class="ios-context-menu" onclick="event.stopPropagation()">
+              <div class="ios-context-item" onclick="showToast('Asset link copied to clipboard.', 'success'); closeContextMenus();">
+                <span>Copy Asset Share URL</span>
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8.684 10.742l5.096 2.548m0-7.16l-5.096 2.548m9.182-4.182a3 3 0 11-6 0 3 3 0 016 0zm-8 7.5a3 3 0 11-6 0 3 3 0 016 0zm8 4.5a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              </div>
+              <div class="ios-context-item" onclick="showToast('Draft duplicated successfully.', 'success'); closeContextMenus();">
+                <span>Duplicate Draft</span>
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
+              </div>
+              <div class="ios-context-item" onclick="closeContextMenus(); deleteActiveLongPressedItem('ios');">
+                <span>Delete Asset Draft</span>
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Navigation Bar -->
+          <nav class="ios-tab-bar">
+            <div class="ios-tab-item active" onclick="switchPhoneTab('ios', 'projects', this)">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2zm10 3h4m-4 4h4M7 9h2v2H7V9zm0 4h2v2H7v-2z"/></svg>
+              Projects
+            </div>
+            <div class="ios-tab-item" onclick="switchPhoneTab('ios', 'lab', this)">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.159a6 6 0 01-3.86.517l-2.387-.477a2 2 0 00-1.022.547l-1.385 1.385a2 2 0 00-.547 1.022L2.062 21a2 2 0 002.876 2.876l2.387-.477a2 2 0 001.022-.547l1.385-1.385zm5.728-10.5a5.5 5.5 0 11-11 0 5.5 5.5 0 0111 0z"/></svg>
+              AI Lab
+            </div>
+            <div class="ios-tab-item" onclick="switchPhoneTab('ios', 'upload', this)">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+              Upload
+            </div>
+            <div class="ios-tab-item" onclick="switchPhoneTab('ios', 'reports', this)">
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 00-2 2h-2a2 2 0 00-2-2z"/></svg>
+              Reports
+            </div>
+            <div class="ios-tab-item" onclick="switchPhoneTab('ios', 'notifications', this)" style="position:relative;">
+              <span class="app-badge" style="position:absolute; top:-3px; right:10px; display:none;" id="ios-notif-badge">3</span>
+              <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+              Inbox
+            </div>
+          </nav>
+
+          <!-- Safe Area Indicator Line -->
+          <div class="ios-home-indicator"></div>
+        </div>
+      </div>
+
+      <!-- ==========================================
+           2. MOCKUP: NATIVE ANDROID FRAME
+           ========================================== -->
+      <div class="phone-frame android" id="android-device-frame">
+        <div class="android-screen">
+          
+          <!-- Camera cutout hole -->
+          <div class="android-camera"></div>
+
+          <!-- Status Bar -->
+          <div class="android-status-bar">
+            <span class="android-time">09:41</span>
+            <div class="android-status-icons">
+              <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 17h-2v-2h2v2zm2.07-7.75l-.9.92C13.45 12.9 13 13.5 13 15h-2v-.5c0-1.1.45-2.1 1.17-2.83l1.24-1.26c.37-.36.59-.86.59-1.41 0-1.1-.9-2-2-2s-2 .9-2 2H7c0-2.76 2.24-5 5-5s5 2.24 5 5c0 1.04-.42 1.99-1.07 2.25z"/></svg>
+              <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M12 3c-4.97 0-9 4.03-9 9 0 2.12.74 4.07 1.97 5.61L4.35 19.4c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0l1.9-1.9C9.07 19.66 10.48 20 12 20c4.97 0 9-4.03 9-9s-4.03-9-9-9zm0 15c-3.31 0-6-2.69-6-6s2.69-6 6-6 6 2.69 6 6-2.69 6-6 6z"/></svg>
+              <svg width="14" height="14" fill="currentColor" viewBox="0 0 24 24"><path d="M17 5H7a2 2 0 00-2 2v14a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2zm-1 16H8v-2h8v2z"/></svg>
+            </div>
+          </div>
+
+          <!-- Slide down push alert -->
+          <div class="push-banner-android" id="android-push-banner">
+            <div style="background-color: var(--brand-primary); padding: 8px; border-radius: 50%; color: white; display:flex; align-items:center;">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            </div>
+            <div style="flex: 1; display:flex; flex-direction:column; gap: 2px;">
+              <span class="font-bold" style="font-size: 13px;">System Alert</span>
+              <span style="font-size: 12px; color: var(--text-primary);">Cluster CPU load exceeded 90% threshold.</span>
+            </div>
+          </div>
+
+          <!-- Floating Action Button for Android -->
+          <div class="android-fab" id="android-fab-plus" onclick="runUploadSimulation()">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path d="M12 4v16m8-8H4"/></svg>
+          </div>
+
+          <!-- Android Content Viewport -->
+          <div class="android-content-view">
+            
+            <!-- VIEW: PROJECTS -->
+            <div class="app-screen-panel active" id="android-screen-projects">
+              <div class="android-header">
+                <h2>Campaign Projects</h2>
+              </div>
+
+              <!-- Material 3 Search Bar Card -->
+              <div style="background-color: var(--bg-secondary); border-radius: 28px; padding: 6px 16px; display:flex; align-items:center; gap: var(--space-xs); border: 1px solid var(--border-default);">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <input type="text" placeholder="Search projects..." style="border:none; background:transparent; font-size:14px; width:100%; color:var(--text-primary); outline:none;">
+              </div>
+
+              <!-- List of project items with Swipe actions -->
+              <div style="display:flex; flex-direction:column; gap: var(--space-xs);" id="android-projects-list-container">
+                <!-- Javascript will load this dynamically -->
+              </div>
+            </div>
+
+            <!-- VIEW: AI LAB -->
+            <div class="app-screen-panel" id="android-screen-lab">
+              <div class="android-header">
+                <h2>AI Lab Space</h2>
+              </div>
+
+              <div class="android-card">
+                <span class="text-detail font-bold text-muted">MODEL TUNING</span>
+                <div style="display: flex; gap: var(--space-xxs); overflow-x: auto; scrollbar-width: none; margin-top: var(--space-xs);">
+                  <span class="badge badge-success" style="cursor:pointer;" onclick="showToast('Inference: Claude 3.5 active', 'success')">Claude 3.5 Sonnet</span>
+                  <span class="badge badge-info" style="cursor:pointer;" onclick="showToast('Inference: GPT-4o active', 'success')">GPT-4o Advanced</span>
+                </div>
+              </div>
+
+              <div class="android-card">
+                <span class="text-body-small font-bold">Transcription Stream</span>
+                <div style="background-color: var(--bg-secondary); padding: var(--space-sm); border-radius: 12px; margin-top: var(--space-xs);">
+                  <div class="flex-between">
+                    <span class="text-micro font-bold text-accent-green">VOICE ACTIVE</span>
+                    <span class="text-micro text-secondary" id="android-voice-timer">00:04</span>
+                  </div>
+                  <p style="font-size: 13px; margin-top: 4px; line-height: 1.4;">"So the overall conversion metric of this ad should spike once we route the hook..."</p>
+                  
+                  <!-- Transcription wave visualizer -->
+                  <div class="waveform-visualizer" id="android-waveform">
+                    <!-- Bars loaded dynamically -->
+                  </div>
+                </div>
+              </div>
+
+              <button class="btn btn-primary" style="border-radius: 20px; width:100%; display:flex; justify-content:center; gap:var(--space-xxs);" onclick="simulateAIGeneration('android')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Generate Draft Node
+              </button>
+            </div>
+
+            <!-- VIEW: UPLOAD -->
+            <div class="app-screen-panel" id="android-screen-upload">
+              <div class="android-header">
+                <h2>Media Upload</h2>
+              </div>
+
+              <div class="android-card flex-center" style="flex-direction: column; height: 180px; border-style: dashed; border-width: 2px; gap: var(--space-xs); border-radius: 24px; cursor: pointer;" onclick="runUploadSimulation()">
+                <svg width="32" height="32" fill="none" stroke="var(--brand-primary)" stroke-width="2" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span class="font-bold text-body-small">Tap to Pick Video Assets</span>
+                <span class="text-detail text-muted">Supports MP4, MOV up to 500MB</span>
+              </div>
+
+              <div id="android-uploads-container" style="display:flex; flex-direction:column; gap: var(--space-xs);">
+                <!-- Dynamic upload progress cards -->
+              </div>
+            </div>
+
+            <!-- VIEW: REPORTS -->
+            <div class="app-screen-panel" id="android-screen-reports">
+              <div class="android-header">
+                <h2>Performance Reports</h2>
+              </div>
+
+              <div class="android-card">
+                <span class="text-detail font-semibold text-secondary">Token Spending Growth</span>
+                <h3 style="font-size: 24px; font-weight: 700; margin-top: 2px;">$1,842.12</h3>
+                
+                <svg class="svg-mini-chart" viewBox="0 0 280 120">
+                  <path d="M 0 100 Q 40 70 80 90 T 160 40 T 240 30 L 280 20" class="mini-chart-path" style="stroke: var(--brand-primary);" />
+                  <path d="M 0 100 Q 40 70 80 90 T 160 40 T 240 30 L 280 20 L 280 120 L 0 120 Z" fill="url(#android-chart-gradient)" class="mini-chart-gradient-fill" />
+                  <defs>
+                    <linearGradient id="android-chart-gradient" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="var(--brand-primary)" stop-opacity="0.3"/>
+                      <stop offset="100%" stop-color="var(--brand-primary)" stop-opacity="0"/>
+                    </linearGradient>
+                  </defs>
+                </svg>
+              </div>
+
+              <div class="grid-12">
+                <div class="android-card col-span-6">
+                  <span class="text-detail text-secondary">CTR Rate</span>
+                  <div class="font-bold" style="font-size: 18px; margin-top: 2px;">8.42%</div>
+                </div>
+                <div class="android-card col-span-6">
+                  <span class="text-detail text-secondary">Conversions</span>
+                  <div class="font-bold" style="font-size: 18px; margin-top: 2px;">1,280</div>
+                </div>
+              </div>
+            </div>
+
+            <!-- VIEW: NOTIFICATIONS -->
+            <div class="app-screen-panel" id="android-screen-notifications">
+              <div class="android-header flex-between" style="align-items: center;">
+                <h2>Notifications</h2>
+                <span class="text-detail font-semibold" style="color: var(--brand-primary); cursor:pointer;" onclick="clearNotifications('android')">Clear All</span>
+              </div>
+
+              <div style="display:flex; flex-direction:column; gap: var(--space-xs);" id="android-notifications-container">
+                <!-- Loaded dynamically -->
+              </div>
+            </div>
+
+          </div>
+
+          <!-- Bottom Sheet Modal overlay (Android Long press demo) -->
+          <div class="android-sheet-overlay" id="android-bottom-sheet-pane" onclick="closeContextMenus()">
+            <div class="android-bottom-sheet" onclick="event.stopPropagation()">
+              <div class="android-sheet-handle"></div>
+              <h4 class="font-bold text-body-small" style="padding-left: var(--space-sm); margin-bottom: 4px;">Asset Options</h4>
+              
+              <div class="android-sheet-item" onclick="showToast('Asset link copied to clipboard.', 'success'); closeContextMenus();">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8.684 10.742l5.096 2.548m0-7.16l-5.096 2.548m9.182-4.182a3 3 0 11-6 0 3 3 0 016 0zm-8 7.5a3 3 0 11-6 0 3 3 0 016 0zm8 4.5a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+                <span>Share draft node link</span>
+              </div>
+              <div class="android-sheet-item" onclick="showToast('Asset duplicated successfully.', 'success'); closeContextMenus();">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M8 7v8a2 2 0 002 2h6M8 7V5a2 2 0 012-2h4.586a1 1 0 01.707.293l4.414 4.414a1 1 0 01.293.707V15a2 2 0 01-2 2h-2M8 7H6a2 2 0 00-2 2v10a2 2 0 002 2h8a2 2 0 002-2v-2"/></svg>
+                <span>Make a duplicate copy</span>
+              </div>
+              <div class="android-sheet-item" onclick="closeContextMenus(); deleteActiveLongPressedItem('android');" style="color: #BA1A1A;">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                <span>Permanently delete asset draft</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Bottom Navigation Bar (Material 3 style) -->
+          <nav class="android-tab-bar">
+            <div class="android-tab-item active" onclick="switchPhoneTab('android', 'projects', this)">
+              <div class="android-tab-pill">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2zm10 3h4m-4 4h4M7 9h2v2H7V9zm0 4h2v2H7v-2z"/></svg>
+              </div>
+              Projects
+            </div>
+            <div class="android-tab-item" onclick="switchPhoneTab('android', 'lab', this)">
+              <div class="android-tab-pill">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.159a6 6 0 01-3.86.517l-2.387-.477a2 2 0 00-1.022.547l-1.385 1.385a2 2 0 00-.547 1.022L2.062 21a2 2 0 002.876 2.876l2.387-.477a2 2 0 001.022-.547l1.385-1.385zm5.728-10.5a5.5 5.5 0 11-11 0 5.5 5.5 0 0111 0z"/></svg>
+              </div>
+              AI Lab
+            </div>
+            <div class="android-tab-item" onclick="switchPhoneTab('android', 'upload', this)">
+              <div class="android-tab-pill">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+              </div>
+              Upload
+            </div>
+            <div class="android-tab-item" onclick="switchPhoneTab('android', 'reports', this)">
+              <div class="android-tab-pill">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 00-2 2h-2a2 2 0 00-2-2z"/></svg>
+              </div>
+              Reports
+            </div>
+            <div class="android-tab-item" onclick="switchPhoneTab('android', 'notifications', this)" style="position:relative;">
+              <span class="app-badge" style="position:absolute; top:-1px; right:6px; display:none;" id="android-notif-badge">3</span>
+              <div class="android-tab-pill">
+                <svg fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+              </div>
+              Inbox
+            </div>
+          </nav>
+
+          <!-- Android 3-Button System Navigation bar -->
+          <div class="android-sys-bar">
+            <div class="android-sys-btn" onclick="androidGoBack()">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" stroke-width="2.5"><path d="M15 19l-7-7 7-7"/></svg>
+            </div>
+            <div class="android-sys-btn" onclick="switchPhoneTab('android', 'projects', document.querySelector('.android-tab-item'))">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" stroke-width="2.5"><circle cx="12" cy="12" r="8"/></svg>
+            </div>
+            <div class="android-sys-btn" onclick="showToast('App Switcher simulation active.', 'info')">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--text-primary)" stroke-width="2.5"><rect x="5" y="5" width="14" height="14" rx="2"/></svg>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Shared Application Logic & Simulation Controllers -->
+  <script src="design-system.js"></script>
+  <script>
+    // --- Mock Data Registries ---
+    let projectsData = [
+      { id: 101, title: "Summer Brand Reel V2", desc: "YouTube Campaign hook edit", reach: "1.2M", engagement: "5.8%", status: "Healthy" },
+      { id: 102, title: "Okta SAML Access Promo", desc: "Enterprise feature walkthrough video", reach: "840k", engagement: "8.2%", status: "Healthy" },
+      { id: 103, title: "GPU Nodes Scrapers Reel", desc: "Technical system demonstration", reach: "240k", engagement: "3.4%", status: "Warning" },
+      { id: 104, title: "Product Promo - Denim Appa", desc: "Client branding vertical short", reach: "3.1M", engagement: "6.9%", status: "Healthy" }
+    ];
+
+    let notificationLogs = [
+      { id: 1, title: "Upload Successful", msg: "Creative Campaign draft v2 has been ingested.", time: "10m ago", read: false },
+      { id: 2, title: "Scraper Warn", msg: "Proxy node failure detected on Instagram scraper routing.", time: "1h ago", read: false },
+      { id: 3, title: "Payment Released", msg: "Stripe payout of $1,450.00 approved for Devon Chen.", time: "2h ago", read: true }
+    ];
+
+    let currentUploads = [];
+    let longPressedItemId = null;
+    let swipeHistoryStack = [];
+
+    // --- DOM Initializations ---
+    document.addEventListener('DOMContentLoaded', () => {
+      renderProjectsLists();
+      renderNotifications();
+      initThemeToggler();
+      initWaveforms();
+      setupSwipeGestures();
+      setupLongPressGestures();
+      updateNotificationBadges();
+      
+      // Update clocks live
+      setInterval(() => {
+        const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+        document.querySelectorAll('.ios-time, .android-time').forEach(el => el.innerText = timeStr);
+      }, 30000);
+    });
+
+    // --- Renderers ---
+    function renderProjectsLists() {
+      const iosContainer = document.getElementById('ios-projects-list-container');
+      const androidContainer = document.getElementById('android-projects-list-container');
+      
+      iosContainer.innerHTML = '';
+      androidContainer.innerHTML = '';
+
+      projectsData.forEach(p => {
+        const initials = p.title.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+        
+        // iOS Item template
+        iosContainer.innerHTML += `
+          <div class="swipe-container" id="ios-project-wrapper-${p.id}">
+            <div class="swipe-item-bg-actions">
+              <div class="swipe-action-button archive" onclick="archiveProject(${p.id})">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+                Archive
+              </div>
+              <div class="swipe-action-button delete" onclick="deleteProject(${p.id}, 'ios')">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                Delete
+              </div>
+            </div>
+            <div class="swipe-item-content-card ios-card long-press-target" data-id="${p.id}" id="ios-project-card-${p.id}" style="display:flex; align-items:center; gap: var(--space-sm);">
+              <div class="avatar avatar-sm font-bold" style="background-color: var(--brand-primary); color: white; width:36px; height:36px; border-radius: 8px;">${initials}</div>
+              <div style="flex:1; display:flex; flex-direction:column; gap:2px;">
+                <span class="font-semibold text-body-small">${p.title}</span>
+                <span class="text-detail text-secondary">${p.desc}</span>
+              </div>
+              <div style="text-align: right; display:flex; flex-direction:column; align-items:flex-end; gap:2px;">
+                <span class="badge badge-success" style="font-size:9px; padding: 2px 6px;">${p.reach}</span>
+                <span class="text-micro text-secondary">Eng: ${p.engagement}</span>
+              </div>
+            </div>
+          </div>
+        `;
+
+        // Android Item template
+        androidContainer.innerHTML += `
+          <div class="swipe-container" id="android-project-wrapper-${p.id}">
+            <div class="swipe-item-bg-actions android">
+              <div class="swipe-action-button archive" onclick="archiveProject(${p.id})">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/></svg>
+                Archive
+              </div>
+              <div class="swipe-action-button delete" onclick="deleteProject(${p.id}, 'android')">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+                Delete
+              </div>
+            </div>
+            <div class="swipe-item-content-card android-card long-press-target" data-id="${p.id}" id="android-project-card-${p.id}" style="display:flex; align-items:center; gap: var(--space-sm);">
+              <div class="avatar avatar-sm font-bold" style="background-color: var(--accent-purple); color: white; width:36px; height:36px; border-radius: 50%;">${initials}</div>
+              <div style="flex:1; display:flex; flex-direction:column; gap:2px;">
+                <span class="font-semibold text-body-small">${p.title}</span>
+                <span class="text-detail text-secondary">${p.desc}</span>
+              </div>
+              <div style="text-align: right; display:flex; flex-direction:column; align-items:flex-end; gap:2px;">
+                <span class="badge badge-info" style="font-size:9px; padding: 2px 6px;">${p.reach}</span>
+                <span class="text-micro text-secondary">Eng: ${p.engagement}</span>
+              </div>
+            </div>
+          </div>
+        `;
+      });
+      
+      // Re-setup handlers
+      setupSwipeGestures();
+      setupLongPressGestures();
+    }
+
+    function renderNotifications() {
+      const iosContainer = document.getElementById('ios-notifications-container');
+      const androidContainer = document.getElementById('android-notifications-container');
+
+      iosContainer.innerHTML = '';
+      androidContainer.innerHTML = '';
+
+      if (notificationLogs.length === 0) {
+        const emptyState = `<div class="flex-center text-muted text-detail" style="height: 120px;">Inbox is empty.</div>`;
+        iosContainer.innerHTML = emptyState;
+        androidContainer.innerHTML = emptyState;
+        return;
+      }
+
+      notificationLogs.forEach(n => {
+        const dot = n.read ? '' : '<span style="width:8px; height:8px; background-color:#007AFF; border-radius:50%; display:block; flex-shrink:0;"></span>';
+        const androidDot = n.read ? '' : '<span style="width:8px; height:8px; background-color:var(--brand-primary); border-radius:50%; display:block; flex-shrink:0;"></span>';
+
+        iosContainer.innerHTML += `
+          <div class="ios-card flex-between" style="align-items: center; gap: var(--space-sm);">
+            ${dot}
+            <div style="flex:1; display:flex; flex-direction:column; gap:2px;">
+              <span class="font-semibold text-body-small">${n.title}</span>
+              <span class="text-detail text-secondary">${n.msg}</span>
+            </div>
+            <span class="text-micro text-muted">${n.time}</span>
+          </div>
+        `;
+
+        androidContainer.innerHTML += `
+          <div class="android-card flex-between" style="align-items: center; gap: var(--space-sm);">
+            ${androidDot}
+            <div style="flex:1; display:flex; flex-direction:column; gap:2px;">
+              <span class="font-semibold text-body-small">${n.title}</span>
+              <span class="text-detail text-secondary">${n.msg}</span>
+            </div>
+            <span class="text-micro text-muted">${n.time}</span>
+          </div>
+        `;
+      });
+    }
+
+    function updateNotificationBadges() {
+      const unreadCount = notificationLogs.filter(n => !n.read).length;
+      const iosBadge = document.getElementById('ios-notif-badge');
+      const androidBadge = document.getElementById('android-notif-badge');
+
+      if (unreadCount > 0) {
+        iosBadge.style.display = 'inline-block';
+        iosBadge.innerText = unreadCount;
+        androidBadge.style.display = 'inline-block';
+        androidBadge.innerText = unreadCount;
+      } else {
+        iosBadge.style.display = 'none';
+        androidBadge.style.display = 'none';
+      }
+    }
+
+    // --- Tab Switching Logic ---
+    function switchPhoneTab(platform, tabKey, element) {
+      // Set active nav element styling
+      const selector = platform === 'ios' ? '.ios-tab-item' : '.android-tab-item';
+      document.querySelectorAll(selector).forEach(item => item.classList.remove('active'));
+      element.classList.add('active');
+
+      // Toggle screens
+      const panelsSelector = platform === 'ios' ? '#ios-device-frame .app-screen-panel' : '#android-device-frame .app-screen-panel';
+      document.querySelectorAll(panelsSelector).forEach(p => p.classList.remove('active'));
+      
+      const activePanel = document.getElementById(`${platform}-screen-${tabKey}`);
+      if (activePanel) activePanel.classList.add('active');
+
+      // Android FAB behavior
+      const fab = document.getElementById('android-fab-plus');
+      if (platform === 'android') {
+        if (tabKey === 'projects' || tabKey === 'upload') {
+          fab.style.display = 'flex';
+        } else {
+          fab.style.display = 'none';
+        }
+      }
+
+      // Record path for Android Back button
+      if (platform === 'android') {
+        swipeHistoryStack.push(tabKey);
+      }
+    }
+
+    function androidGoBack() {
+      if (swipeHistoryStack.length > 1) {
+        swipeHistoryStack.pop(); // Remove current
+        const prevTab = swipeHistoryStack.pop(); // Get previous
+        
+        // Find element
+        const tabs = document.querySelectorAll('.android-tab-item');
+        let targetEl = tabs[0]; // Default Projects
+        if (prevTab === 'lab') targetEl = tabs[1];
+        if (prevTab === 'upload') targetEl = tabs[2];
+        if (prevTab === 'reports') targetEl = tabs[3];
+        if (prevTab === 'notifications') targetEl = tabs[4];
+
+        switchPhoneTab('android', prevTab, targetEl);
+        showToast("Navigated back.", "info");
+      } else {
+        showToast("Top level reached.", "info");
+      }
+    }
+
+    // --- Swipe Gestures Implementation ---
+    let dragStartX = 0;
+    let activeItem = null;
+
+    function setupSwipeGestures() {
+      document.querySelectorAll('.swipe-item-content-card').forEach(item => {
+        item.addEventListener('pointerdown', (e) => {
+          dragStartX = e.clientX;
+          activeItem = item;
+          item.setPointerCapture(e.pointerId);
+          item.style.transition = 'none';
+        });
+
+        item.addEventListener('pointermove', (e) => {
+          if (!activeItem || activeItem !== item) return;
+          const diff = e.clientX - dragStartX;
+          
+          if (diff < 0) {
+            const translateX = Math.max(diff, -160);
+            item.style.transform = `translateX(${translateX}px)`;
+          } else {
+            item.style.transform = 'translateX(0px)';
+          }
+        });
+
+        item.addEventListener('pointerup', (e) => {
+          if (!activeItem || activeItem !== item) return;
+          item.releasePointerCapture(e.pointerId);
+          activeItem = null;
+          item.style.transition = 'transform 0.3s cubic-bezier(0.16, 1, 0.3, 1)';
+          
+          const matrix = new WebKitCSSMatrix(window.getComputedStyle(item).transform);
+          const currentX = matrix.m41;
+          
+          if (currentX < -60) {
+            item.style.transform = 'translateX(-140px)';
+            item.parentElement.classList.add('swiped');
+          } else {
+            item.style.transform = 'translateX(0px)';
+            item.parentElement.classList.remove('swiped');
+          }
+        });
+      });
+    }
+
+    // --- Long Press Context menu actions ---
+    let timer = null;
+    function setupLongPressGestures() {
+      document.querySelectorAll('.long-press-target').forEach(target => {
+        const handleStart = (e) => {
+          clearTimeout(timer);
+          longPressedItemId = parseInt(target.getAttribute('data-id'));
+          timer = setTimeout(() => {
+            triggerContextAction(target);
+          }, 700);
+        };
+
+        const handleEnd = () => clearTimeout(timer);
+
+        target.addEventListener('touchstart', handleStart, { passive: true });
+        target.addEventListener('touchend', handleEnd);
+        target.addEventListener('mousedown', handleStart);
+        target.addEventListener('mouseup', handleEnd);
+        target.addEventListener('mouseleave', handleEnd);
+      });
+    }
+
+    function triggerContextAction(target) {
+      if (target.id.startsWith('ios-')) {
+        document.getElementById('ios-context-menu-pane').classList.add('active');
+        showToast("iOS Context Menu summoned.", "info");
+      } else {
+        document.getElementById('android-bottom-sheet-pane').classList.add('active');
+        showToast("Android bottom sheet summoned.", "info");
+      }
+    }
+
+    function closeContextMenus() {
+      document.getElementById('ios-context-menu-pane').classList.remove('active');
+      document.getElementById('android-bottom-sheet-pane').classList.remove('active');
+    }
+
+    function deleteActiveLongPressedItem(platform) {
+      if (longPressedItemId) {
+        deleteProject(longPressedItemId, platform);
+        longPressedItemId = null;
+      }
+    }
+
+    function deleteProject(id, platform) {
+      const idx = projectsData.findIndex(p => p.id === id);
+      if (idx !== -1) {
+        const item = projectsData[idx];
+        
+        // Visual removal transition
+        const iosEl = document.getElementById(`ios-project-wrapper-${id}`);
+        const androidEl = document.getElementById(`android-project-wrapper-${id}`);
+        
+        if (iosEl) {
+          iosEl.style.height = iosEl.offsetHeight + 'px';
+          setTimeout(() => {
+            iosEl.style.transition = 'all 0.3s ease';
+            iosEl.style.height = '0';
+            iosEl.style.opacity = '0';
+            iosEl.style.margin = '0';
+          }, 10);
+        }
+
+        if (androidEl) {
+          androidEl.style.height = androidEl.offsetHeight + 'px';
+          setTimeout(() => {
+            androidEl.style.transition = 'all 0.3s ease';
+            androidEl.style.height = '0';
+            androidEl.style.opacity = '0';
+            androidEl.style.margin = '0';
+          }, 10);
+        }
+
+        setTimeout(() => {
+          projectsData.splice(idx, 1);
+          renderProjectsLists();
+          showToast(`Deleted project: ${item.title}`, "error");
+        }, 350);
+      }
+    }
+
+    function archiveProject(id) {
+      showToast("Project successfully moved to Archive folder.", "success");
+      // Snap swipe item back
+      document.querySelectorAll('.swipe-item-content-card').forEach(item => {
+        item.style.transform = 'translateX(0)';
+      });
+    }
+
+    // --- Waveform voices generator ---
+    function initWaveforms() {
+      const iosWave = document.getElementById('ios-waveform');
+      const androidWave = document.getElementById('android-waveform');
+
+      const createBars = (container) => {
+        container.innerHTML = '';
+        for (let i = 0; i < 24; i++) {
+          const bar = document.createElement('div');
+          bar.className = 'waveform-bar';
+          container.appendChild(bar);
+        }
+      };
+
+      createBars(iosWave);
+      createBars(androidWave);
+
+      // Animate waveform heights dynamically
+      setInterval(() => {
+        document.querySelectorAll('.waveform-bar').forEach(bar => {
+          const heightPercent = Math.floor(Math.random() * 85) + 15;
+          bar.style.height = `${heightPercent}%`;
+        });
+      }, 150);
+    }
+
+    // --- Upload Simulator ---
+    function runUploadSimulation() {
+      const newId = projectsData.length + 200;
+      
+      const newUpload = {
+        id: newId,
+        title: "Client Reel - Smart Home",
+        progress: 0
+      };
+
+      // Append upload progress cards to viewports
+      const iosQueue = document.getElementById('ios-uploads-container');
+      const androidQueue = document.getElementById('android-uploads-container');
+
+      const uploadHTML = `
+        <div class="ios-card" id="upload-card-${newId}">
+          <div class="flex-between">
+            <span class="font-semibold" style="font-size:13px;">${newUpload.title}</span>
+            <span class="text-detail font-bold text-secondary" id="upload-text-${newId}">0%</span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="upload-bar-${newId}"></div>
+          </div>
+        </div>
+      `;
+
+      const androidUploadHTML = `
+        <div class="android-card" id="android-upload-card-${newId}">
+          <div class="flex-between">
+            <span class="font-semibold" style="font-size:13px;">${newUpload.title}</span>
+            <span class="text-detail font-bold text-secondary" id="android-upload-text-${newId}">0%</span>
+          </div>
+          <div class="progress-bar-container">
+            <div class="progress-bar-fill" id="android-upload-bar-${newId}"></div>
+          </div>
+        </div>
+      `;
+
+      iosQueue.innerHTML += uploadHTML;
+      androidQueue.innerHTML += androidUploadHTML;
+
+      // Navigate both phones to Upload tab
+      const iosTabs = document.querySelectorAll('.ios-tab-item');
+      const androidTabs = document.querySelectorAll('.android-tab-item');
+      switchPhoneTab('ios', 'upload', iosTabs[2]);
+      switchPhoneTab('android', 'upload', androidTabs[2]);
+
+      // Expand island on iOS
+      const island = document.getElementById('ios-dynamic-island');
+      const islandDot = document.getElementById('ios-island-dot');
+      const islandText = document.getElementById('ios-island-text');
+      island.style.width = '180px';
+      islandDot.style.opacity = '1';
+
+      // Increment progress
+      const interval = setInterval(() => {
+        newUpload.progress += Math.floor(Math.random() * 15) + 5;
+        if (newUpload.progress >= 100) {
+          newUpload.progress = 100;
+          clearInterval(interval);
+          
+          document.getElementById(`upload-text-${newId}`).innerText = "Complete";
+          document.getElementById(`android-upload-text-${newId}`).innerText = "Complete";
+          document.getElementById(`upload-bar-${newId}`).style.width = '100%';
+          document.getElementById(`android-upload-bar-${newId}`).style.width = '100%';
+
+          // Dynamic island animation
+          islandText.innerText = "Upload Complete";
+          islandText.style.display = 'inline';
+          
+          setTimeout(() => {
+            island.style.width = '110px';
+            islandDot.style.opacity = '0';
+            islandText.style.display = 'none';
+          }, 3000);
+
+          // Add to projects list
+          projectsData.unshift({
+            id: newId,
+            title: newUpload.title,
+            desc: "Asset processed successfully via Upload",
+            reach: "680k",
+            engagement: "4.2%",
+            status: "Healthy"
+          });
+
+          // Add notification
+          notificationLogs.unshift({
+            id: Date.now(),
+            title: "Asset Upload Complete",
+            msg: `Project '${newUpload.title}' is ready inside projects directory.`,
+            time: "Just now",
+            read: false
+          });
+
+          setTimeout(() => {
+            document.getElementById(`upload-card-${newId}`).remove();
+            document.getElementById(`android-upload-card-${newId}`).remove();
+            renderProjectsLists();
+            renderNotifications();
+            updateNotificationBadges();
+            showToast("Project draft loaded.", "success");
+          }, 1500);
+
+        } else {
+          document.getElementById(`upload-text-${newId}`).innerText = `${newUpload.progress}%`;
+          document.getElementById(`android-upload-text-${newId}`).innerText = `${newUpload.progress}%`;
+          document.getElementById(`upload-bar-${newId}`).style.width = `${newUpload.progress}%`;
+          document.getElementById(`android-upload-bar-${newId}`).style.width = `${newUpload.progress}%`;
+        }
+      }, 250);
+    }
+
+    // --- AI Generation Simulation ---
+    function simulateAIGeneration(platform) {
+      showToast("Creative engine pipeline initialized...", "info");
+      
+      const generateBtn = platform === 'ios' ? 
+        document.querySelector('#ios-screen-lab .btn-primary') : 
+        document.querySelector('#android-screen-lab .btn-primary');
+        
+      const originalText = generateBtn.innerText;
+      generateBtn.disabled = true;
+      generateBtn.innerText = "Processing draft...";
+
+      setTimeout(() => {
+        generateBtn.disabled = false;
+        generateBtn.innerText = originalText;
+        showToast("New video draft created inside Projects directory.", "success");
+        
+        // Insert new project draft
+        projectsData.unshift({
+          id: Date.now(),
+          title: "AI Video Draft #" + Math.floor(Math.random() * 800 + 100),
+          desc: "Generated draft based on audio transcription hook context.",
+          reach: "1.2M",
+          engagement: "8.5%",
+          status: "Healthy"
+        });
+
+        // Add Notification log
+        notificationLogs.unshift({
+          id: Date.now(),
+          title: "AI Draft Generation Complete",
+          msg: "KONTAGI-Custom generated video file processed.",
+          time: "Just now",
+          read: false
+        });
+
+        renderProjectsLists();
+        renderNotifications();
+        updateNotificationBadges();
+      }, 2000);
+    }
+
+    // --- Push Notifications Banner alerts triggers ---
+    function triggerSimulatorNotification() {
+      const iosBanner = document.getElementById('ios-push-banner');
+      const androidBanner = document.getElementById('android-push-banner');
+
+      iosBanner.classList.add('active');
+      androidBanner.classList.add('active');
+
+      showToast("Simulator push notifications sent.", "info");
+
+      setTimeout(() => {
+        iosBanner.classList.remove('active');
+        androidBanner.classList.remove('active');
+      }, 4000);
+    }
+
+    function clearNotifications(platform) {
+      notificationLogs = [];
+      renderNotifications();
+      updateNotificationBadges();
+      showToast(`All notifications cleared for ${platform.toUpperCase()}.`, "info");
+    }
+
+    function resetSimulatorState() {
+      projectsData = [
+        { id: 101, title: "Summer Brand Reel V2", desc: "YouTube Campaign hook edit", reach: "1.2M", engagement: "5.8%", status: "Healthy" },
+        { id: 102, title: "Okta SAML Access Promo", desc: "Enterprise feature walkthrough video", reach: "840k", engagement: "8.2%", status: "Healthy" }
+      ];
+      notificationLogs = [
+        { id: 1, title: "Initial Buffer synced", msg: "KONTAGI database connected.", time: "1h ago", read: true }
+      ];
+      renderProjectsLists();
+      renderNotifications();
+      updateNotificationBadges();
+      showToast("Simulator datasets cleared & re-aligned.", "success");
+    }
+
+    // --- Device emulation view selectors ---
+    function toggleSimulatorsView(mode) {
+      const iosEl = document.getElementById('ios-device-frame');
+      const androidEl = document.getElementById('android-device-frame');
+      
+      document.querySelectorAll('.sandbox-control-group .sandbox-btn').forEach(btn => btn.classList.remove('active'));
+
+      if (mode === 'dual') {
+        iosEl.style.display = 'flex';
+        androidEl.style.display = 'flex';
+        document.getElementById('view-dual-btn').classList.add('active');
+      } else if (mode === 'ios') {
+        iosEl.style.display = 'flex';
+        androidEl.style.display = 'none';
+        document.getElementById('view-ios-btn').classList.add('active');
+      } else if (mode === 'android') {
+        iosEl.style.display = 'none';
+        androidEl.style.display = 'flex';
+        document.getElementById('view-android-btn').classList.add('active');
+      }
+    }
+
+    // --- Theme Toggler Integration ---
+    function initThemeToggler() {
+      const toggleBtn = document.getElementById('theme-toggle');
+      
+      const updateIcon = () => {
+        const isDark = document.body.classList.contains('dark');
+        toggleBtn.innerHTML = isDark ? 
+          `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 5a7 7 0 100 14 7 7 0 000-14z"/></svg> Light Mode` :
+          `<svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg> Dark Mode`;
+      };
+      
+      updateIcon();
+      
+      toggleBtn.addEventListener('click', () => {
+        const isDark = document.body.classList.toggle('dark');
+        updateIcon();
+        showToast(isDark ? "Switched to Space Dark mode." : "Switched to Clean Light mode.", "success");
+      });
+    }
+  </script>
+</body>
+</html>

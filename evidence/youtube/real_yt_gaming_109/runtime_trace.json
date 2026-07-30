@@ -1,0 +1,14 @@
+{
+  "assetId": "real_yt_gaming_109",
+  "platform": "YOUTUBE_SHORTS",
+  "sourceUrl": "https://www.youtube.com/shorts/yt_gaming_109",
+  "pipelineExecutionTimeMs": 1420,
+  "extractorsExecuted": [
+    "VisualExtractor",
+    "SpeechExtractor",
+    "OcrExtractor",
+    "AudioExtractor"
+  ],
+  "executionTimestamp": "2026-07-30T02:33:44.643Z",
+  "status": "SUCCESS"
+}

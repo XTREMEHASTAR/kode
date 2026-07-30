@@ -1,0 +1,20 @@
+{
+  "topic": "Silent Media",
+  "niche": "Minimal Media",
+  "creatorIntent": "TESTING",
+  "audienceIntent": "LOW_ENGAGEMENT",
+  "hookExplanation": "Black screen content lacks visual or acoustic hook triggers.",
+  "emotionalTriggers": [
+    "Confusion"
+  ],
+  "storytellingStructure": "FLAT_LINE",
+  "ctaQuality": 0,
+  "strengths": [
+    "Low processing latency"
+  ],
+  "weaknesses": [
+    "Zero visual novelty",
+    "Zero acoustic energy",
+    "No transcript"
+  ]
+}

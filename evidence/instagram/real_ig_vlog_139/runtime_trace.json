@@ -1,0 +1,14 @@
+{
+  "assetId": "real_ig_vlog_139",
+  "platform": "INSTAGRAM_REELS",
+  "sourceUrl": "https://www.instagram.com/reels/ig_vlog_139",
+  "pipelineExecutionTimeMs": 1420,
+  "extractorsExecuted": [
+    "VisualExtractor",
+    "SpeechExtractor",
+    "OcrExtractor",
+    "AudioExtractor"
+  ],
+  "executionTimestamp": "2026-07-30T02:33:44.643Z",
+  "status": "SUCCESS"
+}

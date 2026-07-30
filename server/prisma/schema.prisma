@@ -1,0 +1,283 @@
+// ──────────────────────────────────────────────
+// Kontagi — Prisma Schema
+// ──────────────────────────────────────────────
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// ─── Enums ───────────────────────────────────
+
+enum UserRole {
+  USER
+  ADMIN
+}
+
+enum AuthProvider {
+  EMAIL
+  GOOGLE
+  APPLE
+}
+
+enum VideoStatus {
+  PENDING
+  UPLOADING
+  ACTIVE
+  TRANSCRIBING
+  COMPLETED
+  FAILED
+}
+
+enum ScriptVersionType {
+  ORIGINAL
+  AI_HOOK
+  AI_SCRIPT
+  USER_EDIT
+}
+
+enum AiGenerationType {
+  HOOK_IMPROVEMENT
+  HOOK_VARIANTS
+  SCRIPT_IMPROVEMENT
+}
+
+// ─── User & Auth ─────────────────────────────
+
+model User {
+  id            String       @id @default(uuid()) @db.Uuid
+  email         String       @unique @db.VarChar(255)
+  passwordHash  String?      @map("password_hash") @db.Text
+  firstName     String?      @map("first_name") @db.VarChar(100)
+  lastName      String?      @map("last_name") @db.VarChar(100)
+  avatar        String?      @db.VarChar(512)
+  provider      AuthProvider @default(EMAIL)
+  googleId      String?      @unique @map("google_id") @db.VarChar(255)
+  appleId       String?      @unique @map("apple_id") @db.VarChar(255)
+  role          UserRole     @default(USER)
+  emailVerified Boolean      @default(false) @map("email_verified")
+  verifyToken   String?      @map("verify_token") @db.VarChar(255)
+  resetToken    String?      @map("reset_token") @db.VarChar(255)
+  resetExpires  DateTime?    @map("reset_expires")
+
+  // Account lockout
+  loginAttempts Int       @default(0) @map("login_attempts")
+  lockedUntil   DateTime? @map("locked_until")
+  lastLoginAt   DateTime? @map("last_login_at") @db.Timestamptz
+  lastLoginIp   String?   @map("last_login_ip") @db.VarChar(45)
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  refreshTokens  RefreshToken[]
+  settings       Setting?
+  usage          UserUsage?
+  scriptAnalyses ScriptAnalysis[]
+  scriptVersions ScriptVersion[]
+  aiGenerations  AiGeneration[]
+
+  @@map("users")
+}
+
+model RefreshToken {
+  id        String    @id @default(uuid()) @db.Uuid
+  token     String    @unique @db.VarChar(512)
+  userId    String    @map("user_id") @db.Uuid
+  expiresAt DateTime  @map("expires_at") @db.Timestamptz
+  revoked   Boolean   @default(false)
+  revokedAt DateTime? @map("revoked_at") @db.Timestamptz
+
+  // Session/device metadata
+  deviceName  String?  @map("device_name") @db.VarChar(255)
+  deviceType  String?  @map("device_type") @db.VarChar(50)
+  browserName String?  @map("browser_name") @db.VarChar(100)
+  osName      String?  @map("os_name") @db.VarChar(100)
+  ipAddress   String?  @map("ip_address") @db.VarChar(45)
+  lastUsedAt  DateTime @default(now()) @map("last_used_at") @db.Timestamptz
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([token])
+  @@index([userId, revoked])
+  @@map("refresh_tokens")
+}
+
+// ─── Workspace & Project ─────────────────────
+
+model Workspace {
+  id              String   @id @default(uuid()) @db.Uuid
+  name            String   @db.VarChar(255)
+  slug            String   @unique @db.VarChar(255)
+  avatarText      String   @map("avatar_text") @db.VarChar(10)
+  avatarBg        String?  @map("avatar_bg") @db.VarChar(100)
+  avatarColor     String?  @map("avatar_color") @db.VarChar(100)
+  tagline         String?  @db.Text
+  prohibitedTerms String?  @map("prohibited_terms") @db.Text
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  projects Project[]
+
+  @@map("workspaces")
+}
+
+model Project {
+  id          String   @id @default(uuid()) @db.Uuid
+  workspaceId String   @map("workspace_id") @db.Uuid
+  name        String   @db.VarChar(255)
+  description String?  @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  workspace Workspace @relation(fields: [workspaceId], references: [id], onDelete: Cascade)
+  videos    Video[]
+
+  @@index([workspaceId])
+  @@map("projects")
+}
+
+// ─── Video ───────────────────────────────────
+
+model Video {
+  id           String      @id @default(uuid()) @db.Uuid
+  projectId    String      @map("project_id") @db.Uuid
+  title        String      @db.VarChar(255)
+  filename     String      @db.VarChar(255)
+  storagePath  String?     @map("storage_path") @db.Text
+  status       VideoStatus @default(PENDING)
+  errorMessage String?     @map("error_message") @db.Text
+
+  // Creative Performance Analysis
+  score                Int      @default(0)
+  transcript           String?  @db.Text
+  caption              String?  @db.Text
+  tags                 String[] @default([])
+  posterUrl            String?  @map("poster_url") @db.Text
+  retentionProfile     Json     @default("[]") @map("retention_profile")
+  hookScore            Int      @default(0) @map("hook_score")
+  hookAnalysis         String?  @map("hook_analysis") @db.Text
+  visualScore          Int      @default(0) @map("visual_score")
+  visualAnalysis       String?  @map("visual_analysis") @db.Text
+  audioScore           Int      @default(0) @map("audio_score")
+  audioAnalysis        String?  @map("audio_analysis") @db.Text
+  thumbnailSuggestions Json     @default("[]") @map("thumbnail_suggestions")
+
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  project Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@index([projectId])
+  @@map("videos")
+}
+
+// ─── Settings ────────────────────────────────
+
+model Setting {
+  id           String   @id @default(uuid()) @db.Uuid
+  userId       String   @unique @map("user_id") @db.Uuid
+  theme        String   @default("dark") @db.VarChar(50)
+  borderRadius String   @default("12") @map("border_radius") @db.VarChar(10)
+  language     String   @default("en") @db.VarChar(10)
+  timezone     String   @default("ist") @db.VarChar(50)
+  dateFormat   String   @default("ddmmyyyy") @map("date_format") @db.VarChar(20)
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("settings")
+}
+
+// ─── Script Intelligence ─────────────────────
+
+model ScriptAnalysis {
+  id                    String   @id @default(uuid()) @db.Uuid
+  userId                String   @map("user_id") @db.Uuid
+  title                 String   @db.Text
+  scriptText            String   @map("script_text") @db.Text
+  originalScriptText    String?  @map("original_script_text") @db.Text
+  contentType           String   @default("Other") @map("content_type") @db.VarChar(100)
+  hookScore             Int      @default(0) @map("hook_score")
+  isFavorite            Boolean  @default(false) @map("is_favorite")
+  wordCount             Int      @default(0) @map("word_count")
+  characterCount        Int      @default(0) @map("character_count")
+  estimatedSpeakingTime Int      @default(0) @map("estimated_speaking_time")
+  hookText              String?  @map("hook_text") @db.Text
+  signals               Json     @default("[]")
+  analysisResult        Json     @map("analysis_result")
+  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt             DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  // Relations
+  user     User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  versions ScriptVersion[]
+  aiGens   AiGeneration[]
+
+  @@index([userId])
+  @@index([createdAt(sort: Desc)])
+  @@index([userId, createdAt(sort: Desc)])
+  @@index([userId, isFavorite])
+  @@map("script_analyses")
+}
+
+model ScriptVersion {
+  id          String            @id @default(uuid()) @db.Uuid
+  analysisId  String            @map("analysis_id") @db.Uuid
+  userId      String            @map("user_id") @db.Uuid
+  name        String            @db.VarChar(255)
+  scriptText  String            @map("script_text") @db.Text
+  hookScore   Int               @default(0) @map("hook_score")
+  versionType ScriptVersionType @map("version_type")
+  createdAt   DateTime          @default(now()) @map("created_at") @db.Timestamptz
+
+  analysis ScriptAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([analysisId])
+  @@index([userId])
+  @@map("script_versions")
+}
+
+model AiGeneration {
+  id             String           @id @default(uuid()) @db.Uuid
+  analysisId     String           @map("analysis_id") @db.Uuid
+  versionId      String?          @map("version_id") @db.Uuid
+  userId         String           @map("user_id") @db.Uuid
+  generationType AiGenerationType @map("generation_type")
+  provider       String?          @db.VarChar(100)
+  model          String?          @db.VarChar(100)
+  attemptIndex   Int              @default(0) @map("attempt_index")
+  outputSummary  Json?            @map("output_summary")
+  createdAt      DateTime         @default(now()) @map("created_at") @db.Timestamptz
+
+  analysis ScriptAnalysis @relation(fields: [analysisId], references: [id], onDelete: Cascade)
+  user     User           @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([analysisId])
+  @@index([userId])
+  @@map("ai_generations")
+}
+
+// ─── Usage Limits & Quota Enforcement ──────
+
+model UserUsage {
+  id                      String   @id @default(uuid()) @db.Uuid
+  userId                  String   @unique @map("user_id") @db.Uuid
+  date                    String   @db.VarChar(10) // UTC Calendar Date: YYYY-MM-DD
+  scriptOptimizationsUsed Int      @default(0) @map("script_optimizations_used")
+  hookOptimizationsUsed   Int      @default(0) @map("hook_optimizations_used")
+  lastResetAt             DateTime @default(now()) @map("last_reset_at") @db.Timestamptz
+  createdAt               DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt               DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([userId, date])
+  @@map("user_usages")
+}

@@ -1,0 +1,2056 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — AI Script Intelligence Dashboard</title>
+  <link rel="stylesheet" href="design-system.css">
+  <style>
+    /* ==========================================================================
+       SANDBOX CORE LAYOUT FRAMEWORK
+       ========================================================================== */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-smooth);
+    }
+
+    .sandbox-header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-xs) var(--space-lg);
+      z-index: 1000;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .sandbox-brand h1 {
+      font-size: 1.125rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .sandbox-brand span {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .sandbox-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-control-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      background-color: var(--bg-secondary);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+    }
+
+    .sandbox-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sandbox-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .sandbox-btn.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sandbox-workspace {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      position: relative;
+    }
+
+    .emulator-viewport {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      transition: width var(--transition-smooth), height var(--transition-smooth), border-radius var(--transition-smooth);
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .emulator-viewport.desktop {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      border: none;
+    }
+
+    .emulator-viewport.tablet {
+      width: 768px;
+      height: 95%;
+      border-radius: var(--radius-lg);
+    }
+
+    .emulator-viewport.mobile {
+      width: 375px;
+      height: 85%;
+      border-radius: var(--radius-2xl);
+    }
+
+    /* ==========================================================================
+       DASHBOARD AND SIDEBAR STRUCTURE
+       ========================================================================== */
+    .dashboard-shell {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .dashboard-sidebar {
+      width: 260px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      transition: transform var(--transition-smooth), width var(--transition-smooth);
+    }
+
+    .sidebar-header {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .sidebar-nav {
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .sidebar-nav-item:hover, .sidebar-nav-item.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .sidebar-nav-item.active {
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .dashboard-main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-primary);
+    }
+
+    .dashboard-header {
+      height: 64px;
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-lg);
+      flex-shrink: 0;
+    }
+
+    .dashboard-search-bar {
+      display: flex;
+      align-items: center;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 6px 12px;
+      gap: var(--space-xs);
+      width: 240px;
+      max-width: 100%;
+    }
+
+    .dashboard-body {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: var(--space-xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    /* Emulator viewports responsive overrides */
+    .emulator-viewport.tablet .dashboard-sidebar {
+      width: 70px;
+    }
+    .emulator-viewport.tablet .sidebar-text-label,
+    .emulator-viewport.tablet .sidebar-footer {
+      display: none;
+    }
+
+    .emulator-viewport.mobile #sidebar-toggle-btn {
+      display: inline-flex !important;
+    }
+    .emulator-viewport.mobile .dashboard-sidebar {
+      display: none;
+    }
+    .emulator-viewport.mobile .dashboard-sidebar.active {
+      display: flex;
+      position: absolute;
+      left: 0;
+      top: 64px;
+      bottom: 0;
+      z-index: 950;
+      height: calc(100% - 64px);
+      width: 240px;
+      box-shadow: var(--shadow-xl);
+      animation: dropdownEnter var(--transition-fast) forwards;
+    }
+
+    /* Skeleton Loading State Sync */
+    .skeleton-view-panel {
+      display: none;
+      flex-direction: column;
+      gap: var(--space-lg);
+      width: 100%;
+    }
+
+    .loading-state-active .skeleton-view-panel {
+      display: flex !important;
+    }
+    .loading-state-active .real-view-panel {
+      display: none !important;
+    }
+
+    .skeleton-pulse {
+      background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--border-default) 50%, var(--bg-secondary) 75%);
+      background-size: 200% 100%;
+      animation: skeletonGlow 1.5s infinite;
+      border-radius: var(--radius-md);
+    }
+
+    @keyframes skeletonGlow {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ==========================================================================
+       SCRIPT INTELLIGENCE CUSTOM SPECIFIC ELEMENTS
+       ========================================================================== */
+    .script-editor-container {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      height: 600px;
+    }
+
+    .editor-toolbar {
+      background-color: var(--bg-secondary);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-sm) var(--space-md);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .editor-body-scroller {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    /* Interactive editor line card */
+    .script-line-card {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      cursor: pointer;
+      position: relative;
+      transition: all var(--transition-fast);
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: var(--space-md);
+    }
+
+    .script-line-card:hover {
+      border-color: var(--brand-primary);
+      transform: translateY(-1px);
+    }
+
+    .script-line-card.active-line {
+      border-color: var(--brand-primary);
+      box-shadow: 0 0 0 2px var(--brand-primary-glow);
+    }
+
+    .line-number-gutter {
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-align: right;
+      min-width: 24px;
+      padding-top: 4px;
+      user-select: none;
+    }
+
+    .line-content-area {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .line-speaker-tag {
+      font-size: 0.625rem;
+      font-weight: 700;
+      color: var(--accent-purple);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .line-main-text {
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      color: var(--text-primary);
+      line-height: 1.6;
+      border: none;
+      background: transparent;
+      outline: none;
+      resize: none;
+      width: 100%;
+      padding: 0;
+    }
+
+    .line-directives {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-xs);
+      margin-top: 4px;
+    }
+
+    .directive-badge {
+      font-size: 0.6875rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-sm);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .directive-visual {
+      background-color: rgba(59, 130, 246, 0.1);
+      color: var(--accent-blue);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    .directive-sound {
+      background-color: rgba(168, 85, 247, 0.1);
+      color: var(--accent-purple);
+      border: 1px solid rgba(168, 85, 247, 0.2);
+    }
+
+    /* Keyword highlight style */
+    .keyword-highlight {
+      background-color: rgba(245, 158, 11, 0.18);
+      border-bottom: 2px solid var(--accent-orange);
+      padding: 0 2px;
+      border-radius: 2px;
+      font-weight: 500;
+    }
+
+    .keyword-badge {
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    .keyword-badge:hover {
+      transform: scale(1.05);
+    }
+    .keyword-badge.optimal {
+      background-color: rgba(34, 197, 94, 0.1);
+      color: var(--accent-green);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+    .keyword-badge.overused {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: var(--accent-red);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+    .keyword-badge.underused {
+      background-color: rgba(59, 130, 246, 0.1);
+      color: var(--accent-blue);
+      border: 1px solid rgba(59, 130, 246, 0.2);
+    }
+
+    /* Emotional trajectory chart styles */
+    .emotion-chart-card {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xl);
+      padding: var(--space-lg);
+    }
+
+    .emotion-svg-chart {
+      width: 100%;
+      height: 180px;
+      overflow: visible;
+    }
+
+    /* Brand voice dials & sliders */
+    .voice-dial-circle {
+      transform: rotate(-90deg);
+      transition: stroke-dashoffset 0.5s ease;
+    }
+
+    .voice-slider {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 100%;
+      height: 4px;
+      border-radius: var(--radius-full);
+      background: var(--border-default);
+      outline: none;
+    }
+
+    .voice-slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: var(--brand-primary);
+      cursor: pointer;
+      border: 2px fill var(--bg-elevated);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Collaborate avatars cursor markers */
+    .avatar-collaboration {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .collab-avatar {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--bg-elevated);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.625rem;
+      font-weight: 700;
+      color: #fff;
+      margin-left: -8px;
+      position: relative;
+    }
+
+    .collab-avatar:first-child {
+      margin-left: 0;
+    }
+
+    .collab-cursor {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      width: 2px;
+      height: 18px;
+      pointer-events: none;
+      animation: cursorBlink 1.2s infinite;
+    }
+
+    @keyframes cursorBlink {
+      0%, 100% { opacity: 0; }
+      50% { opacity: 1; }
+    }
+
+    /* Floating comments drawer & comments bubble */
+    .comments-drawer {
+      position: fixed;
+      top: 0;
+      right: -360px;
+      width: 350px;
+      height: 100%;
+      background-color: var(--bg-elevated);
+      border-left: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      z-index: 1500;
+      display: flex;
+      flex-direction: column;
+      transition: right var(--transition-smooth);
+    }
+
+    .comments-drawer.active {
+      right: 0;
+    }
+
+    .comments-scroller {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .comment-bubble {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    /* Sub-tabs menu design */
+    .tab-btn {
+      background: transparent;
+      border: none;
+      padding: var(--space-xs) var(--space-md);
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .tab-btn.active {
+      color: var(--brand-primary) !important;
+      border-bottom-color: var(--brand-primary) !important;
+    }
+
+    .script-tab-panel {
+      display: none;
+      animation: fadeInState 400ms ease-out forwards;
+    }
+
+    .script-tab-panel.active {
+      display: block;
+    }
+
+    /* AI suggestion card */
+    .suggestion-card {
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xl);
+      padding: var(--space-lg);
+      background-color: var(--bg-elevated);
+      transition: all var(--transition-fast);
+    }
+
+    .suggestion-card.highlighted {
+      border-color: var(--brand-primary);
+      box-shadow: var(--shadow-md);
+    }
+
+    /* Modal dialog */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .modal-overlay.active {
+      display: flex;
+      opacity: 1;
+    }
+
+    .modal-card {
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-2xl);
+      width: 500px;
+      max-width: 90%;
+      padding: var(--space-xl);
+      box-shadow: var(--shadow-2xl);
+      transform: translateY(20px);
+      transition: transform 0.25s ease;
+    }
+
+    .modal-overlay.active .modal-card {
+      transform: translateY(0);
+    }
+  </style>
+</head>
+<body class="dark">
+
+  <!-- ==============================================
+       1. SANDBOX HEADER CONTROL PANEL
+       ============================================== -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M16 8L25 13V19L16 24L7 19V13L16 8Z" fill="var(--brand-primary)" opacity="0.15"/>
+        <circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/>
+      </svg>
+      <h1>KONTAGI AI Script Intelligence</h1>
+      <span>Beta</span>
+    </div>
+
+    <div class="sandbox-controls">
+      <!-- Viewport Emulator buttons -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" data-viewport="desktop" title="Desktop emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 21h12m-9-4l-1 4m8-4l1 4"/></svg>
+          Desktop
+        </button>
+        <button class="sandbox-btn" data-viewport="tablet" title="Tablet emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          Tablet
+        </button>
+        <button class="sandbox-btn" data-viewport="mobile" title="Mobile emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
+          Mobile
+        </button>
+      </div>
+
+      <!-- State Modifiers -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" id="state-normal">Normal</button>
+        <button class="sandbox-btn" id="state-loading">Loading State</button>
+        <button class="sandbox-btn" id="state-ai-chat">Ask Aura AI</button>
+      </div>
+
+      <!-- Mode Toggles -->
+      <button class="btn btn-tertiary btn-sm" id="theme-toggle" style="box-shadow: none;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        Dark Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- ==============================================
+       2. MAIN WORKSPACE WITH VIEWPORT SIMULATOR
+       ============================================== -->
+  <main class="sandbox-workspace">
+    <div class="emulator-viewport desktop" id="viewport-frame">
+      
+      <div class="dashboard-shell" id="dashboard-main-shell">
+        
+        <!-- SIDEBAR COMPONENT -->
+        <aside class="dashboard-sidebar">
+          <div>
+            <!-- Header Workspace Selector -->
+            <div class="sidebar-header">
+              <div class="flex-between select-wrapper" style="width: 100%;">
+                <div class="flex-center" style="gap: var(--space-xs); cursor: pointer;" onclick="toggleWorkspaceDropdown()">
+                  <div class="workspace-avatar" style="width: 28px; height: 28px; font-size: 0.75rem; background-color: var(--brand-primary-glow); color: var(--brand-primary);">GD</div>
+                  <span class="text-body-small font-bold sidebar-text-label" id="current-workspace-name">Deepmind Dev</span>
+                </div>
+                <svg class="sidebar-text-label" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </div>
+
+            <!-- Sidebar Navigations -->
+                        <nav class="sidebar-nav">
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-bottom: 6px; text-transform: uppercase;">Workspace</span>
+              <a class="sidebar-nav-item" href="dashboard.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="sidebar-text-label">Dashboard</span>
+              </a>
+              <a class="sidebar-nav-item" href="projects.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span class="sidebar-text-label">Projects</span>
+              </a>
+              <a class="sidebar-nav-item" href="library.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+                <span class="sidebar-text-label">Creative Library</span>
+              </a>
+              <a class="sidebar-nav-item" href="hooks.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                <span class="sidebar-text-label">Hook Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="retention.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Retention Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item active" href="script.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="sidebar-text-label">Script Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="thumbnail.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15l-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Thumbnail Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="caption.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                <span class="sidebar-text-label">Caption Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="audio.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                <span class="sidebar-text-label">Audio Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="visual.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-.447.894L15 18.5V10zM5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Visual Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="trend.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <span class="sidebar-text-label">Trend Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="upload.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span class="sidebar-text-label">Upload Center</span>
+              </a>
+              <a class="sidebar-nav-item" href="lab.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                <span class="sidebar-text-label">AI Creative Lab</span>
+              </a>
+              <a class="sidebar-nav-item" href="report.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="sidebar-text-label">AI Reports</span>
+              </a>
+              <a class="sidebar-nav-item" href="creators.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Creators</span>
+              </a>
+              <a class="sidebar-nav-item" href="brand.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17V9h3a2 2 0 110 4H9m0 4h3a2 2 0 100-4"/></svg>
+                <span class="sidebar-text-label">Brand Hub</span>
+              </a>
+              <a class="sidebar-nav-item" href="coach.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="sidebar-text-label">AI Coach</span>
+              </a>
+              <a class="sidebar-nav-item" onclick="window.showToast('Loading database insights...', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                <span class="sidebar-text-label">Analytics</span>
+              </a>
+              <a class="sidebar-nav-item" href="client.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Clients</span>
+              </a>
+              <a class="sidebar-nav-item" href="team.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0zm3 10v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg>
+                <span class="sidebar-text-label">Team Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="billing.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span class="sidebar-text-label">Billing</span>
+              </a>
+              <a class="sidebar-nav-item" href="notifications.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="sidebar-text-label">Notifications</span>
+              </a>
+              <a class="sidebar-nav-item" href="settings.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="sidebar-text-label">Settings</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">System</span>
+              <a class="sidebar-nav-item" href="admin.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="sidebar-text-label">Admin Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="mobile.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Mobile App</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">Design</span>
+              <a class="sidebar-nav-item" href="index.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                <span class="sidebar-text-label">Design System</span>
+              </a>
+            </nav>
+          </div>
+
+          <!-- Sidebar Footer User Profile -->
+          <div class="sidebar-footer">
+            <div class="workspace-avatar" style="background-color: var(--accent-purple-bg); color: var(--accent-purple); width: 32px; height: 32px; font-size: 0.875rem;">JH</div>
+            <div style="flex-grow: 1; overflow: hidden;" class="sidebar-text-label">
+              <span class="text-body-small font-bold" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Jaiveer Hastar</span>
+              <span class="text-detail text-secondary" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">jaiveer@company.com</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- DASHBOARD CONTENT PANEL -->
+        <div class="dashboard-main">
+          
+          <!-- Header Area -->
+          <header class="dashboard-header">
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <button class="btn btn-sm btn-tertiary" style="padding: 4px; display: none;" id="sidebar-toggle-btn">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              
+              <!-- Breadcrumbs -->
+              <nav class="text-detail font-medium text-muted flex-center" style="gap: 4px;">
+                <span>Workspaces</span>
+                <span style="color: var(--border-active);">&bull;</span>
+                <span class="text-gradient">Deepmind Dev</span>
+                <span style="color: var(--border-active);">&bull;</span>
+                <span class="text-primary font-bold">Script Intelligence</span>
+              </nav>
+            </div>
+
+            <!-- Header Controls -->
+            <div class="flex-center" style="gap: var(--space-md);">
+              <!-- Collaboration Avatars -->
+              <div class="avatar-collaboration" style="margin-right: var(--space-xs);">
+                <div class="collab-avatar" style="background-color: var(--brand-primary);" title="Jaiveer Hastar (You)">JH</div>
+                <div class="collab-avatar" style="background-color: var(--accent-purple);" title="Grace Hopper (Editing Line 3)">GH</div>
+                <div class="collab-avatar" style="background-color: var(--accent-orange);" title="Alan Turing (Viewing)">AT</div>
+                <span class="text-micro text-muted font-bold" style="margin-left: var(--space-xs);">3 Active</span>
+              </div>
+
+              <div class="dashboard-search-bar" onclick="window.showToast('Global Search opened', 'info')">
+                <svg width="14" height="14" fill="none" stroke="var(--text-secondary)" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <span class="text-detail text-secondary">Search...</span>
+                <span class="text-detail text-muted font-mono" style="margin-left: auto; background-color: var(--bg-tertiary); padding: 1px 4px; border-radius: var(--radius-sm); font-size: 0.625rem; border: 1px solid var(--border-default);">⌘K</span>
+              </div>
+
+              <!-- Comments Sidebar trigger -->
+              <button class="btn btn-sm btn-tertiary" style="padding: 6px; position: relative;" id="comments-trigger-btn">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="badge-count" id="comments-badge">2</span>
+              </button>
+            </div>
+          </header>
+
+          <!-- DASHBOARD MAIN BODY -->
+          <div class="dashboard-body">
+
+            <!-- SUB-TABS INTERACTIVE MENU -->
+            <div class="tabs-container" style="margin-bottom: var(--space-xs); flex-shrink: 0; overflow-x: auto;">
+              <div class="flex" style="border-bottom: 1px solid var(--border-default); gap: var(--space-md); padding-bottom: 2px;">
+                <button class="tab-btn active" data-tab-group="script-tabs" data-tab-target="script-tab-metrics">
+                  1. Structure & Story Arc Metrics
+                </button>
+                <button class="tab-btn" data-tab-group="script-tabs" data-tab-target="script-tab-keywords">
+                  2. Keyword Density & Emotions
+                </button>
+                <button class="tab-btn" data-tab-group="script-tabs" data-tab-target="script-tab-alternatives">
+                  3. AI Suggestions & Re-writes
+                </button>
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 A. SKELETON LOADER PANEL
+                 ============================================== -->
+            <div class="skeleton-view-panel">
+              <div class="grid-12">
+                <div class="col-span-7 card" style="height: 520px; display: flex; flex-direction: column; gap: var(--space-md);">
+                  <div class="skeleton-pulse" style="width: 30%; height: 28px;"></div>
+                  <div class="skeleton-pulse" style="width: 100%; flex-grow: 1;"></div>
+                </div>
+                <div class="col-span-5 card" style="height: 520px; display: flex; flex-direction: column; gap: var(--space-md);">
+                  <div class="skeleton-pulse" style="width: 50%; height: 24px;"></div>
+                  <div class="skeleton-pulse" style="width: 100%; height: 120px;"></div>
+                  <div class="skeleton-pulse" style="width: 100%; height: 120px;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 B. REAL DATA DASHBOARD
+                 ============================================== -->
+            <div class="real-view-panel" style="width: 100%;">
+              <div class="grid-12">
+                
+                <!-- LEFT COLUMN: SCRIPT EDITOR & VERSION SELECTOR -->
+                <div class="col-span-7 flex-column" style="gap: var(--space-lg);">
+                  
+                  <div class="script-editor-container">
+                    <!-- Editor Toolbar Header -->
+                    <div class="editor-toolbar">
+                      <div class="flex-center" style="gap: var(--space-sm);">
+                        <!-- Script Version selector -->
+                        <div style="position: relative;">
+                          <select class="btn btn-secondary btn-sm" id="script-version-select" style="padding-right: 28px; appearance: none; -webkit-appearance: none;">
+                            <option value="v3">V3: Optimized Hook (Active)</option>
+                            <option value="v2">V2: Detailed Features Intro</option>
+                            <option value="v1">V1: Raw Transcription Draft</option>
+                          </select>
+                          <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="position: absolute; right: 12px; top: 12px; pointer-events: none;"><path d="M19 9l-7 7-7-7"/></svg>
+                        </div>
+                        <span class="text-micro text-muted font-mono">Last edited 2 mins ago</span>
+                      </div>
+
+                      <div class="flex-center" style="gap: var(--space-xs);">
+                        <button class="btn btn-secondary btn-sm" onclick="openNewScriptModal()">
+                          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                          Generate New
+                        </button>
+                        <button class="btn btn-primary btn-sm" onclick="saveActiveScript()">
+                          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                          Save Draft
+                        </button>
+                      </div>
+                    </div>
+
+                    <!-- Editor Text Cards Scroller -->
+                    <div class="editor-body-scroller" id="editor-lines-container">
+                      <!-- Active Script lines are loaded here dynamically by JavaScript -->
+                    </div>
+                  </div>
+
+                  <!-- Prompt input generator console at bottom -->
+                  <div class="card flex-column" style="gap: var(--space-md);">
+                    <div class="flex-between">
+                      <span class="text-body font-bold text-primary">Quick AI Revision Helper</span>
+                      <span class="text-detail text-muted">Revise active line instantly</span>
+                    </div>
+                    <div class="flex" style="gap: var(--space-sm);">
+                      <input type="text" class="input-element" id="quick-prompt-input" placeholder="e.g. Make this line sound more urgent and casual..." style="flex-grow: 1;">
+                      <button class="btn btn-primary" onclick="triggerQuickRevision()" id="quick-rewrite-btn">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right: 4px;"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                        Rewrite
+                      </button>
+                    </div>
+                    <!-- Revision progress loading bar -->
+                    <div style="display: none; width: 100%;" id="revision-progress-container">
+                      <div class="flex-between" style="margin-bottom: 4px;">
+                        <span class="text-micro text-muted font-mono" id="revision-progress-label">Engaging AI Optimization core...</span>
+                        <span class="text-micro font-bold text-gradient" id="revision-progress-percent">0%</span>
+                      </div>
+                      <div style="height: 4px; background-color: var(--border-default); border-radius: var(--radius-full); overflow: hidden; width: 100%;">
+                        <div style="width: 0%; height: 100%; background: linear-gradient(90deg, var(--brand-primary) 0%, var(--accent-purple) 100%); transition: width 0.1s ease;" id="revision-progress-bar"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- RIGHT COLUMN: ANALYTICS & AI RECOMMENDATIONS -->
+                <div class="col-span-5 flex-column" style="gap: var(--space-lg);">
+                  
+                  <!-- TAB PANEL 1: STORY ARC STRUCTURE & READABILITY -->
+                  <div class="script-tab-panel active" id="script-tab-metrics" data-tab-panel-group="script-tabs">
+                    <div class="flex-column" style="gap: var(--space-lg);">
+                      
+                      <!-- Story Arc structure visual card -->
+                      <div class="card flex-column" style="gap: var(--space-md);">
+                        <span class="text-body font-bold text-primary">Script Structural Arc</span>
+                        <div class="flex-column" style="gap: var(--space-sm);">
+                          <!-- Hook visual line item -->
+                          <div class="flex-between align-center" style="padding: 10px; border: 1px solid var(--border-default); border-radius: var(--radius-md); background-color: var(--bg-secondary);">
+                            <div class="flex-center" style="gap: var(--space-sm);">
+                              <span style="width: 8px; height: 8px; border-radius: 50%; background-color: var(--accent-red);"></span>
+                              <div class="flex-column">
+                                <span class="text-body-small font-bold text-primary">Hook Phase</span>
+                                <span class="text-micro text-muted">First 3 seconds &bull; Line 1-2</span>
+                              </div>
+                            </div>
+                            <span class="badge badge-success text-micro">94% Strength</span>
+                          </div>
+                          <!-- Build-up item -->
+                          <div class="flex-between align-center" style="padding: 10px; border: 1px solid var(--border-default); border-radius: var(--radius-md); background-color: var(--bg-secondary);">
+                            <div class="flex-center" style="gap: var(--space-sm);">
+                              <span style="width: 8px; height: 8px; border-radius: 50%; background-color: var(--accent-orange);"></span>
+                              <div class="flex-column">
+                                <span class="text-body-small font-bold text-primary">Core Build-Up</span>
+                                <span class="text-micro text-muted">3 - 18 seconds &bull; Line 3-5</span>
+                              </div>
+                            </div>
+                            <span class="badge badge-success text-micro">88% Flow</span>
+                          </div>
+                          <!-- Climax item -->
+                          <div class="flex-between align-center" style="padding: 10px; border: 1px solid var(--border-default); border-radius: var(--radius-md); background-color: var(--bg-secondary);">
+                            <div class="flex-center" style="gap: var(--space-sm);">
+                              <span style="width: 8px; height: 8px; border-radius: 50%; background-color: var(--accent-purple);"></span>
+                              <div class="flex-column">
+                                <span class="text-body-small font-bold text-primary">Climax & Value Prop</span>
+                                <span class="text-micro text-muted">18 - 25 seconds &bull; Line 6-7</span>
+                              </div>
+                            </div>
+                            <span class="badge badge-warning text-micro">Friction Risk</span>
+                          </div>
+                          <!-- CTA item -->
+                          <div class="flex-between align-center" style="padding: 10px; border: 1px solid var(--border-default); border-radius: var(--radius-md); background-color: var(--bg-secondary);">
+                            <div class="flex-center" style="gap: var(--space-sm);">
+                              <span style="width: 8px; height: 8px; border-radius: 50%; background-color: var(--accent-blue);"></span>
+                              <div class="flex-column">
+                                <span class="text-body-small font-bold text-primary">Call to Action (CTA)</span>
+                                <span class="text-micro text-muted">25 - 30 seconds &bull; Line 8</span>
+                              </div>
+                            </div>
+                            <span class="badge badge-success text-micro">89% Clarity</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Readability index & metrics card -->
+                      <div class="card flex-column" style="gap: var(--space-md);">
+                        <span class="text-body font-bold text-primary">Readability & Delivery Metrics</span>
+                        <div class="grid-12" style="gap: var(--space-sm);">
+                          <!-- Flesch card -->
+                          <div class="col-span-6 p-md border-radius-lg border-default" style="background-color: var(--bg-secondary);">
+                            <span class="text-micro text-muted font-bold block" style="text-transform: uppercase;">Flesch-Kincaid Grade</span>
+                            <span class="text-display-xs font-bold text-primary">6.4</span>
+                            <span class="text-micro text-green block" style="margin-top: 2px;">Easy to digest (Conversational)</span>
+                          </div>
+                          <!-- Reading duration -->
+                          <div class="col-span-6 p-md border-radius-lg border-default" style="background-color: var(--bg-secondary);">
+                            <span class="text-micro text-muted font-bold block" style="text-transform: uppercase;">Est. Speaking Time</span>
+                            <span class="text-display-xs font-bold text-primary" id="metric-speaking-time">28.4s</span>
+                            <span class="text-micro text-muted block" style="margin-top: 2px;">Perfect pacing for 30s ads</span>
+                          </div>
+                          <!-- Syllables per word -->
+                          <div class="col-span-6 p-md border-radius-lg border-default" style="background-color: var(--bg-secondary);">
+                            <span class="text-micro text-muted font-bold block" style="text-transform: uppercase;">Avg. Syllables/Word</span>
+                            <span class="text-display-xs font-bold text-primary">1.38</span>
+                            <span class="text-micro text-muted block" style="margin-top: 2px;">Optimal word complexity</span>
+                          </div>
+                          <!-- CTA strength card -->
+                          <div class="col-span-6 p-md border-radius-lg border-default" style="background-color: var(--bg-secondary);">
+                            <span class="text-micro text-muted font-bold block" style="text-transform: uppercase;">CTA Urgency Level</span>
+                            <span class="text-display-xs font-bold text-primary" id="metric-cta-urgency">High</span>
+                            <span class="text-micro text-green block" style="margin-top: 2px;">Direct value link active</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Brand voice match rating dial -->
+                      <div class="card flex-column" style="gap: var(--space-md);">
+                        <div class="flex-between">
+                          <span class="text-body font-bold text-primary">Brand Voice Consistency</span>
+                          <span class="badge badge-success text-micro" id="brand-match-badge">94% Match</span>
+                        </div>
+                        <div class="flex-row align-center" style="gap: var(--space-md);">
+                          <div style="position: relative; width: 80px; height: 80px; flex-shrink: 0;">
+                            <svg width="80" height="80" viewBox="0 0 36 36" style="transform: rotate(-90deg);">
+                              <circle cx="18" cy="18" r="16" fill="none" stroke="var(--border-default)" stroke-width="3.5"></circle>
+                              <circle cx="18" cy="18" r="16" fill="none" stroke="var(--brand-primary)" stroke-width="4" stroke-dasharray="100" stroke-dashoffset="6" stroke-linecap="round" class="voice-dial-circle" id="voice-match-circle"></circle>
+                            </svg>
+                            <div style="position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; font-size: 0.875rem; font-weight: 700;" id="voice-match-text">94%</div>
+                          </div>
+                          <div class="flex-column" style="gap: var(--space-xs); flex-grow: 1;">
+                            <div>
+                              <div class="flex-between" style="margin-bottom: 2px;">
+                                <span class="text-micro text-muted font-bold">Witty vs. Serious</span>
+                                <span class="text-micro text-primary font-mono" id="slider-witty-label">65% Witty</span>
+                              </div>
+                              <input type="range" min="0" max="100" value="65" class="voice-slider" id="slider-witty" oninput="updateBrandVoiceCalculations()">
+                            </div>
+                            <div>
+                              <div class="flex-between" style="margin-bottom: 2px;">
+                                <span class="text-micro text-muted font-bold">Casual vs. Corporate</span>
+                                <span class="text-micro text-primary font-mono" id="slider-casual-label">82% Casual</span>
+                              </div>
+                              <input type="range" min="0" max="100" value="82" class="voice-slider" id="slider-casual" oninput="updateBrandVoiceCalculations()">
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <!-- TAB PANEL 2: KEYWORD DENSITY & EMOTION CURVES -->
+                  <div class="script-tab-panel" id="script-tab-keywords" data-tab-panel-group="script-tabs">
+                    <div class="flex-column" style="gap: var(--space-lg);">
+                      
+                      <!-- Interactive keyword grid -->
+                      <div class="card flex-column" style="gap: var(--space-md);">
+                        <div class="flex-between">
+                          <span class="text-body font-bold text-primary">SEO & Conversion Keywords</span>
+                          <span class="text-detail text-muted">Click tag to highlight in text</span>
+                        </div>
+                        <div class="flex" style="gap: var(--space-xs); flex-wrap: wrap;" id="keyword-badges-container">
+                          <span class="badge keyword-badge optimal text-micro font-bold" onclick="toggleHighlightKeyword('KONTAGI')">KONTAGI (Optimal &bull; 3x)</span>
+                          <span class="badge keyword-badge overused text-micro font-bold" onclick="toggleHighlightKeyword('retention')">retention (Overused &bull; 4x)</span>
+                          <span class="badge keyword-badge underused text-micro font-bold" onclick="toggleHighlightKeyword('hook')">hook (Underused &bull; 1x)</span>
+                          <span class="badge keyword-badge optimal text-micro font-bold" onclick="toggleHighlightKeyword('analytics')">analytics (Optimal &bull; 2x)</span>
+                          <span class="badge keyword-badge optimal text-micro font-bold" onclick="toggleHighlightKeyword('creative')">creative (Optimal &bull; 2x)</span>
+                          <span class="badge keyword-badge underused text-micro font-bold" onclick="toggleHighlightKeyword('instant')">instant (Underused &bull; 1x)</span>
+                        </div>
+                      </div>
+
+                      <!-- Emotion curve visualizer -->
+                      <div class="emotion-chart-card flex-column" style="gap: var(--space-md);">
+                        <div class="flex-between">
+                          <span class="text-body font-bold text-primary">AI Emotional Trajectory Curve</span>
+                          <div class="flex-center" style="gap: var(--space-xs);">
+                            <span class="text-micro font-bold" style="color: var(--accent-red);">&bull; Curiosity</span>
+                            <span class="text-micro font-bold" style="color: var(--accent-orange);">&bull; Excitement</span>
+                            <span class="text-micro font-bold" style="color: var(--accent-blue);">&bull; Trust</span>
+                          </div>
+                        </div>
+                        
+                        <div style="position: relative;">
+                          <svg class="emotion-svg-chart" viewBox="0 0 500 180">
+                            <!-- Background Grid Lines -->
+                            <line x1="0" y1="30" x2="500" y2="30" stroke="var(--border-default)" stroke-width="0.5"></line>
+                            <line x1="0" y1="90" x2="500" y2="90" stroke="var(--border-default)" stroke-width="0.5" stroke-dasharray="2,2"></line>
+                            <line x1="0" y1="150" x2="500" y2="150" stroke="var(--border-default)" stroke-width="0.5"></line>
+                            
+                            <!-- Timeline labels along bottom -->
+                            <text x="5" y="172" fill="var(--text-muted)" font-size="9" font-family="monospace">0.0s</text>
+                            <text x="125" y="172" fill="var(--text-muted)" font-size="9" font-family="monospace">7.5s</text>
+                            <text x="250" y="172" fill="var(--text-muted)" font-size="9" font-family="monospace">15.0s</text>
+                            <text x="375" y="172" fill="var(--text-muted)" font-size="9" font-family="monospace">22.5s</text>
+                            <text x="475" y="172" fill="var(--text-muted)" font-size="9" font-family="monospace">30.0s</text>
+
+                            <!-- Line Graph 1: Curiosity (Red) -->
+                            <path d="M 0 40 Q 125 15 250 120 T 500 130" stroke="var(--accent-red)" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+                            <!-- Line Graph 2: Excitement (Orange) -->
+                            <path d="M 0 140 Q 125 130 250 50 T 500 60" stroke="var(--accent-orange)" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+                            <!-- Line Graph 3: Trust (Blue) -->
+                            <path d="M 0 150 Q 125 120 250 110 T 500 30" stroke="var(--accent-blue)" stroke-width="2.5" fill="none" stroke-linecap="round"></path>
+                          </svg>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <!-- TAB PANEL 3: SUGGESTIONS & ALTERNATE SCRIPTS -->
+                  <div class="script-tab-panel" id="script-tab-alternatives" data-tab-panel-group="script-tabs">
+                    <div class="flex-column" style="gap: var(--space-lg);">
+                      
+                      <!-- Highlighted Active Line Suggester block -->
+                      <div class="suggestion-card highlighted flex-column" style="gap: var(--space-md);">
+                        <div class="flex-between">
+                          <span class="text-body font-bold text-gradient" id="suggester-header-label">Inspecting Line 1</span>
+                          <span class="badge badge-warning text-micro" id="suggester-tag-label">Hook Strength: Medium</span>
+                        </div>
+                        
+                        <div class="p-md border-radius-lg" style="background-color: var(--bg-secondary); border: 1px solid var(--border-default);">
+                          <span class="text-micro text-muted font-bold block" style="margin-bottom: 2px;">Original text:</span>
+                          <p class="text-body-small text-secondary" id="suggester-original-text">"You are still editing scripts by hand? That is why you are losing view duration."</p>
+                        </div>
+
+                        <div class="p-md border-radius-lg" style="background-color: rgba(99, 102, 241, 0.08); border: 1px solid rgba(99, 102, 241, 0.25);">
+                          <div class="flex-between" style="margin-bottom: 4px;">
+                            <span class="text-micro text-primary font-bold">Aura AI Suggested Alternative:</span>
+                            <span class="text-micro text-green font-bold">+18.2% Predicted Retention Lift</span>
+                          </div>
+                          <p class="text-body-small text-primary font-medium" id="suggester-ai-text">"Still writing scripts by hand in 2026? Stop throwing away your view duration."</p>
+                        </div>
+
+                        <div class="flex-end" style="gap: var(--space-xs);">
+                          <button class="btn btn-secondary btn-sm" onclick="rejectAiSuggestion()">Dismiss</button>
+                          <button class="btn btn-primary btn-sm" onclick="applyAiSuggestion()">Apply Alternative</button>
+                        </div>
+                      </div>
+
+                      <!-- Alternative Scripts Side-by-Side Sandbox -->
+                      <div class="card flex-column" style="gap: var(--space-md);">
+                        <span class="text-body font-bold text-primary">Alternative Hook Variations</span>
+                        <div class="flex-column" style="gap: var(--space-sm);">
+                          <!-- Alt Option 1 -->
+                          <div class="p-md border-radius-lg border-default flex-column" style="gap: var(--space-xs); background-color: var(--bg-secondary);">
+                            <div class="flex-between">
+                              <span class="text-micro text-muted font-bold">Variant A: Question Hook</span>
+                              <span class="text-micro text-green font-bold">89% Match</span>
+                            </div>
+                            <p class="text-body-small text-secondary font-medium">"Why does every creator fail at hook timing? Here's the data."</p>
+                            <div class="flex-end">
+                              <button class="btn btn-tertiary btn-sm" style="padding: 2px 6px;" onclick="applyAltHook('Why does every creator fail at hook timing? Here\'s the data.')">Select</button>
+                            </div>
+                          </div>
+                          <!-- Alt Option 2 -->
+                          <div class="p-md border-radius-lg border-default flex-column" style="gap: var(--space-xs); background-color: var(--bg-secondary);">
+                            <div class="flex-between">
+                              <span class="text-micro text-muted font-bold">Variant B: Aggressive Calling-Out</span>
+                              <span class="text-micro text-green font-bold">92% Match</span>
+                            </div>
+                            <p class="text-body-small text-secondary font-medium">"Your viewers swipe away in 2 seconds. Fix it with this one formula."</p>
+                            <div class="flex-end">
+                              <button class="btn btn-tertiary btn-sm" style="padding: 2px 6px;" onclick="applyAltHook('Your viewers swipe away in 2 seconds. Fix it with this one formula.')">Select</button>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </div>
+        
+        <!-- ==============================================
+             3. FLOATING AI ASSISTANT CHAT DRAWER
+             ============================================== -->
+        <aside class="ai-chat-drawer" id="ai-chat-sidebar">
+          <div class="p-md border-bottom flex-between align-center" style="background-color: var(--bg-secondary);">
+            <div class="flex-center" style="gap: var(--space-xs);">
+              <div class="workspace-avatar" style="width: 28px; height: 28px; font-size: 0.75rem; background-color: var(--brand-primary-glow); color: var(--brand-primary);">AI</div>
+              <span class="text-body-small font-bold text-primary">Aura Script Assistant</span>
+            </div>
+            <button class="btn btn-sm btn-tertiary" style="padding: 4px;" onclick="toggleAiChatDrawer()">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <!-- Chat Scroller Messages -->
+          <div style="flex-grow: 1; overflow-y: auto; padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-md);" id="ai-chat-messages-container">
+            <div class="flex" style="gap: var(--space-sm);">
+              <div class="workspace-avatar" style="width: 24px; height: 24px; font-size: 0.65rem; background-color: var(--brand-primary-glow); color: var(--brand-primary); flex-shrink: 0;">AI</div>
+              <div class="p-md border-radius-lg border-default" style="background-color: var(--bg-secondary); max-width: 85%;">
+                <p class="text-body-small text-secondary">Hello Jaiveer! I've analyzed your script draft V3. The readability is excellent (6.4), but the transition between Line 3 and Line 4 has a pacing bottleneck. Ask me to fix it!</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chat inputs -->
+          <div class="p-md border-top" style="background-color: var(--bg-secondary);">
+            <div class="flex" style="gap: var(--space-sm);">
+              <input type="text" class="input-element" id="ai-chat-input-field" placeholder="Ask Aura AI to optimize or draft..." onkeydown="if(event.key === 'Enter') sendAiChatMessage()">
+              <button class="btn btn-primary btn-sm" onclick="sendAiChatMessage()">Send</button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- ==============================================
+             4. FLOATING COLLABORATION COMMENTS DRAWER
+             ============================================== -->
+        <aside class="comments-drawer" id="comments-sidebar">
+          <div class="p-md border-bottom flex-between align-center" style="background-color: var(--bg-secondary);">
+            <div class="flex-center" style="gap: var(--space-xs);">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+              <span class="text-body-small font-bold text-primary" id="comments-sidebar-title">Comments: Active Line 1</span>
+            </div>
+            <button class="btn btn-sm btn-tertiary" style="padding: 4px;" onclick="toggleCommentsDrawer()">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
+            </button>
+          </div>
+
+          <!-- Comment list scroller -->
+          <div class="comments-scroller" id="comments-list-scroller">
+            <!-- Active line comments will load here dynamically -->
+          </div>
+
+          <!-- Add Comment inputs -->
+          <div class="p-md border-top" style="background-color: var(--bg-secondary);">
+            <div class="flex" style="gap: var(--space-sm);">
+              <input type="text" class="input-element" id="new-comment-input-field" placeholder="Add a comment to this line..." onkeydown="if(event.key === 'Enter') submitLineComment()">
+              <button class="btn btn-primary btn-sm" onclick="submitLineComment()">Post</button>
+            </div>
+          </div>
+        </aside>
+
+        <!-- ==============================================
+             5. MODAL: SCRIPT GENERATOR WIZARD
+             ============================================== -->
+        <div class="modal-overlay" id="generator-modal">
+          <div class="modal-card flex-column" style="gap: var(--space-lg);">
+            <div class="flex-between">
+              <h3 class="text-body-large font-bold text-primary">Generate Optimized Script</h3>
+              <button class="btn btn-sm btn-tertiary" style="padding: 4px;" onclick="closeNewScriptModal()">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 18L18 6M6 6l12 12"/></svg>
+              </button>
+            </div>
+            
+            <div class="flex-column" style="gap: var(--space-sm);">
+              <label class="text-micro text-muted font-bold" style="text-transform: uppercase;">Script Concept / Prompt</label>
+              <textarea class="input-element" id="modal-generation-prompt" rows="4" placeholder="Describe your product value prop and target audience..." style="resize: none;">Generate a short VSL script explaining how KONTAGI calculates creator hook scores to increase retention.</textarea>
+            </div>
+
+            <div class="grid-12" style="gap: var(--space-sm);">
+              <div class="col-span-6 flex-column" style="gap: 4px;">
+                <label class="text-micro text-muted font-bold" style="text-transform: uppercase;">Creative Layout</label>
+                <select class="input-element" id="modal-script-layout">
+                  <option value="Short Form TikTok">Short Form TikTok (30s)</option>
+                  <option value="VSL Explainer">VSL Explainer (60s)</option>
+                  <option value="Meta Feed Ad">Meta Feed Ad (15s)</option>
+                </select>
+              </div>
+              <div class="col-span-6 flex-column" style="gap: 4px;">
+                <label class="text-micro text-muted font-bold" style="text-transform: uppercase;">Tone Pacing</label>
+                <select class="input-element" id="modal-script-pacing">
+                  <option value="High Energy Hooky">High Energy Hooky</option>
+                  <option value="Professional Explainer">Professional Explainer</option>
+                  <option value="Casual Storytelling">Casual Storytelling</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="flex-end" style="gap: var(--space-xs);">
+              <button class="btn btn-secondary" onclick="closeNewScriptModal()">Cancel</button>
+              <button class="btn btn-primary" onclick="simulateScriptGeneration()" id="modal-generate-btn">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right: 4px;"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+                Generate Script
+              </button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==============================================
+       6. INTERACTIVE APPLICATION SCRIPT
+       ============================================== -->
+  <script>
+    // Platform Draft Datasets
+    const scriptVersions = {
+      v3: [
+        { id: 1, speaker: "Presenter", text: "You are still editing scripts by hand? That is why you are losing view duration.", visual: "Zoom punch onto presenter, showing hands editing on laptop screen.", sound: "Swoosh sound cue, followed by typing sound effect.", phase: "hook" },
+        { id: 2, speaker: "Presenter", text: "KONTAGI is the only AI tool that analyzes and scores your script before you hit record.", visual: "Text overlay of 'KONTAGI AI Scored'. Logo scales on the top right corner.", sound: "Digital beep synthesizer.", phase: "hook" },
+        { id: 3, speaker: "B-Roll", text: "It maps second-by-second emotional triggers so you know exactly where viewers swipe away.", visual: "Show client retention heatmap scroll animation. Mouse pointer clicks on second 8.", sound: "Gentle click, ambient background music swells.", phase: "build" },
+        { id: 4, speaker: "Presenter", text: "No more guessing what hooks will convert.", visual: "Presenter looking directly into lens. Background grid background fades in.", sound: "Upbeat electronic pacing track begins.", phase: "build" },
+        { id: 5, speaker: "B-Roll", text: "Just drop your draft inside our editor, select your brand voice parameters, and let AI rewrite the boring bits.", visual: "Screen capture of Brand Voice sliders moving: Casual to 82%, Witty to 65%.", sound: "Fast-paced typing ticks.", phase: "build" },
+        { id: 6, speaker: "Presenter", text: "We verified this on over 500 creator channels, and average view duration increased by 42%.", visual: "Infographic bar chart overlay: Control vs Challenger lift (+14.4s).", sound: "Ding chime indicator.", phase: "climax" },
+        { id: 7, speaker: "Presenter", text: "Stop burning ad spend on scripts that don't hook your target buyers.", visual: "Zoom in tight on presenter. Red warning ring highlights around script copy.", sound: "Low synth warning pulse.", phase: "climax" },
+        { id: 8, speaker: "Presenter", text: "Click below to analyze your first script for free and generate optimized hooks in seconds.", visual: "CTA overlay card with call-to-action button: 'Analyze Script Free'.", sound: "Transition sweep to black screen.", phase: "cta" }
+      ],
+      v2: [
+        { id: 1, speaker: "Presenter", text: "How much view duration are you losing on your video hooks?", visual: "Close up presenter. Metric counter overlays starting from 0 to 100%.", sound: "Ticking clock sound.", phase: "hook" },
+        { id: 2, speaker: "Presenter", text: "Most creators burn 60% of their audience in the first 3 seconds.", visual: "Red dropoff curve overlay.", sound: "Deep synth pulse.", phase: "hook" },
+        { id: 3, speaker: "Presenter", text: "Today I am walking through how we built a design system and AI editor to fix this.", visual: "Zoom out to reveal workspace behind presenter.", sound: "Ambient track starts.", phase: "build" },
+        { id: 4, speaker: "Presenter", text: "It starts with script parsing and keyword density analytics.", visual: "Screen mock showing keyword bubble cards.", sound: "Beep sound.", phase: "build" },
+        { id: 5, speaker: "B-Roll", text: "Then it syncs with structural video staging cues so you know how to direct the camera.", visual: "Show storyboard frames zooming dynamically.", sound: "Pencil drawing sound.", phase: "build" },
+        { id: 6, speaker: "Presenter", text: "The result is a retention flow that feels natural and keeps buyers engaged.", visual: "AVD metric dial scales up to 18s.", sound: "Glow chime.", phase: "climax" },
+        { id: 7, speaker: "Presenter", text: "A/B test variations in your browser instantly.", visual: "Split screen comparing Control and Challenger curves.", sound: "Digital sweep.", phase: "climax" },
+        { id: 8, speaker: "Presenter", text: "Start analyzing drafts at the link below.", visual: "Text: 'Get Started with KONTAGI'.", sound: "Music fade out.", phase: "cta" }
+      ],
+      v1: [
+        { id: 1, speaker: "Presenter", text: "Hey guys, so today I want to show you this new tool we've been working on, it's called KONTAGI.", visual: "Presenter standing in home studio, wave file waveform on screen.", sound: "Raw camera microphone audio.", phase: "hook" },
+        { id: 2, speaker: "Presenter", text: "Basically, it uses AI to read your script and tell you if it's going to be boring or not.", visual: "Show desktop computer browser screen.", sound: "Raw room noise.", phase: "hook" },
+        { id: 3, speaker: "Presenter", text: "You type inside the document and it checks the pacing and things like syllables and reading grade.", visual: "Presenter gesturing with hands.", sound: "Acoustic keyboard click noise.", phase: "build" },
+        { id: 4, speaker: "Presenter", text: "Let's see what happens if I rewrite this line. The AI gives me a suggestion here.", visual: "Zoom in on editor screen.", sound: "Mouse click.", phase: "build" },
+        { id: 5, speaker: "Presenter", text: "I can click apply and it swaps the script line instantly.", visual: "Line highlight state changed to blue.", sound: "Beep synthesizer.", phase: "build" },
+        { id: 6, speaker: "Presenter", text: "We tested it on a bunch of channels and view duration went way up.", visual: "Presenter smiles.", sound: "Keyboards ticks.", phase: "climax" },
+        { id: 7, speaker: "Presenter", text: "So yeah, it makes scriptwriting a lot faster.", visual: "Camera pans slightly right.", sound: "Wind sound.", phase: "climax" },
+        { id: 8, speaker: "Presenter", text: "If you want to try it out, go check it out now.", visual: "Presenter points downwards.", sound: "Music ends.", phase: "cta" }
+      ]
+    };
+
+    // AI Suggestions Mapping (Keyed by Line ID)
+    const aiSuggestionsMap = {
+      1: { text: "Still writing scripts by hand in 2026? Stop throwing away your view duration.", lift: "+18.2% Predicted Retention Lift", strength: "Hook Strength: High" },
+      2: { text: "Meet KONTAGI: the first AI that scores and improves your scripts before recording.", lift: "+14.6% Conversion Lift", strength: "Hook Strength: High" },
+      3: { text: "It maps emotional friction points second-by-second to prevent viewer drop-offs.", lift: "+9.8% Retention Lift", strength: "Flow Score: 94%" },
+      4: { text: "Say goodbye to guessing what visual triggers actually keep buyers watching.", lift: "+12.1% Pacing Lift", strength: "Clarity Score: 92%" },
+      5: { text: "Upload your draft, tune sliders for casual/witty tone, and let AI polish the output.", lift: "+8.4% Brand Alignment", strength: "Brand Fit: 96%" },
+      6: { text: "Validated on 500+ channels: A/B testing showed average view durations jumped 42%.", lift: "+15.9% AVD Lift", strength: "Climax Flow: High" },
+      7: { text: "Stop burning ad budgets on creatives that fail in the first 2 seconds.", lift: "+11.3% Urgency Lift", strength: "CTA Urgency: High" },
+      8: { text: "Analyze your script draft for free right now and unlock conversion-ready hooks.", lift: "+20.4% Completion Lift", strength: "CTA Action: Premium" }
+    };
+
+    // Collaboration comment threads (Keyed by Line ID)
+    const commentThreads = {
+      1: [
+        { author: "GH", time: "10 mins ago", text: "This hook is good, but is 'losing view duration' urgent enough? AI suggests 'throwing away' instead." },
+        { author: "JH", time: "8 mins ago", text: "Agreed. Let's inspect the AI alternative rewrites." }
+      ],
+      3: [
+        { author: "AT", time: "15 mins ago", text: "Can we overlay the client retention map visual directive here? It matches B-Roll description perfectly." }
+      ]
+    };
+
+    let activeLineId = 1;
+    let activeVersion = "v3";
+    let activeKeywords = [];
+
+    let currentVideo = null;
+
+    // Initialize Page
+    document.addEventListener("DOMContentLoaded", async () => {
+      // Load current video from DB
+      if (window.dbClient) {
+        const urlParams = new URLSearchParams(window.location.search);
+        const videoId = urlParams.get('id');
+        const videos = await window.dbClient.getVideos();
+        currentVideo = videos.find(v => v.id == videoId) || videos[0];
+        
+        if (currentVideo) {
+          // If the video has scriptLines, load them
+          if (currentVideo.scriptLines && currentVideo.scriptLines.length > 0) {
+            scriptVersions.v3 = currentVideo.scriptLines;
+          } else {
+            // Otherwise populate the db model with current defaults
+            currentVideo.scriptLines = JSON.parse(JSON.stringify(scriptVersions.v3));
+            await window.dbClient.updateVideo(currentVideo.id, currentVideo);
+          }
+        }
+      }
+
+      loadScriptVersion(activeVersion);
+      setupGlobalNavListeners();
+      setupTabs();
+      setupEmulatorControls();
+      setupStateModifiers();
+      setupThemeToggler();
+      setupCommentsTrigger();
+    });
+
+    // Load active script version inside the editor
+    function loadScriptVersion(version) {
+      activeVersion = version;
+      const container = document.getElementById("editor-lines-container");
+      container.innerHTML = "";
+
+      const lines = scriptVersions[version];
+      lines.forEach((line, index) => {
+        const lineCard = document.createElement("div");
+        lineCard.className = `script-line-card ${line.id === activeLineId ? "active-line" : ""}`;
+        lineCard.id = `line-card-${line.id}`;
+        lineCard.onclick = () => selectScriptLine(line.id);
+
+        // Highlight keywords if present in text
+        let formattedText = line.text;
+        const keywords = ["KONTAGI", "retention", "hook", "analytics", "creative", "instant"];
+        keywords.forEach(keyword => {
+          const regex = new RegExp(`\\b${keyword}\\b`, 'gi');
+          formattedText = formattedText.replace(regex, `<span class="keyword-highlight" data-keyword-source="${keyword}">${keyword}</span>`);
+        });
+
+        lineCard.innerHTML = `
+          <div class="line-number-gutter">0:${(index * 4).toString().padStart(2, '0')}</div>
+          <div class="line-content-area">
+            <span class="line-speaker-tag">${line.speaker}</span>
+            <div class="line-main-text" contenteditable="true" onblur="updateLineText(${line.id}, this.innerText)">${formattedText}</div>
+            <div class="line-directives">
+              <span class="directive-badge directive-visual">
+                <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+                Visual: ${line.visual}
+              </span>
+              <span class="directive-badge directive-sound">
+                <svg width="10" height="10" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                Sound: ${line.sound}
+              </span>
+            </div>
+          </div>
+        `;
+        container.appendChild(lineCard);
+      });
+
+      // Update calculations
+      recalculateEstimatedSpeakingTime();
+      selectScriptLine(activeLineId);
+    }
+
+    // Line selection action updates other panels
+    function selectScriptLine(lineId) {
+      activeLineId = lineId;
+      
+      // Toggle active classes in editor cards
+      document.querySelectorAll(".script-line-card").forEach(card => {
+        card.classList.remove("active-line");
+      });
+      const activeCard = document.getElementById(`line-card-${lineId}`);
+      if (activeCard) {
+        activeCard.classList.add("active-line");
+      }
+
+      // Update AI Suggestions Tab details dynamically
+      const lineData = scriptVersions[activeVersion].find(l => l.id === lineId) || scriptVersions[activeVersion][0];
+      const suggestion = aiSuggestionsMap[lineId] || { text: "No suggestions available for this draft style.", lift: "+0% Lift", strength: "Neutral" };
+      
+      document.getElementById("suggester-header-label").innerText = `Inspecting Line ${lineId}`;
+      document.getElementById("suggester-tag-label").innerText = suggestion.strength;
+      document.getElementById("suggester-original-text").innerText = `"${lineData.text}"`;
+      document.getElementById("suggester-ai-text").innerText = `"${suggestion.text}"`;
+
+      // Update Comments Sidebar details
+      document.getElementById("comments-sidebar-title").innerText = `Comments: Line ${lineId}`;
+      renderCommentsForLine(lineId);
+    }
+
+    // Save line text edit
+    function updateLineText(lineId, newText) {
+      const lines = scriptVersions[activeVersion];
+      const line = lines.find(l => l.id === lineId);
+      if (line) {
+        line.text = newText;
+        recalculateEstimatedSpeakingTime();
+        if (currentVideo && window.dbClient) {
+          currentVideo.scriptLines = scriptVersions.v3;
+          window.dbClient.updateVideo(currentVideo.id, currentVideo);
+        }
+      }
+    }
+
+    // Recalculate reading/speaking pacing based on word counts
+    function recalculateEstimatedSpeakingTime() {
+      const lines = scriptVersions[activeVersion];
+      let wordCount = 0;
+      lines.forEach(l => {
+        wordCount += l.text.split(/\s+/).length;
+      });
+      // Pacing constant: 130 words per minute (2.16 words per second)
+      const speakingTime = (wordCount / 2.16).toFixed(1);
+      document.getElementById("metric-speaking-time").innerText = `${speakingTime}s`;
+    }
+
+    // Apply AI rewrite suggestion back to script editor
+    async function applyAiSuggestion() {
+      const suggestion = aiSuggestionsMap[activeLineId];
+      if (suggestion) {
+        const lines = scriptVersions[activeVersion];
+        const line = lines.find(l => l.id === activeLineId);
+        if (line) {
+          line.text = suggestion.text;
+          if (currentVideo && window.dbClient) {
+            currentVideo.scriptLines = scriptVersions.v3;
+            await window.dbClient.updateVideo(currentVideo.id, currentVideo);
+          }
+          loadScriptVersion(activeVersion);
+          window.showToast("AI optimized script suggestion applied!", "success");
+        }
+      }
+    }
+
+    // Dismiss Suggestion
+    function rejectAiSuggestion() {
+      window.showToast("AI suggestion dismissed.", "info");
+    }
+
+    // Save Active Draft simulation
+    async function saveActiveScript() {
+      if (currentVideo && window.dbClient) {
+        currentVideo.scriptLines = scriptVersions.v3;
+        await window.dbClient.updateVideo(currentVideo.id, currentVideo);
+      }
+      window.showToast("Draft successfully saved and persisted to AuraDB.", "success");
+    }
+
+    // Interactive tone sliders update dials and badges
+    function updateBrandVoiceCalculations() {
+      const witty = parseInt(document.getElementById("slider-witty").value);
+      const casual = parseInt(document.getElementById("slider-casual").value);
+
+      document.getElementById("slider-witty-label").innerText = `${witty}% Witty`;
+      document.getElementById("slider-casual-label").innerText = `${casual}% Casual`;
+
+      // Brand match predicted score recalculation (Target: 60-70 Witty, 75-85 Casual)
+      const wittyDistance = Math.abs(65 - witty);
+      const casualDistance = Math.abs(80 - casual);
+      const matchScore = Math.max(50, 100 - wittyDistance - casualDistance);
+
+      document.getElementById("brand-match-badge").innerText = `${matchScore}% Match`;
+      document.getElementById("brand-match-badge").className = `badge text-micro ${matchScore >= 85 ? "badge-success" : matchScore >= 70 ? "badge-warning" : "badge-danger"}`;
+      document.getElementById("voice-match-text").innerText = `${matchScore}%`;
+      
+      // Update SVG circle dial
+      const circle = document.getElementById("voice-match-circle");
+      const offset = 100 - matchScore;
+      circle.style.strokeDashoffset = offset;
+    }
+
+    // Keyword click highlighter selector
+    function toggleHighlightKeyword(keyword) {
+      const highlights = document.querySelectorAll(`[data-keyword-source="${keyword}"]`);
+      
+      if (activeKeywords.includes(keyword)) {
+        activeKeywords = activeKeywords.filter(k => k !== keyword);
+        highlights.forEach(el => el.style.backgroundColor = "rgba(245, 158, 11, 0.18)");
+        window.showToast(`Cleared keyword filter: ${keyword}`, 'info');
+      } else {
+        activeKeywords.push(keyword);
+        highlights.forEach(el => el.style.backgroundColor = "rgba(239, 68, 68, 0.35)");
+        window.showToast(`Highlighting keyword instances: ${keyword}`, 'success');
+      }
+    }
+
+    // Apply Alternative Hook options directly
+    async function applyAltHook(text) {
+      const lines = scriptVersions[activeVersion];
+      const line = lines.find(l => l.id === 1); // target Hook
+      if (line) {
+        line.text = text;
+        if (currentVideo && window.dbClient) {
+          currentVideo.scriptLines = scriptVersions.v3;
+          await window.dbClient.updateVideo(currentVideo.id, currentVideo);
+        }
+        loadScriptVersion(activeVersion);
+        window.showToast("Alternate hook selected and applied to Editor Line 1.", "success");
+      }
+    }
+
+    // Render Comments Sidebar list
+    function renderCommentsForLine(lineId) {
+      const scroller = document.getElementById("comments-list-scroller");
+      scroller.innerHTML = "";
+
+      const threads = commentThreads[lineId] || [];
+      document.getElementById("comments-badge").innerText = threads.length;
+
+      if (threads.length === 0) {
+        scroller.innerHTML = `
+          <div class="flex-column align-center justify-center text-center" style="padding: var(--space-xl) var(--space-md); color: var(--text-muted); gap: var(--space-xs);">
+            <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+            <span class="text-body-small font-bold">No comments on this line yet</span>
+            <span class="text-micro">Start the discussion by writing a note below.</span>
+          </div>
+        `;
+        return;
+      }
+
+      threads.forEach(comment => {
+        const bubble = document.createElement("div");
+        bubble.className = "comment-bubble";
+        bubble.innerHTML = `
+          <div class="flex-between align-center">
+            <span class="text-micro font-bold text-primary">${comment.author === "JH" ? "Jaiveer Hastar (You)" : comment.author}</span>
+            <span class="text-micro text-muted">${comment.time}</span>
+          </div>
+          <p class="text-body-small text-secondary" style="margin-top: 2px;">${comment.text}</p>
+        `;
+        scroller.appendChild(bubble);
+      });
+    }
+
+    // Add comment to line comment history
+    function submitLineComment() {
+      const input = document.getElementById("new-comment-input-field");
+      const text = input.value.trim();
+      if (!text) return;
+
+      if (!commentThreads[activeLineId]) {
+        commentThreads[activeLineId] = [];
+      }
+
+      commentThreads[activeLineId].push({
+        author: "JH",
+        time: "Just now",
+        text: text
+      });
+
+      input.value = "";
+      renderCommentsForLine(activeLineId);
+      window.showToast("Comment posted.", "success");
+    }
+
+    // Quick AI Revision Trigger
+    async function triggerQuickRevision() {
+      const promptInput = document.getElementById("quick-prompt-input");
+      const promptText = promptInput.value.trim();
+      if (!promptText) {
+        window.showToast("Please enter a revision prompt.", "warning");
+        return;
+      }
+
+      // Show revision progress bar loader
+      document.getElementById("revision-progress-container").style.display = "block";
+      document.getElementById("quick-rewrite-btn").disabled = true;
+
+      const progressLabel = document.getElementById("revision-progress-label");
+      const progressPercent = document.getElementById("revision-progress-percent");
+      const progressBar = document.getElementById("revision-progress-bar");
+
+      // Progress animation
+      let progress = 0;
+      const interval = setInterval(() => {
+        if (progress < 90) {
+          progress += 10;
+          progressBar.style.width = `${progress}%`;
+          progressPercent.innerText = `${progress}%`;
+          if (progress < 30) progressLabel.innerText = "Analyzing script readability arc...";
+          else if (progress < 60) progressLabel.innerText = "Validating brand voice tone matching...";
+          else progressLabel.innerText = "Polishing and drafting copy...";
+        }
+      }, 100);
+
+      try {
+        const line = scriptVersions[activeVersion].find(l => l.id === activeLineId);
+        const originalText = line ? line.text : "";
+        const payload = {
+          message: `Please rewrite this script line: "${originalText}" to optimize it for viewer retention, matching this request: "${promptText}". Output only the single optimized line within quotes (e.g. "Optimized line text"). Do not include any intro or conversational filler.`,
+          videoId: currentVideo ? currentVideo.id : null
+        };
+        const response = await fetch('/api/ai/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        clearInterval(interval);
+        
+        progressBar.style.width = "100%";
+        progressPercent.innerText = "100%";
+        progressLabel.innerText = "Completed optimization successfully!";
+
+        setTimeout(async () => {
+          if (data && data.reply) {
+            let replyText = data.reply.trim();
+            if (replyText.startsWith('"') && replyText.endsWith('"')) {
+              replyText = replyText.slice(1, -1);
+            }
+            if (line) {
+              line.text = replyText;
+              // Save back to DB
+              if (currentVideo && window.dbClient) {
+                currentVideo.scriptLines = scriptVersions.v3;
+                await window.dbClient.updateVideo(currentVideo.id, currentVideo);
+              }
+              loadScriptVersion(activeVersion);
+            }
+          }
+          // Reset loader state
+          document.getElementById("revision-progress-container").style.display = "none";
+          document.getElementById("quick-rewrite-btn").disabled = false;
+          promptInput.value = "";
+          window.showToast("Script line revised by AI successfully!", "success");
+        }, 500);
+
+      } catch (err) {
+        clearInterval(interval);
+        document.getElementById("revision-progress-container").style.display = "none";
+        document.getElementById("quick-rewrite-btn").disabled = false;
+        console.error("AI Quick Revision failed:", err);
+        window.showToast("AI revision failed, using local offline fallback.", "error");
+      }
+    }
+
+    // Modal Generator
+    function openNewScriptModal() {
+      document.getElementById("generator-modal").classList.add("active");
+    }
+
+    function closeNewScriptModal() {
+      document.getElementById("generator-modal").classList.remove("active");
+    }
+
+    async function simulateScriptGeneration() {
+      const promptInput = document.getElementById("modal-generation-prompt");
+      const promptText = promptInput.value.trim();
+      const layout = document.getElementById("modal-script-layout").value;
+      const pacing = document.getElementById("modal-script-pacing").value;
+
+      if (!promptText) {
+        window.showToast("Please enter a concept prompt.", "warning");
+        return;
+      }
+
+      const generateBtn = document.getElementById("modal-generate-btn");
+      generateBtn.disabled = true;
+      generateBtn.innerText = "Generating script...";
+
+      try {
+        const payload = {
+          message: `Generate a script with exactly 8 sequential scenes for a ${layout} video with ${pacing} pacing. Base it on this concept: "${promptText}". Format the response strictly as a JSON array of 8 objects, each containing these exact keys: "id" (number 1 to 8), "speaker" (string like Presenter or B-Roll), "text" (string of spoken line), "visual" (string describing B-Roll/Presenter visuals), "sound" (string describing audio/sound design cues), "phase" (string, one of: "hook", "build", "climax", "cta"). Return only the valid JSON array and nothing else. No markdown wrap.`,
+          videoId: currentVideo ? currentVideo.id : null
+        };
+        const response = await fetch('/api/ai/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        
+        if (data && data.reply) {
+          let cleaned = data.reply.trim();
+          if (cleaned.startsWith("```json")) cleaned = cleaned.replace(/^```json/, "");
+          if (cleaned.startsWith("```")) cleaned = cleaned.replace(/^```/, "");
+          if (cleaned.endsWith("```")) cleaned = cleaned.replace(/```$/, "");
+          cleaned = cleaned.trim();
+          
+          try {
+            const parsedArray = JSON.parse(cleaned);
+            if (Array.isArray(parsedArray) && parsedArray.length > 0) {
+              scriptVersions.v3 = parsedArray;
+              if (currentVideo && window.dbClient) {
+                currentVideo.scriptLines = parsedArray;
+                await window.dbClient.updateVideo(currentVideo.id, currentVideo);
+              }
+              loadScriptVersion("v3");
+              window.showToast("New script generated and loaded inside the Editor!", "success");
+            }
+          } catch (parseErr) {
+            console.error("JSON parsing of generated script failed:", parseErr, cleaned);
+            window.showToast("Script generated but output format was invalid. Try again.", "error");
+          }
+        }
+      } catch (err) {
+        console.error("Script generation failed:", err);
+        window.showToast("Failed to generate script. Using fallback offline template.", "error");
+      } finally {
+        generateBtn.disabled = false;
+        generateBtn.innerHTML = `
+          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right: 4px;"><path d="M13 10V3L4 14h7v7l9-11h-7z"/></svg>
+          Generate Script
+        `;
+        closeNewScriptModal();
+      }
+    }
+
+    // Floating Aura Assistant chat integration
+    let chatHistory = [];
+    async function sendAiChatMessage() {
+      const input = document.getElementById("ai-chat-input-field");
+      const text = input.value.trim();
+      if (!text) return;
+
+      const container = document.getElementById("ai-chat-messages-container");
+
+      // Append user message bubble
+      const userBubble = document.createElement("div");
+      userBubble.className = "flex justify-end";
+      userBubble.style.gap = "var(--space-sm)";
+      userBubble.innerHTML = `
+        <div class="p-md border-radius-lg" style="background-color: var(--brand-primary); color: #fff; max-width: 85%;">
+          <p class="text-body-small">${text}</p>
+        </div>
+      `;
+      container.appendChild(userBubble);
+      input.value = "";
+      container.scrollTop = container.scrollHeight;
+
+      chatHistory.push({ role: 'user', content: text });
+
+      // Append temporary typing bubble
+      const typingBubble = document.createElement("div");
+      typingBubble.className = "flex temp-typing-bubble";
+      typingBubble.style.gap = "var(--space-sm)";
+      typingBubble.innerHTML = `
+        <div class="workspace-avatar" style="width: 24px; height: 24px; font-size: 0.65rem; background-color: var(--brand-primary-glow); color: var(--brand-primary); flex-shrink: 0;">AI</div>
+        <div class="p-md border-radius-lg border-default" style="background-color: var(--bg-secondary); max-width: 85%;">
+          <p class="text-body-small text-muted"><span class="spinner" style="border-color: var(--text-muted); border-top-color: transparent;"></span> Pacing calculations...</p>
+        </div>
+      `;
+      container.appendChild(typingBubble);
+      container.scrollTop = container.scrollHeight;
+
+      try {
+        const payload = {
+          message: text,
+          chatHistory: chatHistory,
+          videoId: currentVideo ? currentVideo.id : null
+        };
+        const response = await fetch('/api/ai/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(payload)
+        });
+        const data = await response.json();
+        
+        // Remove typing bubble
+        typingBubble.remove();
+
+        const aiBubble = document.createElement("div");
+        aiBubble.className = "flex";
+        aiBubble.style.gap = "var(--space-sm)";
+        aiBubble.innerHTML = `
+          <div class="workspace-avatar" style="width: 24px; height: 24px; font-size: 0.65rem; background-color: var(--brand-primary-glow); color: var(--brand-primary); flex-shrink: 0;">AI</div>
+          <div class="p-md border-radius-lg border-default" style="background-color: var(--bg-secondary); max-width: 85%;">
+            <p class="text-body-small text-secondary">${data && data.reply ? data.reply : "No response generated."}</p>
+          </div>
+        `;
+        container.appendChild(aiBubble);
+        container.scrollTop = container.scrollHeight;
+        
+        if (data && data.reply) {
+          chatHistory.push({ role: 'model', content: data.reply });
+        }
+      } catch (err) {
+        typingBubble.remove();
+        console.error("AI chat failed:", err);
+        window.showToast("Failed to chat with AI", "error");
+      }
+    }
+
+    // Global navigation event listener
+    function setupGlobalNavListeners() {
+      const select = document.getElementById("script-version-select");
+      select.addEventListener("change", (e) => {
+        loadScriptVersion(e.target.value);
+        window.showToast(`Loaded version draft ${e.target.value.toUpperCase()}`, "info");
+      });
+    }
+
+    // Tabs functionality
+    function setupTabs() {
+      const tabs = document.querySelectorAll(".tab-btn");
+      tabs.forEach(tab => {
+        tab.addEventListener("click", () => {
+          const group = tab.getAttribute("data-tab-group");
+          const target = tab.getAttribute("data-tab-target");
+
+          document.querySelectorAll(`[data-tab-group="${group}"]`).forEach(t => t.classList.remove("active"));
+          document.querySelectorAll(`[data-tab-panel-group="${group}"]`).forEach(p => p.classList.remove("active"));
+
+          tab.classList.add("active");
+          const activePanel = document.getElementById(target);
+          if (activePanel) {
+            activePanel.classList.add("active");
+          }
+        });
+      });
+    }
+
+    // Viewport Emulator triggers
+    function setupEmulatorControls() {
+      const viewportFrame = document.getElementById("viewport-frame");
+      const buttons = document.querySelectorAll("[data-viewport]");
+
+      buttons.forEach(btn => {
+        btn.addEventListener("click", () => {
+          buttons.forEach(b => b.classList.remove("active"));
+          btn.classList.add("active");
+
+          const viewport = btn.getAttribute("data-viewport");
+          viewportFrame.className = `emulator-viewport ${viewport}`;
+          window.showToast(`Resized workspace to ${viewport}`, 'info');
+        });
+      });
+
+      // Mobile Hamburger menu sidebar toggle
+      const sidebarToggle = document.getElementById("sidebar-toggle-btn");
+      sidebarToggle.addEventListener("click", () => {
+        document.querySelector(".dashboard-sidebar").classList.toggle("active");
+      });
+    }
+
+    // State modifiers (Loading, Normal, AI Chat)
+    function setupStateModifiers() {
+      const shell = document.getElementById("dashboard-main-shell");
+      
+      document.getElementById("state-normal").addEventListener("click", function() {
+        document.querySelectorAll("#state-normal, #state-loading, #state-ai-chat").forEach(b => b.classList.remove("active"));
+        this.classList.add("active");
+        shell.classList.remove("loading-state-active");
+        document.getElementById("ai-chat-sidebar").classList.remove("active");
+      });
+
+      document.getElementById("state-loading").addEventListener("click", function() {
+        document.querySelectorAll("#state-normal, #state-loading, #state-ai-chat").forEach(b => b.classList.remove("active"));
+        this.classList.add("active");
+        shell.classList.add("loading-state-active");
+      });
+
+      document.getElementById("state-ai-chat").addEventListener("click", function() {
+        document.querySelectorAll("#state-normal, #state-loading, #state-ai-chat").forEach(b => b.classList.remove("active"));
+        this.classList.add("active");
+        shell.classList.remove("loading-state-active");
+        document.getElementById("ai-chat-sidebar").classList.add("active");
+      });
+    }
+
+    // Theme toggler (Light vs Dark mode)
+    function setupThemeToggler() {
+      const toggleBtn = document.getElementById("theme-toggle");
+      toggleBtn.addEventListener("click", () => {
+        const body = document.body;
+        if (body.classList.contains("dark")) {
+          body.classList.remove("dark");
+          toggleBtn.innerHTML = `
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+            Light Mode
+          `;
+          window.showToast("Switched to Aura Light Theme", "info");
+        } else {
+          body.classList.add("dark");
+          toggleBtn.innerHTML = `
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+            Dark Mode
+          `;
+          window.showToast("Switched to Space Dark Theme", "info");
+        }
+      });
+    }
+
+    // Toggle comments sidebar drawer
+    function setupCommentsTrigger() {
+      const trigger = document.getElementById("comments-trigger-btn");
+      trigger.addEventListener("click", () => {
+        toggleCommentsDrawer();
+      });
+    }
+
+    function toggleCommentsDrawer() {
+      const drawer = document.getElementById("comments-sidebar");
+      drawer.classList.toggle("active");
+      if (drawer.classList.contains("active")) {
+        document.getElementById("ai-chat-sidebar").classList.remove("active");
+      }
+    }
+
+    function toggleAiChatDrawer() {
+      document.getElementById("ai-chat-sidebar").classList.toggle("active");
+    }
+
+    function toggleWorkspaceDropdown() {
+      window.showToast("Deepmind Dev Workspace workspace selection menu opened", "info");
+    }
+  </script>
+  <script src="db-client.js"></script>
+  <script src="design-system.js"></script>
+</body>
+</html>

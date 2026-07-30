@@ -1,0 +1,17 @@
+{
+  "screenText": "[OCR Text Segment] Asset bench_music_088 text overlay density: 65.2%.",
+  "captionDensity": 0.6519,
+  "fontSizeEstimatePx": 62,
+  "textTimingSec": [
+    {
+      "start": 0.5,
+      "end": 21.6
+    },
+    {
+      "start": 21.6,
+      "end": 48.6
+    }
+  ],
+  "ctaDetected": true,
+  "emojiCount": 1
+}

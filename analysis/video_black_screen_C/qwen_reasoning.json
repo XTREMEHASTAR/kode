@@ -1,0 +1,19 @@
+{
+  "topic": "Silent / Low Audio Media",
+  "niche": "MINIMAL_MEDIA",
+  "creatorIntent": "TESTING",
+  "audienceIntent": "LOW_ENGAGEMENT",
+  "hookExplanation": "Content lacks vocal acoustic triggers or dialogue hooks.",
+  "emotionalTriggers": [
+    "Curiosity"
+  ],
+  "storytellingStructure": "FLAT_LINE",
+  "ctaQuality": 0,
+  "strengths": [
+    "Low background acoustic noise"
+  ],
+  "weaknesses": [
+    "Zero voice energy",
+    "Low dialogue engagement"
+  ]
+}

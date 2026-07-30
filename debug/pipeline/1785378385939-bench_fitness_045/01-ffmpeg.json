@@ -1,0 +1,13 @@
+{
+  "assetId": "bench_fitness_045",
+  "videoPath": "c:/videos/benchmark_fitness_5.mp4",
+  "duration": 15,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "bitrate": 4500000,
+  "keyframe_count": 15,
+  "extracted_frame_count": 15,
+  "extracted_audio_samples": 220500,
+  "contentHash": 167336960
+}

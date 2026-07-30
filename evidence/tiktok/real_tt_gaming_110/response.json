@@ -1,0 +1,19 @@
+{
+  "data": {
+    "videos": [
+      {
+        "id": "real_tt_gaming_110",
+        "create_time": 1775874824,
+        "duration": 35,
+        "view_count": 281200,
+        "like_count": 18520,
+        "comment_count": 970,
+        "share_count": 2420
+      }
+    ]
+  },
+  "error": {
+    "code": "ok",
+    "message": ""
+  }
+}

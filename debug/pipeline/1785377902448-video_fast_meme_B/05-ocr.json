@@ -1,0 +1,19 @@
+{
+  "detected_text": "[OCR Text Segment] Asset video_fast_meme_B text overlay density: 80.0%.",
+  "text_count": 9,
+  "text_density": 0.8,
+  "confidence": 0.96,
+  "regions": [
+    {
+      "start": 0.5,
+      "end": 6
+    },
+    {
+      "start": 6,
+      "end": 13.5
+    }
+  ],
+  "fontSizeEstimatePx": 68,
+  "ctaDetected": true,
+  "emojiCount": 1
+}

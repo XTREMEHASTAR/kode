@@ -1,0 +1,17 @@
+{
+  "screenText": "[OCR Text Segment] Asset real_yt_gaming_109 text overlay density: 80.0%.",
+  "captionDensity": 0.8,
+  "fontSizeEstimatePx": 68,
+  "textTimingSec": [
+    {
+      "start": 0.5,
+      "end": 13.6
+    },
+    {
+      "start": 13.6,
+      "end": 30.6
+    }
+  ],
+  "ctaDetected": true,
+  "emojiCount": 1
+}

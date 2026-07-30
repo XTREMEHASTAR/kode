@@ -1,0 +1,7 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="1024" height="1024" rx="220" fill="#162A3B"/>
+  <!-- Vector K Letterform matching exact KONTAGI geometric K -->
+  <path fill-rule="evenodd" clip-rule="evenodd" d="M220 220H475V435L675 220H910L590 535L925 804H675L475 580V804H220V220Z" fill="#FAF8F3"/>
+  <!-- Warm Orange Square Dot on top right of K -->
+  <rect x="720" y="140" width="148" height="148" rx="24" fill="#FF6B3D"/>
+</svg>

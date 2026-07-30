@@ -1,0 +1,14 @@
+{
+  "assetId": "real_yt_travel_129",
+  "platform": "YOUTUBE_SHORTS",
+  "sourceUrl": "https://www.youtube.com/shorts/yt_travel_129",
+  "pipelineExecutionTimeMs": 1420,
+  "extractorsExecuted": [
+    "VisualExtractor",
+    "SpeechExtractor",
+    "OcrExtractor",
+    "AudioExtractor"
+  ],
+  "executionTimestamp": "2026-07-30T02:33:44.643Z",
+  "status": "SUCCESS"
+}

@@ -1,0 +1,13 @@
+{
+  "assetId": "bench_vlog_093",
+  "videoPath": "c:/videos/benchmark_vlog_3.mp4",
+  "duration": 24,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "bitrate": 4500000,
+  "keyframe_count": 24,
+  "extracted_frame_count": 24,
+  "extracted_audio_samples": 220500,
+  "contentHash": 1130313914
+}

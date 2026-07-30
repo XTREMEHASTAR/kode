@@ -1,0 +1,2351 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — Global Account & Workspace Settings</title>
+  <meta name="description" content="Manage your personal profile, secure account credentials, developer API keys, workspace configurations, brand assets, and application integrations.">
+  
+  <!-- KONTAGI CSS Design System -->
+  <link rel="stylesheet" href="design-system.css">
+  
+  <!-- KONTAGI JS Engine -->
+  <script defer src="design-system.js"></script>
+
+  <style>
+    /* ==========================================================================
+       SANDBOX CORE LAYOUT FRAMEWORK & SETTINGS CUSTOM STYLES
+       ========================================================================== */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-smooth);
+    }
+
+    .sandbox-header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-xs) var(--space-lg);
+      z-index: 1000;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .sandbox-brand h1 {
+      font-size: 1.125rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .sandbox-brand span {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .sandbox-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-control-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      background-color: var(--bg-secondary);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+    }
+
+    .sandbox-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sandbox-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .sandbox-btn.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sandbox-workspace {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      position: relative;
+    }
+
+    .emulator-viewport {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      transition: width var(--transition-smooth), height var(--transition-smooth), border-radius var(--transition-smooth);
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .emulator-viewport.desktop {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      border: none;
+    }
+
+    .emulator-viewport.tablet {
+      width: 768px;
+      height: 95%;
+      border-radius: var(--radius-lg);
+    }
+
+    .emulator-viewport.mobile {
+      width: 375px;
+      height: 85%;
+      border-radius: var(--radius-2xl);
+    }
+
+    /* Shell Layout */
+    .dashboard-shell {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .dashboard-sidebar {
+      width: 260px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      transition: transform var(--transition-smooth), width var(--transition-smooth);
+    }
+
+    .sidebar-header {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .sidebar-nav {
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .sidebar-nav-item:hover, .sidebar-nav-item.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .sidebar-nav-item.active {
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .dashboard-main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .dashboard-header {
+      padding: var(--space-md) var(--space-lg);
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-shrink: 0;
+    }
+
+    .dashboard-body {
+      flex-grow: 1;
+      overflow: hidden;
+      padding: var(--space-lg);
+      display: flex;
+    }
+
+    /* Emulator controls for responsive layout */
+    .emulator-viewport.tablet .dashboard-sidebar { width: 70px; }
+    .emulator-viewport.tablet .sidebar-text-label,
+    .emulator-viewport.tablet .sidebar-footer { display: none; }
+    
+    .emulator-viewport.mobile #sidebar-toggle-btn { display: inline-flex !important; }
+    .emulator-viewport.mobile .dashboard-sidebar { display: none; }
+    .emulator-viewport.mobile .dashboard-sidebar.active {
+      display: flex;
+      position: absolute;
+      left: 0;
+      top: 64px;
+      bottom: 0;
+      z-index: 950;
+      height: calc(100% - 64px);
+      width: 240px;
+      box-shadow: var(--shadow-xl);
+    }
+
+    /* Settings Dashboard Container */
+    .settings-container {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      gap: var(--space-lg);
+      overflow: hidden;
+    }
+
+    .settings-nav {
+      width: 240px;
+      flex-shrink: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      border-right: 1px solid var(--border-default);
+      padding-right: var(--space-md);
+      overflow-y: auto;
+    }
+
+    .settings-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      border: 1px solid transparent;
+    }
+
+    .settings-nav-item:hover {
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .settings-nav-item.active {
+      background-color: var(--brand-primary-glow);
+      color: var(--brand-primary);
+      font-weight: 600;
+      border-color: rgba(99, 102, 241, 0.15);
+    }
+
+    .settings-content-wrapper {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding-right: var(--space-xs);
+      height: 100%;
+    }
+
+    .settings-panel {
+      display: none;
+      animation: tabFadeIn var(--transition-smooth) forwards;
+    }
+
+    .settings-panel.active {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    @keyframes tabFadeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Sub-grid form layout */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xxs);
+    }
+
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: var(--space-md);
+    }
+
+    @media (max-width: 600px) {
+      .form-row-2 {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Settings visual panels */
+    .card-settings-header {
+      border-bottom: 1px solid var(--border-default);
+      padding-bottom: var(--space-md);
+      margin-bottom: var(--space-xs);
+    }
+
+    /* Password strength meter */
+    .password-strength-bar {
+      height: 6px;
+      border-radius: var(--radius-full);
+      background-color: var(--border-default);
+      overflow: hidden;
+      margin-top: var(--space-xxs);
+      transition: all var(--transition-smooth);
+    }
+
+    .password-strength-fill {
+      height: 100%;
+      width: 0;
+      transition: width var(--transition-smooth), background-color var(--transition-smooth);
+    }
+
+    /* 2FA Enrollment QR Screen */
+    .qrcode-mock {
+      background-color: #FFFFFF;
+      padding: var(--space-sm);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border-default);
+      width: 140px;
+      height: 140px;
+      display: grid;
+      grid-template-columns: repeat(10, 1fr);
+      grid-template-rows: repeat(10, 1fr);
+      gap: 1px;
+    }
+
+    .qr-pixel {
+      background-color: transparent;
+    }
+    .qr-pixel.active {
+      background-color: #000000;
+    }
+
+    /* Custom Color Swatch Preview */
+    .swatch-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: var(--radius-full);
+      border: 1px solid rgba(0, 0, 0, 0.1);
+      flex-shrink: 0;
+    }
+
+    /* Appearance radio preview styling */
+    .appearance-theme-card {
+      border: 2px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      cursor: pointer;
+      transition: all var(--transition-smooth);
+      position: relative;
+    }
+
+    .appearance-theme-card.active {
+      border-color: var(--brand-primary);
+      background-color: var(--brand-primary-glow);
+    }
+
+    /* Drag & Drop mockup */
+    .dropzone-mock {
+      border: 2px dashed var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: var(--space-lg);
+      text-align: center;
+      cursor: pointer;
+      transition: border-color var(--transition-smooth), background-color var(--transition-smooth);
+    }
+
+    .dropzone-mock:hover {
+      border-color: var(--brand-primary);
+      background-color: var(--bg-secondary);
+    }
+
+    /* Switch styling overrides */
+    .switch-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-sm) 0;
+      border-bottom: 1px solid var(--border-muted);
+    }
+
+    .switch-row:last-child {
+      border-bottom: none;
+    }
+
+    /* Integrations card design */
+    .integration-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .integration-card {
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xl);
+      padding: var(--space-md);
+      background-color: var(--bg-elevated);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      transition: all var(--transition-smooth);
+    }
+
+    .integration-card:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-2px);
+    }
+
+    .integration-header {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    /* Dialog Modals */
+    .dialog-overlay {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+    }
+
+    .dialog-overlay.active {
+      display: flex;
+    }
+
+    .dialog-card {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      max-width: 500px;
+      width: 100%;
+      box-shadow: var(--shadow-2xl);
+      animation: dialogZoom var(--transition-bounce) forwards;
+    }
+
+    @keyframes dialogZoom {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    /* IP Whitelist tag pill */
+    .ip-tag {
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-sm);
+      padding: 2px 8px;
+      font-size: 0.75rem;
+      font-family: var(--font-mono);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Layout overrides for mobile settings view */
+    @media (max-width: 768px) {
+      .settings-container {
+        flex-direction: column;
+      }
+      .settings-nav {
+        width: 100%;
+        border-right: none;
+        border-bottom: 1px solid var(--border-default);
+        flex-direction: row;
+        overflow-x: auto;
+        padding-right: 0;
+        padding-bottom: var(--space-xs);
+        scrollbar-width: none;
+        white-space: nowrap;
+      }
+      .settings-nav::-webkit-scrollbar {
+        display: none;
+      }
+      .settings-nav-item {
+        padding: 6px 12px;
+      }
+    }
+  </style>
+</head>
+<body class="dark">
+
+  <!-- ==============================================
+       1. SANDBOX CONTROL HEADER PANEL
+       ============================================== -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M16 8L25 13V19L16 24L7 19V13L16 8Z" fill="var(--brand-primary)" opacity="0.15"/>
+        <circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/>
+      </svg>
+      <h1>KONTAGI System Shell</h1>
+      <span class="version-badge" id="sandbox-version-badge">Settings</span>
+    </div>
+
+    <div class="sandbox-controls">
+      <!-- Active Brand Selector -->
+      <div style="display: flex; align-items: center; gap: var(--space-xxs);">
+        <span class="text-detail font-bold text-muted sidebar-text-label">Active Workspace:</span>
+        <select class="select select-sm" style="width: 170px;" id="workspace-dropdown-select" onchange="switchWorkspaceBrand(this.value)">
+          <option value="pulse_energy">Pulse Energy Corp</option>
+          <option value="retro_denim">Retro Denim Apparel</option>
+          <option value="smart_home">AuraSmart IoT Hub</option>
+        </select>
+      </div>
+
+      <!-- Viewports Emulator -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" data-viewport="desktop">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 21h12m-9-4l-1 4m8-4l1 4"/></svg>
+          Desktop
+        </button>
+        <button class="sandbox-btn" data-viewport="tablet">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          Tablet
+        </button>
+        <button class="sandbox-btn" data-viewport="mobile">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
+          Mobile
+        </button>
+      </div>
+
+      <!-- Theme Switcher -->
+      <button class="btn btn-tertiary btn-sm" id="theme-toggle" style="box-shadow: none;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        Light Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- ==============================================
+       2. WORKSPACE EMULATOR VIEWPORT FRAME
+       ============================================== -->
+  <main class="sandbox-workspace">
+    <div class="emulator-viewport desktop" id="viewport-frame">
+      
+      <div class="dashboard-shell">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="dashboard-sidebar">
+          <div>
+            <div class="sidebar-header">
+              <div class="flex-between select-wrapper" style="width: 100%;">
+                <div class="flex-center" style="gap: var(--space-xs); cursor: pointer;">
+                  <div class="workspace-avatar" id="sidebar-workspace-avatar" style="width: 28px; height: 28px; font-size: 0.75rem; background-color: var(--brand-primary-glow); color: var(--brand-primary);">PE</div>
+                  <span class="text-body-small font-bold sidebar-text-label" id="sidebar-workspace-label">Pulse Energy</span>
+                </div>
+                <svg class="sidebar-text-label" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </div>
+
+            <!-- Nav Links -->
+                        <nav class="sidebar-nav">
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-bottom: 6px; text-transform: uppercase;">Workspace</span>
+              <a class="sidebar-nav-item" href="dashboard.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="sidebar-text-label">Dashboard</span>
+              </a>
+              <a class="sidebar-nav-item" href="projects.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span class="sidebar-text-label">Projects</span>
+              </a>
+              <a class="sidebar-nav-item" href="library.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+                <span class="sidebar-text-label">Creative Library</span>
+              </a>
+              <a class="sidebar-nav-item" href="hooks.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                <span class="sidebar-text-label">Hook Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="retention.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Retention Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="script.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="sidebar-text-label">Script Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="thumbnail.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15l-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Thumbnail Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="caption.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                <span class="sidebar-text-label">Caption Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="audio.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                <span class="sidebar-text-label">Audio Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="visual.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-.447.894L15 18.5V10zM5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Visual Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="trend.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <span class="sidebar-text-label">Trend Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="upload.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span class="sidebar-text-label">Upload Center</span>
+              </a>
+              <a class="sidebar-nav-item" href="lab.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                <span class="sidebar-text-label">AI Creative Lab</span>
+              </a>
+              <a class="sidebar-nav-item" href="report.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="sidebar-text-label">AI Reports</span>
+              </a>
+              <a class="sidebar-nav-item" href="creators.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Creators</span>
+              </a>
+              <a class="sidebar-nav-item" href="brand.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17V9h3a2 2 0 110 4H9m0 4h3a2 2 0 100-4"/></svg>
+                <span class="sidebar-text-label">Brand Hub</span>
+              </a>
+              <a class="sidebar-nav-item" href="coach.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="sidebar-text-label">AI Coach</span>
+              </a>
+              <a class="sidebar-nav-item" onclick="window.showToast('Loading database insights...', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                <span class="sidebar-text-label">Analytics</span>
+              </a>
+              <a class="sidebar-nav-item" href="client.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Clients</span>
+              </a>
+              <a class="sidebar-nav-item" href="team.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0zm3 10v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg>
+                <span class="sidebar-text-label">Team Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="billing.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span class="sidebar-text-label">Billing</span>
+              </a>
+              <a class="sidebar-nav-item" href="notifications.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="sidebar-text-label">Notifications</span>
+              </a>
+              <a class="sidebar-nav-item active" href="settings.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="sidebar-text-label">Settings</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">System</span>
+              <a class="sidebar-nav-item" href="admin.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="sidebar-text-label">Admin Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="mobile.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Mobile App</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">Design</span>
+              <a class="sidebar-nav-item" href="index.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                <span class="sidebar-text-label">Design System</span>
+              </a>
+            </nav>
+          </div>
+
+          <div class="sidebar-footer">
+            <div class="avatar avatar-md font-bold" style="background-color: var(--brand-secondary); color: var(--text-inverse);">JH</div>
+            <div class="sidebar-text-label" style="display: flex; flex-direction: column;">
+              <span class="text-body-small font-bold" style="line-height: 1.2;">Jaiveer Hastar</span>
+              <span class="text-detail text-secondary">jaiveer@company.com</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- MAIN WORKSPACE -->
+        <div class="dashboard-main">
+          
+          <!-- Main Module Header -->
+          <header class="dashboard-header">
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <button class="btn btn-sm btn-tertiary" style="padding: 4px; display: none;" id="sidebar-toggle-btn">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              <h2 class="text-gradient" id="settings-header-title">System Settings</h2>
+              <span class="badge badge-indigo" id="settings-workspace-badge">Pulse Workspace active</span>
+            </div>
+
+            <div class="flex-center" style="gap: var(--space-xs);">
+              <button class="btn btn-secondary btn-sm" onclick="saveAllSettings()">
+                Save All Changes
+              </button>
+            </div>
+          </header>
+
+          <!-- Dashboard Content Body -->
+          <div class="dashboard-body">
+
+            <!-- Settings SPA Container -->
+            <div class="settings-container">
+              
+              <!-- Left Sidebar Menu -->
+              <nav class="settings-nav">
+                <div class="settings-nav-item active" onclick="switchSettingsPanel('profile', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+                  Profile
+                </div>
+                <div class="settings-nav-item" onclick="switchSettingsPanel('account', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5.121 17.804A13.937 13.937 0 0112 16c2.5 0 4.847.655 6.879 1.804M15 10a3 3 0 11-6 0 3 3 0 016 0zm6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                  Account
+                </div>
+                <div class="settings-nav-item" onclick="switchSettingsPanel('password', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m-5-4v1a3 3 0 003 3h5m-6 0a3 3 0 01-3-3V4a3 3 0 013-3h5l3 3v3a3 3 0 01-3 3h-5zM4 15v-1a3 3 0 013-3h3a3 3 0 013 3v1m-6 3H4m4-4h6"/></svg>
+                  Password
+                </div>
+                <div class="settings-nav-item" onclick="switchSettingsPanel('twofactor', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg>
+                  2FA Security
+                </div>
+                <div class="settings-nav-item" onclick="switchSettingsPanel('apikeys', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 7a2 2 0 012 2m-5-4v1a3 3 0 003 3h5m-6 0C10.5 7.5 7 11 7 11v3h3v-2h2v-2h2l1.5-1.5a3 3 0 10-2-3z"/></svg>
+                  API Keys
+                </div>
+                <div class="settings-nav-item" onclick="switchSettingsPanel('workspace', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"/></svg>
+                  Workspace
+                </div>
+                <div class="settings-nav-item" onclick="switchSettingsPanel('brand', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17V9h3a2 2 0 110 4H9m0 4h3a2 2 0 100-4"/></svg>
+                  Brand Kits
+                </div>
+                <div class="settings-nav-item" onclick="switchSettingsPanel('appearance', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01"/></svg>
+                  Appearance
+                </div>
+                <div class="settings-nav-item" onclick="switchSettingsPanel('language', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5c-.313 1.565-.953 3.037-1.876 4.345M10.875 9.345A17.973 17.973 0 008.204 5m2.671 4.345a18.09 18.09 0 01-4.887 4.148"/></svg>
+                  Language
+                </div>
+                <div class="settings-nav-item" onclick="switchSettingsPanel('privacy', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l18 18"/></svg>
+                  Privacy
+                </div>
+                <div class="settings-nav-item" onclick="switchSettingsPanel('security', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                  Security
+                </div>
+                <div class="settings-nav-item" onclick="switchSettingsPanel('integrations', this)">
+                  <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 4a2 2 0 114 0v1a2 2 0 01-2 2H3a2 2 0 01-2-2V4a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+                  Integrations
+                </div>
+              </nav>
+
+              <!-- Right Content Area -->
+              <div class="settings-content-wrapper">
+                
+                <!-- ==============================================
+                     1. PANEL: PROFILE
+                     ============================================== -->
+                <div class="settings-panel active" id="panel-profile">
+                  <div class="card-settings-header">
+                    <h3 class="font-bold text-primary">Public Profile Settings</h3>
+                    <p class="text-body-small text-muted">Configure how your details are displayed to workspace teammates and creative reviewers.</p>
+                  </div>
+
+                  <div class="card flex-row" style="padding: var(--space-md); gap: var(--space-md); align-items: center; flex-wrap: wrap;">
+                    <div class="avatar avatar-xl font-bold" id="profile-avatar-display" style="background-color: var(--brand-primary); color: var(--text-inverse); width: 80px; height: 80px; font-size: 2rem;">JH</div>
+                    <div class="flex-column" style="gap: var(--space-xxs);">
+                      <h4 class="font-bold text-primary">Workspace Avatar</h4>
+                      <p class="text-detail text-secondary">We support custom SVG shapes and generic JPG/PNG square formats up to 4MB.</p>
+                      <div class="flex-center" style="gap: var(--space-xs); justify-content: flex-start; margin-top: var(--space-xxs);">
+                        <button class="btn btn-primary btn-sm" onclick="triggerAvatarUpload()">Upload Picture</button>
+                        <button class="btn btn-secondary btn-sm" onclick="resetAvatarInitials()">Reset to Initials</button>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card" style="padding: var(--space-md);">
+                    <div class="flex-column" style="gap: var(--space-md);">
+                      <div class="form-row-2">
+                        <div class="form-group">
+                          <label class="text-detail font-bold text-muted">Full Representative Name</label>
+                          <input type="text" class="input" id="profile-name" value="Jaiveer Hastar">
+                        </div>
+                        <div class="form-group">
+                          <label class="text-detail font-bold text-muted">Public Contact Email</label>
+                          <input type="email" class="input" id="profile-email" value="jaiveer@company.com">
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="text-detail font-bold text-muted">Preferred Pronouns</label>
+                        <select class="select" id="profile-pronouns">
+                          <option value="he-him">He/Him</option>
+                          <option value="she-her">She/Her</option>
+                          <option value="they-them">They/Them</option>
+                          <option value="custom">Not Specified</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="text-detail font-bold text-muted">Creative Biography</label>
+                        <textarea class="textarea" id="profile-bio" rows="4" placeholder="Brief statement regarding your creative direction, workspace roles, or agency pipeline goals..."></textarea>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ==============================================
+                     2. PANEL: ACCOUNT
+                     ============================================== -->
+                <div class="settings-panel" id="panel-account">
+                  <div class="card-settings-header">
+                    <h3 class="font-bold text-primary">Account Management</h3>
+                    <p class="text-body-small text-muted">Configure basic URLs, subscription plans, and account deactivation zones.</p>
+                  </div>
+
+                  <div class="card" style="padding: var(--space-md);">
+                    <h4 class="font-bold text-primary" style="margin-bottom: var(--space-sm);">Core Workspace Coordinates</h4>
+                    <div class="form-group">
+                      <label class="text-detail font-bold text-muted">Unique Account Handle</label>
+                      <div class="input-container">
+                        <span class="text-detail text-secondary" style="position: absolute; left: 12px; top: 12px; pointer-events: none;">kontagi.ai/member/</span>
+                        <input type="text" class="input" style="padding-left: 145px;" id="account-handle" value="jaiveer-hastar">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card flex-column" style="padding: var(--space-md); gap: var(--space-sm); background: linear-gradient(135deg, var(--brand-primary-glow) 0%, rgba(139, 92, 246, 0.05) 100%); border-color: rgba(99, 102, 241, 0.2);">
+                    <div class="flex-between">
+                      <div>
+                        <h4 class="font-bold text-primary flex-center" style="gap: var(--space-xs); justify-content: flex-start;">
+                          Enterprise AI Orchestrator
+                          <span class="badge badge-indigo">PRO TIER</span>
+                        </h4>
+                        <p class="text-detail text-secondary" style="margin-top: 4px;">Subscribed since June 2025. Billing cycle renews July 15, 2026.</p>
+                      </div>
+                      <a href="billing.html" class="btn btn-secondary btn-sm">Manage Billing</a>
+                    </div>
+                    
+                    <div style="margin-top: var(--space-xs);">
+                      <div class="flex-between" style="margin-bottom: 4px;">
+                        <span class="text-detail font-bold text-muted">Monthly AI Rendering Quota</span>
+                        <span class="text-detail font-mono font-bold text-primary">42,204,912 / 50,000,000 Tokens (84%)</span>
+                      </div>
+                      <div class="password-strength-bar" style="background-color: var(--border-default);">
+                        <div class="password-strength-fill" style="width: 84%; background-color: var(--brand-primary);"></div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card" style="padding: var(--space-md); border-color: var(--accent-red); background-color: var(--accent-red-bg);">
+                    <h4 class="font-bold text-danger" style="margin-bottom: var(--space-xxs);">Danger Zone</h4>
+                    <p class="text-detail text-secondary" style="margin-bottom: var(--space-md);">Deactivating your user account removes access tokens, revokes client pipelines, and pauses billing. This action is irreversible.</p>
+                    <button class="btn btn-sm btn-tertiary text-danger" style="border: 1px solid var(--accent-red); background-color: var(--bg-primary);" onclick="openDeactivateModal()">Deactivate Account</button>
+                  </div>
+                </div>
+
+                <!-- ==============================================
+                     3. PANEL: PASSWORD
+                     ============================================== -->
+                <div class="settings-panel" id="panel-password">
+                  <div class="card-settings-header">
+                    <h3 class="font-bold text-primary">Update Account Password</h3>
+                    <p class="text-body-small text-muted">Keep your account secure by rotating security passwords periodically.</p>
+                  </div>
+
+                  <div class="card" style="padding: var(--space-md);">
+                    <div class="flex-column" style="gap: var(--space-md);">
+                      <div class="form-group">
+                        <label class="text-detail font-bold text-muted">Current Password</label>
+                        <input type="password" class="input" id="pwd-current" placeholder="••••••••••••">
+                      </div>
+
+                      <div class="form-group">
+                        <label class="text-detail font-bold text-muted">New Secure Password</label>
+                        <input type="password" class="input" id="pwd-new" oninput="checkPasswordStrength(this.value)" placeholder="At least 12 characters recommended">
+                        <div class="flex-between" style="align-items: center; margin-top: 4px;">
+                          <span class="text-detail text-secondary">Password strength: <span id="pwd-strength-label" class="font-bold">Not Evaluated</span></span>
+                        </div>
+                        <div class="password-strength-bar">
+                          <div class="password-strength-fill" id="pwd-strength-bar-fill"></div>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="text-detail font-bold text-muted">Confirm New Secure Password</label>
+                        <input type="password" class="input" id="pwd-confirm" placeholder="Re-type new password">
+                      </div>
+
+                      <div class="flex-center" style="justify-content: flex-end; margin-top: var(--space-xs);">
+                        <button class="btn btn-primary btn-sm" onclick="savePasswordRotation()">Update Password</button>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ==============================================
+                     4. PANEL: 2FA SECURITY
+                     ============================================== -->
+                <div class="settings-panel" id="panel-twofactor">
+                  <div class="card-settings-header">
+                    <h3 class="font-bold text-primary">Two-Factor Authentication (2FA)</h3>
+                    <p class="text-body-small text-muted">Secure logins using multi-factor confirmation tokens.</p>
+                  </div>
+
+                  <div class="card" style="padding: var(--space-md);">
+                    <div class="flex-between" style="margin-bottom: var(--space-md);">
+                      <div>
+                        <h4 class="font-bold text-primary">Enrollment Status</h4>
+                        <p class="text-detail text-secondary" style="margin-top: 4px;">Use time-based authentication software like Google Authenticator or 1Password.</p>
+                      </div>
+                      <span class="badge badge-danger" id="twofactor-status-badge">DISABLED</span>
+                    </div>
+
+                    <!-- Enrollment flow box -->
+                    <div class="flex-column" id="twofactor-setup-container" style="gap: var(--space-md); border-top: 1px solid var(--border-default); padding-top: var(--space-md);">
+                      <h4 class="font-bold text-primary">Begin 2FA Enrollment</h4>
+                      
+                      <div class="flex-row" style="gap: var(--space-lg); align-items: start; flex-wrap: wrap;">
+                        <div class="qrcode-mock">
+                          <!-- CSS Grid mock QR -->
+                          <div class="qr-pixel active"></div><div class="qr-pixel active"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel active"></div><div class="qr-pixel active"></div><div class="qr-pixel active"></div>
+                          <div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div>
+                          <div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div>
+                          <div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div>
+                          <div class="qr-pixel active"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel"></div><div class="qr-pixel"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div>
+                          <div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel active"></div><div class="qr-pixel active"></div>
+                          <div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel active"></div><div class="qr-pixel active"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div>
+                          <div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div>
+                          <div class="qr-pixel active"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel active"></div><div class="qr-pixel"></div><div class="qr-pixel active"></div><div class="qr-pixel active"></div><div class="qr-pixel active"></div>
+                        </div>
+
+                        <div class="flex-column" style="gap: var(--space-sm); flex-grow: 1; min-width: 200px;">
+                          <p class="text-body-small text-secondary">1. Scan the mock barcode to sync authorization tokens. Or manually configure the registration key below:</p>
+                          <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-default); padding: var(--space-xs); border-radius: var(--radius-md);" class="flex-between">
+                            <span class="font-mono text-body-small font-bold text-primary">AURA CORE 2FA KEY CODE</span>
+                            <button class="btn btn-tertiary btn-sm" onclick="showToast('Key copied!', 'info')">Copy Key</button>
+                          </div>
+                          
+                          <p class="text-body-small text-secondary" style="margin-top: var(--space-xxs);">2. Enter the six-digit verification code sent to your app:</p>
+                          <div class="flex-row" style="gap: var(--space-xs); max-width: 300px;">
+                            <input type="text" class="input font-mono font-bold" id="twofactor-code" placeholder="000 000" style="text-align: center; letter-spacing: 0.25em;">
+                            <button class="btn btn-primary btn-sm" onclick="verifyTwoFactorEnrollment()">Verify Code</button>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Enrollment backup key section (Hidden initially) -->
+                    <div class="flex-column" id="twofactor-recovery-container" style="display: none; gap: var(--space-md); border-top: 1px solid var(--border-default); padding-top: var(--space-md);">
+                      <div class="alert alert-success">
+                        <span class="font-bold">2FA Enabled Successfully!</span> Save these recovery backup codes in a safe folder. Each code can be consumed once if you lose device authentication control.
+                      </div>
+                      
+                      <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: var(--space-xs);" class="font-mono text-body-small font-bold text-primary">
+                        <div>1. AB8F-2C9D-981A</div>
+                        <div>2. 4DF0-98FA-1A3E</div>
+                        <div>3. C9DA-E2B4-9F01</div>
+                        <div>4. 1E3A-F4B8-C2D9</div>
+                        <div>5. D9C2-B4E2-019F</div>
+                        <div>6. FA98-3E1E-D9C2</div>
+                        <div>7. B4E2-9F01-AB8F</div>
+                        <div>8. 2C9D-4DF0-98FA</div>
+                      </div>
+                      <div class="flex-center" style="gap: var(--space-sm); justify-content: flex-start; margin-top: var(--space-xxs);">
+                        <button class="btn btn-secondary btn-sm" onclick="showToast('Recovery codes downloaded.', 'success')">Download Backup Codes</button>
+                        <button class="btn btn-tertiary btn-sm text-danger" onclick="disableTwoFactor()">Disable 2FA</button>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- ==============================================
+                     5. PANEL: API KEYS
+                     ============================================== -->
+                <div class="settings-panel" id="panel-apikeys">
+                  <div class="card-settings-header">
+                    <h3 class="font-bold text-primary">Developer API Keys</h3>
+                    <p class="text-body-small text-muted">Generate secure access credentials to integrate automated agents and rendering scripts.</p>
+                  </div>
+
+                  <div class="card" style="padding: var(--space-md);">
+                    <div class="flex-between" style="margin-bottom: var(--space-sm);">
+                      <h4 class="font-bold text-primary">Active Access Tokens</h4>
+                      <button class="btn btn-primary btn-sm" onclick="openCreateApiKeyModal()">Create New API Key</button>
+                    </div>
+
+                    <div class="table-container">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Key Label</th>
+                            <th>Token Details</th>
+                            <th>Permissions</th>
+                            <th>Expiry</th>
+                            <th>Status</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody id="apikey-table-body">
+                          <tr>
+                            <td><span class="font-bold text-primary">Production Orchestrator</span></td>
+                            <td><span class="font-mono text-detail">ac_live_••••••••••••48df</span></td>
+                            <td><span class="badge badge-indigo">Admin Role</span></td>
+                            <td><span>Never</span></td>
+                            <td><span class="badge badge-success">Active</span></td>
+                            <td><button class="btn btn-tertiary btn-sm text-danger" onclick="revokeApiKey(this, 'Production Orchestrator')">Revoke</button></td>
+                          </tr>
+                          <tr>
+                            <td><span class="font-bold text-primary">CI Pipeline Build</span></td>
+                            <td><span class="font-mono text-detail">ac_live_••••••••••••92a1</span></td>
+                            <td><span class="badge badge-blue">Write Access</span></td>
+                            <td><span>30 days</span></td>
+                            <td><span class="badge badge-success">Active</span></td>
+                            <td><button class="btn btn-tertiary btn-sm text-danger" onclick="revokeApiKey(this, 'CI Pipeline Build')">Revoke</button></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ==============================================
+                     6. PANEL: WORKSPACE
+                     ============================================== -->
+                <div class="settings-panel" id="panel-workspace">
+                  <div class="card-settings-header">
+                    <h3 class="font-bold text-primary">Workspace Profile & Team</h3>
+                    <p class="text-body-small text-muted">Configure corporate workspace profile configurations, URL handles, and view collaborator roles.</p>
+                  </div>
+
+                  <div class="card" style="padding: var(--space-md);">
+                    <div class="flex-column" style="gap: var(--space-md);">
+                      <h4 class="font-bold text-primary">Workspace Metadata</h4>
+                      <div class="form-row-2">
+                        <div class="form-group">
+                          <label class="text-detail font-bold text-muted">Workspace Company Name</label>
+                          <input type="text" class="input" id="workspace-name" value="Pulse Energy Corp">
+                        </div>
+                        <div class="form-group">
+                          <label class="text-detail font-bold text-muted">Workspace Route URL</label>
+                          <div class="input-container">
+                            <span class="text-detail text-secondary" style="position: absolute; left: 12px; top: 12px; pointer-events: none;">kontagi.ai/workspace/</span>
+                            <input type="text" class="input" style="padding-left: 175px;" id="workspace-slug" value="pulse-energy">
+                          </div>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="text-detail font-bold text-muted">Update Workspace Logo</label>
+                        <div class="dropzone-mock" onclick="showToast('Logo upload initiated.', 'info')">
+                          <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-bottom: var(--space-xxs);"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                          <p class="text-body-small font-bold text-primary">Click to upload logo</p>
+                          <p class="text-detail text-secondary">Supports square SVG, PNG vector templates.</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card" style="padding: var(--space-md);">
+                    <div class="flex-between" style="margin-bottom: var(--space-sm);">
+                      <h4 class="font-bold text-primary">Workspace Collaborators</h4>
+                      <button class="btn btn-secondary btn-sm" onclick="openInviteModal()">Invite Member</button>
+                    </div>
+
+                    <div class="table-container">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>User Member</th>
+                            <th>Role Permissions</th>
+                            <th>Status</th>
+                          </tr>
+                        </thead>
+                        <tbody id="collaborators-table-body">
+                          <tr>
+                            <td>
+                              <div class="flex-center" style="gap: var(--space-xs); justify-content: flex-start;">
+                                <div class="avatar avatar-sm font-bold" style="background-color: var(--brand-secondary); color: var(--text-inverse);">JH</div>
+                                <div class="flex-column" style="gap: 2px;">
+                                  <span class="text-body-small font-bold text-primary">Jaiveer Hastar</span>
+                                  <span class="text-detail text-secondary">jaiveer@company.com</span>
+                                </div>
+                              </div>
+                            </td>
+                            <td><span class="badge badge-indigo">Workspace Owner</span></td>
+                            <td><span class="badge badge-success">Active</span></td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <div class="flex-center" style="gap: var(--space-xs); justify-content: flex-start;">
+                                <div class="avatar avatar-sm font-bold" style="background-color: var(--brand-primary); color: var(--text-inverse);">AV</div>
+                                <div class="flex-column" style="gap: 2px;">
+                                  <span class="text-body-small font-bold text-primary">Aria Vance</span>
+                                  <span class="text-detail text-secondary">aria@company.com</span>
+                                </div>
+                              </div>
+                            </td>
+                            <td><span class="badge badge-blue">Agency Editor</span></td>
+                            <td><span class="badge badge-success">Active</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ==============================================
+                     7. PANEL: BRAND KITS
+                     ============================================== -->
+                <div class="settings-panel" id="panel-brand">
+                  <div class="card-settings-header">
+                    <h3 class="font-bold text-primary">Workspace Brand Kit Preferences</h3>
+                    <p class="text-body-small text-muted">Establish preferred brand profiles, typography rules, and restricted tone guidelines.</p>
+                  </div>
+
+                  <div class="card" style="padding: var(--space-md);">
+                    <h4 class="font-bold text-primary" style="margin-bottom: var(--space-sm);">Brand Color Guidelines</h4>
+                    
+                    <div class="flex-column" style="gap: var(--space-sm);">
+                      <div class="flex-between switch-row">
+                        <div class="flex-center" style="gap: var(--space-sm); justify-content: flex-start;">
+                          <div class="swatch-circle" style="background-color: #6366F1;"></div>
+                          <div class="flex-column">
+                            <span class="text-body-small font-bold text-primary">Primary Indigo Swatch</span>
+                            <span class="text-detail text-secondary">hex: #6366F1 (Stripe Indigo)</span>
+                          </div>
+                        </div>
+                        <input type="color" class="input" style="width: 50px; padding: 2px; height: 32px;" value="#6366F1" onchange="showToast('Primary swatch updated.', 'info')">
+                      </div>
+
+                      <div class="flex-between switch-row">
+                        <div class="flex-center" style="gap: var(--space-sm); justify-content: flex-start;">
+                          <div class="swatch-circle" style="background-color: #10B981;"></div>
+                          <div class="flex-column">
+                            <span class="text-body-small font-bold text-primary">Accent Green Swatch</span>
+                            <span class="text-detail text-secondary">hex: #10B981 (Cyber Green)</span>
+                          </div>
+                        </div>
+                        <input type="color" class="input" style="width: 50px; padding: 2px; height: 32px;" value="#10B981" onchange="showToast('Accent green swatch updated.', 'info')">
+                      </div>
+                    </div>
+                  </div>
+
+                  <div class="card" style="padding: var(--space-md);">
+                    <h4 class="font-bold text-primary" style="margin-bottom: var(--space-sm);">Verbal Rules & AI Guardrails</h4>
+                    <div class="flex-column" style="gap: var(--space-md);">
+                      <div class="form-group">
+                        <label class="text-detail font-bold text-muted">Core Workspace Tagline Value Proposition</label>
+                        <input type="text" class="input" id="brand-tagline" value="Charging clean Gen-Z visual focus states with zero additives.">
+                      </div>
+
+                      <div class="form-group">
+                        <label class="text-detail font-bold text-muted">Prohibited Verbal Terms</label>
+                        <input type="text" class="input" id="brand-prohibited" value="tired, old-fashioned, slow, additives">
+                        <p class="text-detail text-secondary">Separate restricted terms with commas to warn campaign builders.</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ==============================================
+                     8. PANEL: APPEARANCE
+                     ============================================== -->
+                <div class="settings-panel" id="panel-appearance">
+                  <div class="card-settings-header">
+                    <h3 class="font-bold text-primary">Appearance & Themes</h3>
+                    <p class="text-body-small text-muted">Customize layout density, theme styling templates, and corners.</p>
+                  </div>
+
+                  <div class="grid-12" style="gap: var(--space-md);">
+                    
+                    <!-- Theme card Light -->
+                    <div class="col-span-6 appearance-theme-card" id="theme-card-light" onclick="setAppTheme('light')">
+                      <div style="background-color: #FFFFFF; height: 80px; border-radius: var(--radius-sm); border: 1px solid #E5E7EB; padding: var(--space-xs);" class="flex-column">
+                        <div style="height: 12px; width: 40%; background-color: #E5E7EB; border-radius: 4px;"></div>
+                        <div style="height: 8px; width: 80%; background-color: #F3F4F6; border-radius: 4px; margin-top: auto;"></div>
+                      </div>
+                      <span class="text-body-small font-bold text-primary" style="display: block; margin-top: var(--space-xs); text-align: center;">Light Mode</span>
+                    </div>
+
+                    <!-- Theme card Dark -->
+                    <div class="col-span-6 appearance-theme-card active" id="theme-card-dark" onclick="setAppTheme('dark')">
+                      <div style="background-color: #0A0A0E; height: 80px; border-radius: var(--radius-sm); border: 1px solid rgba(255,255,255,0.08); padding: var(--space-xs);" class="flex-column">
+                        <div style="height: 12px; width: 40%; background-color: rgba(255,255,255,0.15); border-radius: 4px;"></div>
+                        <div style="height: 8px; width: 80%; background-color: rgba(255,255,255,0.08); border-radius: 4px; margin-top: auto;"></div>
+                      </div>
+                      <span class="text-body-small font-bold text-primary" style="display: block; margin-top: var(--space-xs); text-align: center;">Dark Mode</span>
+                    </div>
+
+                  </div>
+
+                  <div class="card" style="padding: var(--space-md);">
+                    <h4 class="font-bold text-primary" style="margin-bottom: var(--space-sm);">Visual Density & Corners</h4>
+                    
+                    <div class="flex-column" style="gap: var(--space-lg);">
+                      <div class="form-group">
+                        <label class="text-detail font-bold text-muted flex-between">
+                          Corner Border Radius Preview
+                          <span id="radius-val-label" class="font-mono text-primary font-bold">12px (Sleek)</span>
+                        </label>
+                        <input type="range" class="input" min="0" max="24" value="12" step="4" id="appearance-radius-slider" oninput="updateAppRadius(this.value)">
+                        <div class="flex-between font-mono text-detail text-secondary" style="padding: 0 4px;">
+                          <span>0px (Sharp)</span>
+                          <span>8px (Sleek)</span>
+                          <span>16px (Apple)</span>
+                          <span>24px (Pill)</span>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="text-detail font-bold text-muted">Layout Display Density</label>
+                        <div class="flex-row" style="gap: var(--space-sm);">
+                          <label class="flex-center" style="gap: var(--space-xs); background-color: var(--bg-secondary); border: 1px solid var(--border-default); padding: var(--space-sm); border-radius: var(--radius-md); flex-grow: 1; cursor: pointer;">
+                            <input type="radio" name="density" value="standard" checked onclick="showToast('Standard density selected.', 'info')">
+                            <span class="text-body-small font-bold text-primary">Standard View</span>
+                          </label>
+                          <label class="flex-center" style="gap: var(--space-xs); background-color: var(--bg-secondary); border: 1px solid var(--border-default); padding: var(--space-sm); border-radius: var(--radius-md); flex-grow: 1; cursor: pointer;">
+                            <input type="radio" name="density" value="compact" onclick="showToast('Compact density selected.', 'info')">
+                            <span class="text-body-small font-bold text-primary">Compact List</span>
+                          </label>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ==============================================
+                     9. PANEL: LANGUAGE
+                     ============================================== -->
+                <div class="settings-panel" id="panel-language">
+                  <div class="card-settings-header">
+                    <h3 class="font-bold text-primary">Language & Region Settings</h3>
+                    <p class="text-body-small text-muted">Select localization standards, system calendar time zones, and formatting options.</p>
+                  </div>
+
+                  <div class="card" style="padding: var(--space-md);">
+                    <div class="flex-column" style="gap: var(--space-md);">
+                      <div class="form-group">
+                        <label class="text-detail font-bold text-muted">Primary System Language</label>
+                        <select class="select" id="lang-select" onchange="showToast('Language settings saved.', 'success')">
+                          <option value="en">English (US)</option>
+                          <option value="hi">Hindi (हिन्दी)</option>
+                          <option value="de">German (Deutsch)</option>
+                          <option value="ja">Japanese (日本語)</option>
+                          <option value="pt">Portuguese (Português)</option>
+                        </select>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="text-detail font-bold text-muted">Active Time Zone Locale</label>
+                        <select class="select" id="timezone-select" onchange="updateTimeZonePreview(this.value)">
+                          <option value="ist">Asia/Kolkata (IST) — UTC+5:30</option>
+                          <option value="est">America/New_York (EST) — UTC-5:00</option>
+                          <option value="gmt">Europe/London (GMT) — UTC+0:00</option>
+                          <option value="pst">America/Los_Angeles (PST) — UTC-8:00</option>
+                        </select>
+                        <div class="flex-between text-detail text-secondary" style="margin-top: 4px;">
+                          <span>Current regional time preview:</span>
+                          <span id="timezone-preview-clock" class="font-mono font-bold text-primary">July 14, 2026 12:15 PM</span>
+                        </div>
+                      </div>
+
+                      <div class="form-group">
+                        <label class="text-detail font-bold text-muted">Default Calendar Date Format</label>
+                        <select class="select" id="date-format-select" onchange="showToast('Date format updated.', 'info')">
+                          <option value="ddmmyyyy">DD/MM/YYYY (e.g. 14/07/2026)</option>
+                          <option value="mmddyyyy">MM/DD/YYYY (e.g. 07/14/2026)</option>
+                          <option value="yyyymmdd">YYYY-MM-DD (e.g. 2026-07-14)</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ==============================================
+                     10. PANEL: PRIVACY
+                     ============================================== -->
+                <div class="settings-panel" id="panel-privacy">
+                  <div class="card-settings-header">
+                    <h3 class="font-bold text-primary">Privacy & Data Governance</h3>
+                    <p class="text-body-small text-muted">Control your telemetry settings, download archive logs, or erase workspace history.</p>
+                  </div>
+
+                  <div class="card" style="padding: var(--space-md);">
+                    <h4 class="font-bold text-primary" style="margin-bottom: var(--space-sm);">Workspace Telemetry Switches</h4>
+                    <div class="flex-column" style="gap: var(--space-xs);">
+                      
+                      <div class="switch-row">
+                        <div class="flex-column">
+                          <span class="text-body-small font-bold text-primary">AI Model Training</span>
+                          <span class="text-detail text-secondary">Allow KONTAGI models to learn from rendering pipeline metrics and creative approvals.</span>
+                        </div>
+                        <label class="switch">
+                          <input type="checkbox" checked onclick="showToast('AI training parameters updated.', 'info')">
+                          <span class="slider"></span>
+                        </label>
+                      </div>
+
+                      <div class="switch-row">
+                        <div class="flex-column">
+                          <span class="text-body-small font-bold text-primary">Anonymous Diagnostic Reports</span>
+                          <span class="text-detail text-secondary">Transmit silent error logs, latency timelines, and application rendering crashes.</span>
+                        </div>
+                        <label class="switch">
+                          <input type="checkbox" checked onclick="showToast('Diagnostic reporting preferences updated.', 'info')">
+                          <span class="slider"></span>
+                        </label>
+                      </div>
+
+                      <div class="switch-row">
+                        <div class="flex-column">
+                          <span class="text-body-small font-bold text-primary">Public Asset Indexing</span>
+                          <span class="text-detail text-secondary">Permit Google or other search crawler scripts to catalog metadata in public library pages.</span>
+                        </div>
+                        <label class="switch">
+                          <input type="checkbox" onclick="showToast('Asset SEO indexing updated.', 'info')">
+                          <span class="slider"></span>
+                        </label>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <div class="card" style="padding: var(--space-md);">
+                    <h4 class="font-bold text-primary" style="margin-bottom: var(--space-xxs);">Export Data Archive</h4>
+                    <p class="text-detail text-secondary" style="margin-bottom: var(--space-md);">Generate a copyable JSON profile archive containing creative libraries, member configurations, and project metadata.</p>
+                    
+                    <div class="flex-column" id="export-archive-holder" style="gap: var(--space-sm);">
+                      <button class="btn btn-secondary btn-sm" style="align-self: flex-start;" onclick="startWorkspaceExport()">Request Data Export</button>
+                      <div class="flex-column" id="export-progress-container" style="display: none; gap: var(--space-xxs);">
+                        <div class="flex-between text-detail font-bold text-primary">
+                          <span>Compiling JSON metadata assets...</span>
+                          <span id="export-progress-percent">0%</span>
+                        </div>
+                        <div class="password-strength-bar">
+                          <div class="password-strength-fill" id="export-progress-fill" style="width: 0%; background-color: var(--accent-green);"></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ==============================================
+                     11. PANEL: SECURITY
+                     ============================================== -->
+                <div class="settings-panel" id="panel-security">
+                  <div class="card-settings-header">
+                    <h3 class="font-bold text-primary">Security & Audit Logs</h3>
+                    <p class="text-body-small text-muted">Monitor login session coordinates, audit administrative edits, and config IP address boundaries.</p>
+                  </div>
+
+                  <div class="card" style="padding: var(--space-md);">
+                    <h4 class="font-bold text-primary" style="margin-bottom: var(--space-sm);">Active Sessions</h4>
+                    <div class="table-container">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Device OS / Browser</th>
+                            <th>IP Address</th>
+                            <th>Geographic Location</th>
+                            <th>Active Status</th>
+                            <th>Action</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>
+                              <div class="flex-center" style="gap: var(--space-xs); justify-content: flex-start;">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 21h12m-9-4l-1 4m8-4l1 4"/></svg>
+                                <span class="text-body-small font-bold text-primary">Chrome (Windows 11)</span>
+                              </div>
+                            </td>
+                            <td><span class="font-mono text-detail">192.168.1.14</span></td>
+                            <td><span>Mumbai, India</span></td>
+                            <td><span class="badge badge-success">Current Session</span></td>
+                            <td><span class="text-detail text-secondary">—</span></td>
+                          </tr>
+                          <tr>
+                            <td>
+                              <div class="flex-center" style="gap: var(--space-xs); justify-content: flex-start;">
+                                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
+                                <span class="text-body-small font-bold text-primary">Safari (iOS mobile)</span>
+                              </div>
+                            </td>
+                            <td><span class="font-mono text-detail">103.45.21.90</span></td>
+                            <td><span>Delhi, India</span></td>
+                            <td><span>3 hours ago</span></td>
+                            <td><button class="btn btn-tertiary btn-sm text-danger" onclick="revokeSessionRow(this)">Log out</button></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+
+                  <div class="card" style="padding: var(--space-md);">
+                    <h4 class="font-bold text-primary" style="margin-bottom: var(--space-sm);">IP Address Whitelists</h4>
+                    <div class="flex-column" style="gap: var(--space-sm);">
+                      <p class="text-body-small text-secondary">Restrict API key executions and dashboard logins to verified IP subnets.</p>
+                      
+                      <div class="flex-row" style="gap: var(--space-xs); max-width: 450px;">
+                        <input type="text" class="input font-mono" id="security-ip-input" placeholder="e.g. 192.168.1.0/24">
+                        <button class="btn btn-secondary btn-sm" onclick="addIpToWhitelist()">Whitelist IP</button>
+                      </div>
+
+                      <div id="ip-tags-holder" class="flex-center" style="gap: var(--space-xs); justify-content: flex-start; flex-wrap: wrap; margin-top: var(--space-xxs);">
+                        <div class="ip-tag">
+                          <span>127.0.0.1</span>
+                          <span style="cursor: pointer; color: var(--accent-red);" onclick="this.parentElement.remove()">&times;</span>
+                        </div>
+                        <div class="ip-tag">
+                          <span>192.168.1.14</span>
+                          <span style="cursor: pointer; color: var(--accent-red);" onclick="this.parentElement.remove()">&times;</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- ==============================================
+                     12. PANEL: INTEGRATIONS
+                     ============================================= -->
+                <div class="settings-panel" id="panel-integrations">
+                  <div class="card-settings-header">
+                    <h3 class="font-bold text-primary">Connected SaaS Applications</h3>
+                    <p class="text-body-small text-muted">Enable webhook integration modules and sync asset libraries with external tools.</p>
+                  </div>
+
+                  <div class="integration-grid">
+                    
+                    <!-- Slack integration -->
+                    <div class="integration-card">
+                      <div class="integration-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M5.042 15.165a2.528 2.528 0 0 1-2.52 2.523 2.528 2.528 0 0 1-2.522-2.523 2.528 2.528 0 0 1 2.522-2.52h2.52v2.52zm1.261 0a2.528 2.528 0 0 1 2.52-2.52h5.043a2.528 2.528 0 0 1 2.522 2.52v5.042a2.528 2.528 0 0 1-2.522 2.52H8.823a2.528 2.528 0 0 1-2.52-2.52v-5.042zM8.823 5.043a2.528 2.528 0 0 1 2.52-2.52 2.528 2.528 0 0 1 2.522 2.52v2.52h-2.522a2.528 2.528 0 0 1-2.52-2.52zm0 1.261a2.528 2.528 0 0 1 2.52 2.52v5.043a2.528 2.528 0 0 1-2.52 2.522H3.78a2.528 2.528 0 0 1-2.52-2.522V8.824a2.528 2.528 0 0 1 2.52-2.52h5.043zm10.135 3.781a2.528 2.528 0 0 1 2.522-2.52 2.528 2.528 0 0 1 2.52 2.52 2.528 2.528 0 0 1-2.52 2.522h-2.522v-2.522zm-1.262 0a2.528 2.528 0 0 1-2.52 2.522h-5.043a2.528 2.528 0 0 1-2.522-2.522V3.78a2.528 2.528 0 0 1 2.522-2.52h5.043a2.528 2.528 0 0 1 2.52 2.52v5.043zm-3.78 10.135a2.528 2.528 0 0 1-2.52 2.52 2.528 2.528 0 0 1-2.522-2.52v-2.52h2.522a2.528 2.528 0 0 1 2.52 2.52zm0-1.262a2.528 2.528 0 0 1-2.52-2.52v-5.043a2.528 2.528 0 0 1 2.52-2.522h5.043a2.528 2.528 0 0 1 2.52 2.522v5.043a2.528 2.528 0 0 1-2.52 2.52h-5.043z"/>
+                        </svg>
+                        <h4 class="font-bold text-primary">Slack Hub</h4>
+                      </div>
+                      <p class="text-detail text-secondary flex-grow">Send project rendering approvals and pipeline updates directly to Slack channels.</p>
+                      <div class="flex-between" style="margin-top: auto;">
+                        <span class="badge badge-success" id="badge-int-slack">Connected</span>
+                        <label class="switch switch-sm">
+                          <input type="checkbox" checked onchange="toggleIntegration('slack', this.checked)">
+                          <span class="slider"></span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <!-- Stripe integration -->
+                    <div class="integration-card">
+                      <div class="integration-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M13.962 10.3c0-1.02-.823-1.44-2.22-1.44-1.928 0-4.062.7-4.062.7v-2.7s1.886-.72 4.254-.72c3.279 0 5.092 1.54 5.092 4.3 0 3.8-5.18 4.36-5.18 5.72 0 .56.46 1 1.71 1 1.848 0 4.108-.82 4.108-.82l.024 2.68s-1.848.86-4.52.86c-3.14 0-4.632-1.74-4.632-4.16 0-4.2 5.428-4.78 5.428-6.42z"/>
+                        </svg>
+                        <h4 class="font-bold text-primary">Stripe Billing</h4>
+                      </div>
+                      <p class="text-detail text-secondary flex-grow">Automate creator pay escrows and visual license contract settlements.</p>
+                      <div class="flex-between" style="margin-top: auto;">
+                        <span class="badge badge-success" id="badge-int-stripe">Connected</span>
+                        <label class="switch switch-sm">
+                          <input type="checkbox" checked onchange="toggleIntegration('stripe', this.checked)">
+                          <span class="slider"></span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <!-- Figma integration -->
+                    <div class="integration-card">
+                      <div class="integration-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2C9.24 2 7 4.24 7 7c0 2.26 1.5 4.17 3.55 4.75C8.5 12.33 7 14.24 7 17c0 2.76 2.24 5 5 5s5-2.24 5-5c0-2.76-1.5-4.67-3.55-5.25C15.5 11.17 17 9.26 17 7c0-2.76-2.24-5-5-5zm-2.5 5c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5S13.38 9.5 12 9.5s-2.5-1.12-2.5-2.5zm0 10c0-1.38 1.12-2.5 2.5-2.5s2.5 1.12 2.5 2.5S13.38 19.5 12 19.5s-2.5-1.12-2.5-2.5z"/>
+                        </svg>
+                        <h4 class="font-bold text-primary">Figma Canvas</h4>
+                      </div>
+                      <p class="text-detail text-secondary flex-grow">Synchronize workspace brand kits, palettes, and vector outlines instantly.</p>
+                      <div class="flex-between" style="margin-top: auto;">
+                        <span class="badge badge-danger" id="badge-int-figma">Disconnected</span>
+                        <label class="switch switch-sm">
+                          <input type="checkbox" onchange="toggleIntegration('figma', this.checked)">
+                          <span class="slider"></span>
+                        </label>
+                      </div>
+                    </div>
+
+                    <!-- Vercel integration -->
+                    <div class="integration-card">
+                      <div class="integration-header">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor">
+                          <path d="M12 2L2 22h20L12 2z"/>
+                        </svg>
+                        <h4 class="font-bold text-primary">Vercel Webhooks</h4>
+                      </div>
+                      <p class="text-detail text-secondary flex-grow">Trigger static web rebuilds and design token distribution pipelines.</p>
+                      <div class="flex-between" style="margin-top: auto;">
+                        <span class="badge badge-danger" id="badge-int-vercel">Disconnected</span>
+                        <label class="switch switch-sm">
+                          <input type="checkbox" onchange="toggleIntegration('vercel', this.checked)">
+                          <span class="slider"></span>
+                        </label>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==============================================
+       3. INTERACTIVE DIALOG MODALS
+       ============================================== -->
+  
+  <!-- Collaborative invite modal -->
+  <div class="dialog-overlay" id="invite-dialog">
+    <div class="dialog-card">
+      <div class="flex-between" style="border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-xs); margin-bottom: var(--space-md);">
+        <h3 class="font-bold text-primary">Invite Member to Workspace</h3>
+        <button class="btn btn-tertiary" style="padding: 4px;" onclick="closeInviteModal()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="flex-column" style="gap: var(--space-md);">
+        <div class="form-group">
+          <label class="text-detail font-bold text-muted">Email Address</label>
+          <input type="email" class="input" id="invite-email-input" placeholder="e.g. collaborator@company.com">
+        </div>
+
+        <div class="form-group">
+          <label class="text-detail font-bold text-muted">Workspace Permission Level</label>
+          <select class="select" id="invite-role-select">
+            <option value="Admin">Workspace Administrator</option>
+            <option value="Editor">Agency Editor</option>
+            <option value="Viewer">Viewer Only</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex-center" style="gap: var(--space-sm); justify-content: flex-end; margin-top: var(--space-xl);">
+        <button class="btn btn-secondary btn-sm" onclick="closeInviteModal()">Cancel</button>
+        <button class="btn btn-primary btn-sm" onclick="submitInviteCollaborator()">Grant Workspace Access</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Deactivate confirmation modal -->
+  <div class="dialog-overlay" id="deactivate-dialog">
+    <div class="dialog-card">
+      <div class="flex-between" style="border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-xs); margin-bottom: var(--space-md);">
+        <h3 class="font-bold text-danger">Confirm Account Deactivation</h3>
+        <button class="btn btn-tertiary" style="padding: 4px;" onclick="closeDeactivateModal()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="flex-column" style="gap: var(--space-md);">
+        <p class="text-body-small text-muted" style="line-height: 1.5;">
+          This will temporarily suspend your access, pause billings, and lock active campaigns. Type <span class="font-mono font-bold text-danger">DEACTIVATE</span> in the input below to authorize deactivation:
+        </p>
+        <input type="text" class="input font-mono" id="deactivate-input" placeholder="DEACTIVATE">
+      </div>
+
+      <div class="flex-center" style="gap: var(--space-sm); justify-content: flex-end; margin-top: var(--space-xl);">
+        <button class="btn btn-secondary btn-sm" onclick="closeDeactivateModal()">Cancel</button>
+        <button class="btn btn-primary btn-sm text-danger" style="background-color: var(--accent-red); border-color: var(--accent-red);" onclick="confirmDeactivateAccount()">Confirm Deactivate</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Create API Key modal -->
+  <div class="dialog-overlay" id="apikey-dialog">
+    <div class="dialog-card">
+      <div class="flex-between" style="border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-xs); margin-bottom: var(--space-md);">
+        <h3 class="font-bold text-primary">Generate Developer API Key</h3>
+        <button class="btn btn-tertiary" style="padding: 4px;" onclick="closeCreateApiKeyModal()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="flex-column" id="apikey-form-step" style="gap: var(--space-md);">
+        <div class="form-group">
+          <label class="text-detail font-bold text-muted">Key Identifier Label</label>
+          <input type="text" class="input" id="apikey-label" placeholder="e.g. Production Agent">
+        </div>
+        <div class="form-row-2">
+          <div class="form-group">
+            <label class="text-detail font-bold text-muted">Scope Level</label>
+            <select class="select" id="apikey-role">
+              <option value="Admin Role">Admin Access</option>
+              <option value="Write Access">Write Only</option>
+              <option value="Read Access">Read Only</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="text-detail font-bold text-muted">Expiration Limit</label>
+            <select class="select" id="apikey-expiry">
+              <option value="Never">Never Expire</option>
+              <option value="30 days">30 Days</option>
+              <option value="90 days">90 Days</option>
+            </select>
+          </div>
+        </div>
+        <div class="flex-center" style="gap: var(--space-sm); justify-content: flex-end; margin-top: var(--space-xl);">
+          <button class="btn btn-secondary btn-sm" onclick="closeCreateApiKeyModal()">Cancel</button>
+          <button class="btn btn-primary btn-sm" onclick="submitCreateApiKey()">Generate Key</button>
+        </div>
+      </div>
+
+      <div class="flex-column" id="apikey-success-step" style="display: none; gap: var(--space-md);">
+        <div class="alert alert-success">
+          <span class="font-bold">API Key Generated!</span> Copy this token value immediately. It will not be shown again.
+        </div>
+        <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-default); padding: var(--space-sm); border-radius: var(--radius-md);" class="flex-between">
+          <span class="font-mono text-body-small font-bold text-primary" id="apikey-generated-val">ac_live_84f9...2c1a</span>
+          <button class="btn btn-tertiary btn-sm" onclick="copyGeneratedKey()">Copy Token</button>
+        </div>
+        <div class="flex-center" style="justify-content: flex-end; margin-top: var(--space-sm);">
+          <button class="btn btn-primary btn-sm" onclick="closeCreateApiKeyModal()">Done</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="global-toast-container"></div>
+
+  <!-- ==============================================
+       4. INTERACTIVE PAGE SCRIPTS & LOCAL STATE
+       ============================================== -->
+  <script>
+    // Workspace Mock Registry with localStorage caching
+    const savedWorkspacesData = localStorage.getItem('kontagi-workspaces-data');
+    const workspacesData = savedWorkspacesData ? JSON.parse(savedWorkspacesData) : {
+      pulse_energy: {
+        name: "Pulse Energy",
+        fullName: "Pulse Energy Corp",
+        slug: "pulse-energy",
+        avatarText: "PE",
+        avatarBg: "var(--brand-primary-glow)",
+        avatarColor: "var(--brand-primary)",
+        collaborators: [
+          { name: "Jaiveer Hastar", email: "jaiveer@company.com", initials: "JH", role: "Workspace Owner", status: "Active" },
+          { name: "Aria Vance", email: "aria@company.com", initials: "AV", role: "Agency Editor", status: "Active" }
+        ],
+        tagline: "Charging clean Gen-Z visual focus states with zero additives.",
+        prohibited: "tired, old-fashioned, slow, additives"
+      },
+      retro_denim: {
+        name: "Retro Denim",
+        fullName: "Retro Denim Apparel",
+        slug: "retro-denim",
+        avatarText: "RD",
+        avatarBg: "rgba(245, 158, 11, 0.15)",
+        avatarColor: "var(--accent-orange)",
+        collaborators: [
+          { name: "Jaiveer Hastar", email: "jaiveer@company.com", initials: "JH", role: "Workspace Owner", status: "Active" },
+          { name: "Marcus Thorne", email: "marcus@company.com", initials: "MT", role: "Agency Editor", status: "Active" },
+          { name: "Devon Chen", email: "devon@company.com", initials: "DC", role: "Viewer Only", status: "Active" }
+        ],
+        tagline: "Sleek retro-streetwear visual aesthetics built for long-duration wear.",
+        prohibited: "hyper-futuristic, synthetic, neon glow, glitch"
+      },
+      smart_home: {
+        name: "AuraSmart IoT",
+        fullName: "AuraSmart IoT Hub",
+        slug: "smart-home",
+        avatarText: "AS",
+        avatarBg: "rgba(16, 185, 129, 0.15)",
+        avatarColor: "var(--accent-green)",
+        collaborators: [
+          { name: "Jaiveer Hastar", email: "jaiveer@company.com", initials: "JH", role: "Workspace Owner", status: "Active" },
+          { name: "Elena Rostova", email: "elena@company.com", initials: "ER", role: "Agency Editor", status: "Active" }
+        ],
+        tagline: "AuraSmart IoT assistant systems integrating seamlessly with family flow.",
+        prohibited: "cluttered, complex setup, loud sounds, intrusive"
+      }
+    };
+
+    let activeWorkspace = localStorage.getItem('kontagi-active-workspace') || "pulse_energy";
+
+    // Initialize page fields on load
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Profile fields
+      const profileNameInput = document.getElementById('profile-name');
+      const profileEmailInput = document.getElementById('profile-email');
+      const profileAvatarDisplay = document.getElementById('profile-avatar-display');
+      
+      const savedName = localStorage.getItem('kontagi-profile-name') || 'Jaiveer Hastar';
+      const savedEmail = localStorage.getItem('kontagi-profile-email') || 'jaiveer@company.com';
+      const savedInitials = localStorage.getItem('kontagi-profile-initials') || 'JH';
+      const savedAvatarBg = localStorage.getItem('kontagi-profile-avatar-bg') || '';
+
+      if (profileNameInput) profileNameInput.value = savedName;
+      if (profileEmailInput) profileEmailInput.value = savedEmail;
+      if (profileAvatarDisplay) {
+        profileAvatarDisplay.innerText = savedInitials;
+        if (savedAvatarBg) {
+          profileAvatarDisplay.style.background = savedAvatarBg;
+        }
+      }
+
+      // 2. Language/Timezone/DateFormat fields
+      const savedLang = localStorage.getItem('kontagi-language');
+      if (savedLang) {
+        const langSelect = document.getElementById('lang-select');
+        if (langSelect) langSelect.value = savedLang;
+      }
+      const savedTimezone = localStorage.getItem('kontagi-timezone');
+      if (savedTimezone) {
+        const timezoneSelect = document.getElementById('timezone-select');
+        if (timezoneSelect) timezoneSelect.value = savedTimezone;
+        updateTimeZonePreview(savedTimezone);
+      }
+      const savedDateFormat = localStorage.getItem('kontagi-date-format');
+      if (savedDateFormat) {
+        const dateFormatSelect = document.getElementById('date-format-select');
+        if (dateFormatSelect) dateFormatSelect.value = savedDateFormat;
+      }
+
+      // 3. Theme toggle active cards
+      const isDark = (localStorage.getItem('kontagi-theme') || 'dark') === 'dark';
+      document.getElementById('theme-card-light').classList.toggle('active', !isDark);
+      document.getElementById('theme-card-dark').classList.toggle('active', isDark);
+
+      // 4. Border Radius slider and labels
+      const savedRadiusVal = localStorage.getItem('kontagi-border-radius') || '12';
+      const radiusSlider = document.getElementById('appearance-radius-slider');
+      if (radiusSlider) {
+        radiusSlider.value = savedRadiusVal;
+        updateAppRadius(savedRadiusVal);
+      }
+
+      // 5. Initial Workspace Render
+      switchWorkspaceBrand(activeWorkspace);
+    });
+
+    // Viewport Resizing
+    document.querySelectorAll('.sandbox-btn[data-viewport]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sandbox-btn[data-viewport]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const frame = document.getElementById('viewport-frame');
+        const viewport = btn.getAttribute('data-viewport');
+        
+        frame.className = `emulator-viewport ${viewport}`;
+        window.showToast(`Viewport size set to ${viewport.toUpperCase()}`, 'info');
+      });
+    });
+
+    // Sidebar Mobile Toggle
+    const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+    if (sidebarToggleBtn) {
+      sidebarToggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        document.querySelector('.dashboard-sidebar').classList.toggle('active');
+      });
+    }
+    window.addEventListener('click', () => {
+      document.querySelector('.dashboard-sidebar').classList.remove('active');
+    });
+
+    // SPA Tab Switching Panel
+    function switchSettingsPanel(panelId, element) {
+      document.querySelectorAll('.settings-nav-item').forEach(item => item.classList.remove('active'));
+      element.classList.add('active');
+
+      document.querySelectorAll('.settings-panel').forEach(panel => panel.classList.remove('active'));
+      const activePanel = document.getElementById(`panel-${panelId}`);
+      if (activePanel) activePanel.classList.add('active');
+    }
+
+    // Workspace Brand Syncing
+    function switchWorkspaceBrand(workspaceKey) {
+      activeWorkspace = workspaceKey;
+      const data = workspacesData[workspaceKey];
+
+      // Update Sidebar Headers
+      const avatar = document.getElementById('sidebar-workspace-avatar');
+      const label = document.getElementById('sidebar-workspace-label');
+      if (avatar) {
+        avatar.innerText = data.avatarText;
+        avatar.style.backgroundColor = data.avatarBg;
+        avatar.style.color = data.avatarColor;
+      }
+      if (label) label.innerText = data.name;
+
+      // Update Header Badges
+      const badge = document.getElementById('settings-workspace-badge');
+      if (badge) badge.innerText = `${data.name} active`;
+
+      // Update Workspace Panel Fields
+      const wsName = document.getElementById('workspace-name');
+      const wsSlug = document.getElementById('workspace-slug');
+      if (wsName) wsName.value = data.fullName;
+      if (wsSlug) wsSlug.value = data.slug;
+
+      // Update Brand Kit Panel Fields
+      const brandTagline = document.getElementById('brand-tagline');
+      const brandProhibited = document.getElementById('brand-prohibited');
+      if (brandTagline) brandTagline.value = data.tagline;
+      if (brandProhibited) brandProhibited.value = data.prohibited;
+
+      // Update Workspace Collaborators table
+      renderCollaboratorsTable();
+    }
+
+    // Save All Action
+    function saveAllSettings() {
+      const name = document.getElementById('profile-name').value;
+      const email = document.getElementById('profile-email').value;
+      
+      // Save profile
+      localStorage.setItem('kontagi-profile-name', name);
+      localStorage.setItem('kontagi-profile-email', email);
+      
+      // Generate initials from name
+      const initials = name.split(' ').map(n => n[0]).join('').slice(0, 2).toUpperCase();
+      localStorage.setItem('kontagi-profile-initials', initials);
+      
+      // Sync global profile footer views
+      if (typeof window.syncGlobalProfile === 'function') {
+        window.syncGlobalProfile(name, email, initials);
+      }
+      
+      // Save Workspace info if inputs are modified
+      const wsNameInput = document.getElementById('workspace-name');
+      const wsSlugInput = document.getElementById('workspace-slug');
+      if (wsNameInput && wsSlugInput) {
+        workspacesData[activeWorkspace].fullName = wsNameInput.value;
+        workspacesData[activeWorkspace].slug = wsSlugInput.value;
+        workspacesData[activeWorkspace].name = wsNameInput.value.replace(/ Corp| Apparel| IoT Hub/g, '');
+      }
+
+      // Save Brand info
+      const brandTagline = document.getElementById('brand-tagline');
+      const brandProhibited = document.getElementById('brand-prohibited');
+      if (brandTagline && brandProhibited) {
+        workspacesData[activeWorkspace].tagline = brandTagline.value;
+        workspacesData[activeWorkspace].prohibited = brandProhibited.value;
+      }
+      
+      // Write modified workspacesData to localStorage
+      localStorage.setItem('kontagi-workspaces-data', JSON.stringify(workspacesData));
+      
+      // Sync active workspace selector UI labels
+      switchWorkspaceBrand(activeWorkspace);
+      
+      // Save language / timezone select values
+      const langSelect = document.getElementById('lang-select');
+      const timezoneSelect = document.getElementById('timezone-select');
+      const dateFormatSelect = document.getElementById('date-format-select');
+      if (langSelect) localStorage.setItem('kontagi-language', langSelect.value);
+      if (timezoneSelect) localStorage.setItem('kontagi-timezone', timezoneSelect.value);
+      if (dateFormatSelect) localStorage.setItem('kontagi-date-format', dateFormatSelect.value);
+
+      window.showToast(`Saving settings for ${name}...`, 'info');
+      setTimeout(() => {
+        window.showToast("All configuration modules saved and synced with KONTAGI database.", "success");
+      }, 1000);
+    }
+
+    // 1. Profile Panel Actions
+    function triggerAvatarUpload() {
+      window.showToast("Opening system file picker mock...", "info");
+      setTimeout(() => {
+        const avatarDisplay = document.getElementById('profile-avatar-display');
+        const gradientBg = "linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%)";
+        if (avatarDisplay) {
+          avatarDisplay.innerText = "JH";
+          avatarDisplay.style.background = gradientBg;
+        }
+        localStorage.setItem('kontagi-profile-avatar-bg', gradientBg);
+        if (typeof window.syncGlobalProfile === 'function') {
+          window.syncGlobalProfile(null, null, null, gradientBg);
+        }
+        window.showToast("Avatar image uploaded and scaled successfully.", "success");
+      }, 800);
+    }
+
+    // Reset Avatar to initials
+    function resetAvatarInitials() {
+      const avatarDisplay = document.getElementById('profile-avatar-display');
+      if (avatarDisplay) {
+        avatarDisplay.innerText = "JH";
+        avatarDisplay.style.background = "var(--brand-primary)";
+      }
+      localStorage.removeItem('kontagi-profile-avatar-bg');
+      if (typeof window.syncGlobalProfile === 'function') {
+        window.syncGlobalProfile(null, null, null, '');
+      }
+      window.showToast("Avatar reset to standard initials.", "info");
+    }
+
+    // 2. Account Panel - Deactivation modal
+    function openDeactivateModal() {
+      document.getElementById('deactivate-dialog').classList.add('active');
+    }
+
+    // Close Deactivate Modal
+    function closeDeactivateModal() {
+      document.getElementById('deactivate-dialog').classList.remove('active');
+      document.getElementById('deactivate-input').value = '';
+    }
+
+    // Confirm deactivation
+    function confirmDeactivateAccount() {
+      const val = document.getElementById('deactivate-input').value;
+      if (val === 'DEACTIVATE') {
+        window.showToast("Account marked for deactivation. Suspending session...", "error");
+        closeDeactivateModal();
+        setTimeout(() => {
+          window.location.href = "auth.html";
+        }, 1500);
+      } else {
+        window.showToast("Invalid verification phrase. Please type 'DEACTIVATE' to confirm.", "error");
+      }
+    }
+
+    // 3. Password Panel - Strength Meter
+    function checkPasswordStrength(password) {
+      const fill = document.getElementById('pwd-strength-bar-fill');
+      const label = document.getElementById('pwd-strength-label');
+      if (!fill || !label) return;
+
+      if (password.length === 0) {
+        fill.style.width = '0%';
+        label.innerText = 'Not Evaluated';
+        label.style.color = 'var(--text-secondary)';
+        return;
+      }
+
+      let score = 0;
+      if (password.length >= 8) score++;
+      if (password.length >= 12) score++;
+      if (/[A-Z]/.test(password)) score++;
+      if (/[0-9]/.test(password)) score++;
+      if (/[^A-Za-z0-9]/.test(password)) score++;
+
+      if (score <= 2) {
+        fill.style.width = '33%';
+        fill.style.backgroundColor = 'var(--accent-red)';
+        label.innerText = 'Weak';
+        label.style.color = 'var(--accent-red)';
+      } else if (score <= 4) {
+        fill.style.width = '66%';
+        fill.style.backgroundColor = 'var(--accent-orange)';
+        label.innerText = 'Moderate';
+        label.style.color = 'var(--accent-orange)';
+      } else {
+        fill.style.width = '100%';
+        fill.style.backgroundColor = 'var(--accent-green)';
+        label.innerText = 'Strong & Secure';
+        label.style.color = 'var(--accent-green)';
+      }
+    }
+
+    function savePasswordRotation() {
+      const current = document.getElementById('pwd-current').value;
+      const newPwd = document.getElementById('pwd-new').value;
+      const confirmPwd = document.getElementById('pwd-confirm').value;
+
+      if (!current || !newPwd || !confirmPwd) {
+        window.showToast("Please fill in all password fields.", "error");
+        return;
+      }
+
+      if (newPwd !== confirmPwd) {
+        window.showToast("New password confirmation does not match.", "error");
+        return;
+      }
+
+      window.showToast("Verifying credentials...", "info");
+      setTimeout(() => {
+        window.showToast("Password updated and synced across sessions.", "success");
+        document.getElementById('pwd-current').value = '';
+        document.getElementById('pwd-new').value = '';
+        document.getElementById('pwd-confirm').value = '';
+        checkPasswordStrength('');
+      }, 1000);
+    }
+
+    // 4. Two-Factor Authentication
+    let twoFactorVerified = false;
+
+    function verifyTwoFactorEnrollment() {
+      const code = document.getElementById('twofactor-code').value.replace(/\s+/g, '');
+      if (code.length === 6 && /^\d+$/.test(code)) {
+        window.showToast("Validating 2FA authentication token...", "info");
+        setTimeout(() => {
+          twoFactorVerified = true;
+          document.getElementById('twofactor-status-badge').innerText = "ENABLED";
+          document.getElementById('twofactor-status-badge').className = "badge badge-success";
+          document.getElementById('twofactor-setup-container').style.display = "none";
+          document.getElementById('twofactor-recovery-container').style.display = "flex";
+          window.showToast("Two-factor security enrolled successfully.", "success");
+        }, 1000);
+      } else {
+        window.showToast("Please input a valid 6-digit verification code.", "error");
+      }
+    }
+
+    function disableTwoFactor() {
+      twoFactorVerified = false;
+      document.getElementById('twofactor-status-badge').innerText = "DISABLED";
+      document.getElementById('twofactor-status-badge').className = "badge badge-danger";
+      document.getElementById('twofactor-setup-container').style.display = "flex";
+      document.getElementById('twofactor-recovery-container').style.display = "none";
+      document.getElementById('twofactor-code').value = '';
+      window.showToast("Two-factor authentication disabled.", "warning");
+    }
+
+    // 5. API Keys Panel
+    function openCreateApiKeyModal() {
+      document.getElementById('apikey-form-step').style.display = 'flex';
+      document.getElementById('apikey-success-step').style.display = 'none';
+      document.getElementById('apikey-dialog').classList.add('active');
+    }
+
+    function closeCreateApiKeyModal() {
+      document.getElementById('apikey-dialog').classList.remove('active');
+      document.getElementById('apikey-label').value = '';
+    }
+
+    function submitCreateApiKey() {
+      const labelVal = document.getElementById('apikey-label').value.trim();
+      if (!labelVal) {
+        window.showToast("Please specify a key label identifier.", "error");
+        return;
+      }
+
+      const role = document.getElementById('apikey-role').value;
+      const expiry = document.getElementById('apikey-expiry').value;
+
+      // Mock generate token
+      const randomHex = Array.from({length: 16}, () => Math.floor(Math.random()*16).toString(16)).join('');
+      const fullToken = `ac_live_${randomHex}`;
+      
+      document.getElementById('apikey-generated-val').innerText = fullToken;
+
+      // Switch view step
+      document.getElementById('apikey-form-step').style.display = 'none';
+      document.getElementById('apikey-success-step').style.display = 'flex';
+
+      // Insert Row into table
+      const tbody = document.getElementById('apikey-table-body');
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><span class="font-bold text-primary">${labelVal}</span></td>
+        <td><span class="font-mono text-detail">ac_live_••••••••••••${randomHex.slice(-4)}</span></td>
+        <td><span class="badge ${role.includes('Admin') ? 'badge-indigo' : 'badge-blue'}">${role}</span></td>
+        <td><span>${expiry}</span></td>
+        <td><span class="badge badge-success">Active</span></td>
+        <td><button class="btn btn-tertiary btn-sm text-danger" onclick="revokeApiKey(this, '${labelVal}')">Revoke</button></td>
+      `;
+      tbody.appendChild(tr);
+    }
+
+    function copyGeneratedKey() {
+      const val = document.getElementById('apikey-generated-val').innerText;
+      navigator.clipboard.writeText(val).then(() => {
+        window.showToast("API Key copied to clipboard.", "success");
+      }).catch(() => {
+        window.showToast("Token copied automatically.", "success");
+      });
+    }
+
+    function revokeApiKey(btn, label) {
+      if (confirm(`Are you sure you want to revoke the API Key: ${label}? This will break integrations using this token.`)) {
+        btn.closest('tr').remove();
+        window.showToast(`API key '${label}' has been permanently revoked.`, "warning");
+      }
+    }
+
+    // 6. Workspace Member Table
+    function renderCollaboratorsTable() {
+      const tbody = document.getElementById('collaborators-table-body');
+      if (!tbody) return;
+      tbody.innerHTML = '';
+
+      const data = workspacesData[activeWorkspace];
+      data.collaborators.forEach(collab => {
+        const tr = document.createElement('tr');
+        tr.innerHTML = `
+          <td>
+            <div class="flex-center" style="gap: var(--space-xs); justify-content: flex-start;">
+              <div class="avatar avatar-sm font-bold" style="background-color: var(--brand-secondary); color: var(--text-inverse);">${collab.initials}</div>
+              <div class="flex-column" style="gap: 2px;">
+                <span class="text-body-small font-bold text-primary">${collab.name}</span>
+                <span class="text-detail text-secondary">${collab.email}</span>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge ${collab.role.includes('Owner') ? 'badge-indigo' : (collab.role.includes('Editor') ? 'badge-blue' : 'badge-gray')}">${collab.role}</span></td>
+          <td><span class="badge badge-success">${collab.status}</span></td>
+        `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function openInviteModal() {
+      document.getElementById('invite-dialog').classList.add('active');
+    }
+
+    function closeInviteModal() {
+      document.getElementById('invite-dialog').classList.remove('active');
+      document.getElementById('invite-email-input').value = '';
+    }
+
+    function submitInviteCollaborator() {
+      const email = document.getElementById('invite-email-input').value.trim();
+      if (!email || !email.includes('@')) {
+        window.showToast("Please enter a valid collaborator email address.", "error");
+        return;
+      }
+
+      const role = document.getElementById('invite-role-select').value;
+      const initials = email.split('@')[0].slice(0, 2).toUpperCase();
+      const mockName = email.split('@')[0].replace('.', ' ');
+
+      // Add to workspace state
+      const workspace = workspacesData[activeWorkspace];
+      workspace.collaborators.push({
+        name: mockName.charAt(0).toUpperCase() + mockName.slice(1),
+        email: email,
+        initials: initials,
+        role: role === 'Admin' ? 'Workspace Administrator' : (role === 'Editor' ? 'Agency Editor' : 'Viewer Only'),
+        status: "Active"
+      });
+
+      localStorage.setItem('kontagi-workspaces-data', JSON.stringify(workspacesData));
+      renderCollaboratorsTable();
+      closeInviteModal();
+      window.showToast(`Invitation sent to: ${email}`, "success");
+    }
+
+    // 8. Appearance Panel - Radio theme switcher & Radius variable slider
+    function setAppTheme(theme) {
+      const isDark = theme === 'dark';
+      document.body.classList.toggle('dark', isDark);
+      localStorage.setItem('kontagi-theme', theme);
+      
+      const themeToggle = document.getElementById('theme-toggle');
+      if (themeToggle) {
+        themeToggle.innerHTML = isDark ? 
+          `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 5a7 7 0 100 14 7 7 0 000-14z"/></svg> Light Mode` :
+          `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg> Dark Mode`;
+      }
+
+      document.getElementById('theme-card-light').classList.toggle('active', !isDark);
+      document.getElementById('theme-card-dark').classList.toggle('active', isDark);
+
+      window.showToast(`System theme set to ${theme.toUpperCase()}`, 'success');
+    }
+
+    function updateAppRadius(val) {
+      document.getElementById('radius-val-label').innerText = `${val}px (${val === '0' ? 'Sharp' : (val === '8' ? 'Sleek' : (val === '16' ? 'Apple' : 'Pill'))})`;
+      
+      // Update local styling custom properties on viewport
+      const viewport = document.getElementById('viewport-frame');
+      if (viewport) {
+        viewport.style.setProperty('--radius-lg', `${val}px`);
+        viewport.style.setProperty('--radius-xl', `${parseFloat(val) + 4}px`);
+      }
+      
+      localStorage.setItem('kontagi-border-radius', val);
+      document.documentElement.style.setProperty('--radius-lg', `${val}px`);
+      document.documentElement.style.setProperty('--radius-xl', `${parseFloat(val) + 4}px`);
+    }
+
+    // 9. Language Panel
+    function updateTimeZonePreview(val) {
+      const clock = document.getElementById('timezone-preview-clock');
+      if (!clock) return;
+
+      const dateObj = new Date();
+      let options = { month: 'long', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' };
+      
+      if (val === 'est') {
+        dateObj.setHours(dateObj.getHours() - 10.5); // Mock EST shift from IST
+      } else if (val === 'gmt') {
+        dateObj.setHours(dateObj.getHours() - 5.5); // Mock GMT shift from IST
+      } else if (val === 'pst') {
+        dateObj.setHours(dateObj.getHours() - 13.5); // Mock PST shift from IST
+      }
+
+      clock.innerText = dateObj.toLocaleDateString('en-US', options) + ` (${val.toUpperCase()})`;
+    }
+
+    // 10. Privacy - Data Archive compilation
+    function startWorkspaceExport() {
+      const container = document.getElementById('export-progress-container');
+      const fill = document.getElementById('export-progress-fill');
+      const label = document.getElementById('export-progress-percent');
+      
+      container.style.display = 'flex';
+      fill.style.width = '0%';
+      label.innerText = '0%';
+
+      let progress = 0;
+      const interval = setInterval(() => {
+        progress += 10;
+        fill.style.width = `${progress}%`;
+        label.innerText = `${progress}%`;
+
+        if (progress >= 100) {
+          clearInterval(interval);
+          window.showToast("JSON schema compiled! Downloading workspace backup file...", "success");
+          
+          // Generate mock JSON download
+          const mockData = JSON.stringify({
+            workspace: workspacesData[activeWorkspace],
+            timestamp: new Date().toISOString(),
+            platform: "KONTAGI v2.4.9"
+          }, null, 2);
+          
+          const blob = new Blob([mockData], {type: "application/json"});
+          const url = URL.createObjectURL(blob);
+          const a = document.createElement('a');
+          a.href = url;
+          a.download = `kontagi-workspace-export-${activeWorkspace}.json`;
+          document.body.appendChild(a);
+          a.click();
+          a.remove();
+          
+          setTimeout(() => {
+            container.style.display = 'none';
+          }, 1000);
+        }
+      }, 150);
+    }
+
+    // 11. Security revoking
+    function revokeSessionRow(btn) {
+      if (confirm("Are you sure you want to terminate this active user session? The device will be signed out immediately.")) {
+        btn.closest('tr').remove();
+        window.showToast("Session terminated.", "warning");
+      }
+    }
+
+    function addIpToWhitelist() {
+      const input = document.getElementById('security-ip-input');
+      const val = input.value.trim();
+      if (!val) {
+        window.showToast("Please enter a valid IP address or subnet mask.", "error");
+        return;
+      }
+
+      // Append tag
+      const holder = document.getElementById('ip-tags-holder');
+      const tag = document.createElement('div');
+      tag.className = 'ip-tag';
+      tag.innerHTML = `
+        <span>${val}</span>
+        <span style="cursor: pointer; color: var(--accent-red);" onclick="this.parentElement.remove()">&times;</span>
+      `;
+      holder.appendChild(tag);
+      input.value = '';
+      window.showToast(`IP Whitelist updated: ${val}`, "success");
+    }
+
+    // 12. Integrations toggling
+    function toggleIntegration(saasId, isChecked) {
+      const badge = document.getElementById(`badge-int-${saasId}`);
+      if (!badge) return;
+
+      if (isChecked) {
+        badge.innerText = "Connecting...";
+        badge.className = "badge badge-gray";
+        
+        setTimeout(() => {
+          badge.innerText = "Connected";
+          badge.className = "badge badge-success";
+          window.showToast(`${saasId.toUpperCase()} workspace syncing is active!`, 'success');
+        }, 1000);
+      } else {
+        badge.innerText = "Disconnected";
+        badge.className = "badge badge-danger";
+        window.showToast(`${saasId.toUpperCase()} integration has been disabled.`, 'warning');
+      }
+    }
+  </script>
+</body>
+</html>

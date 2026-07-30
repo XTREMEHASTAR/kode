@@ -1,0 +1,5 @@
+<svg width="26" height="26" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Precision Vector Kontagi K Mark matching exact reference image -->
+  <path d="M18 18 C18 14 21 11 25 11 H42 C46 11 49 14 49 18 V41 L67 18 C69 15 72 14 75 14 H85 C90 14 92 20 88 23 L59 52 L90 85 C93 88 91 94 86 94 H74 C71 94 68 93 66 90 L49 68 V87 C49 91 46 94 42 94 H25 C21 94 18 91 18 87 V18 Z" fill="#FFFFFF"/>
+  <rect x="70" y="10" width="22" height="22" rx="5" fill="#FF6B3D"/>
+</svg>

@@ -1,0 +1,14 @@
+{
+  "assetId": "real_tt_educational_102",
+  "platform": "TIKTOK",
+  "sourceUrl": "https://www.tiktok.com/@creator/video/tt_educational_102",
+  "pipelineExecutionTimeMs": 1420,
+  "extractorsExecuted": [
+    "VisualExtractor",
+    "SpeechExtractor",
+    "OcrExtractor",
+    "AudioExtractor"
+  ],
+  "executionTimestamp": "2026-07-30T02:33:44.643Z",
+  "status": "SUCCESS"
+}

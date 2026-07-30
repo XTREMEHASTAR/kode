@@ -1,0 +1,14 @@
+{
+  "assetId": "real_ig_music_135",
+  "platform": "INSTAGRAM_REELS",
+  "sourceUrl": "https://www.instagram.com/reels/ig_music_135",
+  "pipelineExecutionTimeMs": 1420,
+  "extractorsExecuted": [
+    "VisualExtractor",
+    "SpeechExtractor",
+    "OcrExtractor",
+    "AudioExtractor"
+  ],
+  "executionTimestamp": "2026-07-30T02:33:44.643Z",
+  "status": "SUCCESS"
+}

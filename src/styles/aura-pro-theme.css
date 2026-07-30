@@ -1,0 +1,106 @@
+/* ==========================================================================
+   AURACORE PRO DESIGN SYSTEM — AI OPERATING SYSTEM THEME (Linear + OpenAI + Framer)
+   ========================================================================== */
+
+:root {
+  /* Color Palette Tokens */
+  --pro-bg-obsidian: #090D16;
+  --pro-bg-navy: #0F172A;
+  --pro-card-glass: rgba(15, 23, 42, 0.75);
+  --pro-card-solid: #1E293B;
+  --pro-border-subtle: rgba(255, 255, 255, 0.08);
+  --pro-border-medium: rgba(255, 255, 255, 0.16);
+  --pro-border-glow: rgba(241, 58, 30, 0.4);
+
+  /* Brand Accents */
+  --pro-vermilion: #F13A1E;
+  --pro-coral: #FF6B3D;
+  --pro-gold: #F59E0B;
+  --pro-emerald: #10B981;
+  --pro-sky: #38BDF8;
+
+  /* Typography */
+  --pro-font-sans: 'Satoshi', 'Inter', system-ui, -apple-system, sans-serif;
+  --pro-font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+
+  /* Shadows & Depth */
+  --pro-shadow-sm: 0 2px 8px rgba(0, 0, 0, 0.2);
+  --pro-shadow-lg: 0 12px 36px rgba(0, 0, 0, 0.4);
+  --pro-shadow-glow: 0 0 24px rgba(241, 58, 30, 0.25);
+
+  /* Radius & Transitions */
+  --pro-radius-sm: 8px;
+  --pro-radius-md: 12px;
+  --pro-radius-lg: 18px;
+  --pro-transition-spring: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Glassmorphism Card Utility */
+.pro-glass-card {
+  background: var(--pro-card-glass);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--pro-border-subtle);
+  border-radius: var(--pro-radius-md);
+  box-shadow: var(--pro-shadow-sm);
+  transition: all 0.25s var(--pro-transition-spring);
+}
+
+.pro-glass-card:hover {
+  border-color: var(--pro-border-medium);
+  box-shadow: var(--pro-shadow-lg);
+}
+
+/* Glow Border Modifier */
+.pro-glow-card {
+  border: 1px solid var(--pro-border-glow);
+  box-shadow: var(--pro-shadow-glow);
+}
+
+/* Tabular Mono Telemetry Text */
+.pro-mono {
+  font-family: var(--pro-font-mono);
+  font-variant-numeric: tabular-nums;
+}
+
+/* Pulsing AI Activity Badge */
+.pro-ai-pulse {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pro-ai-pulse::before {
+  content: '';
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: var(--pro-emerald);
+  box-shadow: 0 0 10px var(--pro-emerald);
+  animation: proPulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes proPulse {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+/* Linear-Style Custom Scrollbars */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 3px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}

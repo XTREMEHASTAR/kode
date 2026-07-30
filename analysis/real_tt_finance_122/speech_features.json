@@ -1,0 +1,9 @@
+{
+  "transcript": "[Acoustic Speech Track] Detected 45 spoken dialogue tokens with speech clarity index 0.95.",
+  "wordsPerMinute": 221,
+  "speechClarity": 0.95,
+  "pauseDurationSec": 4.82,
+  "fillerWordsCount": 1,
+  "sentimentScore": 0.283,
+  "language": "en-US"
+}

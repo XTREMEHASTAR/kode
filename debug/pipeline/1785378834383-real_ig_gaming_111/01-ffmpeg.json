@@ -1,0 +1,13 @@
+{
+  "assetId": "real_ig_gaming_111",
+  "videoPath": "c:/videos/real_ig_gaming_111.mp4",
+  "duration": 36,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "bitrate": 4500000,
+  "keyframe_count": 36,
+  "extracted_frame_count": 36,
+  "extracted_audio_samples": 220500,
+  "contentHash": 1598499619
+}

@@ -1,0 +1,18 @@
+{
+  "RMS": 0.5657,
+  "LUFS": -4.95,
+  "peak": 0.792,
+  "BPM": 103,
+  "zero_crossing_rate": 0.4526,
+  "spectral_centroid": 8000,
+  "MFCC": [
+    0.12,
+    0.45,
+    0.78,
+    0.34,
+    0.89
+  ],
+  "silence_ratio": 0.0039,
+  "pitch": 220,
+  "dynamicRangeDb": 3.01
+}

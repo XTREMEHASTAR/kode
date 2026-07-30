@@ -1,0 +1,13 @@
+{
+  "assetId": "video_black_screen_C",
+  "videoPath": "c:/videos/black_screen.mp4",
+  "duration": 30,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "bitrate": 4500000,
+  "keyframe_count": 30,
+  "extracted_frame_count": 30,
+  "extracted_audio_samples": 220500,
+  "contentHash": 1501007534
+}

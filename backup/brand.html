@@ -1,0 +1,1483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — Brand Management Hub</title>
+  <link rel="stylesheet" href="design-system.css">
+  <style>
+    /* ==========================================================================
+       SANDBOX CORE LAYOUT FRAMEWORK
+       ========================================================================== */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-smooth);
+    }
+
+    .sandbox-header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-xs) var(--space-lg);
+      z-index: 1000;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .sandbox-brand h1 {
+      font-size: 1.125rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .sandbox-brand span {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .sandbox-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-control-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      background-color: var(--bg-secondary);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+    }
+
+    .sandbox-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sandbox-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .sandbox-btn.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sandbox-workspace {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      position: relative;
+    }
+
+    .emulator-viewport {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      transition: width var(--transition-smooth), height var(--transition-smooth), border-radius var(--transition-smooth);
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .emulator-viewport.desktop {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      border: none;
+    }
+
+    .emulator-viewport.tablet {
+      width: 768px;
+      height: 95%;
+      border-radius: var(--radius-lg);
+    }
+
+    .emulator-viewport.mobile {
+      width: 375px;
+      height: 85%;
+      border-radius: var(--radius-2xl);
+    }
+
+    /* Shell Layout */
+    .dashboard-shell {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .dashboard-sidebar {
+      width: 260px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      transition: transform var(--transition-smooth), width var(--transition-smooth);
+    }
+
+    .sidebar-header {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .sidebar-nav {
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .sidebar-nav-item:hover, .sidebar-nav-item.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .sidebar-nav-item.active {
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .dashboard-main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-primary);
+    }
+
+    .dashboard-header {
+      height: 64px;
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-lg);
+      flex-shrink: 0;
+    }
+
+    .dashboard-body {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    /* Sub Navigation Tabs */
+    .subnav-tabs-wrapper {
+      display: flex;
+      border-bottom: 1px solid var(--border-default);
+      padding: 0 var(--space-lg);
+      background-color: var(--bg-secondary);
+      flex-shrink: 0;
+      gap: var(--space-md);
+      overflow-x: auto;
+    }
+
+    .subnav-tab {
+      padding: 16px 4px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .subnav-tab:hover {
+      color: var(--text-primary);
+    }
+
+    .subnav-tab.active {
+      color: var(--brand-primary);
+      border-bottom-color: var(--brand-primary);
+      font-weight: 600;
+    }
+
+    /* ==========================================================================
+       BRAND SUITE INTERNALS
+       ========================================================================== */
+    .tab-content-panel {
+      display: none;
+      height: 100%;
+      overflow-y: auto;
+    }
+
+    .tab-content-panel.active {
+      display: block;
+    }
+
+    /* Brand Grid Profiles */
+    .brand-profiles-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: var(--space-md);
+    }
+
+    .brand-profile-card {
+      cursor: pointer;
+      position: relative;
+      transition: all var(--transition-fast);
+    }
+
+    .brand-profile-card:hover, .brand-profile-card.active {
+      border-color: var(--brand-primary);
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-glow);
+    }
+
+    /* Swatch Grid styles */
+    .color-swatch-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: var(--space-sm);
+    }
+
+    .swatch-card {
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      background-color: var(--bg-elevated);
+      cursor: pointer;
+      transition: transform var(--transition-fast);
+    }
+
+    .swatch-card:hover {
+      transform: translateY(-2px);
+    }
+
+    .swatch-color-block {
+      height: 64px;
+      width: 100%;
+    }
+
+    /* Guidelines safe-zone validator simulator */
+    .guideline-visual-sandbox {
+      border: 2px dashed var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl);
+      text-align: center;
+      background-color: var(--bg-secondary);
+      position: relative;
+      overflow: hidden;
+      min-height: 200px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+    }
+
+    /* Digital safezone grids overlay */
+    .safezone-overlay-grid {
+      position: absolute;
+      inset: 0;
+      background-size: 20px 20px;
+      background-image: 
+        linear-gradient(to right, rgba(99, 102, 241, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(99, 102, 241, 0.05) 1px, transparent 1px);
+      display: none;
+      pointer-events: none;
+    }
+
+    .safezone-overlay-grid.active {
+      display: block;
+    }
+
+    .safezone-border-ring {
+      position: absolute;
+      border: 2px solid var(--accent-orange);
+      opacity: 0.4;
+      display: none;
+      pointer-events: none;
+      animation: pulsateRing 1.5s infinite ease-in-out;
+    }
+
+    .safezone-border-ring.active {
+      display: block;
+    }
+
+    @keyframes pulsateRing {
+      0% { transform: scale(0.95); opacity: 0.3; }
+      50% { transform: scale(1.02); opacity: 0.6; }
+      100% { transform: scale(0.95); opacity: 0.3; }
+    }
+
+    /* Dialog Modals */
+    .dialog-overlay {
+      position: absolute;
+      inset: 0;
+      background-color: rgba(15, 23, 42, 0.6);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+    }
+
+    .dialog-overlay.active {
+      display: flex;
+    }
+
+    .dialog-card {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      max-width: 500px;
+      width: 100%;
+      box-shadow: var(--shadow-2xl);
+    }
+
+    /* Table Sparkline styling */
+    .sparkline-svg {
+      width: 70px;
+      height: 20px;
+      fill: none;
+      stroke: var(--accent-green);
+      stroke-width: 2;
+    }
+
+    /* Responsive adjustments */
+    .emulator-viewport.tablet .dashboard-sidebar { width: 70px; }
+    .emulator-viewport.tablet .sidebar-text-label,
+    .emulator-viewport.tablet .sidebar-footer { display: none; }
+    
+    .emulator-viewport.mobile #sidebar-toggle-btn { display: inline-flex !important; }
+    .emulator-viewport.mobile .dashboard-sidebar { display: none; }
+    .emulator-viewport.mobile .dashboard-sidebar.active {
+      display: flex;
+      position: absolute;
+      left: 0;
+      top: 64px;
+      bottom: 0;
+      z-index: 950;
+      height: calc(100% - 64px);
+      width: 240px;
+      box-shadow: var(--shadow-xl);
+    }
+  </style>
+</head>
+<body class="dark">
+
+  <!-- ==============================================
+       1. SANDBOX CONTROL HEADER PANEL
+       ============================================== -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M16 8L25 13V19L16 24L7 19V13L16 8Z" fill="var(--brand-primary)" opacity="0.15"/>
+        <circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/>
+      </svg>
+      <h1>KONTAGI Brand Hub</h1>
+      <span class="version-badge" id="sandbox-version-badge" style="background-color: var(--brand-primary-glow); color: var(--brand-primary);">Brand Kit</span>
+    </div>
+
+    <div class="sandbox-controls">
+      <!-- Active Brand Selector -->
+      <div style="display: flex; align-items: center; gap: var(--space-xxs);">
+        <span class="text-detail font-bold text-muted sidebar-text-label">Active Workspace:</span>
+        <select class="select select-sm" style="width: 170px;" id="workspace-dropdown-select" onchange="switchWorkspaceBrand(this.value)">
+          <option value="pulse_energy">Pulse Energy Corp</option>
+          <option value="retro_denim">Retro Denim Apparel</option>
+          <option value="smart_home">AuraSmart IoT Hub</option>
+        </select>
+      </div>
+
+      <!-- Viewports Emulator -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" data-viewport="desktop">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 21h12m-9-4l-1 4m8-4l1 4"/></svg>
+          Desktop
+        </button>
+        <button class="sandbox-btn" data-viewport="tablet">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          Tablet
+        </button>
+        <button class="sandbox-btn" data-viewport="mobile">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
+          Mobile
+        </button>
+      </div>
+
+      <!-- Theme Switcher -->
+      <button class="btn btn-tertiary btn-sm" id="theme-toggle" style="box-shadow: none;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        Light Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- ==============================================
+       2. WORKSPACE EMULATOR VIEWPORT FRAME
+       ============================================== -->
+  <main class="sandbox-workspace">
+    <div class="emulator-viewport desktop" id="viewport-frame">
+      
+      <div class="dashboard-shell" id="brand-dashboard-shell">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="dashboard-sidebar">
+          <div>
+            <div class="sidebar-header">
+              <div class="flex-between select-wrapper" style="width: 100%;">
+                <div class="flex-center" style="gap: var(--space-xs); cursor: pointer;">
+                  <div class="workspace-avatar" style="width: 28px; height: 28px; font-size: 0.75rem; background-color: var(--brand-primary-glow); color: var(--brand-primary);">GD</div>
+                  <span class="text-body-small font-bold sidebar-text-label">Deepmind Dev</span>
+                </div>
+                <svg class="sidebar-text-label" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </div>
+
+            <!-- Nav Links -->
+                        <nav class="sidebar-nav">
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-bottom: 6px; text-transform: uppercase;">Workspace</span>
+              <a class="sidebar-nav-item" href="dashboard.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="sidebar-text-label">Dashboard</span>
+              </a>
+              <a class="sidebar-nav-item" href="projects.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span class="sidebar-text-label">Projects</span>
+              </a>
+              <a class="sidebar-nav-item" href="library.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+                <span class="sidebar-text-label">Creative Library</span>
+              </a>
+              <a class="sidebar-nav-item" href="hooks.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                <span class="sidebar-text-label">Hook Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="retention.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Retention Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="script.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="sidebar-text-label">Script Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="thumbnail.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15l-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Thumbnail Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="caption.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                <span class="sidebar-text-label">Caption Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="audio.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                <span class="sidebar-text-label">Audio Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="visual.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-.447.894L15 18.5V10zM5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Visual Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="trend.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <span class="sidebar-text-label">Trend Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="upload.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span class="sidebar-text-label">Upload Center</span>
+              </a>
+              <a class="sidebar-nav-item" href="lab.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                <span class="sidebar-text-label">AI Creative Lab</span>
+              </a>
+              <a class="sidebar-nav-item" href="report.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="sidebar-text-label">AI Reports</span>
+              </a>
+              <a class="sidebar-nav-item" href="creators.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Creators</span>
+              </a>
+              <a class="sidebar-nav-item active" href="brand.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17V9h3a2 2 0 110 4H9m0 4h3a2 2 0 100-4"/></svg>
+                <span class="sidebar-text-label">Brand Hub</span>
+              </a>
+              <a class="sidebar-nav-item" href="coach.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="sidebar-text-label">AI Coach</span>
+              </a>
+              <a class="sidebar-nav-item" onclick="window.showToast('Loading database insights...', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                <span class="sidebar-text-label">Analytics</span>
+              </a>
+              <a class="sidebar-nav-item" href="client.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Clients</span>
+              </a>
+              <a class="sidebar-nav-item" href="team.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0zm3 10v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg>
+                <span class="sidebar-text-label">Team Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="billing.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span class="sidebar-text-label">Billing</span>
+              </a>
+              <a class="sidebar-nav-item" href="notifications.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="sidebar-text-label">Notifications</span>
+              </a>
+              <a class="sidebar-nav-item" href="settings.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="sidebar-text-label">Settings</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">System</span>
+              <a class="sidebar-nav-item" href="admin.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="sidebar-text-label">Admin Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="mobile.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Mobile App</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">Design</span>
+              <a class="sidebar-nav-item" href="index.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                <span class="sidebar-text-label">Design System</span>
+              </a>
+            </nav>
+          </div>
+
+          <div class="sidebar-footer">
+            <div class="avatar avatar-md font-bold" style="background-color: var(--brand-secondary); color: var(--text-inverse);">JH</div>
+            <div class="sidebar-text-label" style="display: flex; flex-direction: column;">
+              <span class="text-body-small font-bold" style="line-height: 1.2;">Jaiveer Hastar</span>
+              <span class="text-detail text-secondary">jaiveer@company.com</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- MAIN WORKSPACE -->
+        <div class="dashboard-main">
+          <!-- Main Module Header -->
+          <header class="dashboard-header">
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <button class="btn btn-sm btn-tertiary" style="padding: 4px; display: none;" id="sidebar-toggle-btn">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              <h2 class="text-gradient">Brand Portal Management</h2>
+              <span class="badge badge-indigo">Global Workspace active</span>
+            </div>
+            
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <button class="btn btn-sm btn-secondary" onclick="openInviteCollaboratorModal()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="margin-right: 4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M18 9v3m0 0v3m0-3h3m-3 0h-3m-2-5a4 4 0 11-8 0 4 4 0 018 0zM3 20a6 6 0 0112 0v1H3v-1z"/></svg>
+                Invite Member
+              </button>
+            </div>
+          </header>
+
+          <!-- Navigation Sub tabs -->
+          <div class="subnav-tabs-wrapper">
+            <div class="subnav-tab active" data-tab="profiles" onclick="switchSubTab('profiles')">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"/></svg>
+              Brand Profiles
+            </div>
+            <div class="subnav-tab" data-tab="kit" onclick="switchSubTab('kit')">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+              Brand Kit
+            </div>
+            <div class="subnav-tab" data-tab="assets" onclick="switchSubTab('assets')">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+              Asset Library
+            </div>
+            <div class="subnav-tab" data-tab="campaigns" onclick="switchSubTab('campaigns')">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+              Campaign History
+            </div>
+            <div class="subnav-tab" data-tab="permissions" onclick="switchSubTab('permissions')">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              Permissions
+            </div>
+            <div class="subnav-tab" data-tab="guidelines" onclick="switchSubTab('guidelines')">
+              <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+              Guidelines & Rules
+            </div>
+          </div>
+
+          <!-- Main Scrollable Body Area -->
+          <div class="dashboard-body" style="padding-top: var(--space-md);">
+            
+            <!-- ==============================================
+                 TAB 1: BRAND PROFILES SELECTOR
+                 ============================================== -->
+            <div id="tab-profiles" class="tab-content-panel active">
+              <div class="card" style="padding: var(--space-md); margin-bottom: var(--space-lg); background-color: var(--bg-secondary);">
+                <div class="flex-between">
+                  <div>
+                    <h3 class="font-bold text-primary">Switch Active Brand Workspace</h3>
+                    <p class="text-detail text-secondary">Switching workspaces updates dynamic assets, matching algorithms, and colors.</p>
+                  </div>
+                  <button class="btn btn-primary btn-sm" onclick="showToast('Initiating Brand Setup Wizard...', 'info')">Create Brand Profile</button>
+                </div>
+              </div>
+
+              <div class="brand-profiles-grid" id="brand-profiles-list-holder">
+                <!-- Loaded dynamically by JavaScript -->
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 TAB 2: BRAND KIT
+                 ============================================== -->
+            <div id="tab-kit" class="tab-content-panel">
+              <div class="grid-12" style="gap: var(--space-lg); align-items: start;">
+                
+                <!-- Colors & Typography (Left Column) -->
+                <div class="col-span-6 flex-column" style="gap: var(--space-lg);">
+                  
+                  <!-- Colors card -->
+                  <div class="card" style="padding: var(--space-md);">
+                    <div class="flex-between" style="margin-bottom: var(--space-sm);">
+                      <h4 class="font-bold text-primary">Brand Color Swatches</h4>
+                      <button class="btn btn-tertiary btn-sm" onclick="showToast('Swatch customization locked for editor role.', 'error')">Add Swatch</button>
+                    </div>
+
+                    <div class="color-swatch-grid" id="kit-color-grid">
+                      <!-- Rendered dynamically -->
+                    </div>
+                  </div>
+
+                  <!-- Typography card -->
+                  <div class="card" style="padding: var(--space-md);">
+                    <h4 class="font-bold text-primary" style="margin-bottom: var(--space-sm);">Typography Tokens</h4>
+                    
+                    <div class="flex-column" style="gap: var(--space-md);">
+                      <div style="border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-xs);">
+                        <span class="text-detail font-bold text-muted block" style="text-transform: uppercase;">Display Font (Titles)</span>
+                        <div class="flex-between" style="align-items: flex-end; margin-top: 4px;">
+                          <h3 class="font-display font-bold text-primary" style="font-size: 1.5rem;" id="kit-font-display-name">Outfit</h3>
+                          <span class="text-detail font-mono text-secondary">font-family: var(--font-display)</span>
+                        </div>
+                      </div>
+
+                      <div>
+                        <span class="text-detail font-bold text-muted block" style="text-transform: uppercase;">Body Font (Paragraphs)</span>
+                        <div class="flex-between" style="align-items: flex-end; margin-top: 4px;">
+                          <p class="font-sans text-primary" style="font-size: 1rem;" id="kit-font-sans-name">Inter</p>
+                          <span class="text-detail font-mono text-secondary">font-family: var(--font-sans)</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+                <!-- Logos & Messaging (Right Column) -->
+                <div class="col-span-6 flex-column" style="gap: var(--space-lg);">
+                  
+                  <!-- Logos Grid -->
+                  <div class="card" style="padding: var(--space-md);">
+                    <h4 class="font-bold text-primary" style="margin-bottom: var(--space-sm);">Logo Variations</h4>
+                    <div class="grid-12" style="gap: var(--space-md);">
+                      
+                      <div class="col-span-6 card flex-column" style="padding: var(--space-sm); text-align: center; align-items: center; justify-content: center; min-height: 120px; background-color: var(--bg-secondary);">
+                        <div id="logo-preview-box-1" style="height: 48px; width: 100%; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm);">
+                          <!-- Loaded dynamically -->
+                        </div>
+                        <span class="text-detail font-bold text-primary" style="margin-top: var(--space-xs);">Primary Logo (Dark Mode)</span>
+                      </div>
+
+                      <div class="col-span-6 card flex-column" style="padding: var(--space-sm); text-align: center; align-items: center; justify-content: center; min-height: 120px; background-color: #FFFFFF; border-color: #E8EDF5;">
+                        <div id="logo-preview-box-2" style="height: 48px; width: 100%; display: flex; align-items: center; justify-content: center; border-radius: var(--radius-sm);">
+                          <!-- Loaded dynamically -->
+                        </div>
+                        <span class="text-detail font-bold" style="color: #0F172A; margin-top: var(--space-xs);">Primary Logo (Light Mode)</span>
+                      </div>
+
+                    </div>
+                  </div>
+
+                  <!-- Messaging / Tone of Voice Guidelines -->
+                  <div class="card" style="padding: var(--space-md);">
+                    <h4 class="font-bold text-primary" style="margin-bottom: var(--space-sm);">Tone & Core Messaging</h4>
+                    
+                    <div class="flex-column" style="gap: var(--space-md);">
+                      <div>
+                        <span class="text-detail font-bold text-muted block" style="text-transform: uppercase;">Tone of Voice Keywords</span>
+                        <div class="flex-center" style="gap: var(--space-xs); justify-content: flex-start; flex-wrap: wrap; margin-top: var(--space-xs);" id="kit-tone-chips">
+                          <!-- Chips loaded dynamically -->
+                        </div>
+                      </div>
+
+                      <div>
+                        <span class="text-detail font-bold text-muted block" style="text-transform: uppercase;">Core Brand Message Value Proposition</span>
+                        <p class="text-body-small text-muted" style="margin-top: var(--space-xs); line-height: 1.5;" id="kit-core-messaging-value">
+                          "Charging clean Gen-Z visual focus states with zero additives."
+                        </p>
+                      </div>
+
+                      <div>
+                        <span class="text-detail font-bold text-muted block" style="text-transform: uppercase; color: var(--accent-orange);">Avoid Verbal Pitfalls</span>
+                        <div class="flex-center" style="gap: var(--space-xs); justify-content: flex-start; flex-wrap: wrap; margin-top: var(--space-xs);" id="kit-prohibited-words">
+                          <!-- Loaded dynamically -->
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 TAB 3: ASSET LIBRARY
+                 ============================================== -->
+            <div id="tab-assets" class="tab-content-panel">
+              
+              <!-- Asset catalog header filter -->
+              <div class="card" style="padding: var(--space-sm); margin-bottom: var(--space-md); background-color: var(--bg-secondary);">
+                <div class="flex-between flex-wrap" style="gap: var(--space-sm);">
+                  <div style="display: flex; gap: var(--space-xs); align-items: center;">
+                    <select class="select select-sm" style="width: 140px;" id="asset-filter-type" onchange="filterAssetLibrary()">
+                      <option value="all">All File Types</option>
+                      <option value="png">PNG Images</option>
+                      <option value="mp4">MP4 Videos</option>
+                      <option value="obj">3D Models</option>
+                    </select>
+
+                    <select class="select select-sm" style="width: 140px;" id="asset-filter-aspect" onchange="filterAssetLibrary()">
+                      <option value="all">Any Format</option>
+                      <option value="9:16">Portrait (9:16)</option>
+                      <option value="16:9">Landscape (16:9)</option>
+                      <option value="1:1">Square (1:1)</option>
+                    </select>
+                  </div>
+                  <button class="btn btn-secondary btn-sm" onclick="showToast('Asset upload wizard is loaded in Sandbox mode.', 'info')">Upload Asset</button>
+                </div>
+              </div>
+
+              <!-- Assets bento grid layout -->
+              <div class="grid-12" style="gap: var(--space-md);" id="assets-grid-holder">
+                <!-- Assets rendered dynamically -->
+              </div>
+
+            </div>
+
+            <!-- ==============================================
+                 TAB 4: CAMPAIGN HISTORY
+                 ============================================== -->
+            <div id="tab-campaigns" class="tab-content-panel">
+              <div class="card" style="padding: var(--space-md);">
+                <h4 class="font-bold text-primary" style="margin-bottom: var(--space-sm);">Historical Campaign Track Records</h4>
+                
+                <div class="table-container">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Campaign Brief Reference</th>
+                        <th>Status</th>
+                        <th>Visual ROI</th>
+                        <th>Impressions</th>
+                        <th>Timeline Trend</th>
+                        <th>Details</th>
+                      </tr>
+                    </thead>
+                    <tbody id="brand-campaigns-table-body">
+                      <!-- Rendered dynamically -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 TAB 5: PERMISSIONS & ACCESS CONTROL
+                 ============================================== -->
+            <div id="tab-permissions" class="tab-content-panel">
+              <div class="grid-12" style="gap: var(--space-lg); align-items: start;">
+                
+                <!-- Left instructions card -->
+                <div class="col-span-4 card" style="padding: var(--space-md);">
+                  <h4 class="font-bold text-primary" style="margin-bottom: var(--space-xs);">Access Control Governance</h4>
+                  <p class="text-body-small text-muted" style="line-height: 1.5; margin-bottom: var(--space-md);">
+                    Assign explicit workspace permissions to internal campaign managers or external agency collaborators. Roles restrict editing brand color swatches, uploading logo vectors, or releasing milestone payment escrows.
+                  </p>
+
+                  <div class="flex-column" style="gap: var(--space-xs);">
+                    <div style="border-left: 2px solid var(--brand-primary); padding-left: 8px;">
+                      <span class="text-body-small font-bold text-primary block">Workspace Administrator</span>
+                      <span class="text-detail text-secondary">Full read/write/payout control.</span>
+                    </div>
+                    <div style="border-left: 2px solid var(--accent-orange); padding-left: 8px;">
+                      <span class="text-body-small font-bold text-primary block">Agency Editor</span>
+                      <span class="text-detail text-secondary">Edit brand kits, upload creatives. No escrow release.</span>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right Permissions Table -->
+                <div class="col-span-8 card" style="padding: var(--space-md);">
+                  <h4 class="font-bold text-primary" style="margin-bottom: var(--space-sm);">Collaborators list</h4>
+                  
+                  <div class="table-container">
+                    <table class="table">
+                      <thead>
+                        <tr>
+                          <th>User Member</th>
+                          <th>Access Role</th>
+                          <th>Status</th>
+                          <th>Permission Action</th>
+                        </tr>
+                      </thead>
+                      <tbody id="permissions-table-body">
+                        <!-- Loaded dynamically -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 TAB 6: BRAND GUIDELINES
+                 ============================================== -->
+            <div id="tab-guidelines" class="tab-content-panel">
+              <div class="grid-12" style="gap: var(--space-lg); align-items: start;">
+                
+                <!-- Safe zone checker dashboard (Left Column) -->
+                <div class="col-span-6 flex-column" style="gap: var(--space-lg);">
+                  <div class="card" style="padding: var(--space-md);">
+                    <h4 class="font-bold text-primary" style="margin-bottom: var(--space-xs);">Brand Safe-Zone Compliance Tester</h4>
+                    <p class="text-detail text-secondary" style="margin-bottom: var(--space-md);">Simulate visual safe padding boundaries and accessibility contrast guidelines.</p>
+                    
+                    <div class="guideline-visual-sandbox">
+                      <div class="safezone-overlay-grid" id="safezone-grid"></div>
+                      <div class="safezone-border-ring" id="safezone-ring" style="width: 140px; height: 80px;"></div>
+                      
+                      <!-- Sandbox preview elements -->
+                      <div id="sandbox-logo-preview" style="z-index: 10;">
+                        <!-- Logo dynamically rendered -->
+                      </div>
+                    </div>
+
+                    <div class="flex-between flex-wrap" style="gap: var(--space-sm); margin-top: var(--space-md);">
+                      <button class="btn btn-secondary btn-sm" id="btn-toggle-grid" onclick="toggleSafezoneGrid()">Toggle Overlay Grid</button>
+                      <button class="btn btn-primary btn-sm" onclick="runContrastAudit()">Run Contrast Audit</button>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Contrast metrics and restrictions (Right Column) -->
+                <div class="col-span-6 flex-column" style="gap: var(--space-lg);">
+                  
+                  <!-- Accessibility contrast results -->
+                  <div class="card" style="padding: var(--space-md);">
+                    <h4 class="font-bold text-primary" style="margin-bottom: var(--space-xs);">Accessibility Compliance</h4>
+                    <p class="text-detail text-secondary" style="margin-bottom: var(--space-md);">Automated contrast calculations for active brand assets against core background canvas.</p>
+                    
+                    <div class="flex-column" style="gap: var(--space-sm);">
+                      <div class="flex-between">
+                        <span class="text-body-small text-secondary">Contrast Ratio (Canvas vs Logo)</span>
+                        <span class="text-body-small font-mono font-bold text-primary" id="guidelines-contrast-ratio">8.4:1</span>
+                      </div>
+                      <div class="flex-between">
+                        <span class="text-body-small text-secondary">WCAG AA Standard</span>
+                        <span class="badge badge-success">Passed</span>
+                      </div>
+                      <div class="flex-between">
+                        <span class="text-body-small text-secondary">WCAG AAA Standard (Enhanced)</span>
+                        <span class="badge badge-success">Passed</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Prompt restrictions guidelines for AI twin rendering -->
+                  <div class="card" style="padding: var(--space-md);">
+                    <h4 class="font-bold text-primary" style="margin-bottom: var(--space-sm);">AI Generation Token Rules</h4>
+                    <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-sm);">
+                      <span class="text-detail font-bold text-muted block" style="text-transform: uppercase;">Permitted AI Prompt Tokens</span>
+                      <p class="text-body-small font-mono text-primary" style="margin-top: 4px;" id="guidelines-allowed-tokens">
+                        "cyberpunk clean backdrop, glassmorphism, studio lighting, outfits 4k"
+                      </p>
+                      
+                      <span class="text-detail font-bold text-muted block" style="text-transform: uppercase; margin-top: var(--space-sm); color: var(--accent-orange);">Prohibited AI Tokens</span>
+                      <p class="text-body-small font-mono text-warning" style="margin-top: 4px;" id="guidelines-prohibited-tokens">
+                        "retro noise filters, saturated glare, oversaturation"
+                      </p>
+                    </div>
+                  </div>
+
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==============================================
+       3. INTERACTIVE COLLABORATOR INVITE MODAL
+       ============================================== -->
+  <div class="dialog-overlay" id="collaborator-dialog">
+    <div class="dialog-card">
+      <div class="flex-between" style="border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-xs); margin-bottom: var(--space-md);">
+        <h3 class="font-bold text-primary">Invite Member to Workspace</h3>
+        <button class="btn btn-tertiary" style="padding: 4px;" onclick="closeInviteCollaboratorModal()">
+          <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+        </button>
+      </div>
+
+      <div class="flex-column" style="gap: var(--space-md);">
+        <div class="flex-column" style="gap: var(--space-xxs);">
+          <label class="text-detail font-bold text-muted">Email Address</label>
+          <input type="email" class="input" id="invite-email" placeholder="e.g. teammate@brand.com">
+        </div>
+
+        <div class="flex-column" style="gap: var(--space-xxs);">
+          <label class="text-detail font-bold text-muted">Workspace Role Permissions</label>
+          <select class="select" id="invite-role">
+            <option value="Administrator">Workspace Administrator</option>
+            <option value="Editor">Agency Editor</option>
+            <option value="Viewer">Viewer Only</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="flex-center" style="gap: var(--space-sm); justify-content: flex-end; margin-top: var(--space-xl);">
+        <button class="btn btn-secondary btn-sm" onclick="closeInviteCollaboratorModal()">Cancel</button>
+        <button class="btn btn-primary btn-sm" onclick="submitInviteCollaborator()">Grant Access</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="global-toast-container"></div>
+
+  <!-- ==============================================
+       4. INTERACTIVE PAGE SCRIPTS & MOCK DATA
+       ============================================== -->
+  <script>
+    // Global Brand Registry Mock Data
+    const brandsData = {
+      pulse_energy: {
+        name: "Pulse Energy Corp",
+        logoSvg: `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="28" height="28" rx="6" fill="#6366F1" opacity="0.2"/><path d="M16 4L28 12V20L16 28L4 20V12L16 4Z" stroke="#6366F1" stroke-width="2.5"/><circle cx="16" cy="16" r="4" fill="#6366F1"/></svg>`,
+        logoDarkSvg: `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="28" height="28" rx="6" fill="#0F172A" opacity="0.2"/><path d="M16 4L28 12V20L16 28L4 20V12L16 4Z" stroke="#0F172A" stroke-width="2.5"/><circle cx="16" cy="16" r="4" fill="#0F172A"/></svg>`,
+        colors: [
+          { name: "Primary Brand Indigo", hex: "#6366F1" },
+          { name: "Accent Violet", hex: "#8B5CF6" },
+          { name: "Cyber Green", hex: "#10B981" },
+          { name: "Bg Charcoal", hex: "#0B0F19" }
+        ],
+        displayFont: "Outfit",
+        sansFont: "Inter",
+        toneKeywords: ["High-Octane", "Futuristic", "Electric", "Cinematic"],
+        valueProp: "Aura-level charge tracking for clean energy content verification.",
+        avoidWords: ["tired", "old-fashioned", "slow", "additives"],
+        assets: [
+          { name: "Pulse Bottle 3D Render", size: "14.2 MB", type: "OBJ", aspect: "1:1", thumb: "https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=200&auto=format&fit=crop&q=80" },
+          { name: "Energy Drink Promotional video", size: "48.0 MB", type: "MP4", aspect: "9:16", thumb: "https://images.unsplash.com/photo-1563227812-0ea4c22e6cc8?w=200&auto=format&fit=crop&q=80" },
+          { name: "Pulse Brand Identity Guide", size: "2.4 MB", type: "PDF", aspect: "16:9", thumb: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80" }
+        ],
+        campaigns: [
+          { brief: "Cyber Energy Launch", status: "Active", roi: "4.2x", impressions: "1.2M" },
+          { brief: "Pulse Zero Ad Video Campaign", status: "Completed", roi: "3.8x", impressions: "890K" }
+        ],
+        permissions: [
+          { name: "Aria Vance", role: "Editor", status: "Active" },
+          { name: "Jaiveer Hastar", role: "Administrator", status: "Active" }
+        ],
+        allowedTokens: "electric glow backdrop, high contrast neon, glassmorphism, pulse renders",
+        prohibitedTokens: "retro filters, soft glow, monochrome, low resolution noise",
+        contrast: "8.4:1"
+      },
+      retro_denim: {
+        name: "Retro Denim Apparel",
+        logoSvg: `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="28" height="28" rx="6" fill="#F59E0B" opacity="0.2"/><path d="M6 10L16 6L26 10V22L16 26L6 22V10Z" stroke="#F59E0B" stroke-width="2.5"/><path d="M12 16h8" stroke="#F59E0B" stroke-width="2"/></svg>`,
+        logoDarkSvg: `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="28" height="28" rx="6" fill="#0F172A" opacity="0.2"/><path d="M6 10L16 6L26 10V22L16 26L6 22V10Z" stroke="#0F172A" stroke-width="2.5"/><path d="M12 16h8" stroke="#0F172A" stroke-width="2"/></svg>`,
+        colors: [
+          { name: "Vintage Denim Blue", hex: "#1D4ED8" },
+          { name: "Retro Rust", hex: "#C2410C" },
+          { name: "Warm Cream", hex: "#FEF3C7" },
+          { name: "Off Black", hex: "#1F2937" }
+        ],
+        displayFont: "Playfair Display",
+        sansFont: "Outfit",
+        toneKeywords: ["Authentic", "Vintage", "Rugged", "Timeless"],
+        valueProp: "Sleek retro-streetwear visual aesthetics built for long-duration wear.",
+        avoidWords: ["hyper-futuristic", "synthetic", "neon glow", "glitch"],
+        assets: [
+          { name: "Autumn Jackets Promo 01", size: "8.1 MB", type: "PNG", aspect: "9:16", thumb: "https://images.unsplash.com/photo-1542272604-787c3835535d?w=200&auto=format&fit=crop&q=80" },
+          { name: "Raw Denim Textures HighRes", size: "12.4 MB", type: "PNG", aspect: "1:1", thumb: "https://images.unsplash.com/photo-1582533561751-ef6f6ab93a2e?w=200&auto=format&fit=crop&q=80" }
+        ],
+        campaigns: [
+          { brief: "Retro Denim Autumn 2026", status: "Active", roi: "3.5x", impressions: "650K" }
+        ],
+        permissions: [
+          { name: "Marcus Thorne", role: "Editor", status: "Active" },
+          { name: "Devon Chen", role: "Viewer", status: "Active" }
+        ],
+        allowedTokens: "warm sunset lighting, retro lens grain, denim textures, apparel high-definition",
+        prohibitedTokens: "neon cyberpunk lights, green overlays, sci-fi renders",
+        contrast: "7.1:1"
+      },
+      smart_home: {
+        name: "AuraSmart IoT Hub",
+        logoSvg: `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="28" height="28" rx="6" fill="#10B981" opacity="0.2"/><path d="M16 6L26 14V24A2 2 0 0124 26H8A2 2 0 016 24V14L16 6Z" stroke="#10B981" stroke-width="2.5"/><path d="M12 18h8v8h-8v-8Z" fill="#10B981"/></svg>`,
+        logoDarkSvg: `<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg"><rect x="2" y="2" width="28" height="28" rx="6" fill="#0F172A" opacity="0.2"/><path d="M16 6L26 14V24A2 2 0 0124 26H8A2 2 0 016 24V14L16 6Z" stroke="#0F172A" stroke-width="2.5"/><path d="M12 18h8v8h-8v-8Z" fill="#0F172A"/></svg>`,
+        colors: [
+          { name: "Smart Mint Green", hex: "#10B981" },
+          { name: "Clean Slate Gray", hex: "#64748B" },
+          { name: "Ultra White", hex: "#FAFAFA" },
+          { name: "Deep Charcoal", hex: "#0F172A" }
+        ],
+        displayFont: "Outfit",
+        sansFont: "Inter",
+        toneKeywords: ["Minimalist", "Intuitive", "Helpful", "Calm"],
+        valueProp: "AuraSmart IoT assistant systems integrating seamlessly with family flow.",
+        avoidWords: ["cluttered", "complex setup", "loud sounds", "intrusive"],
+        assets: [
+          { name: "Smart Hub render 1080p", size: "6.8 MB", type: "PNG", aspect: "16:9", thumb: "https://images.unsplash.com/photo-1558002038-1055907df827?w=200&auto=format&fit=crop&q=80" },
+          { name: "Voice commands demo audio", size: "3.2 MB", type: "MP3", aspect: "1:1", thumb: "https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=200&auto=format&fit=crop&q=80" }
+        ],
+        campaigns: [
+          { brief: "AuraSmart Hub Launch", status: "Completed", roi: "4.8x", impressions: "2.4M" }
+        ],
+        permissions: [
+          { name: "Elena Rostova", role: "Editor", status: "Active" },
+          { name: "Deepmind Team Operations", role: "Administrator", status: "Active" }
+        ],
+        allowedTokens: "clean minimalist lighting, white studio walls, helpful assistant devices, high contrast",
+        prohibitedTokens: "dark gaming vibes, red highlights, messy wiring",
+        contrast: "9.2:1"
+      }
+    };
+
+    let activeWorkspace = "pulse_energy";
+
+    // Toast helper
+    window.showToast = function(message, type = 'info') {
+      const container = document.getElementById('global-toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      
+      let icon = '';
+      if (type === 'success') icon = '✓ ';
+      if (type === 'error') icon = '⚠ ';
+      if (type === 'info') icon = 'ℹ ';
+
+      toast.innerText = icon + message;
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.animation = 'toastLeave 250ms ease forwards';
+        setTimeout(() => toast.remove(), 250);
+      }, 3500);
+    };
+
+    // Sub Navigation Tabs
+    function switchSubTab(tabName) {
+      document.querySelectorAll('.subnav-tab').forEach(tab => {
+        tab.classList.toggle('active', tab.getAttribute('data-tab') === tabName);
+      });
+      document.querySelectorAll('.tab-content-panel').forEach(panel => {
+        panel.classList.toggle('active', panel.id === `tab-${tabName}`);
+      });
+      window.showToast(`Switched to ${tabName.toUpperCase()} section.`, 'info');
+    }
+
+    // Emulator Viewports Resizing
+    document.querySelectorAll('.sandbox-btn[data-viewport]').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sandbox-btn[data-viewport]').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const frame = document.getElementById('viewport-frame');
+        const viewport = btn.getAttribute('data-viewport');
+        
+        frame.className = `emulator-viewport ${viewport}`;
+        window.showToast(`Viewport set to ${viewport}`, 'info');
+      });
+    });
+
+    // Theme Switcher Handler
+    document.getElementById('theme-toggle').addEventListener('click', () => {
+      const body = document.body;
+      const isDark = body.classList.toggle('dark');
+      document.getElementById('theme-toggle').innerText = isDark ? "Light Mode" : "Dark Mode";
+      window.showToast(isDark ? "Switched to Cyber Dark mode." : "Switched to Clean Light mode.", "success");
+    });
+
+    // Render Brand Profiles Grid
+    function renderBrandProfiles() {
+      const grid = document.getElementById('brand-profiles-list-holder');
+      grid.innerHTML = '';
+
+      Object.keys(brandsData).forEach(key => {
+        const b = brandsData[key];
+        const isActive = key === activeWorkspace;
+        
+        const card = document.createElement('div');
+        card.className = `card brand-profile-card ${isActive ? 'active' : ''}`;
+        card.innerHTML = `
+          <div class="flex-between" style="align-items: center; margin-bottom: var(--space-sm);">
+            <div class="flex-center" style="gap: var(--space-xs);">
+              <div style="height: 36px; width: 36px; display: flex; align-items: center; justify-content: center;">
+                ${b.logoSvg}
+              </div>
+              <div>
+                <span class="font-bold text-primary block">${b.name}</span>
+                <span class="text-detail text-secondary block">${key === 'pulse_energy' ? 'Energy & Beverage' : key === 'retro_denim' ? 'Fashion Apparel' : 'Smart Home Tech'}</span>
+              </div>
+            </div>
+            ${isActive ? '<span class="badge badge-success">Active</span>' : ''}
+          </div>
+          <div class="flex-column" style="gap: 4px; border-top: 1px dashed var(--border-default); padding-top: var(--space-xs);">
+            <div class="flex-between">
+              <span class="text-detail text-secondary">Active Campaigns</span>
+              <span class="text-detail font-bold text-primary">${b.campaigns.length} campaigns</span>
+            </div>
+            <div class="flex-between">
+              <span class="text-detail text-secondary">Accessibility Score</span>
+              <span class="text-detail font-bold text-gradient">${b.contrast}</span>
+            </div>
+          </div>
+          <div style="margin-top: var(--space-md); text-align: right;">
+            <button class="btn btn-secondary btn-sm" onclick="event.stopPropagation(); loadWorkspace('${key}')">Configure Brand Kit</button>
+          </div>
+        `;
+        card.onclick = () => loadWorkspace(key);
+        grid.appendChild(card);
+      });
+    }
+
+    // Load active brand workspace details
+    function loadWorkspace(brandKey) {
+      activeWorkspace = brandKey;
+      const b = brandsData[brandKey];
+      if (!b) return;
+
+      // Update workspace selector dropdown in header
+      document.getElementById('workspace-dropdown-select').value = brandKey;
+
+      // Render Brand Profiles cards to update active badge
+      renderBrandProfiles();
+
+      // Populate Colors
+      const colorGrid = document.getElementById('kit-color-grid');
+      colorGrid.innerHTML = '';
+      b.colors.forEach(c => {
+        colorGrid.innerHTML += `
+          <div class="swatch-card" onclick="copyColorHex('${c.hex}')">
+            <div class="swatch-color-block" style="background-color: ${c.hex};"></div>
+            <div style="padding: var(--space-xs);">
+              <span class="text-detail font-bold text-primary block" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${c.name}</span>
+              <span class="text-detail font-mono text-secondary">${c.hex}</span>
+            </div>
+          </div>
+        `;
+      });
+
+      // Populate Typography
+      document.getElementById('kit-font-display-name').innerText = b.displayFont;
+      document.getElementById('kit-font-sans-name').innerText = b.sansFont;
+
+      // Populate Logos
+      document.getElementById('logo-preview-box-1').innerHTML = b.logoSvg;
+      document.getElementById('logo-preview-box-2').innerHTML = b.logoDarkSvg;
+      document.getElementById('sandbox-logo-preview').innerHTML = b.logoSvg; // guidelines tester preview
+
+      // Populate Verbal Identity
+      const toneChips = document.getElementById('kit-tone-chips');
+      toneChips.innerHTML = '';
+      b.toneKeywords.forEach(t => {
+        toneChips.innerHTML += `<span class="badge badge-purple">${t}</span>`;
+      });
+      document.getElementById('kit-core-messaging-value').innerText = `"${b.valueProp}"`;
+
+      const prohibitedChips = document.getElementById('kit-prohibited-words');
+      prohibitedChips.innerHTML = '';
+      b.avoidWords.forEach(w => {
+        prohibitedChips.innerHTML += `<span class="badge badge-warning">${w}</span>`;
+      });
+
+      // Populate Asset Library
+      renderAssets();
+
+      // Populate Campaigns table
+      const campTableBody = document.getElementById('brand-campaigns-table-body');
+      campTableBody.innerHTML = '';
+      b.campaigns.forEach(camp => {
+        campTableBody.innerHTML += `
+          <tr>
+            <td><span class="font-bold text-primary">${camp.brief}</span></td>
+            <td><span class="badge ${camp.status === 'Active' ? 'badge-success' : 'badge-indigo'}">${camp.status}</span></td>
+            <td class="font-mono font-bold">${camp.roi}</td>
+            <td class="font-mono">${camp.impressions}</td>
+            <td>
+              <svg class="sparkline-svg" viewBox="0 0 100 30">
+                <path d="M0,25 Q15,10 30,18 T60,5 T90,12 L100,8" />
+              </svg>
+            </td>
+            <td><button class="btn btn-secondary btn-sm" onclick="showToast('Loading historical telemetry charts...', 'info')">View Dashboard</button></td>
+          </tr>
+        `;
+      });
+
+      // Populate Permissions table
+      const permissionsBody = document.getElementById('permissions-table-body');
+      permissionsBody.innerHTML = '';
+      b.permissions.forEach(p => {
+        permissionsBody.innerHTML += `
+          <tr>
+            <td class="flex-center" style="gap: var(--space-xs); justify-content: flex-start;">
+              <div class="avatar avatar-sm font-bold" style="background-color: var(--brand-secondary); color: var(--text-inverse); width: 28px; height: 28px; font-size: 0.75rem;">${p.name.charAt(0)}</div>
+              <div>
+                <span class="font-bold text-primary block">${p.name}</span>
+              </div>
+            </td>
+            <td>
+              <select class="select select-sm" style="width: 130px;" onchange="changeCollaboratorRole('${p.name}', this.value)">
+                <option value="Administrator" ${p.role === 'Administrator' ? 'selected' : ''}>Administrator</option>
+                <option value="Editor" ${p.role === 'Editor' ? 'selected' : ''}>Agency Editor</option>
+                <option value="Viewer" ${p.role === 'Viewer' ? 'selected' : ''}>Viewer Only</option>
+              </select>
+            </td>
+            <td><span class="badge badge-success">${p.status}</span></td>
+            <td><button class="btn btn-secondary btn-sm" onclick="removeCollaborator('${p.name}')">Revoke</button></td>
+          </tr>
+        `;
+      });
+
+      // Populate Guidelines Safe-Zone Checker Details
+      document.getElementById('guidelines-contrast-ratio').innerText = b.contrast;
+      document.getElementById('guidelines-allowed-tokens').innerText = `"${b.allowedTokens}"`;
+      document.getElementById('guidelines-prohibited-tokens').innerText = `"${b.prohibitedTokens}"`;
+
+      window.showToast(`Successfully loaded brand kit for ${b.name}.`, 'success');
+    }
+
+    // Sw Workspace selection dropdown trigger
+    function switchWorkspaceBrand(val) {
+      loadWorkspace(val);
+    }
+
+    // Copy Color hex to clipboard simulation
+    function copyColorHex(hex) {
+      navigator.clipboard.writeText(hex);
+      window.showToast(`Copied Hex Swatch ${hex} to clipboard!`, 'success');
+    }
+
+    // Render Assets catalog bento grid
+    function renderAssets() {
+      const holder = document.getElementById('assets-grid-holder');
+      holder.innerHTML = '';
+      const b = brandsData[activeWorkspace];
+
+      b.assets.forEach(asset => {
+        holder.innerHTML += `
+          <div class="col-span-4 card" style="padding: var(--space-sm); position: relative; overflow: hidden;">
+            <div style="height: 120px; border-radius: var(--radius-md); overflow: hidden; background-color: var(--bg-secondary); position: relative;">
+              <img src="${asset.thumb}" style="width:100%; height:100%; object-fit: cover;" alt="${asset.name}">
+              <span class="badge badge-purple" style="position: absolute; top: 8px; right: 8px;">${asset.type}</span>
+            </div>
+            <div style="margin-top: var(--space-xs);">
+              <span class="font-bold text-primary block" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${asset.name}</span>
+              <div class="flex-between text-detail text-secondary" style="margin-top: 2px;">
+                <span>${asset.size}</span>
+                <span>Format: ${asset.aspect}</span>
+              </div>
+            </div>
+            <div class="flex-between" style="margin-top: var(--space-sm);">
+              <button class="btn btn-secondary btn-sm" onclick="showToast('Downloading package asset...', 'success')">Download</button>
+              <button class="btn btn-tertiary btn-sm" onclick="showToast('Loading full preview container...', 'info')">Preview</button>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Filter Asset catalog library
+    function filterAssetLibrary() {
+      const typeVal = document.getElementById('asset-filter-type').value;
+      const aspectVal = document.getElementById('asset-filter-aspect').value;
+      const b = brandsData[activeWorkspace];
+      
+      const holder = document.getElementById('assets-grid-holder');
+      holder.innerHTML = '';
+
+      b.assets.forEach(asset => {
+        let matches = true;
+        if (typeVal !== 'all' && asset.type.toLowerCase() !== typeVal) {
+          matches = false;
+        }
+        if (aspectVal !== 'all' && asset.aspect !== aspectVal) {
+          matches = false;
+        }
+
+        if (matches) {
+          holder.innerHTML += `
+            <div class="col-span-4 card" style="padding: var(--space-sm); position: relative; overflow: hidden;">
+              <div style="height: 120px; border-radius: var(--radius-md); overflow: hidden; background-color: var(--bg-secondary); position: relative;">
+                <img src="${asset.thumb}" style="width:100%; height:100%; object-fit: cover;" alt="${asset.name}">
+                <span class="badge badge-purple" style="position: absolute; top: 8px; right: 8px;">${asset.type}</span>
+              </div>
+              <div style="margin-top: var(--space-xs);">
+                <span class="font-bold text-primary block" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${asset.name}</span>
+                <div class="flex-between text-detail text-secondary" style="margin-top: 2px;">
+                  <span>${asset.size}</span>
+                  <span>Format: ${asset.aspect}</span>
+                </div>
+              </div>
+              <div class="flex-between" style="margin-top: var(--space-sm);">
+                <button class="btn btn-secondary btn-sm" onclick="showToast('Downloading package asset...', 'success')">Download</button>
+                <button class="btn btn-tertiary btn-sm" onclick="showToast('Loading full preview container...', 'info')">Preview</button>
+              </div>
+            </div>
+          `;
+        }
+      });
+    }
+
+    // Guideline safe-zones checker simulation
+    function toggleSafezoneGrid() {
+      const grid = document.getElementById('safezone-grid');
+      const ring = document.getElementById('safezone-ring');
+      const isGridActive = grid.classList.toggle('active');
+      ring.classList.toggle('active', isGridActive);
+
+      window.showToast(isGridActive ? "Overlay grid safe guidelines enabled." : "Overlay guidelines disabled.", "info");
+    }
+
+    function runContrastAudit() {
+      window.showToast("Calculating accessibility ratios against brand guidelines...", "info");
+      setTimeout(() => {
+        const b = brandsData[activeWorkspace];
+        window.showToast(`Contrast audit complete. Score is ${b.contrast} (WCAG Triple-A compliant).`, "success");
+      }, 1000);
+    }
+
+    // Role Permission functions
+    function changeCollaboratorRole(name, val) {
+      window.showToast(`Updated permissions role for ${name} to ${val}.`, 'success');
+    }
+
+    function removeCollaborator(name) {
+      window.showToast(`Revoked workspace permissions access for ${name}.`, 'warning');
+      const b = brandsData[activeWorkspace];
+      b.permissions = b.permissions.filter(p => p.name !== name);
+      loadWorkspace(activeWorkspace);
+    }
+
+    // Dialog Invite Collaborator
+    function openInviteCollaboratorModal() {
+      document.getElementById('collaborator-dialog').classList.add('active');
+    }
+
+    function closeInviteCollaboratorModal() {
+      document.getElementById('collaborator-dialog').classList.remove('active');
+    }
+
+    function submitInviteCollaborator() {
+      const email = document.getElementById('invite-email').value;
+      const role = document.getElementById('invite-role').value;
+      
+      if (!email) {
+        window.showToast("Please specify a collaborator email.", "error");
+        return;
+      }
+
+      const b = brandsData[activeWorkspace];
+      b.permissions.push({
+        name: email,
+        role: role,
+        status: "Active"
+      });
+
+      closeInviteCollaboratorModal();
+      loadWorkspace(activeWorkspace);
+      window.showToast(`Granted workspace collaborator access to ${email}!`, "success");
+    }
+
+    // Initialize Active Brand workspace details on load
+    renderBrandProfiles();
+    loadWorkspace("pulse_energy");
+  </script>
+
+  <script src="design-system.js"></script>
+</body>
+</html>

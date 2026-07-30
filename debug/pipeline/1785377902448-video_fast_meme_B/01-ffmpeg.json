@@ -1,0 +1,13 @@
+{
+  "assetId": "video_fast_meme_B",
+  "videoPath": "c:/videos/fast_meme.mp4",
+  "duration": 15,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "bitrate": 4500000,
+  "keyframe_count": 15,
+  "extracted_frame_count": 15,
+  "extracted_audio_samples": 220500,
+  "contentHash": 1071378967
+}

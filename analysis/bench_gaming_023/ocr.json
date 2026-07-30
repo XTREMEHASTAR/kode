@@ -1,0 +1,17 @@
+{
+  "screenText": "[OCR Text Segment] Asset bench_gaming_023 text overlay density: 80.0%.",
+  "captionDensity": 0.8,
+  "fontSizeEstimatePx": 68,
+  "textTimingSec": [
+    {
+      "start": 0.5,
+      "end": 15.6
+    },
+    {
+      "start": 15.6,
+      "end": 35.1
+    }
+  ],
+  "ctaDetected": true,
+  "emojiCount": 1
+}

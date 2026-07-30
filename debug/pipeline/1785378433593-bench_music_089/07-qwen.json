@@ -1,0 +1,97 @@
+{
+  "full_structured_payload": {
+    "visual": {
+      "sceneCount": 10,
+      "shotLengthSec": 5.7,
+      "motionIntensity": 0.2034,
+      "brightness": 0.3456,
+      "saturation": 0.5999,
+      "contrast": 0.4999,
+      "faceCount": 1,
+      "faceSizePct": 0.35,
+      "cameraMovement": "PAN",
+      "editingRhythmScore": 0.2632,
+      "thumbnailQualityScore": 0.4073,
+      "visualNoveltyScore": 0.644,
+      "colorHistogram": [
+        0.0175,
+        0.0088,
+        0.0439,
+        0.0614,
+        0.5789,
+        0.0526,
+        0.0263,
+        0.0439,
+        0.0526,
+        0.0263,
+        0.0526,
+        0.0351,
+        0,
+        0,
+        0,
+        0
+      ],
+      "detectedObjects": [
+        "high_contrast_foreground",
+        "dynamic_motion"
+      ]
+    },
+    "speech": {
+      "transcript": "",
+      "wordsPerMinute": 0,
+      "speechClarity": 0.4983,
+      "pauseDurationSec": 0.19,
+      "fillerWordsCount": 0,
+      "sentimentScore": 0.4932,
+      "language": "none"
+    },
+    "ocr": {
+      "screenText": "[OCR Text Segment] Asset bench_music_089 text overlay density: 66.0%.",
+      "captionDensity": 0.6596,
+      "fontSizeEstimatePx": 62,
+      "textTimingSec": [
+        {
+          "start": 0.5,
+          "end": 22.8
+        },
+        {
+          "start": 22.8,
+          "end": 51.3
+        }
+      ],
+      "ctaDetected": true,
+      "emojiCount": 1
+    },
+    "audio": {
+      "bpm": 60,
+      "loudnessDb": -7.7,
+      "rmsEnergy": 0.4122,
+      "silenceRatio": 0.0034,
+      "dynamicRangeDb": 5.76,
+      "spectralCentroidHz": 3159,
+      "tempoStabilityScore": 0.99
+    }
+  },
+  "generated_reasoning": "Opening segment evaluates visual rhythm score (0.26) and speech clarity (0.50).",
+  "detected_niche": "ENTERTAINMENT",
+  "detected_topic": "Dynamic Visual & Short-Form Content",
+  "storytelling_structure": "FAST_PACED_CLIPS -> HOOK",
+  "hook_reasoning": "Opening segment evaluates visual rhythm score (0.26) and speech clarity (0.50).",
+  "creatorIntent": "VIRAL_REACH",
+  "audienceIntent": "ENTERTAINMENT",
+  "ctaQuality": 0.65,
+  "emotionalTriggers": [
+    "Excitement",
+    "Amusement",
+    "Relatability"
+  ],
+  "strengths": [
+    "Editing Rhythm Score: 0.26",
+    "Speech Clarity: 0.50",
+    "Audio Energy RMS: 0.41"
+  ],
+  "weaknesses": [
+    "Motion Intensity Variance: 0.20",
+    "Silence Ratio: 0.00"
+  ]
+}

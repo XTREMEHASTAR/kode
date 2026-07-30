@@ -1,0 +1,8 @@
+{
+  "method": "GET",
+  "url": "https://graph.facebook.com/v18.0/real_ig_fitness_119?fields=id,timestamp,like_count,comments_count,plays&access_token=[REDACTED_ACCESS_TOKEN]",
+  "headers": {
+    "Host": "graph.facebook.com",
+    "Accept": "application/json"
+  }
+}

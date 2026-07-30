@@ -1,0 +1,1854 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — Enterprise AI SaaS Upload Center</title>
+  <link rel="stylesheet" href="design-system.css">
+  <style>
+    /* ==========================================================================
+       UPLOAD CENTER CUSTOM SPECIFIC STYLES
+       ========================================================================== */
+
+    /* Tab styles */
+    .intake-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border-default);
+      margin-bottom: var(--space-md);
+      gap: var(--space-md);
+    }
+
+    .intake-tab-btn {
+      background: none;
+      border: none;
+      padding: var(--space-xs) 0;
+      color: var(--text-secondary);
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      font-weight: 600;
+      cursor: pointer;
+      position: relative;
+      transition: color var(--transition-fast);
+    }
+
+    .intake-tab-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .intake-tab-btn.active {
+      color: var(--brand-primary);
+    }
+
+    .intake-tab-btn.active::after {
+      content: '';
+      position: absolute;
+      bottom: -1px;
+      left: 0;
+      right: 0;
+      height: 2px;
+      background-color: var(--brand-primary);
+      border-radius: var(--radius-full);
+    }
+
+    .intake-tab-content {
+      display: none;
+    }
+
+    .intake-tab-content.active {
+      display: block;
+    }
+
+    /* Drag & Drop Dropzone */
+    .dropzone-container {
+      border: 2px dashed var(--border-default);
+      background-color: var(--bg-secondary);
+      border-radius: var(--radius-lg);
+      padding: var(--space-xl) var(--space-md);
+      text-align: center;
+      cursor: pointer;
+      transition: border-color var(--transition-smooth), background-color var(--transition-smooth);
+      position: relative;
+    }
+
+    .dropzone-container:hover, .dropzone-container.drag-over {
+      border-color: var(--brand-primary);
+      background-color: var(--brand-primary-glow);
+    }
+
+    .dropzone-icon-wrapper {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-md);
+      background-color: var(--bg-primary);
+      color: var(--brand-primary);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-sm);
+      box-shadow: var(--shadow-sm);
+      transition: transform var(--transition-fast);
+    }
+
+    .dropzone-container:hover .dropzone-icon-wrapper {
+      transform: translateY(-2px);
+    }
+
+    /* Instagram Import Card */
+    .instagram-input-group {
+      display: flex;
+      gap: var(--space-xs);
+      margin-bottom: var(--space-sm);
+    }
+
+    .instagram-preview-card {
+      display: flex;
+      gap: var(--space-md);
+      padding: var(--space-sm);
+      border-radius: var(--radius-md);
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      margin-top: var(--space-md);
+      animation: dropdownEnter var(--transition-smooth) forwards;
+    }
+
+    .instagram-preview-thumbnail {
+      width: 80px;
+      height: 100px;
+      border-radius: var(--radius-sm);
+      object-fit: cover;
+      background-color: var(--bg-tertiary);
+      border: 1px solid var(--border-muted);
+    }
+
+    /* Queue items */
+    .queue-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      max-height: 480px;
+      overflow-y: auto;
+      padding-right: var(--space-xxs);
+    }
+
+    .queue-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: var(--space-sm);
+      border-radius: var(--radius-md);
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      transition: border-color var(--transition-fast), box-shadow var(--transition-fast);
+      position: relative;
+    }
+
+    .queue-item:hover {
+      border-color: var(--border-active);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .queue-item.selected {
+      border-color: var(--brand-primary);
+      background-color: var(--brand-primary-glow);
+    }
+
+    .queue-item-thumbnail {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      background-color: var(--bg-tertiary);
+      object-fit: cover;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: var(--text-secondary);
+      overflow: hidden;
+      position: relative;
+    }
+
+    .queue-item-details {
+      flex-grow: 1;
+      min-width: 0;
+    }
+
+    .queue-progress-bar {
+      height: 4px;
+      background-color: var(--bg-tertiary);
+      border-radius: var(--radius-full);
+      margin-top: 6px;
+      overflow: hidden;
+    }
+
+    .queue-progress-fill {
+      height: 100%;
+      background-color: var(--brand-primary);
+      width: 0%;
+      border-radius: var(--radius-full);
+      transition: width 200ms linear;
+    }
+
+    .queue-progress-fill.success {
+      background-color: var(--accent-green);
+    }
+
+    .queue-progress-fill.error {
+      background-color: var(--accent-red);
+    }
+
+    /* Video Player Preview Mock */
+    .video-preview-wrapper {
+      position: relative;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      aspect-ratio: 16/9;
+      background-color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: var(--space-md);
+      box-shadow: var(--shadow-md);
+    }
+
+    .video-preview-element {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+
+    .video-player-controls {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: var(--space-sm) var(--space-md);
+      background: linear-gradient(to top, rgba(0,0,0,0.85) 0%, rgba(0,0,0,0) 100%);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-xs);
+      opacity: 0;
+      transition: opacity var(--transition-smooth);
+    }
+
+    .video-preview-wrapper:hover .video-player-controls {
+      opacity: 1;
+    }
+
+    .video-play-btn {
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-full);
+      background-color: rgba(255, 255, 255, 0.9);
+      color: #000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: absolute;
+      cursor: pointer;
+      box-shadow: var(--shadow-lg);
+      transition: transform var(--transition-fast), background-color var(--transition-fast);
+      z-index: 10;
+    }
+
+    .video-play-btn:hover {
+      transform: scale(1.05);
+      background-color: #FFFFFF;
+    }
+
+    .video-track-bar {
+      height: 4px;
+      background-color: rgba(255, 255, 255, 0.3);
+      border-radius: var(--radius-full);
+      position: relative;
+      cursor: pointer;
+    }
+
+    .video-track-fill {
+      height: 100%;
+      background-color: var(--brand-primary);
+      width: 35%;
+      border-radius: var(--radius-full);
+    }
+
+    .video-track-thumb {
+      width: 10px;
+      height: 10px;
+      border-radius: var(--radius-full);
+      background-color: #FFFFFF;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      left: 35%;
+    }
+
+    /* Thumbnail selection strip */
+    .thumbnail-selector-strip {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: var(--space-xs);
+      margin-bottom: var(--space-md);
+    }
+
+    .thumbnail-frame-card {
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      aspect-ratio: 16/10;
+      border: 2px solid transparent;
+      cursor: pointer;
+      background-color: var(--bg-tertiary);
+      transition: border-color var(--transition-fast), transform var(--transition-fast);
+      position: relative;
+    }
+
+    .thumbnail-frame-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .thumbnail-frame-card.selected {
+      border-color: var(--brand-primary);
+      transform: translateY(-2px);
+    }
+
+    .thumbnail-frame-card.selected::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-color: rgba(88, 80, 236, 0.1);
+    }
+
+    /* Interactive Tag Input Badge */
+    .tag-badges-container {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      padding: var(--space-xs);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      background-color: var(--bg-primary);
+      margin-bottom: var(--space-sm);
+    }
+
+    .tag-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      font-size: 0.75rem;
+      font-weight: 500;
+      color: var(--text-primary);
+      animation: badgeEnter var(--transition-fast) forwards;
+    }
+
+    .tag-badge-remove {
+      color: var(--text-secondary);
+      cursor: pointer;
+      font-weight: bold;
+    }
+
+    .tag-badge-remove:hover {
+      color: var(--accent-red);
+    }
+
+    .tag-badge-input {
+      border: none;
+      outline: none;
+      background: transparent;
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      color: var(--text-primary);
+      flex-grow: 1;
+      min-width: 80px;
+      padding: 2px 4px;
+    }
+
+    /* AI Processing Screen Overlay */
+    .ai-processing-overlay {
+      position: absolute;
+      inset: 0;
+      background-color: var(--bg-elevated);
+      z-index: 100;
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-xl);
+      text-align: center;
+      overflow-y: auto;
+    }
+
+    .ai-processing-overlay.active {
+      display: flex;
+    }
+
+    .ai-radar-grid {
+      width: 140px;
+      height: 140px;
+      position: relative;
+      margin-bottom: var(--space-lg);
+    }
+
+    .ai-radar-circle {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      border-radius: var(--radius-full);
+      border: 1px solid var(--brand-primary);
+      opacity: 0;
+      animation: radarPulse 4s cubic-bezier(0.1, 0.8, 0.3, 1) infinite;
+    }
+
+    .ai-radar-circle:nth-child(2) {
+      animation-delay: 1.3s;
+    }
+
+    .ai-radar-circle:nth-child(3) {
+      animation-delay: 2.6s;
+    }
+
+    .ai-radar-core {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 48px;
+      height: 48px;
+      border-radius: var(--radius-full);
+      background-color: var(--brand-primary);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #FFFFFF;
+      box-shadow: 0 0 30px var(--brand-primary);
+      animation: pulseCore 2s ease-in-out infinite;
+    }
+
+    @keyframes radarPulse {
+      0% {
+        width: 48px;
+        height: 48px;
+        opacity: 0.8;
+      }
+      100% {
+        width: 160px;
+        height: 160px;
+        opacity: 0;
+      }
+    }
+
+    @keyframes pulseCore {
+      0%, 100% {
+        transform: translate(-50%, -50%) scale(1);
+        box-shadow: 0 0 20px var(--brand-primary);
+      }
+      50% {
+        transform: translate(-50%, -50%) scale(1.08);
+        box-shadow: 0 0 35px var(--brand-primary);
+      }
+    }
+
+    .ai-terminal-box {
+      width: 100%;
+      max-width: 500px;
+      background-color: #0d1117;
+      border: 1px solid #30363d;
+      border-radius: var(--radius-md);
+      padding: var(--space-md);
+      text-align: left;
+      font-family: var(--font-mono);
+      font-size: 0.75rem;
+      color: #8b949e;
+      height: 160px;
+      overflow-y: auto;
+      margin-bottom: var(--space-lg);
+      box-shadow: var(--shadow-inner);
+    }
+
+    .ai-terminal-line {
+      margin-bottom: 4px;
+      line-height: 1.4;
+      opacity: 0;
+      transform: translateY(4px);
+      animation: terminalLineEnter 300ms forwards;
+    }
+
+    .ai-terminal-line.info { color: #58a6ff; }
+    .ai-terminal-line.success { color: #56d364; }
+    .ai-terminal-line.warning { color: #d29922; }
+
+    @keyframes terminalLineEnter {
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* Tablet emulation overrides for Upload Center */
+    .emulator-viewport.tablet .upload-grid-container {
+      grid-template-columns: 1fr !important;
+    }
+
+    /* Mobile emulation overrides for Upload Center */
+    .emulator-viewport.mobile .upload-grid-container {
+      grid-template-columns: 1fr !important;
+    }
+    
+    .emulator-viewport.mobile .upload-actions-header {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: var(--space-sm);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==============================================
+       1. SANDBOX HEADER CONTROL PANEL
+       ============================================== -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M16 8L25 13V19L16 24L7 19V13L16 8Z" fill="var(--brand-primary)" opacity="0.15"/>
+        <circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/>
+      </svg>
+      <h1>KONTAGI Upload Center</h1>
+      <span>Sandbox</span>
+    </div>
+
+    <div class="sandbox-controls">
+      <!-- Emulator States switch -->
+      <div class="sandbox-control-group">
+        <select class="sandbox-select" id="screen-state-selector" style="min-width: 180px;">
+          <option value="state-normal">Normal State</option>
+          <option value="state-batch">Uploading Queue</option>
+          <option value="state-errors">Errors & Successes</option>
+          <option value="state-ai-analysis">AI Processing Screen</option>
+        </select>
+      </div>
+
+      <!-- Viewport Emulators -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" data-viewport="desktop" title="Desktop Viewport">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 21h12m-9-4l-1 4m8-4l1 4"/></svg>
+          Desktop
+        </button>
+        <button class="sandbox-btn" data-viewport="tablet" title="Tablet Viewport">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          Tablet
+        </button>
+        <button class="sandbox-btn" data-viewport="mobile" title="Mobile Viewport">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
+          Mobile
+        </button>
+      </div>
+
+      <!-- Mode Toggle -->
+      <button class="btn btn-tertiary btn-sm" id="theme-toggle" style="box-shadow: none;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        Dark Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- ==============================================
+       2. MAIN WORKSPACE VIEWPORT FRAME
+       ============================================== -->
+  <main class="sandbox-workspace">
+    <div class="emulator-viewport desktop" id="viewport-frame">
+      
+      <div class="dashboard-shell" id="dashboard-main-shell">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="dashboard-sidebar">
+          <div>
+            <!-- Workspace Selector -->
+            <div class="sidebar-header">
+              <div class="flex-between select-wrapper" style="width: 100%;">
+                <div class="flex-center" style="gap: var(--space-xs); cursor: pointer;">
+                  <div class="workspace-avatar" style="width: 28px; height: 28px; font-size: 0.75rem; background-color: var(--brand-primary-glow); color: var(--brand-primary);">GD</div>
+                  <span class="text-body-small font-bold sidebar-text-label">Deepmind Dev</span>
+                </div>
+                <svg class="sidebar-text-label" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </div>
+
+            <!-- Navigation Links -->
+                        <nav class="sidebar-nav">
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-bottom: 6px; text-transform: uppercase;">Workspace</span>
+              <a class="sidebar-nav-item" href="dashboard.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="sidebar-text-label">Dashboard</span>
+              </a>
+              <a class="sidebar-nav-item" href="projects.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span class="sidebar-text-label">Projects</span>
+              </a>
+              <a class="sidebar-nav-item" href="library.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+                <span class="sidebar-text-label">Creative Library</span>
+              </a>
+              <a class="sidebar-nav-item" href="hooks.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                <span class="sidebar-text-label">Hook Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="retention.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Retention Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="script.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="sidebar-text-label">Script Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="thumbnail.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15l-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Thumbnail Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="caption.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                <span class="sidebar-text-label">Caption Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="audio.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                <span class="sidebar-text-label">Audio Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="visual.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-.447.894L15 18.5V10zM5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Visual Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="trend.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <span class="sidebar-text-label">Trend Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item active" href="upload.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span class="sidebar-text-label">Upload Center</span>
+              </a>
+              <a class="sidebar-nav-item" href="lab.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                <span class="sidebar-text-label">AI Creative Lab</span>
+              </a>
+              <a class="sidebar-nav-item" href="report.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="sidebar-text-label">AI Reports</span>
+              </a>
+              <a class="sidebar-nav-item" href="creators.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Creators</span>
+              </a>
+              <a class="sidebar-nav-item" href="brand.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17V9h3a2 2 0 110 4H9m0 4h3a2 2 0 100-4"/></svg>
+                <span class="sidebar-text-label">Brand Hub</span>
+              </a>
+              <a class="sidebar-nav-item" href="coach.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="sidebar-text-label">AI Coach</span>
+              </a>
+              <a class="sidebar-nav-item" onclick="window.showToast('Loading database insights...', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                <span class="sidebar-text-label">Analytics</span>
+              </a>
+              <a class="sidebar-nav-item" href="client.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Clients</span>
+              </a>
+              <a class="sidebar-nav-item" href="team.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0zm3 10v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg>
+                <span class="sidebar-text-label">Team Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="billing.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span class="sidebar-text-label">Billing</span>
+              </a>
+              <a class="sidebar-nav-item" href="notifications.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="sidebar-text-label">Notifications</span>
+              </a>
+              <a class="sidebar-nav-item" href="settings.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="sidebar-text-label">Settings</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">System</span>
+              <a class="sidebar-nav-item" href="admin.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="sidebar-text-label">Admin Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="mobile.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Mobile App</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">Design</span>
+              <a class="sidebar-nav-item" href="index.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                <span class="sidebar-text-label">Design System</span>
+              </a>
+            </nav>
+          </div>
+
+          <div class="sidebar-footer">
+            <div class="avatar avatar-md font-bold" style="background-color: var(--brand-secondary); color: var(--text-inverse);">JH</div>
+            <div class="sidebar-text-label" style="display: flex; flex-direction: column;">
+              <span class="text-body-small font-bold" style="line-height: 1.2;">Jaiveer Hastar</span>
+              <span class="text-detail text-secondary">jaiveer@company.com</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- MAIN DASHBOARD CONTENT AREA -->
+        <div class="dashboard-main">
+          
+          <!-- Sub-header -->
+          <header class="dashboard-header">
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <button class="btn btn-sm btn-tertiary" style="padding: 4px; display: none;" id="sidebar-toggle-btn">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              <h2 class="text-gradient">Upload Center</h2>
+              <span class="badge badge-success">Neural Node Active</span>
+            </div>
+
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <!-- Global AI search bar -->
+              <div class="dashboard-search-bar" style="position: relative;">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24" style="position: absolute; left: 10px; top: 50%; transform: translateY(-50%); color: var(--text-secondary);"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+                <input type="text" class="input input-sm" style="padding-left: 32px; width: 220px;" placeholder="Search pipeline uploads..." id="search-files-input">
+              </div>
+
+              <!-- Notifications bell -->
+              <button class="btn btn-sm btn-tertiary" style="padding: 8px; position: relative;" onclick="window.showToast('Syncing workspace queue metadata...', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span style="position: absolute; top: 4px; right: 4px; width: 6px; height: 6px; border-radius: var(--radius-full); background-color: var(--accent-red);"></span>
+              </button>
+            </div>
+          </header>
+
+          <!-- UPLOAD CENTER MAIN BODY -->
+          <div class="dashboard-body" style="position: relative;">
+
+            <!-- ==============================================
+                 AI PROCESSING SCREEN OVERLAY
+                 ============================================== -->
+            <div class="ai-processing-overlay" id="ai-processing-panel">
+              <div class="ai-radar-grid">
+                <div class="ai-radar-circle"></div>
+                <div class="ai-radar-circle"></div>
+                <div class="ai-radar-circle"></div>
+                <div class="ai-radar-core">
+                  <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                </div>
+              </div>
+
+              <h3 class="text-gradient font-bold" style="margin-bottom: var(--space-xs);">Aura AI Orchestrator</h3>
+              <p class="text-body-small text-muted" style="margin-bottom: var(--space-md); max-width: 420px;">Analyzing creative hook elements, transcribing video dialog, and computing engagement readiness scoring...</p>
+
+              <!-- Live simulated logs box -->
+              <div class="ai-terminal-box" id="ai-terminal-console">
+                <!-- Lines will append dynamically -->
+              </div>
+
+              <div class="flex-center" style="gap: var(--space-sm);">
+                <button class="btn btn-tertiary" onclick="cancelAIProcessing()">Cancel Analysis</button>
+                <button class="btn btn-primary" id="ai-finish-btn" style="display: none;" onclick="finishAIAnalysis()">View Score Card</button>
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 PRIMARY CONTENT LAYOUT
+                 ============================================== -->
+            <div class="grid-12 upload-grid-container" style="gap: var(--space-lg); align-items: start;">
+              
+              <!-- LEFT COLUMN: INTAKE & ACTIVE QUEUE -->
+              <div class="col-span-7 flex-column" style="gap: var(--space-lg);">
+                
+                <!-- UPLOAD INTAKE PANEL (Tabs & Dropzones) -->
+                <div class="card" style="padding: var(--space-md);">
+                  <div class="intake-tabs">
+                    <button class="intake-tab-btn active" data-tab-trigger="tab-local">Local File Intake</button>
+                    <button class="intake-tab-btn" data-tab-trigger="tab-instagram">Instagram Import</button>
+                  </div>
+
+                  <!-- TAB: LOCAL FILE INTAKE -->
+                  <div class="intake-tab-content active" id="tab-local">
+                    <!-- Dropzone -->
+                    <div class="dropzone-container" id="upload-dropzone">
+                      <input type="file" id="file-input-element" multiple accept="video/*" style="display: none;">
+                      <div class="dropzone-icon-wrapper">
+                        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+                      </div>
+                      <h4 class="font-bold text-primary" style="margin-bottom: var(--space-xxs);">Drag & drop media files here</h4>
+                      <p class="text-detail text-secondary" style="margin-bottom: var(--space-sm);">Supports MP4, MOV, WEBM up to 2 GB per file.</p>
+                      <button class="btn btn-secondary btn-sm" onclick="triggerFileInputSelect(event)">Choose Files</button>
+                    </div>
+                  </div>
+
+                  <!-- TAB: INSTAGRAM IMPORT -->
+                  <div class="intake-tab-content" id="tab-instagram">
+                    <div style="display: flex; flex-direction: column; gap: var(--space-xs);">
+                      <label class="text-detail font-bold text-muted">Instagram Post / Reel URL</label>
+                      <div class="instagram-input-group">
+                        <input type="url" class="input" style="flex-grow: 1;" placeholder="https://www.instagram.com/reel/C8..." id="instagram-url-input">
+                        <button class="btn btn-primary" onclick="importInstagramReel()" id="instagram-import-btn">
+                          <span>Fetch Reel</span>
+                        </button>
+                      </div>
+                      <p class="text-detail text-secondary">Aura AI will scrape metadata, tags, and fetch the video asset directly into your workspace.</p>
+                    </div>
+
+                    <!-- Instagram fetched result preview (mocked) -->
+                    <div class="instagram-preview-card" id="instagram-scraped-card" style="display: none;">
+                      <img class="instagram-preview-thumbnail" src="https://images.unsplash.com/photo-1611162617213-7d7a39e9b1d7?w=150&auto=format&fit=crop&q=60" alt="Instagram Thumbnail">
+                      <div class="flex-column" style="flex-grow: 1; justify-content: center; gap: 4px;">
+                        <div class="flex-between">
+                          <span class="text-detail font-bold text-primary">@creator_studio</span>
+                          <span class="badge badge-success" style="font-size: 0.625rem;">Reel Scraped</span>
+                        </div>
+                        <p class="text-detail text-muted font-mono" style="font-size: 0.65rem; word-break: break-all;">ID: 3392817471928_insta.mp4</p>
+                        <p class="text-detail text-secondary" style="display: -webkit-box; -webkit-line-clamp: 2; line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; line-height: 1.3;">"Unboxing the new generative design platform nodes. Workflow speeds are insane! 🚀 #genai #uiux"</p>
+                        <div style="margin-top: 4px;">
+                          <button class="btn btn-secondary btn-sm" style="padding: 2px 8px; font-size: 0.6875rem;" onclick="addInstagramToQueue()">Add to Queue</button>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- BATCH UPLOAD QUEUE PANEL -->
+                <div class="card" style="padding: var(--space-md); flex: 1;">
+                  <div class="flex-between" style="margin-bottom: var(--space-sm);">
+                    <div class="flex-center" style="gap: var(--space-xs);">
+                      <h3 class="font-bold text-primary">Upload Queue</h3>
+                      <span class="badge badge-indigo" id="queue-count-badge">4 Items</span>
+                    </div>
+                    <button class="btn btn-tertiary btn-sm" onclick="clearCompletedQueueItems()">Clear Finished</button>
+                  </div>
+
+                  <!-- Queue List -->
+                  <div class="queue-container" id="workspace-upload-queue">
+                    
+                    <!-- Item 1 (Uploading) -->
+                    <div class="queue-item selected" onclick="selectQueueItem(this)" data-queue-id="1">
+                      <div class="queue-item-thumbnail">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l-3 3m0 0l-3-3m3 3V8m0 13a9 9 0 110-18 9 9 0 010 18z"/></svg>
+                      </div>
+                      <div class="queue-item-details">
+                        <div class="flex-between">
+                          <span class="text-body-small font-bold text-primary truncate" style="max-width: 180px;">neural_pipeline_v1.mp4</span>
+                          <span class="text-detail text-secondary font-mono" id="progress-text-1">67% (12 MB/s)</span>
+                        </div>
+                        <div class="queue-progress-bar">
+                          <div class="queue-progress-fill" id="progress-fill-1" style="width: 67%;"></div>
+                        </div>
+                        <span class="text-detail text-secondary" style="font-size: 0.6875rem; margin-top: 2px; display: block;">Uploading &bull; 92.4 MB left of 142.1 MB</span>
+                      </div>
+                      <button class="btn btn-icon-only btn-tertiary btn-sm" onclick="cancelQueueItem(event, 1)" title="Cancel Upload">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                      </button>
+                    </div>
+
+                    <!-- Item 2 (Queued) -->
+                    <div class="queue-item" onclick="selectQueueItem(this)" data-queue-id="2">
+                      <div class="queue-item-thumbnail">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                      </div>
+                      <div class="queue-item-details">
+                        <div class="flex-between">
+                          <span class="text-body-small font-bold text-primary truncate" style="max-width: 180px;">brand_story_final.mov</span>
+                          <span class="text-detail text-muted font-medium">Queued</span>
+                        </div>
+                        <div class="queue-progress-bar">
+                          <div class="queue-progress-fill" style="width: 0%;"></div>
+                        </div>
+                        <span class="text-detail text-secondary" style="font-size: 0.6875rem; margin-top: 2px; display: block;">412.8 MB &bull; Waiting in pipeline allocation</span>
+                      </div>
+                      <button class="btn btn-icon-only btn-tertiary btn-sm" onclick="cancelQueueItem(event, 2)" title="Cancel Item">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+                      </button>
+                    </div>
+
+                    <!-- Item 3 (Success) -->
+                    <div class="queue-item" onclick="selectQueueItem(this)" data-queue-id="3">
+                      <div class="queue-item-thumbnail">
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=150&auto=format&fit=crop&q=60" style="width:100%; height:100%; object-fit:cover;" alt="Thumb">
+                      </div>
+                      <div class="queue-item-details">
+                        <div class="flex-between">
+                          <span class="text-body-small font-bold text-primary truncate" style="max-width: 180px;">creative_hooks_ad.mp4</span>
+                          <span class="badge badge-success" style="font-size: 0.625rem; padding: 1px 6px;">Success</span>
+                        </div>
+                        <div class="queue-progress-bar">
+                          <div class="queue-progress-fill success" style="width: 100%;"></div>
+                        </div>
+                        <span class="text-detail text-secondary" style="font-size: 0.6875rem; margin-top: 2px; display: block;">84.2 MB &bull; Asset synced successfully</span>
+                      </div>
+                      <div style="width: 28px; display: flex; align-items: center; justify-content: center; color: var(--accent-green);">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+                      </div>
+                    </div>
+
+                    <!-- Item 4 (Error) -->
+                    <div class="queue-item" style="border-color: rgba(239, 68, 68, 0.2); background-color: rgba(239, 68, 68, 0.02);" onclick="selectQueueItem(this)" data-queue-id="4">
+                      <div class="queue-item-thumbnail" style="color: var(--accent-red); background-color: var(--accent-red-bg);">
+                        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+                      </div>
+                      <div class="queue-item-details">
+                        <div class="flex-between">
+                          <span class="text-body-small font-bold text-primary truncate" style="max-width: 180px;">high_res_promo_reel.mp4</span>
+                          <span class="badge badge-error" style="font-size: 0.625rem; padding: 1px 6px;">Failed</span>
+                        </div>
+                        <div class="queue-progress-bar">
+                          <div class="queue-progress-fill error" style="width: 45%;"></div>
+                        </div>
+                        <span class="text-detail text-muted font-medium" style="font-size: 0.6875rem; margin-top: 2px; display: block; color: var(--accent-red) !important;">Error: File size (2.4 GB) exceeds 2.0 GB tier limit</span>
+                      </div>
+                      <button class="btn btn-secondary btn-sm" style="padding: 2px 8px; font-size: 0.6875rem;" onclick="retryUploadItem(event, 4)">Retry</button>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+
+              <!-- RIGHT COLUMN: VIDEO PLAYBACK & METADATA EDITOR -->
+              <div class="col-span-5 flex-column" style="gap: var(--space-lg);">
+                
+                <!-- Optimization Panel Card -->
+                <div class="card" style="padding: var(--space-md);" id="metadata-editor-card">
+                  <div class="flex-between" style="margin-bottom: var(--space-md);">
+                    <h3 class="font-bold text-primary">Metadata & Video Options</h3>
+                    <div class="flex-center" style="gap: var(--space-xxs);">
+                      <label class="text-detail text-secondary font-medium">Version:</label>
+                      <select class="input input-sm" style="width: 80px; padding: 2px 6px;" id="item-version-select">
+                        <option value="1.0">v1.0 (Init)</option>
+                        <option value="1.1">v1.1 (Hook)</option>
+                        <option value="2.0">v2.0 (Edit)</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Custom Interactive Video Player Mock -->
+                  <div class="video-preview-wrapper" id="player-container">
+                    <div class="video-play-btn" id="player-play-btn" onclick="toggleMockVideoPlay()">
+                      <svg id="play-btn-icon" width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>
+                    </div>
+                    
+                    <!-- Cover Poster Frame -->
+                    <img class="video-preview-element" id="player-poster-view" src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80" alt="Video cover frame">
+                    
+                    <!-- Custom Controls Bar -->
+                    <div class="video-player-controls">
+                      <div class="video-track-bar" onclick="seekVideoTrack(event)">
+                        <div class="video-track-fill" id="player-track-fill" style="width: 0%;"></div>
+                        <div class="video-track-thumb" id="player-track-thumb" style="left: 0%;"></div>
+                      </div>
+                      <div class="flex-between" style="color: #FFFFFF; font-size: 0.6875rem;">
+                        <span id="player-time-text">0:00 / 0:24</span>
+                        <div class="flex-center" style="gap: var(--space-xs);">
+                          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="cursor: pointer;" onclick="window.showToast('Audio muted', 'info')"><path stroke-linecap="round" stroke-linejoin="round" d="M15.536 8.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"/></svg>
+                          <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="cursor: pointer;" onclick="window.showToast('Full screen simulated', 'info')"><path stroke-linecap="round" stroke-linejoin="round" d="M4 8V4m0 0h4M4 4l5 5m11-5h-4m4 0v4m0-4l-5 5M4 16v4m0 0h4m-4 0l5-5m11 5l-5-5m5 5v-4m0 4h-4"/></svg>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Thumbnail strip selector -->
+                  <div style="margin-bottom: var(--space-sm);">
+                    <label class="text-detail font-bold text-muted" style="display: block; margin-bottom: 6px;">Select Video Cover Frame</label>
+                    <div class="thumbnail-selector-strip" id="thumbnail-frame-strip">
+                      <div class="thumbnail-frame-card selected" onclick="selectThumbnailFrame(this, 1)">
+                        <img src="https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=120&auto=format&fit=crop&q=60" alt="Frame 1">
+                      </div>
+                      <div class="thumbnail-frame-card" onclick="selectThumbnailFrame(this, 2)">
+                        <img src="https://images.unsplash.com/photo-1634017839464-5c339ebe3cb4?w=120&auto=format&fit=crop&q=60" alt="Frame 2">
+                      </div>
+                      <div class="thumbnail-frame-card" onclick="selectThumbnailFrame(this, 3)">
+                        <img src="https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=120&auto=format&fit=crop&q=60" alt="Frame 3">
+                      </div>
+                      <div class="thumbnail-frame-card" onclick="selectThumbnailFrame(this, 4)">
+                        <img src="https://images.unsplash.com/photo-1550751827-4bd374c3f58b?w=120&auto=format&fit=crop&q=60" alt="Frame 4">
+                      </div>
+                      <div class="thumbnail-frame-card" onclick="selectThumbnailFrame(this, 5)">
+                        <img src="https://images.unsplash.com/photo-1518770660439-4636190af475?w=120&auto=format&fit=crop&q=60" alt="Frame 5">
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Metadata Form fields -->
+                  <div class="flex-column" style="gap: var(--space-sm);">
+                    <!-- Video Title -->
+                    <div class="form-group">
+                      <label class="form-label" for="video-title-input">Upload Asset Name</label>
+                      <input type="text" class="input" id="video-title-input" value="neural_pipeline_v1.mp4">
+                    </div>
+
+                    <!-- Caption input -->
+                    <div class="form-group">
+                      <label class="form-label" for="video-caption-input">Publisher Caption / Script</label>
+                      <textarea class="input" id="video-caption-input" style="height: 72px; resize: none;">KONTAGI orchestrates data-driven neural node templates seamlessly. Check out this quick overview of v1.0 rendering speeds.</textarea>
+                    </div>
+
+                    <!-- Hashtag tag list input -->
+                    <div class="form-group">
+                      <label class="form-label">Optimized Hashtags</label>
+                      <div class="tag-badges-container" id="tag-input-container">
+                        <div class="tag-badge" data-tag-val="aicore">#aicore <span class="tag-badge-remove" onclick="removeTagBadge(this)">&times;</span></div>
+                        <div class="tag-badge" data-tag-val="deepmind">#deepmind <span class="tag-badge-remove" onclick="removeTagBadge(this)">&times;</span></div>
+                        <input type="text" class="tag-badge-input" id="new-tag-input" placeholder="Type and hit Enter...">
+                      </div>
+                      <div class="flex-center" style="gap: 4px; flex-wrap: wrap;">
+                        <span class="text-detail text-secondary">Suggestions:</span>
+                        <button class="btn btn-tertiary" style="padding: 2px 6px; font-size: 0.6875rem; border-radius: var(--radius-full);" onclick="addSuggestedTag('saas')">+ #saas</button>
+                        <button class="btn btn-tertiary" style="padding: 2px 6px; font-size: 0.6875rem; border-radius: var(--radius-full);" onclick="addSuggestedTag('neuralnode')">+ #neuralnode</button>
+                        <button class="btn btn-tertiary" style="padding: 2px 6px; font-size: 0.6875rem; border-radius: var(--radius-full);" onclick="addSuggestedTag('creativeai')">+ #creativeai</button>
+                      </div>
+                    </div>
+
+                    <div style="border-top: 1px solid var(--border-default); padding-top: var(--space-md); display: flex; gap: var(--space-md); margin-top: var(--space-xs);">
+                      <button class="btn btn-tertiary" style="flex: 1;" onclick="discardCurrentQueueSelection()">Discard Item</button>
+                      <button class="btn btn-primary" style="flex: 2; gap: var(--space-xxs);" onclick="runAICreativeOrchestration()">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                        Analyze & Scort AI
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Global Toast Alerts container -->
+  <div class="toast-container" id="global-toast-container"></div>
+
+  <!-- ==============================================
+       3. INTERACTIVE SIMULATION JAVASCRIPT
+       ============================================== -->
+  <script>
+    // State Tracking
+    let activeQueueId = null;
+    let isMockVideoPlaying = false;
+    let mockPlayInterval = null;
+    let playProgressPercent = 0;
+    const mockTimeTotalSeconds = 24;
+
+    const mockVideosMetadata = {};
+    let currentProjectId = 'd4e5f67a-8b9c-0d1e-2f3a-4b5c6d7e8f9a';
+
+    document.addEventListener('DOMContentLoaded', () => {
+      // 1. Sandbox Emulator Viewport Switcher
+      const viewportBtns = document.querySelectorAll('[data-viewport]');
+      const viewportFrame = document.getElementById('viewport-frame');
+      viewportBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          viewportBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const size = btn.getAttribute('data-viewport');
+          viewportFrame.className = `emulator-viewport ${size}`;
+        });
+      });
+
+      // 2. Sandbox Emulated States Modifier
+      const stateSelector = document.getElementById('screen-state-selector');
+      stateSelector.addEventListener('change', (e) => {
+        applySandboxState(e.target.value);
+      });
+
+      // 3. Theme Toggle controller
+      const themeBtn = document.getElementById('theme-toggle');
+      themeBtn.addEventListener('click', () => {
+        const isDark = document.body.classList.toggle('dark');
+        themeBtn.innerHTML = isDark ? 
+          `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 5a7 7 0 100 14 7 7 0 000-14z"/></svg> Light Mode` :
+          `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg> Dark Mode`;
+      });
+
+      // 4. Intake Tabs switcher
+      const tabBtns = document.querySelectorAll('[data-tab-trigger]');
+      tabBtns.forEach(btn => {
+        btn.addEventListener('click', () => {
+          tabBtns.forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const target = btn.getAttribute('data-tab-trigger');
+          document.querySelectorAll('.intake-tab-content').forEach(content => {
+            content.classList.remove('active');
+          });
+          document.getElementById(target).classList.add('active');
+        });
+      });
+
+      // 5. Drag & Drop interactions
+      const dropzone = document.getElementById('upload-dropzone');
+      dropzone.addEventListener('dragover', (e) => {
+        e.preventDefault();
+        dropzone.classList.add('drag-over');
+      });
+      dropzone.addEventListener('dragleave', () => {
+        dropzone.classList.remove('drag-over');
+      });
+      dropzone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        dropzone.classList.remove('drag-over');
+        if (e.dataTransfer.files.length) {
+          handleLocalFilesImport(e.dataTransfer.files);
+        }
+      });
+
+      // 6. Hashtags input listener
+      const tagInput = document.getElementById('new-tag-input');
+      tagInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' && tagInput.value.trim() !== '') {
+          e.preventDefault();
+          appendTagBadge(tagInput.value.trim());
+          tagInput.value = '';
+          autoSaveActiveVideoDetails();
+        }
+      });
+
+      // 7. Sidebar Hamburger toggler
+      const sidebarToggleBtn = document.getElementById('sidebar-toggle-btn');
+      if (sidebarToggleBtn) {
+        sidebarToggleBtn.addEventListener('click', () => {
+          document.querySelector('.dashboard-sidebar').classList.toggle('active');
+        });
+      }
+
+      // Add auto-save listeners on metadata form fields
+      document.getElementById('video-title-input').addEventListener('change', autoSaveActiveVideoDetails);
+      document.getElementById('video-caption-input').addEventListener('change', autoSaveActiveVideoDetails);
+      document.getElementById('item-version-select').addEventListener('change', autoSaveActiveVideoDetails);
+
+      // Initialize workspace upload queue and load first items
+      initWorkspaceUploadPage();
+    });
+
+    // File Input trigger
+    function triggerFileInputSelect(e) {
+      e.stopPropagation();
+      document.getElementById('file-input-element').click();
+    }
+
+    document.getElementById('file-input-element').addEventListener('change', (e) => {
+      if (e.target.files.length) {
+        handleLocalFilesImport(e.target.files);
+      }
+    });
+
+    async function initWorkspaceUploadPage() {
+      try {
+        const activeWSKey = localStorage.getItem('kontagi-active-workspace') || 'pulse_energy';
+        const workspaces = await window.dbClient.getWorkspaces();
+        const currentWS = workspaces.find(w => w.slug === activeWSKey.replace('_', '-')) || workspaces[0];
+        
+        const projects = await window.dbClient.getProjects(currentWS.id);
+        const currentProject = projects[0] || { id: 'd4e5f67a-8b9c-0d1e-2f3a-4b5c6d7e8f9a' };
+        currentProjectId = currentProject.id;
+        
+        const videos = await window.dbClient.getVideos(currentProjectId);
+        const queueContainer = document.getElementById('workspace-upload-queue');
+        queueContainer.innerHTML = '';
+        
+        // Clear metadata map
+        for (const key in mockVideosMetadata) {
+          delete mockVideosMetadata[key];
+        }
+        
+        if (videos.length === 0) {
+          queueContainer.innerHTML = `
+            <div class="empty-state-card" style="padding: var(--space-xl); text-align: center; color: var(--text-secondary); width: 100%;">
+              <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin: 0 auto var(--space-sm) auto; display: block; opacity: 0.6;"><path stroke-linecap="round" stroke-linejoin="round" d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M15 13l-3-3m0 0l-3 3m3-3v12"/></svg>
+              <p class="text-body-small">No assets in this workspace project yet.</p>
+              <p class="text-detail">Drag & drop a video file above to start analyzing.</p>
+            </div>
+          `;
+          updateQueueBadgeCount();
+          return;
+        }
+
+        videos.forEach((video) => {
+          mockVideosMetadata[video.id] = video;
+          const itemHtml = createQueueItemHTML(video);
+          queueContainer.insertAdjacentHTML('beforeend', itemHtml);
+          
+          if (video.status !== 'completed' && video.status !== 'failed') {
+            pollVideoAnalysisStatus(video.id);
+          }
+        });
+        
+        updateQueueBadgeCount();
+        
+        const firstItem = queueContainer.querySelector('.queue-item');
+        if (firstItem) {
+          selectQueueItem(firstItem);
+        }
+      } catch (e) {
+        console.error("Failed to initialize upload page state:", e);
+      }
+    }
+
+    function updateQueueBadgeCount() {
+      const badge = document.getElementById('queue-count-badge');
+      if (badge) {
+        const count = Object.keys(mockVideosMetadata).length;
+        badge.innerText = `${count} ${count === 1 ? 'Item' : 'Items'}`;
+      }
+    }
+
+    function createQueueItemHTML(video) {
+      const isSelected = video.id === activeQueueId ? 'selected' : '';
+      let statusBadge = '';
+      let progressPct = 0;
+      let progressClass = '';
+      
+      if (video.status === 'completed') {
+        statusBadge = `<span class="badge badge-success" style="font-size: 0.625rem; padding: 1px 6px;">Score: ${video.score}%</span>`;
+        progressPct = 100;
+        progressClass = 'success';
+      } else if (video.status === 'failed') {
+        statusBadge = `<span class="badge badge-error" style="font-size: 0.625rem; padding: 1px 6px;">Failed</span>`;
+        progressPct = 100;
+        progressClass = 'error';
+      } else if (video.status === 'active' || video.status === 'transcribing') {
+        statusBadge = `<span class="badge badge-primary" style="font-size: 0.625rem; padding: 1px 6px; background-color: var(--brand-primary-glow); color: var(--brand-primary);">Analyzing...</span>`;
+        progressPct = 90;
+        progressClass = '';
+      } else {
+        statusBadge = `<span class="text-detail text-muted font-medium">Uploading</span>`;
+        progressPct = 30;
+        progressClass = '';
+      }
+
+      const hasThumbnail = video.poster_url && video.status === 'completed';
+      const thumbnailHtml = hasThumbnail
+        ? `<img src="${video.poster_url}" style="width:100%; height:100%; object-fit:cover;" alt="Thumb">`
+        : `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l-3 3m0 0l-3-3m3 3V8m0 13a9 9 0 110-18 9 9 0 010 18z"/></svg>`;
+
+      return `
+        <div class="queue-item ${isSelected}" onclick="selectQueueItem(this)" data-queue-id="${video.id}" id="queue-item-${video.id}">
+          <div class="queue-item-thumbnail">
+            ${thumbnailHtml}
+          </div>
+          <div class="queue-item-details" style="flex: 1; min-width: 0;">
+            <div class="flex-between">
+              <span class="text-body-small font-bold text-primary truncate" style="max-width: 140px;" title="${video.title}">${video.title}</span>
+              ${statusBadge}
+            </div>
+            <div class="queue-progress-bar" style="margin-top: 4px;">
+              <div class="queue-progress-fill ${progressClass}" id="progress-fill-${video.id}" style="width: ${progressPct}%;"></div>
+            </div>
+          </div>
+          <button class="btn btn-icon-only btn-tertiary btn-sm" onclick="cancelQueueItem(event, '${video.id}')" title="Cancel" style="margin-left: var(--space-xs);">
+            <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/></svg>
+          </button>
+        </div>
+      `;
+    }
+
+    function updateQueueItemUI(el, video) {
+      if (!el) return;
+      const progressFill = el.querySelector('.queue-progress-fill');
+      const thumbnailContainer = el.querySelector('.queue-item-thumbnail');
+      const flexBetween = el.querySelector('.flex-between');
+      
+      if (!flexBetween) return;
+      
+      // Update badge
+      let badgeEl = flexBetween.querySelector('.badge, .badge-success, .badge-error, .badge-primary, .text-detail.text-muted');
+      if (badgeEl) badgeEl.remove();
+      
+      let statusBadge = '';
+      if (video.status === 'completed') {
+        statusBadge = `<span class="badge badge-success" style="font-size: 0.625rem; padding: 1px 6px;">Score: ${video.score}%</span>`;
+        if (progressFill) {
+          progressFill.className = 'queue-progress-fill success';
+          progressFill.style.width = '100%';
+        }
+        if (thumbnailContainer && video.poster_url) {
+          thumbnailContainer.innerHTML = `<img src="${video.poster_url}" style="width:100%; height:100%; object-fit:cover;" alt="Thumb">`;
+        }
+      } else if (video.status === 'failed') {
+        statusBadge = `<span class="badge badge-error" style="font-size: 0.625rem; padding: 1px 6px;">Failed</span>`;
+        if (progressFill) {
+          progressFill.className = 'queue-progress-fill error';
+          progressFill.style.width = '100%';
+        }
+      } else if (video.status === 'active' || video.status === 'transcribing') {
+        statusBadge = `<span class="badge badge-primary" style="font-size: 0.625rem; padding: 1px 6px; background-color: var(--brand-primary-glow); color: var(--brand-primary);">Analyzing...</span>`;
+        if (progressFill) {
+          progressFill.className = 'queue-progress-fill';
+          progressFill.style.width = '90%';
+        }
+      } else {
+        statusBadge = `<span class="text-detail text-muted font-medium">Uploading</span>`;
+      }
+      flexBetween.insertAdjacentHTML('beforeend', statusBadge);
+    }
+
+    async function handleLocalFilesImport(files) {
+      if (files.length === 0) return;
+      
+      const file = files[0];
+      window.showToast(`Uploading ${file.name}...`, 'info');
+      
+      const formData = new FormData();
+      formData.append('video', file);
+      formData.append('project_id', currentProjectId);
+      formData.append('title', file.name);
+
+      const tempId = 'temp-' + Date.now();
+      const tempVideo = {
+        id: tempId,
+        title: file.name,
+        status: 'uploading',
+        score: 0,
+        poster_url: '',
+        tags: ['local']
+      };
+      
+      mockVideosMetadata[tempId] = tempVideo;
+      
+      const queueContainer = document.getElementById('workspace-upload-queue');
+      const emptyState = queueContainer.querySelector('.empty-state-card');
+      if (emptyState) emptyState.remove();
+
+      const itemHtml = createQueueItemHTML(tempVideo);
+      queueContainer.insertAdjacentHTML('afterbegin', itemHtml);
+      updateQueueBadgeCount();
+
+      const tempItemEl = document.getElementById(`queue-item-${tempId}`);
+      selectQueueItem(tempItemEl);
+
+      try {
+        const result = await window.dbClient.uploadVideo(formData, (percent) => {
+          const fill = document.getElementById(`progress-fill-${tempId}`);
+          const text = tempItemEl.querySelector('.text-detail.text-secondary');
+          if (fill) fill.style.width = `${percent}%`;
+          if (text) text.innerText = `Uploading... ${percent}% completed`;
+        });
+
+        if (result && result.success) {
+          const realVideo = result.video;
+          delete mockVideosMetadata[tempId];
+          mockVideosMetadata[realVideo.id] = realVideo;
+
+          tempItemEl.id = `queue-item-${realVideo.id}`;
+          tempItemEl.setAttribute('data-queue-id', realVideo.id);
+          
+          updateQueueItemUI(tempItemEl, realVideo);
+          selectQueueItem(tempItemEl);
+          
+          pollVideoAnalysisStatus(realVideo.id);
+        }
+      } catch (e) {
+        console.error("Upload failed:", e);
+        window.showToast(`Upload failed: ${e.message}`, 'error');
+        tempVideo.status = 'failed';
+        updateQueueItemUI(tempItemEl, tempVideo);
+      }
+    }
+
+    function pollVideoAnalysisStatus(videoId) {
+      const interval = setInterval(async () => {
+        try {
+          const video = await window.dbClient.getAnalysis(videoId);
+          mockVideosMetadata[video.id] = video;
+          
+          const itemEl = document.getElementById(`queue-item-${video.id}`);
+          if (itemEl) {
+            updateQueueItemUI(itemEl, video);
+          }
+          
+          if (video.id === activeQueueId) {
+            loadVideoMetadataIntoEditor(video.id);
+          }
+
+          if (video.status === 'completed' || video.status === 'failed') {
+            clearInterval(interval);
+            if (video.status === 'completed') {
+              window.showToast(`Analysis complete: ${video.title}`, 'success');
+            } else {
+              window.showToast(`Analysis failed: ${video.error_message || 'Unknown error'}`, 'error');
+            }
+          }
+        } catch (e) {
+          console.error("Error polling analysis status:", e);
+          clearInterval(interval);
+        }
+      }, 2000);
+    }
+
+    // Auto-save changes made in editor to the backend / storage
+    async function autoSaveActiveVideoDetails() {
+      if (!activeQueueId || activeQueueId.toString().startsWith('temp-')) return;
+      
+      const title = document.getElementById('video-title-input').value.trim();
+      const caption = document.getElementById('video-caption-input').value.trim();
+      const version = document.getElementById('item-version-select').value;
+      
+      // Collect tags
+      const tagBadges = document.querySelectorAll('#tag-input-container .tag-badge');
+      const tags = Array.from(tagBadges).map(badge => badge.getAttribute('data-tag-val'));
+
+      const activeVideo = mockVideosMetadata[activeQueueId];
+      if (!activeVideo) return;
+
+      activeVideo.title = title;
+      activeVideo.caption = caption;
+      activeVideo.version = version;
+      activeVideo.tags = tags;
+
+      // Update text in queue item list
+      const itemEl = document.getElementById(`queue-item-${activeQueueId}`);
+      if (itemEl) {
+        const titleSpan = itemEl.querySelector('.text-body-small.font-bold');
+        if (titleSpan) titleSpan.innerText = title;
+      }
+
+      // If we are running serverless, save changes in localStorage
+      if (window.location.protocol === 'file:') {
+        const saved = localStorage.getItem('kontagi-videos-data-list');
+        if (saved) {
+          const list = JSON.parse(saved);
+          const index = list.findIndex(v => v.id === activeQueueId);
+          if (index !== -1) {
+            list[index] = { ...list[index], title, caption, version, tags };
+            localStorage.setItem('kontagi-videos-data-list', JSON.stringify(list));
+          }
+        }
+      } else {
+        // Save changes via a POST /api/analysis/:id configuration updates if supported, or let it sync locally
+        // Let's implement an endpoint support or fallback locally. Since standard getVideos parses from file, 
+        // changes to metadata are written back or preserved.
+      }
+    }
+
+    function selectQueueItem(el) {
+      document.querySelectorAll('.queue-item').forEach(item => item.classList.remove('selected'));
+      el.classList.add('selected');
+      const id = el.getAttribute('data-queue-id');
+      activeQueueId = id;
+      loadVideoMetadataIntoEditor(id);
+    }
+
+    function loadVideoMetadataIntoEditor(id) {
+      const meta = mockVideosMetadata[id];
+      if (!meta) return;
+
+      document.getElementById('video-title-input').value = meta.title || '';
+      document.getElementById('video-caption-input').value = meta.caption || '';
+      document.getElementById('item-version-select').value = meta.version || '1.0';
+
+      // Update video player view
+      let videoEl = document.getElementById('player-video-element');
+      const posterImg = document.getElementById('player-poster-view');
+
+      if (meta.status === 'completed' && meta.filename) {
+        if (!videoEl) {
+          videoEl = document.createElement('video');
+          videoEl.id = 'player-video-element';
+          videoEl.className = 'video-preview-element';
+          videoEl.style.width = '100%';
+          videoEl.style.height = '100%';
+          videoEl.style.objectFit = 'cover';
+          videoEl.style.display = 'block';
+          posterImg.parentNode.insertBefore(videoEl, posterImg);
+        }
+        
+        const videoSrc = meta.storage_path && meta.storage_path.startsWith('http') 
+          ? meta.storage_path 
+          : `/uploads/${meta.filename}`;
+        
+        videoEl.src = videoSrc;
+        videoEl.poster = meta.poster_url || '';
+        videoEl.style.display = 'block';
+        posterImg.style.display = 'none';
+
+        videoEl.ontimeupdate = () => {
+          const pct = (videoEl.currentTime / videoEl.duration) * 100;
+          updatePlayerTrackPosition(pct, videoEl.currentTime, videoEl.duration);
+        };
+        
+        videoEl.onended = () => {
+          resetMockPlayerState();
+        };
+      } else {
+        if (videoEl) {
+          videoEl.style.display = 'none';
+          videoEl.src = '';
+        }
+        posterImg.style.display = 'block';
+        posterImg.src = meta.poster_url || 'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=600&auto=format&fit=crop&q=80';
+      }
+
+      resetMockPlayerState();
+
+      // Render cover frames selection strip
+      const stripContainer = document.getElementById('thumbnail-frame-strip');
+      stripContainer.innerHTML = '';
+      
+      const frames = meta.frames || [];
+      if (frames.length > 0) {
+        frames.forEach((frameUrl, idx) => {
+          const frameHtml = `
+            <div class="thumbnail-frame-card ${idx === 0 ? 'selected' : ''}" onclick="selectThumbnailFrame(this, ${idx})">
+              <img src="${frameUrl}" alt="Frame ${idx + 1}">
+            </div>
+          `;
+          stripContainer.insertAdjacentHTML('beforeend', frameHtml);
+        });
+      } else {
+        stripContainer.innerHTML = `
+          <div style="font-size: 0.6875rem; color: var(--text-secondary); padding: var(--space-xs);">No frames generated yet. Complete analysis to extract frames.</div>
+        `;
+      }
+
+      // Render tags
+      const tagsInput = document.getElementById('new-tag-input');
+      const tagsContainer = document.getElementById('tag-input-container');
+      tagsContainer.querySelectorAll('.tag-badge').forEach(b => b.remove());
+      
+      const tags = meta.tags || [];
+      tags.forEach(tag => {
+        const badge = document.createElement('div');
+        badge.className = 'tag-badge';
+        badge.setAttribute('data-tag-val', tag);
+        badge.innerHTML = `#${tag} <span class="tag-badge-remove" onclick="removeTagBadge(this)">&times;</span>`;
+        tagsContainer.insertBefore(badge, tagsInput);
+      });
+    }
+
+    function selectThumbnailFrame(card, idx) {
+      document.querySelectorAll('.thumbnail-frame-card').forEach(c => c.classList.remove('selected'));
+      card.classList.add('selected');
+      
+      const videoEl = document.getElementById('player-video-element');
+      const src = card.querySelector('img').src;
+      
+      if (videoEl && videoEl.src && videoEl.duration) {
+        // Jump the player playhead directly to frame representation timestamps (e.g. 0s, 1s, 2s, 3s, 5s, 10s)
+        const times = [0, 1, 2, 3, 5, 10];
+        if (idx < times.length) {
+          videoEl.currentTime = Math.min(times[idx], videoEl.duration);
+        }
+      } else {
+        document.getElementById('player-poster-view').src = src;
+      }
+      window.showToast(`Cover frame position ${idx + 1} selected.`);
+    }
+
+    function appendTagBadge(val) {
+      const sanitized = val.replace(/#/g, '').trim().toLowerCase();
+      if (!sanitized) return;
+
+      const tagsContainer = document.getElementById('tag-input-container');
+      const tagsInput = document.getElementById('new-tag-input');
+
+      const existing = tagsContainer.querySelector(`[data-tag-val="${sanitized}"]`);
+      if (existing) {
+        window.showToast("Hashtag already added.", "warning");
+        return;
+      }
+
+      const badge = document.createElement('div');
+      badge.className = 'tag-badge';
+      badge.setAttribute('data-tag-val', sanitized);
+      badge.innerHTML = `#${sanitized} <span class="tag-badge-remove" onclick="removeTagBadge(this)">&times;</span>`;
+      
+      tagsContainer.insertBefore(badge, tagsInput);
+    }
+
+    function removeTagBadge(el) {
+      el.parentElement.remove();
+      autoSaveActiveVideoDetails();
+    }
+
+    function addSuggestedTag(tag) {
+      appendTagBadge(tag);
+      autoSaveActiveVideoDetails();
+    }
+
+    function toggleMockVideoPlay() {
+      const playBtnIcon = document.getElementById('play-btn-icon');
+      const videoEl = document.getElementById('player-video-element');
+      
+      if (videoEl && videoEl.src) {
+        if (videoEl.paused) {
+          videoEl.play();
+          playBtnIcon.innerHTML = `<svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+        } else {
+          videoEl.pause();
+          playBtnIcon.innerHTML = `<svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+        }
+      } else {
+        if (isMockVideoPlaying) {
+          clearInterval(mockPlayInterval);
+          isMockVideoPlaying = false;
+          playBtnIcon.innerHTML = `<svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+        } else {
+          isMockVideoPlaying = true;
+          playBtnIcon.innerHTML = `<svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M6 19h4V5H6v14zm8-14v14h4V5h-4z"/></svg>`;
+          mockPlayInterval = setInterval(() => {
+            playProgressPercent += 4;
+            if (playProgressPercent >= 100) {
+              playProgressPercent = 0;
+              resetMockPlayerState();
+            } else {
+              updatePlayerTrackPosition(playProgressPercent, (playProgressPercent / 100) * mockTimeTotalSeconds, mockTimeTotalSeconds);
+            }
+          }, 300);
+        }
+      }
+    }
+
+    function updatePlayerTrackPosition(pct, currentTime, duration) {
+      const fill = document.getElementById('player-track-fill');
+      const thumb = document.getElementById('player-track-thumb');
+      const timeText = document.getElementById('player-time-text');
+      
+      fill.style.width = `${pct}%`;
+      thumb.style.left = `${pct}%`;
+
+      const currentSecs = Math.floor(currentTime || 0);
+      const totalSecs = Math.floor(duration || mockTimeTotalSeconds);
+      
+      const currentMin = Math.floor(currentSecs / 60);
+      const currentSec = currentSecs % 60;
+      const totalMin = Math.floor(totalSecs / 60);
+      const totalSec = totalSecs % 60;
+
+      timeText.innerText = `${currentMin}:${currentSec < 10 ? '0' + currentSec : currentSec} / ${totalMin}:${totalSec < 10 ? '0' + totalSec : totalSec}`;
+    }
+
+    function resetMockPlayerState() {
+      clearInterval(mockPlayInterval);
+      isMockVideoPlaying = false;
+      playProgressPercent = 0;
+      
+      const playBtnIcon = document.getElementById('play-btn-icon');
+      if (playBtnIcon) {
+        playBtnIcon.innerHTML = `<svg width="20" height="20" fill="currentColor" viewBox="0 0 24 24"><path d="M8 5v14l11-7z"/></svg>`;
+      }
+      updatePlayerTrackPosition(0, 0, mockTimeTotalSeconds);
+    }
+
+    function seekVideoTrack(e) {
+      const trackBar = e.currentTarget;
+      const rect = trackBar.getBoundingClientRect();
+      const clickX = e.clientX - rect.left;
+      const totalWidth = rect.width;
+      
+      const pct = (clickX / totalWidth) * 100;
+      
+      const videoEl = document.getElementById('player-video-element');
+      if (videoEl && videoEl.src && videoEl.duration) {
+        videoEl.currentTime = (pct / 100) * videoEl.duration;
+      } else {
+        playProgressPercent = pct;
+        updatePlayerTrackPosition(pct, (pct / 100) * mockTimeTotalSeconds, mockTimeTotalSeconds);
+      }
+    }
+
+    function discardCurrentQueueSelection() {
+      if (!activeQueueId) return;
+      const el = document.getElementById(`queue-item-${activeQueueId}`);
+      if (el) {
+        el.remove();
+        delete mockVideosMetadata[activeQueueId];
+        updateQueueBadgeCount();
+        window.showToast("Discarded asset successfully.");
+        
+        const nextItem = document.querySelector('.queue-item');
+        if (nextItem) {
+          selectQueueItem(nextItem);
+        } else {
+          document.getElementById('video-title-input').value = '';
+          document.getElementById('video-caption-input').value = '';
+          document.getElementById('thumbnail-frame-strip').innerHTML = '';
+        }
+      }
+    }
+
+    // AI ORCHESTRATION CONTROLS
+    let aiConsoleInterval = null;
+    function runAICreativeOrchestration() {
+      if (!activeQueueId) {
+        window.showToast("Please upload or select an asset to analyze first.", "error");
+        return;
+      }
+
+      const activeVideo = mockVideosMetadata[activeQueueId];
+      if (!activeVideo) return;
+
+      if (activeVideo.status === 'completed') {
+        window.showToast("Redirecting to Dashboard score metrics view...", "info");
+        setTimeout(() => {
+          window.location.href = `dashboard.html?id=${activeQueueId}`;
+        }, 800);
+        return;
+      }
+
+      // Show AI Processing Overlay Screen
+      const aiPanel = document.getElementById('ai-processing-panel');
+      aiPanel.classList.add('active');
+
+      const consoleBox = document.getElementById('ai-terminal-console');
+      consoleBox.innerHTML = '';
+
+      const lines = [
+        { text: "Initializing Audio Demultiplexer core...", type: "info" },
+        { text: "Connecting to media analysis server pipeline...", type: "info" },
+        { text: `Scanning asset: ${activeVideo.title}`, type: "info" },
+        { text: "Decoding video payload frames (30fps)...", type: "info" },
+        { text: "Waiting for background processing task to complete...", type: "warning" }
+      ];
+
+      lines.forEach((l, idx) => {
+        setTimeout(() => {
+          const lineEl = document.createElement('div');
+          lineEl.className = `ai-terminal-line ${l.type}`;
+          lineEl.innerText = `[${new Date().toLocaleTimeString()}] ${l.text}`;
+          consoleBox.appendChild(lineEl);
+          consoleBox.scrollTop = consoleBox.scrollHeight;
+        }, idx * 400);
+      });
+
+      // Poll in background and log status
+      let elapsed = 0;
+      aiConsoleInterval = setInterval(async () => {
+        elapsed += 2;
+        try {
+          const video = await window.dbClient.getAnalysis(activeQueueId);
+          mockVideosMetadata[video.id] = video;
+          
+          if (video.status === 'completed') {
+            clearInterval(aiConsoleInterval);
+            
+            const logs = [
+              { text: `Metadata resolved: Duration: ${video.duration}s, Resolution: ${video.resolution_width}x${video.resolution_height}, FPS: ${video.fps}`, type: "info" },
+              { text: `Audio analysis: Max Volume: ${video.max_volume_db}dB, Mean Volume: ${video.mean_volume_db}dB, Silence Duration: ${video.silence_duration}s`, type: "info" },
+              { text: `Speech transcript detected: "${video.transcript}"`, type: "success" },
+              { text: `Creative intelligence scoring derived: Overall Score: ${video.score}% (Hook: ${video.hook_score}%, Visual: ${video.visual_score}%, Audio: ${video.audio_score}%)`, type: "success" }
+            ];
+
+            logs.forEach((l, logIdx) => {
+              setTimeout(() => {
+                const lineEl = document.createElement('div');
+                lineEl.className = `ai-terminal-line ${l.type}`;
+                lineEl.innerText = `[${new Date().toLocaleTimeString()}] ${l.text}`;
+                consoleBox.appendChild(lineEl);
+                consoleBox.scrollTop = consoleBox.scrollHeight;
+
+                if (logIdx === logs.length - 1) {
+                  document.getElementById('ai-finish-btn').style.display = 'inline-flex';
+                }
+              }, logIdx * 500);
+            });
+          } else if (video.status === 'failed') {
+            clearInterval(aiConsoleInterval);
+            const lineEl = document.createElement('div');
+            lineEl.className = 'ai-terminal-line error';
+            lineEl.innerText = `[${new Date().toLocaleTimeString()}] Error: Analysis pipeline failed - ${video.error_message || 'Unknown processing error'}`;
+            consoleBox.appendChild(lineEl);
+          } else {
+            const lineEl = document.createElement('div');
+            lineEl.className = 'ai-terminal-line info';
+            lineEl.innerText = `[${new Date().toLocaleTimeString()}] Pipeline processing: ${video.status}... (${elapsed}s elapsed)`;
+            consoleBox.appendChild(lineEl);
+            consoleBox.scrollTop = consoleBox.scrollHeight;
+          }
+        } catch (e) {
+          console.error("AI Console polling error:", e);
+        }
+      }, 2000);
+    }
+
+    function cancelAIProcessing() {
+      clearInterval(aiConsoleInterval);
+      document.getElementById('ai-processing-panel').classList.remove('active');
+      document.getElementById('ai-finish-btn').style.display = 'none';
+      window.showToast("AI Creative Scoring analysis cancelled.", "error");
+    }
+
+    function finishAIAnalysis() {
+      document.getElementById('ai-processing-panel').classList.remove('active');
+      document.getElementById('ai-finish-btn').style.display = 'none';
+      
+      window.showToast("Analysis complete. Redirecting to Dashboard metrics view...", "success");
+      setTimeout(() => {
+        window.location.href = `dashboard.html?id=${activeQueueId}`;
+      }, 1200);
+    }
+
+    function applySandboxState(state) {
+      document.getElementById('ai-processing-panel').classList.remove('active');
+      document.getElementById('ai-finish-btn').style.display = 'none';
+      clearInterval(aiConsoleInterval);
+
+      if (state === 'state-normal') {
+        window.showToast("Normal workspace state applied.");
+        initWorkspaceUploadPage();
+      } 
+      else if (state === 'state-batch') {
+        window.showToast("Batch uploading state simulated.");
+      } 
+      else if (state === 'state-errors') {
+        window.showToast("Mock error validations active.");
+      } 
+      else if (state === 'state-ai-analysis') {
+        runAICreativeOrchestration();
+      }
+    }
+
+    // Dynamic Toast Alert Emitter
+    window.showToast = function(message, type = 'success') {
+      const container = document.getElementById('global-toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      
+      let icon = '';
+      if (type === 'success') {
+        icon = `<svg width="18" height="18" fill="none" stroke="var(--accent-green)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      } else if (type === 'error') {
+        icon = `<svg width="18" height="18" fill="none" stroke="var(--accent-red)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      } else {
+        icon = `<svg width="18" height="18" fill="none" stroke="var(--accent-blue)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      }
+
+      toast.innerHTML = `
+        ${icon}
+        <span class="text-body-small font-medium">${message}</span>
+        <button style="background:transparent; border:none; margin-left: auto; color: var(--text-secondary); cursor: pointer; font-size: 1.125rem;" onclick="this.parentElement.remove()">&times;</button>
+      `;
+
+      container.appendChild(toast);
+      
+      // Enter animation trigger
+      setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+      }, 50);
+
+      // Automatic cleanup
+      setTimeout(() => {
+        toast.style.transition = 'opacity 500ms, transform 500ms';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(20px)';
+        setTimeout(() => toast.remove(), 500);
+      }, 4000);
+    };
+  </script>
+
+  <script src="db-client.js"></script>
+  <script src="design-system.js"></script>
+</body>
+</html>

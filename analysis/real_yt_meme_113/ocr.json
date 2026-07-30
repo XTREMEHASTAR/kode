@@ -1,0 +1,17 @@
+{
+  "screenText": "[OCR Text Segment] Asset real_yt_meme_113 text overlay density: 80.0%.",
+  "captionDensity": 0.8,
+  "fontSizeEstimatePx": 68,
+  "textTimingSec": [
+    {
+      "start": 0.5,
+      "end": 15.2
+    },
+    {
+      "start": 15.2,
+      "end": 34.2
+    }
+  ],
+  "ctaDetected": true,
+  "emojiCount": 1
+}

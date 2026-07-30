@@ -1,0 +1,1925 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — Notifications & Security Alerts</title>
+  <meta name="description" content="View notifications inbox, active mentions, AI insights, system alerts, and configure push and email preferences.">
+  <link rel="stylesheet" href="design-system.css">
+  <script defer src="design-system.js"></script>
+
+  <style>
+    /* ==========================================================================
+       SANDBOX CORE LAYOUT FRAMEWORK & NOTIFICATION STYLES
+       ========================================================================== */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-smooth);
+    }
+
+    .sandbox-header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-xs) var(--space-lg);
+      z-index: 1000;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .sandbox-brand h1 {
+      font-size: 1.125rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .sandbox-brand span {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .sandbox-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-control-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      background-color: var(--bg-secondary);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+    }
+
+    .sandbox-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sandbox-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .sandbox-btn.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sandbox-workspace {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      position: relative;
+    }
+
+    .emulator-viewport {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      transition: width var(--transition-smooth), height var(--transition-smooth), border-radius var(--transition-smooth);
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .emulator-viewport.desktop {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      border: none;
+    }
+
+    .emulator-viewport.tablet {
+      width: 768px;
+      height: 95%;
+      border-radius: var(--radius-lg);
+    }
+
+    .emulator-viewport.mobile {
+      width: 375px;
+      height: 85%;
+      border-radius: var(--radius-2xl);
+    }
+
+    /* Shell Layout */
+    .dashboard-shell {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .dashboard-sidebar {
+      width: 260px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      transition: transform var(--transition-smooth), width var(--transition-smooth);
+    }
+
+    .sidebar-header {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .sidebar-nav {
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .sidebar-nav-item:hover, .sidebar-nav-item.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .sidebar-nav-item.active {
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .dashboard-main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-primary);
+    }
+
+    .dashboard-header {
+      height: 64px;
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-lg);
+      flex-shrink: 0;
+    }
+
+    .dashboard-body {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    /* Sub Navigation Tabs */
+    .subnav-tabs-wrapper {
+      display: flex;
+      border-bottom: 1px solid var(--border-default);
+      padding: 0 var(--space-lg);
+      background-color: var(--bg-secondary);
+      flex-shrink: 0;
+      gap: var(--space-md);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .subnav-tab {
+      padding: 16px 4px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all var(--transition-fast);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .subnav-tab:hover, .subnav-tab.active {
+      color: var(--text-primary);
+    }
+
+    .subnav-tab.active {
+      border-bottom-color: var(--brand-primary);
+      font-weight: 600;
+    }
+
+    .subnav-tab-badge {
+      background-color: var(--border-default);
+      color: var(--text-secondary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: var(--radius-full);
+    }
+
+    .subnav-tab.active .subnav-tab-badge {
+      background-color: var(--brand-primary-glow);
+      color: var(--brand-primary);
+    }
+
+    /* Notification Item Card */
+    .notification-item {
+      border: 1px solid var(--border-default);
+      background-color: var(--bg-elevated);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      display: flex;
+      gap: var(--space-md);
+      transition: all var(--transition-smooth);
+      position: relative;
+      cursor: pointer;
+    }
+
+    .notification-item.unread {
+      border-left: 3px solid var(--brand-primary);
+      background-color: var(--brand-primary-glow);
+    }
+
+    .notification-item:hover {
+      box-shadow: var(--shadow-md);
+      transform: translateY(-1px);
+    }
+
+    .notification-icon-container {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .notification-icon-container.info {
+      background-color: var(--brand-primary-glow);
+      color: var(--brand-primary);
+    }
+
+    .notification-icon-container.warning {
+      background-color: rgba(245, 158, 11, 0.15);
+      color: #F59E0B;
+    }
+
+    .notification-icon-container.danger {
+      background-color: rgba(239, 68, 68, 0.15);
+      color: #EF4444;
+    }
+
+    .notification-icon-container.success {
+      background-color: rgba(16, 185, 129, 0.15);
+      color: #10B981;
+    }
+
+    .notification-icon-container.ai {
+      background-color: var(--accent-purple-bg);
+      color: var(--accent-purple);
+    }
+
+    .notification-actions {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+      opacity: 0;
+      transition: opacity var(--transition-fast);
+      position: absolute;
+      top: 16px;
+      right: 16px;
+    }
+
+    .notification-item:hover .notification-actions {
+      opacity: 1;
+    }
+
+    /* Sections wrapper */
+    .notif-section {
+      display: none;
+      animation: fadeIn var(--transition-smooth);
+    }
+
+    .notif-section.active {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Responsive Viewports */
+    .emulator-viewport.tablet .dashboard-sidebar { width: 70px; }
+    .emulator-viewport.tablet .sidebar-text-label,
+    .emulator-viewport.tablet .sidebar-footer { display: none; }
+    
+    .emulator-viewport.mobile #sidebar-toggle-btn { display: inline-flex !important; }
+    .emulator-viewport.mobile .dashboard-sidebar { display: none; }
+    .emulator-viewport.mobile .dashboard-sidebar.active {
+      display: flex;
+      position: absolute;
+      left: 0;
+      top: 64px;
+      bottom: 0;
+      z-index: 950;
+      height: calc(100% - 64px);
+      width: 240px;
+      box-shadow: var(--shadow-xl);
+    }
+
+    /* ==========================================================================
+       PREMIUM NEW COMPONENT STYLES
+       ========================================================================== */
+    /* IOS Switch Toggle Slider */
+    .switch {
+      position: relative;
+      display: inline-block;
+      width: 44px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+    .switch input {
+      opacity: 0;
+      width: 0;
+      height: 0;
+    }
+    .slider {
+      position: absolute;
+      cursor: pointer;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-color: var(--bg-tertiary);
+      transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 34px;
+      border: 1px solid var(--border-default);
+    }
+    .slider:before {
+      position: absolute;
+      content: "";
+      height: 18px;
+      width: 18px;
+      left: 2px;
+      bottom: 2px;
+      background-color: #FFFFFF;
+      transition: .3s cubic-bezier(0.4, 0, 0.2, 1);
+      border-radius: 50%;
+      box-shadow: var(--shadow-sm);
+    }
+    .dark .slider:before {
+      background-color: #E2E8F0;
+    }
+    input:checked + .slider {
+      background-color: var(--brand-primary);
+      border-color: var(--brand-primary);
+    }
+    input:checked + .slider:before {
+      transform: translateX(20px);
+      background-color: #FFFFFF;
+    }
+
+    /* Pulsing unread status dot */
+    .unread-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--brand-primary);
+      border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 0 8px var(--brand-primary);
+      animation: pulseGlow 2s infinite ease-in-out;
+    }
+    @keyframes pulseGlow {
+      0%, 100% { opacity: 0.6; transform: scale(1); }
+      50% { opacity: 1; transform: scale(1.2); }
+    }
+
+    /* Vertical Timeline nodes styling */
+    .timeline-container {
+      position: relative;
+      padding-left: 28px;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      margin-top: var(--space-xs);
+    }
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 14px;
+      bottom: 14px;
+      width: 2px;
+      background-color: var(--border-default);
+    }
+    .timeline-node {
+      position: relative;
+    }
+    .timeline-dot {
+      position: absolute;
+      left: -25px;
+      top: 14px;
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      background-color: var(--bg-primary);
+      border: 3px solid var(--brand-primary);
+      box-shadow: 0 0 0 4px var(--bg-primary);
+      z-index: 2;
+    }
+
+    /* Visual Selectable Cards for Email Preference */
+    .radio-card {
+      border: 1px solid var(--border-default);
+      background-color: var(--bg-elevated);
+      border-radius: var(--radius-lg);
+      padding: var(--space-sm) var(--space-md);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      cursor: pointer;
+      transition: all var(--transition-smooth);
+    }
+    .radio-card:hover {
+      border-color: var(--border-active);
+      transform: translateY(-1px);
+      box-shadow: var(--shadow-md);
+    }
+    .radio-card.active {
+      border-color: var(--brand-primary);
+      background-color: var(--brand-primary-glow);
+      box-shadow: 0 0 0 1px var(--brand-primary);
+    }
+
+    /* Sound Visual preview row */
+    .sound-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: var(--space-xs) 0;
+      border-top: 1px solid var(--border-default);
+    }
+  </style>
+</head>
+<body class="dark">
+
+  <!-- ==============================================
+       1. SANDBOX HEADER CONTROL PANEL
+       ============================================== -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M16 8L25 13V19L16 24L7 19V13L16 8Z" fill="var(--brand-primary)" opacity="0.15"/>
+        <circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/>
+      </svg>
+      <h1>KONTAGI Portal</h1>
+      <span class="version-badge">Notifications</span>
+    </div>
+
+    <div class="sandbox-controls">
+      <!-- Active Brand Selector -->
+      <div style="display: flex; align-items: center; gap: var(--space-xxs);">
+        <span class="text-detail font-bold text-muted sidebar-text-label">Active Account:</span>
+        <select class="select select-sm" style="width: 170px;" id="workspace-dropdown-select" onchange="switchWorkspaceBrand(this.value)">
+          <option value="pulse_energy">Pulse Energy Corp</option>
+          <option value="retro_denim">Retro Denim Apparel</option>
+          <option value="smart_home">AuraSmart IoT Hub</option>
+        </select>
+      </div>
+
+      <!-- Viewports Emulator -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" data-viewport="desktop">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 21h12m-9-4l-1 4m8-4l1 4"/></svg>
+          Desktop
+        </button>
+        <button class="sandbox-btn" data-viewport="tablet">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          Tablet
+        </button>
+        <button class="sandbox-btn" data-viewport="mobile">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
+          Mobile
+        </button>
+      </div>
+
+      <!-- Theme Switcher -->
+      <button class="btn btn-tertiary btn-sm" id="theme-toggle" style="box-shadow: none;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        Light Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- ==============================================
+       2. WORKSPACE EMULATOR VIEWPORT FRAME
+       ============================================== -->
+  <main class="sandbox-workspace">
+    <div class="emulator-viewport desktop" id="viewport-frame">
+      
+      <div class="dashboard-shell" id="notif-portal-shell">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="dashboard-sidebar">
+          <div>
+            <div class="sidebar-header">
+              <div class="flex-between select-wrapper" style="width: 100%;">
+                <div class="flex-center" style="gap: var(--space-xs); cursor: pointer;">
+                  <div class="workspace-avatar" id="notif-sidebar-avatar" style="width: 28px; height: 28px; font-size: 0.75rem; background-color: var(--brand-primary-glow); color: var(--brand-primary);">PE</div>
+                  <div class="sidebar-text-label" style="display: flex; flex-direction: column;">
+                    <span class="text-body-small font-bold" style="line-height: 1.2;" id="notif-sidebar-brand-name">Pulse Energy</span>
+                    <span class="text-detail text-muted">Workspace Admin</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Nav Links -->
+                        <nav class="sidebar-nav">
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-bottom: 6px; text-transform: uppercase;">Workspace</span>
+              <a class="sidebar-nav-item" href="dashboard.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="sidebar-text-label">Dashboard</span>
+              </a>
+              <a class="sidebar-nav-item" href="projects.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span class="sidebar-text-label">Projects</span>
+              </a>
+              <a class="sidebar-nav-item" href="library.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+                <span class="sidebar-text-label">Creative Library</span>
+              </a>
+              <a class="sidebar-nav-item" href="hooks.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                <span class="sidebar-text-label">Hook Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="retention.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Retention Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="script.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="sidebar-text-label">Script Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="thumbnail.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15l-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Thumbnail Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="caption.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                <span class="sidebar-text-label">Caption Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="audio.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                <span class="sidebar-text-label">Audio Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="visual.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-.447.894L15 18.5V10zM5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Visual Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="trend.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <span class="sidebar-text-label">Trend Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="upload.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span class="sidebar-text-label">Upload Center</span>
+              </a>
+              <a class="sidebar-nav-item" href="lab.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                <span class="sidebar-text-label">AI Creative Lab</span>
+              </a>
+              <a class="sidebar-nav-item" href="report.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="sidebar-text-label">AI Reports</span>
+              </a>
+              <a class="sidebar-nav-item" href="creators.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Creators</span>
+              </a>
+              <a class="sidebar-nav-item" href="brand.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17V9h3a2 2 0 110 4H9m0 4h3a2 2 0 100-4"/></svg>
+                <span class="sidebar-text-label">Brand Hub</span>
+              </a>
+              <a class="sidebar-nav-item" href="coach.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="sidebar-text-label">AI Coach</span>
+              </a>
+              <a class="sidebar-nav-item" onclick="window.showToast('Loading database insights...', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                <span class="sidebar-text-label">Analytics</span>
+              </a>
+              <a class="sidebar-nav-item" href="client.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Clients</span>
+              </a>
+              <a class="sidebar-nav-item" href="team.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0zm3 10v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg>
+                <span class="sidebar-text-label">Team Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="billing.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span class="sidebar-text-label">Billing</span>
+              </a>
+              <a class="sidebar-nav-item active" href="notifications.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="sidebar-text-label">Notifications</span>
+              </a>
+              <a class="sidebar-nav-item" href="settings.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="sidebar-text-label">Settings</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">System</span>
+              <a class="sidebar-nav-item" href="admin.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="sidebar-text-label">Admin Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="mobile.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Mobile App</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">Design</span>
+              <a class="sidebar-nav-item" href="index.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                <span class="sidebar-text-label">Design System</span>
+              </a>
+            </nav>
+          </div>
+
+          <div class="sidebar-footer">
+            <div class="avatar avatar-md font-bold" style="background-color: var(--brand-secondary); color: var(--text-inverse);">JH</div>
+            <div class="sidebar-text-label" style="display: flex; flex-direction: column;">
+              <span class="text-body-small font-bold" style="line-height: 1.2;">Jaiveer Hastar</span>
+              <span class="text-detail text-secondary">jaiveer@company.com</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- MAIN WORKSPACE -->
+        <div class="dashboard-main">
+          
+          <!-- Main Module Header -->
+          <header class="dashboard-header">
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <button class="btn btn-sm btn-tertiary" style="padding: 4px; display: none;" id="sidebar-toggle-btn">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              <h2 class="text-gradient" id="notif-header-title">Notification Center</h2>
+              <span class="badge badge-indigo" id="notif-workspace-badge">Pulse Workspace active</span>
+            </div>
+
+            <div class="flex-center" style="gap: var(--space-xs);">
+              <button class="btn btn-secondary btn-sm flex-center" style="gap: var(--space-xxs);" onclick="markAllAsRead()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+                Mark all read
+              </button>
+              <button class="btn btn-tertiary btn-sm text-danger" onclick="clearAllNotifications()">
+                Clear all
+              </button>
+            </div>
+          </header>
+
+          <!-- Sub Navigation Tabs with Unread Badges -->
+          <div class="subnav-tabs-wrapper">
+            <div class="subnav-tab active" onclick="switchNotifTab('inbox', this)">
+              Inbox <span class="subnav-tab-badge" id="badge-inbox">3</span>
+            </div>
+            <div class="subnav-tab" onclick="switchNotifTab('activity', this)">
+              Activity Feed <span class="subnav-tab-badge" id="badge-activity">0</span>
+            </div>
+            <div class="subnav-tab" onclick="switchNotifTab('mentions', this)">
+              Mentions <span class="subnav-tab-badge" id="badge-mentions">2</span>
+            </div>
+            <div class="subnav-tab" onclick="switchNotifTab('aialerts', this)">
+              AI Alerts <span class="subnav-tab-badge" id="badge-aialerts">1</span>
+            </div>
+            <div class="subnav-tab" onclick="switchNotifTab('projects', this)">
+              Project Alerts <span class="subnav-tab-badge" id="badge-projects">0</span>
+            </div>
+            <div class="subnav-tab" onclick="switchNotifTab('system', this)">
+              System Alerts <span class="subnav-tab-badge" id="badge-system">0</span>
+            </div>
+            <div class="subnav-tab" onclick="switchNotifTab('settings', this)">
+              Settings
+            </div>
+            <div class="subnav-tab" onclick="switchNotifTab('push', this)">
+              Push Notifications
+            </div>
+            <div class="subnav-tab" onclick="switchNotifTab('email', this)">
+              Email Preferences
+            </div>
+          </div>
+
+          <!-- Dashboard Content Body -->
+          <div class="dashboard-body">
+
+            <!-- ==============================================
+                 A. TAB: INBOX (ALL NOTIFICATIONS)
+                 ============================================== -->
+            <div class="notif-section active" id="sec-inbox">
+              <div class="flex-between" style="margin-bottom: var(--space-xs); gap: var(--space-sm); flex-wrap: wrap;">
+                <div class="input-container" style="flex-grow: 1; min-width: 240px;">
+                  <svg class="input-icon-left" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                  <input type="text" class="input input-with-icon" id="search-inbox-input" placeholder="Search title, details, or author..." oninput="searchInbox(this.value)">
+                </div>
+                <div class="flex-center" style="gap: var(--space-xs);">
+                  <select class="select select-sm" style="width: 120px;" id="filter-read-status" onchange="filterInboxByRead(this.value)">
+                    <option value="all">All Read Status</option>
+                    <option value="unread">Unread Only</option>
+                    <option value="read">Read Only</option>
+                  </select>
+                  <select class="select select-sm" style="width: 120px;" id="filter-priority-status" onchange="filterInboxByPriority(this.value)">
+                    <option value="all">All Priorities</option>
+                    <option value="high">High Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="low">Low Priority</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="flex-between" style="margin-bottom: var(--space-xxs);">
+                <span class="text-detail font-bold text-muted" id="inbox-count-label">Showing 6 notifications</span>
+              </div>
+
+              <div class="flex-column" style="gap: var(--space-sm);" id="inbox-list-holder">
+                <!-- Rendered dynamically via JS -->
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 B. TAB: ACTIVITY FEED
+                 ============================================== -->
+            <div class="notif-section" id="sec-activity">
+              <div class="flex-between" style="margin-bottom: var(--space-xxs);">
+                <span class="text-detail font-bold text-muted">Teammate Log Activity Timeline</span>
+              </div>
+              <div class="flex-column" style="gap: var(--space-sm);" id="activity-list-holder">
+                <!-- Rendered dynamically via JS -->
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 C. TAB: MENTIONS
+                 ============================================== -->
+            <div class="notif-section" id="sec-mentions">
+              <div class="flex-between" style="margin-bottom: var(--space-xxs);">
+                <span class="text-detail font-bold text-muted">Comments where you were @mentioned</span>
+              </div>
+              <div class="flex-column" style="gap: var(--space-sm);" id="mentions-list-holder">
+                <!-- Rendered dynamically via JS -->
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 D. TAB: AI ALERTS
+                 ============================================== -->
+            <div class="notif-section" id="sec-aialerts">
+              <div class="flex-between" style="margin-bottom: var(--space-xxs);">
+                <span class="text-detail font-bold text-muted">Orchestrator warnings and telemetry analysis alerts</span>
+              </div>
+              <div class="flex-column" style="gap: var(--space-sm);" id="aialerts-list-holder">
+                <!-- Rendered dynamically via JS -->
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 E. TAB: PROJECT ALERTS
+                 ============================================== -->
+            <div class="notif-section" id="sec-projects">
+              <div class="flex-between" style="margin-bottom: var(--space-xxs);">
+                <span class="text-detail font-bold text-muted">Creative pipelines rendering and client approvals</span>
+              </div>
+              <div class="flex-column" style="gap: var(--space-sm);" id="projects-list-holder">
+                <!-- Rendered dynamically via JS -->
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 F. TAB: SYSTEM ALERTS
+                 ============================================== -->
+            <div class="notif-section" id="sec-system">
+              <div class="flex-between" style="margin-bottom: var(--space-xxs);">
+                <span class="text-detail font-bold text-muted">Security events, billing invoice notifications, API key actions</span>
+              </div>
+              <div class="flex-column" style="gap: var(--space-sm);" id="system-list-holder">
+                <!-- Rendered dynamically via JS -->
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 G. TAB: SETTINGS
+                 ============================================== -->
+            <div class="notif-section" id="sec-settings">
+              
+              <!-- Do Not Disturb Mode Card -->
+              <div class="card p-md">
+                <div class="flex-between" style="align-items: center; margin-bottom: var(--space-sm);">
+                  <div>
+                    <h4 class="text-body-base font-bold text-primary">Do Not Disturb</h4>
+                    <p class="text-detail text-muted" style="margin-top: 2px;">Mute all incoming notification sound cues, visual banners, and alerts immediately.</p>
+                  </div>
+                  <label class="switch">
+                    <input type="checkbox" id="dnd-toggle-switch" onchange="toggleDndState(this.checked)">
+                    <span class="slider"></span>
+                  </label>
+                </div>
+                
+                <div class="flex-between" style="padding: var(--space-sm) 0; border-top: 1px solid var(--border-default); align-items: center;">
+                  <span class="text-body-small text-secondary">Mute Duration</span>
+                  <select class="select select-sm" style="width: 160px;" id="dnd-duration-select" disabled onchange="selectDndDuration(this.value)">
+                    <option value="30m">For 30 minutes</option>
+                    <option value="1h" selected>For 1 hour</option>
+                    <option value="8h">For 8 hours</option>
+                    <option value="24h">For 24 hours</option>
+                    <option value="tomorrow">Until tomorrow</option>
+                  </select>
+                </div>
+              </div>
+
+              <!-- Working Hours Schedule Card -->
+              <div class="card p-md flex-column" style="gap: var(--space-md);">
+                <div>
+                  <h4 class="text-body-base font-bold text-primary">Notification Schedule</h4>
+                  <p class="text-detail text-muted" style="margin-top: 2px;">Restrict notification deliveries to specific windows of the day.</p>
+                </div>
+
+                <div class="flex-column" style="gap: var(--space-sm); border-top: 1px solid var(--border-default); padding-top: var(--space-sm);">
+                  <div class="grid-12" style="gap: var(--space-sm);">
+                    
+                    <div class="col-span-4 radio-card active schedule-card" id="sc-always" onclick="selectSchedule('always', this)">
+                      <div class="flex-column" style="align-items: flex-start; gap: 2px;">
+                        <span class="text-body-small font-bold text-primary">Always Receive</span>
+                        <span class="text-detail text-muted">24/7 delivery flow</span>
+                      </div>
+                    </div>
+
+                    <div class="col-span-4 radio-card schedule-card" id="sc-working" onclick="selectSchedule('working', this)">
+                      <div class="flex-column" style="align-items: flex-start; gap: 2px;">
+                        <span class="text-body-small font-bold text-primary">Working Hours</span>
+                        <span class="text-detail text-muted">Mon - Fri, 9AM to 6PM</span>
+                      </div>
+                    </div>
+
+                    <div class="col-span-4 radio-card schedule-card" id="sc-custom" onclick="selectSchedule('custom', this)">
+                      <div class="flex-column" style="align-items: flex-start; gap: 2px;">
+                        <span class="text-body-small font-bold text-primary">Custom Period</span>
+                        <span class="text-detail text-muted">Define delivery times</span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- Custom time picker grid (toggled in JS) -->
+                <div class="grid-12" id="schedule-custom-time" style="gap: var(--space-sm); display: none; padding-top: var(--space-xs);">
+                  <div class="col-span-6 form-group">
+                    <label class="form-label">Delivery Start Time</label>
+                    <input type="time" class="input" value="09:00" id="schedule-start-input">
+                  </div>
+                  <div class="col-span-6 form-group">
+                    <label class="form-label">Delivery End Time</label>
+                    <input type="time" class="input" value="18:00" id="schedule-end-input">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tone sounds card -->
+              <div class="card p-md flex-column" style="gap: var(--space-sm);">
+                <div>
+                  <h4 class="text-body-base font-bold text-primary">Audio Tone Settings</h4>
+                  <p class="text-detail text-muted" style="margin-top: 2px;">Change incoming audio alerts and play test triggers.</p>
+                </div>
+
+                <div class="sound-row">
+                  <span class="text-body-small text-secondary">Incoming Alert Sound</span>
+                  <div class="flex-center" style="gap: var(--space-xs);">
+                    <select class="select select-sm" style="width: 150px;" id="alert-sound-select" onchange="selectAlertSound(this.value)">
+                      <option value="default">Default Chime</option>
+                      <option value="subtle">Subtle Pop</option>
+                      <option value="high">High-Priority Beep</option>
+                      <option value="futuristic">Futuristic Swoosh</option>
+                      <option value="mute">Mute Audio</option>
+                    </select>
+                    <button class="btn btn-tertiary btn-sm" onclick="previewAlertSound()" title="Preview alert chime sound">Play Preview</button>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ==============================================
+                 H. TAB: PUSH NOTIFICATIONS
+                 ============================================== -->
+            <div class="notif-section" id="sec-push">
+              
+              <!-- Browser Permission Status -->
+              <div class="card p-md">
+                <div class="flex-between" style="align-items: center; margin-bottom: var(--space-sm);">
+                  <div>
+                    <h4 class="text-body-base font-bold text-primary">Browser Push Permission</h4>
+                    <p class="text-detail text-muted" style="margin-top: 2px;">Receive push notifications directly on this device, even when KONTAGI is closed.</p>
+                  </div>
+                  <button class="btn btn-primary btn-sm" id="btn-request-permission" onclick="requestPushPermission()">Request Push Permission</button>
+                </div>
+                <div id="push-permission-status" style="padding-top: var(--space-xs); border-top: 1px solid var(--border-default);">
+                  <!-- Dynamic status via JS -->
+                </div>
+              </div>
+
+              <!-- Push alert trigger toggles -->
+              <div class="card p-md flex-column" style="gap: var(--space-md);">
+                <div class="flex-between" style="align-items: center;">
+                  <div>
+                    <h4 class="text-body-base font-bold text-primary">Push Alerts Channels</h4>
+                    <p class="text-detail text-muted" style="margin-top: 2px;">Select which notification categories dispatch browser push popups.</p>
+                  </div>
+                  <button class="btn btn-secondary btn-sm" onclick="testBrowserPushNotification()">Test Push Notification</button>
+                </div>
+
+                <div class="flex-column" style="gap: var(--space-xs); border-top: 1px solid var(--border-default); padding-top: var(--space-sm);">
+                  
+                  <div class="flex-between" style="padding: 10px 0; border-bottom: 1px solid var(--border-default);">
+                    <div class="flex-column" style="align-items: flex-start; gap: 2px;">
+                      <span class="text-body-small font-bold text-primary">Mentions & Direct Messages</span>
+                      <span class="text-detail text-muted">Push when colleagues tag `@Jaiveer` on creatives or comments.</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" checked onchange="togglePushChannel('mentions', this.checked)">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="flex-between" style="padding: 10px 0; border-bottom: 1px solid var(--border-default);">
+                    <div class="flex-column" style="align-items: flex-start; gap: 2px;">
+                      <span class="text-body-small font-bold text-primary">AI Telemetry Thresholds</span>
+                      <span class="text-detail text-muted">Push warning popups for hook fatigue rates or CTR changes.</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" checked onchange="togglePushChannel('ai', this.checked)">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="flex-between" style="padding: 10px 0; border-bottom: 1px solid var(--border-default);">
+                    <div class="flex-column" style="align-items: flex-start; gap: 2px;">
+                      <span class="text-body-small font-bold text-primary">Project Render Completions</span>
+                      <span class="text-detail text-muted">Push alert on completed asset video renders or design approvals.</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" checked onchange="togglePushChannel('projects', this.checked)">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="flex-between" style="padding: 10px 0;">
+                    <div class="flex-column" style="align-items: flex-start; gap: 2px;">
+                      <span class="text-body-small font-bold text-primary">Security Banners & System Logs</span>
+                      <span class="text-detail text-muted">Push warnings on billing renewals, login locks, or SAML locks.</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" checked onchange="togglePushChannel('system', this.checked)">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ==============================================
+                 I. TAB: EMAIL PREFERENCES
+                 ============================================== -->
+            <div class="notif-section" id="sec-email">
+              
+              <!-- Notification Delivery Address Card -->
+              <div class="card p-md">
+                <div class="flex-column" style="gap: var(--space-xs);">
+                  <h4 class="text-body-base font-bold text-primary">Email Delivery Address</h4>
+                  <p class="text-detail text-muted" style="margin-top: 2px;">Change where KONTAGI delivers email summary notifications.</p>
+                  
+                  <div class="flex-center" style="gap: var(--space-sm); margin-top: var(--space-xs); width: 100%;">
+                    <input type="email" class="input" value="jaiveer@company.com" id="pref-email-input" style="flex-grow: 1;">
+                    <button class="btn btn-primary btn-sm" onclick="saveEmailAddress()">Update Address</button>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Email Digest Frequency Card -->
+              <div class="card p-md flex-column" style="gap: var(--space-md);">
+                <div>
+                  <h4 class="text-body-base font-bold text-primary">Email Digest Frequency</h4>
+                  <p class="text-detail text-muted" style="margin-top: 2px;">Select summary digest frequency for non-critical alerts.</p>
+                </div>
+
+                <div class="flex-column" style="gap: var(--space-sm); border-top: 1px solid var(--border-default); padding-top: var(--space-sm);">
+                  <div class="grid-12" style="gap: var(--space-sm);">
+                    
+                    <div class="col-span-3 radio-card active" id="rc-digest-instant" onclick="selectEmailDigest('instant')">
+                      <input type="radio" name="digest-frequency" id="digest-instant" checked style="display:none;">
+                      <div class="flex-column" style="align-items: flex-start; gap: 2px;">
+                        <span class="text-body-small font-bold text-primary">Instantly</span>
+                        <span class="text-detail text-muted">Immediate alert email</span>
+                      </div>
+                    </div>
+
+                    <div class="col-span-3 radio-card" id="rc-digest-daily" onclick="selectEmailDigest('daily')">
+                      <input type="radio" name="digest-frequency" id="digest-daily" style="display:none;">
+                      <div class="flex-column" style="align-items: flex-start; gap: 2px;">
+                        <span class="text-body-small font-bold text-primary">Daily Digest</span>
+                        <span class="text-detail text-muted">Summary at 6:00 PM</span>
+                      </div>
+                    </div>
+
+                    <div class="col-span-3 radio-card" id="rc-digest-weekly" onclick="selectEmailDigest('weekly')">
+                      <input type="radio" name="digest-frequency" id="digest-weekly" style="display:none;">
+                      <div class="flex-column" style="align-items: flex-start; gap: 2px;">
+                        <span class="text-body-small font-bold text-primary">Weekly Summary</span>
+                        <span class="text-detail text-muted">Digest every Friday</span>
+                      </div>
+                    </div>
+
+                    <div class="col-span-3 radio-card" id="rc-digest-muted" onclick="selectEmailDigest('muted')">
+                      <input type="radio" name="digest-frequency" id="digest-muted" style="display:none;">
+                      <div class="flex-column" style="align-items: flex-start; gap: 2px;">
+                        <span class="text-body-small font-bold text-primary">Muted</span>
+                        <span class="text-detail text-muted">No emails sent</span>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+                <!-- Granular toggle metrics -->
+                <div class="flex-column" style="gap: var(--space-xs); margin-top: var(--space-xs);">
+                  <label class="text-detail font-bold text-muted">Granular Subscriptions</label>
+                  
+                  <div class="flex-between" style="padding: 10px 0; border-bottom: 1px solid var(--border-default);">
+                    <div class="flex-column" style="align-items: flex-start; gap: 2px;">
+                      <span class="text-body-small font-bold text-primary">Invoices and Billing receipts</span>
+                      <span class="text-detail text-muted">Get automated email billing transaction receipts after credit refill or upgrade.</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" checked id="email-ch-billing" onchange="toggleEmailChannel('billing', this.checked)">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="flex-between" style="padding: 10px 0; border-bottom: 1px solid var(--border-default);">
+                    <div class="flex-column" style="align-items: flex-start; gap: 2px;">
+                      <span class="text-body-small font-bold text-primary">Workspace member invitations</span>
+                      <span class="text-detail text-muted">Receive alerts whenever collaborators accept invitations to join.</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" checked id="email-ch-invites" onchange="toggleEmailChannel('invites', this.checked)">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="flex-between" style="padding: 10px 0; border-bottom: 1px solid var(--border-default);">
+                    <div class="flex-column" style="align-items: flex-start; gap: 2px;">
+                      <span class="text-body-small font-bold text-primary">Comments and mentions alerts</span>
+                      <span class="text-detail text-muted">Email triggers when colleagues comment on library uploads.</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" checked id="email-ch-comments" onchange="toggleEmailChannel('comments', this.checked)">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                  <div class="flex-between" style="padding: 10px 0;">
+                    <div class="flex-column" style="align-items: flex-start; gap: 2px;">
+                      <span class="text-body-small font-bold text-primary">AI model compliance events</span>
+                      <span class="text-detail text-muted">Notify immediately on low engagement hook rates or safety warnings.</span>
+                    </div>
+                    <label class="switch">
+                      <input type="checkbox" id="email-ch-ai" onchange="toggleEmailChannel('ai', this.checked)">
+                      <span class="slider"></span>
+                    </label>
+                  </div>
+
+                </div>
+
+                <div class="flex-between" style="margin-top: var(--space-md); border-top: 1px solid var(--border-default); padding-top: var(--space-sm);">
+                  <span class="text-detail text-muted">Changes apply universally across all your managed workspaces.</span>
+                  <button class="btn btn-primary btn-sm" onclick="showToast('Email preferences updated successfully.', 'success')">Save Email Settings</button>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==============================================
+       3. CLIENT SIDE INTERACTIVE LOGIC SCRIPT
+       ============================================== -->
+  <script>
+    // Workspace Alerts Mock Store
+    const workspaceNotifications = {
+      pulse_energy: [
+        { id: 1, type: "mention", title: "@Jaiveer tagged you on Retro Denim Script", desc: "Please confirm if the contrast hook parameters align with the summer collection specs.", date: "10 mins ago", author: "Sarah Connor", initials: "SC", color: "purple", unread: true, category: "mentions", priority: "high", replyCount: 0, thread: [] },
+        { id: 2, type: "ai", title: "AI Warning: High fatigue score on Retro Ad Hook", desc: "Orchestrator detected fatigue ratings matching 74% over repeat viewer targets.", date: "1 hour ago", author: "Aura Orchestrator", unread: true, category: "aialerts", priority: "medium", metric: "74%", metricLabel: "Fatigue Rate", recommendations: "Swap video hook with 'Retro Beach B-Roll'" },
+        { id: 3, type: "mention", title: "@Jaiveer approve client request on Retro V2", desc: "The client asked for visual edits to the watermark transparency.", date: "3 hours ago", author: "Alex Mercer", initials: "AM", color: "blue", unread: true, category: "mentions", priority: "medium", replyCount: 0, thread: [] },
+        { id: 4, type: "project", title: "Project V3 Render Completed", desc: "Pipeline node successfully processed Retro Denim Summer Ad V3 in 1080p.", date: "1 day ago", author: "Pipeline Server", unread: false, category: "projects", priority: "low", progress: 100, status: "completed" },
+        { id: 5, type: "system", title: "API Secrets Rotated Automatically", desc: "Standard rotation protocols successfully cycled active OAuth keys.", date: "2 days ago", author: "SAML Security", unread: false, category: "system", priority: "low", keyId: "ak_live_••••a8b9", location: "US-EAST-1 (London Proxy)" },
+        { id: 6, type: "activity", title: "Sarah Connor updated brand palette", desc: "Adjusted primary royal blue weight values in workspace variables.", date: "3 days ago", author: "Sarah Connor", initials: "SC", color: "purple", unread: false, category: "activity", priority: "low" }
+      ],
+      retro_denim: [
+        { id: 7, type: "project", title: "Client rejected campaign storyboard V1", desc: "Retro Denim client requested changes to colors, typography, and fonts.", date: "4 hours ago", author: "Client Portal", unread: true, category: "projects", priority: "high", progress: 45, status: "rejected" },
+        { id: 8, type: "system", title: "Workspace Billing payment renewal failed", desc: "Unable to process payment for invoice INV-2026-09. Please check payment cards.", date: "1 day ago", author: "Billing Gateway", fill: "danger", unread: true, category: "system", priority: "high", invoiceId: "INV-2026-09", amount: "$149.00" }
+      ],
+      smart_home: [
+        { id: 9, type: "system", title: "SSO SAML Identity Lock Enabled", desc: "Owner successfully restricted workspace log in to okta.aurasmart.com.", date: "2 hours ago", author: "Owner Security", unread: true, category: "system", priority: "high", restrictions: "okta.aurasmart.com", user: "Admin (Jaiveer)" },
+        { id: 10, type: "ai", title: "AI Alert: Unusual CTR drop detected", desc: "CTR telemetry analysis shows an 8% drop on active Smart Thermostat ads.", date: "5 hours ago", author: "Aura Orchestrator", unread: true, category: "aialerts", priority: "medium", metric: "-8.4%", metricLabel: "CTR Shift", recommendations: "Refresh Ad Creative copy with engaging features hook." }
+      ]
+    };
+
+    let activeWorkspace = "pulse_energy";
+    let activeTab = "inbox";
+    
+    // Filters State
+    let searchFilterQuery = "";
+    let readStatusFilter = "all";
+    let priorityFilter = "all";
+
+    // Settings States
+    let dndState = {
+      enabled: false,
+      duration: "1h",
+      schedule: "always",
+      sound: "default"
+    };
+
+    let pushState = {
+      granted: true,
+      channels: {
+        mentions: true,
+        ai: true,
+        projects: true,
+        system: true
+      }
+    };
+
+    let emailSettings = {
+      address: "jaiveer@company.com",
+      digest: "instant",
+      channels: {
+        billing: true,
+        invites: true,
+        comments: true,
+        ai: false
+      }
+    };
+
+    document.addEventListener("DOMContentLoaded", () => {
+      loadWorkspaceAlerts(activeWorkspace);
+      updatePushPermissionUI();
+
+      // Setup Viewports Resizing
+      document.querySelectorAll('.sandbox-btn[data-viewport]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.sandbox-btn[data-viewport]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const frame = document.getElementById('viewport-frame');
+          const viewport = btn.getAttribute('data-viewport');
+          frame.className = `emulator-viewport ${viewport}`;
+          window.showToast(`Viewport set to ${viewport}`, 'info');
+        });
+      });
+
+      // Mobile Sidebar Toggle
+      const toggleBtn = document.getElementById('sidebar-toggle-btn');
+      const sidebar = document.querySelector('.dashboard-sidebar');
+      if (toggleBtn && sidebar) {
+        toggleBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          sidebar.classList.toggle('active');
+        });
+        document.addEventListener('click', () => {
+          sidebar.classList.remove('active');
+        });
+      }
+    });
+
+    // Switch workspaces dynamically
+    function switchWorkspaceBrand(value) {
+      activeWorkspace = value;
+      loadWorkspaceAlerts(activeWorkspace);
+      showToast(`Switched notifications feed to ${brandWorkspacesName(activeWorkspace)}`, "success");
+    }
+
+    function brandWorkspacesName(key) {
+      if (key === "pulse_energy") return "Pulse Energy";
+      if (key === "retro_denim") return "Retro Denim";
+      return "AuraSmart IoT";
+    }
+
+    // Load alarms into tables/grids
+    function loadWorkspaceAlerts(key) {
+      const data = workspaceNotifications[key];
+
+      // Update sidebar
+      const avatarEl = document.getElementById('notif-sidebar-avatar');
+      if (avatarEl) {
+        avatarEl.innerText = key === "pulse_energy" ? "PE" : (key === "retro_denim" ? "RD" : "AS");
+      }
+      const brandEl = document.getElementById('notif-sidebar-brand-name');
+      if (brandEl) {
+        brandEl.innerText = brandWorkspacesName(key);
+      }
+      const badgeEl = document.getElementById('notif-workspace-badge');
+      if (badgeEl) {
+        badgeEl.innerText = `${brandWorkspacesName(key)} Active`;
+      }
+      
+      // Update counters
+      updateAllBadges(data);
+
+      // Render the current view
+      renderActiveTabContent();
+    }
+
+    // Tab Router Switcher
+    function switchNotifTab(target, tabElement) {
+      activeTab = target;
+      document.querySelectorAll('.subnav-tab').forEach(el => el.classList.remove('active'));
+      tabElement.classList.add('active');
+
+      document.querySelectorAll('.notif-section').forEach(el => el.classList.remove('active'));
+      const sec = document.getElementById(`sec-${target}`);
+      if (sec) sec.classList.add('active');
+
+      renderActiveTabContent();
+    }
+
+    // Render alerts based on active tabs
+    function renderActiveTabContent() {
+      const data = workspaceNotifications[activeWorkspace];
+      
+      if (activeTab === "inbox") {
+        renderInboxFeed(data);
+      } else if (activeTab === "activity") {
+        renderCategoryFeed(data, "activity", "activity-list-holder");
+      } else if (activeTab === "mentions") {
+        renderCategoryFeed(data, "mentions", "mentions-list-holder");
+      } else if (activeTab === "aialerts") {
+        renderCategoryFeed(data, "aialerts", "aialerts-list-holder");
+      } else if (activeTab === "projects") {
+        renderCategoryFeed(data, "projects", "projects-list-holder");
+      } else if (activeTab === "system") {
+        renderCategoryFeed(data, "system", "system-list-holder");
+      }
+    }
+
+    // Render general Inbox feed
+    function renderInboxFeed(alerts) {
+      const holder = document.getElementById('inbox-list-holder');
+      holder.innerHTML = '';
+
+      if (alerts.length === 0) {
+        holder.innerHTML = renderEmptyState("Inbox");
+        document.getElementById('inbox-count-label').innerText = "Showing 0 notifications";
+        return;
+      }
+
+      // Filter based on select
+      let filtered = alerts;
+      if (readStatusFilter === "unread") {
+        filtered = filtered.filter(a => a.unread);
+      } else if (readStatusFilter === "read") {
+        filtered = filtered.filter(a => !a.unread);
+      }
+
+      // Filter based on priority
+      if (priorityFilter !== "all") {
+        filtered = filtered.filter(a => a.priority === priorityFilter);
+      }
+
+      // Filter based on search query
+      if (searchFilterQuery.trim() !== "") {
+        const q = searchFilterQuery.toLowerCase().trim();
+        filtered = filtered.filter(a => 
+          a.title.toLowerCase().includes(q) || 
+          a.desc.toLowerCase().includes(q) || 
+          a.author.toLowerCase().includes(q)
+        );
+      }
+
+      document.getElementById('inbox-count-label').innerText = `Showing ${filtered.length} notification(s)`;
+
+      if (filtered.length === 0) {
+        holder.innerHTML = renderEmptyState("Inbox");
+        return;
+      }
+
+      filtered.forEach(a => {
+        holder.innerHTML += renderNotificationCardHTML(a);
+      });
+    }
+
+    // Inbox Filters Actions
+    function searchInbox(query) {
+      searchFilterQuery = query;
+      renderActiveTabContent();
+    }
+
+    function filterInboxByRead(val) {
+      readStatusFilter = val;
+      renderActiveTabContent();
+    }
+
+    function filterInboxByPriority(val) {
+      priorityFilter = val;
+      renderActiveTabContent();
+    }
+
+    // Render feeds belonging to specific category
+    function renderCategoryFeed(alerts, category, elementId) {
+      const holder = document.getElementById(elementId);
+      holder.innerHTML = '';
+
+      const filtered = alerts.filter(a => a.category === category);
+      if (filtered.length === 0) {
+        holder.innerHTML = renderEmptyState(category);
+        return;
+      }
+
+      if (category === "activity") {
+        // Vertical Timeline Rendering
+        let timelineHTML = '<div class="timeline-container">';
+        filtered.forEach(a => {
+          timelineHTML += `
+            <div class="timeline-node" onclick="toggleReadStatus(${a.id})">
+              <div class="timeline-dot"></div>
+              <div class="card p-sm flex-column" style="gap: var(--space-xxs); margin-left: 8px; cursor: pointer; border-left: 3px solid var(--border-default); ${a.unread ? 'border-left-color: var(--brand-primary); background-color: var(--brand-primary-glow);' : ''}">
+                <div class="flex-between">
+                  <span class="text-body-small font-bold text-primary">${a.title}</span>
+                  <span class="text-detail text-muted">${a.date}</span>
+                </div>
+                <p class="text-detail text-secondary">${a.desc}</p>
+                <div class="flex-center" style="justify-content: flex-start; gap: var(--space-xs); margin-top: 4px;">
+                  <div class="avatar" style="background-color: var(--bg-tertiary); color: var(--text-secondary); width: 20px; height: 20px; font-size: 0.625rem; border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-default);">
+                    ${a.initials || 'AO'}
+                  </div>
+                  <span class="text-detail text-muted font-mono" style="font-size: 0.6875rem;">By ${a.author}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        });
+        timelineHTML += '</div>';
+        holder.innerHTML = timelineHTML;
+      } else {
+        filtered.forEach(a => {
+          holder.innerHTML += renderNotificationCardHTML(a);
+        });
+      }
+    }
+
+    // Render empty states
+    function renderEmptyState(tabName) {
+      return `
+        <div class="card p-xl flex-center" style="flex-direction: column; text-align: center;">
+          <svg width="40" height="40" fill="none" stroke="var(--text-muted)" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom: var(--space-md);"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+          <h4 class="text-body-base font-bold text-primary">All Clear!</h4>
+          <p class="text-detail text-muted" style="margin-top: 4px; max-width: 320px;">No outstanding items listed in your ${tabName} stream.</p>
+        </div>
+      `;
+    }
+
+    // Generate Card Icon/Avatar category badge
+    function getCategoryIconHTML(a) {
+      if (a.type === "mention" && a.initials) {
+        let avatarBg = a.color === "purple" ? "var(--accent-purple-bg)" : "var(--brand-primary-glow)";
+        let avatarColor = a.color === "purple" ? "var(--accent-purple)" : "var(--brand-primary)";
+        return `
+          <div class="avatar font-bold" style="background-color: ${avatarBg}; color: ${avatarColor}; width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 0.875rem; border: 1px solid var(--border-default);">
+            ${a.initials}
+          </div>
+        `;
+      }
+
+      let icon = `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      let clz = "info";
+
+      if (a.fill === "danger") clz = "danger";
+
+      if (a.type === "ai") {
+        icon = `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813z"/></svg>`;
+        clz = "ai";
+      } else if (a.type === "warning") {
+        icon = `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>`;
+        clz = "warning";
+      } else if (a.type === "project") {
+        icon = `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>`;
+        clz = a.status === "rejected" ? "danger" : "info";
+      } else if (a.type === "system") {
+        icon = `<svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>`;
+        clz = a.priority === "high" || a.fill === "danger" ? "danger" : "warning";
+      } else if (a.type === "activity" && a.initials) {
+        return `
+          <div class="avatar font-bold" style="background-color: var(--bg-tertiary); color: var(--text-secondary); width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 0.875rem; border: 1px solid var(--border-default);">
+            ${a.initials}
+          </div>
+        `;
+      }
+
+      return `<div class="notification-icon-container ${clz}">${icon}</div>`;
+    }
+
+    // HTML Generator Card
+    function renderNotificationCardHTML(a) {
+      let interactiveSegment = '';
+
+      // Priority Badge
+      let priorityBadge = '';
+      if (a.priority === 'high') {
+        priorityBadge = `<span class="badge badge-danger" style="font-size: 0.65rem; font-weight:700;">High Priority</span>`;
+      } else if (a.priority === 'medium') {
+        priorityBadge = `<span class="badge badge-warning" style="font-size: 0.65rem; font-weight:700;">Medium</span>`;
+      } else if (a.priority === 'low') {
+        priorityBadge = `<span class="badge badge-info" style="font-size: 0.65rem; font-weight:700;">Low</span>`;
+      }
+
+      // 1. Mentions custom inline reply thread
+      if (a.type === "mention") {
+        let repliesHTML = '';
+        if (a.thread && a.thread.length > 0) {
+          repliesHTML = `
+            <div class="flex-column" style="gap: var(--space-xs); margin-top: var(--space-xs); padding-left: var(--space-md); border-left: 2px solid var(--border-default); width: 100%;">
+              ${a.thread.map(rep => `
+                <div class="flex-column" style="gap: 2px; padding: 4px 0;">
+                  <div class="flex-between">
+                    <div class="flex-center" style="gap: 6px;">
+                      <div class="avatar" style="width: 18px; height: 18px; font-size: 0.55rem; background-color: var(--bg-tertiary); color: var(--text-secondary); border-radius: 50%; display: flex; align-items: center; justify-content: center; border: 1px solid var(--border-default);">
+                        ${rep.author === "Jaiveer Hastar (You)" ? "JH" : "SC"}
+                      </div>
+                      <span class="text-detail font-bold text-primary">${rep.author}</span>
+                    </div>
+                    <span class="text-detail text-muted" style="font-size: 0.625rem;">${rep.date}</span>
+                  </div>
+                  <p class="text-detail text-secondary" style="padding-left: 24px;">${rep.text}</p>
+                </div>
+              `).join('')}
+            </div>
+          `;
+        }
+
+        interactiveSegment = `
+          <div class="flex-column" style="width: 100%; margin-top: var(--space-xs); gap: var(--space-xxs);">
+            ${repliesHTML}
+            <!-- Toggle reply textbox -->
+            <div id="reply-container-${a.id}" style="display: none; width: 100%; margin-top: var(--space-xxs);">
+              <textarea class="textarea" id="reply-text-${a.id}" placeholder="Type your reply to ${a.author}..." rows="2" style="width: 100%; font-size: 0.75rem; padding: 6px; margin-bottom: 6px;"></textarea>
+              <div class="flex-center" style="justify-content: flex-end; gap: var(--space-xs);">
+                <button class="btn btn-tertiary btn-sm" onclick="toggleReplyBox(${a.id}, false)">Cancel</button>
+                <button class="btn btn-primary btn-sm" onclick="submitReply(${a.id})">Post Reply</button>
+              </div>
+            </div>
+            <button class="btn btn-secondary btn-sm" id="btn-reply-toggle-${a.id}" style="font-size: 0.75rem; padding: 4px 8px; margin-top: var(--space-xxs); width: fit-content;" onclick="toggleReplyBox(${a.id}, true)">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right: 4px;"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h10a8 8 0 018 8v2M3 10l6 6m-6-6l6-6"/></svg>
+              Reply
+            </button>
+          </div>
+        `;
+      }
+
+      // 2. AI Alerts Telemetry
+      if (a.type === "ai" && a.metric) {
+        interactiveSegment = `
+          <div class="flex-column" style="width: 100%; margin-top: var(--space-xs); gap: var(--space-xs); background: var(--bg-primary); padding: var(--space-xs); border-radius: var(--radius-md); border: 1px solid var(--border-default);">
+            <div class="flex-between">
+              <span class="text-detail font-bold text-muted">${a.metricLabel}:</span>
+              <span class="badge ${a.metric.startsWith('-') ? 'badge-green' : 'badge-danger'} font-mono">${a.metric}</span>
+            </div>
+            <!-- Dynamic percentage bar indicator -->
+            <div style="width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: var(--radius-full); overflow: hidden;">
+              <div style="width: ${a.metric.replace('-', '')}; height: 100%; background: linear-gradient(90deg, var(--accent-purple) 0%, var(--brand-primary) 100%);"></div>
+            </div>
+            <div class="flex-column" style="gap: 2px;">
+              <span class="text-detail font-bold text-primary">Recommendation:</span>
+              <p class="text-detail text-muted">${a.recommendations}</p>
+            </div>
+            <button class="btn btn-secondary btn-sm" style="font-size: 0.75rem; width: fit-content;" onclick="optimizeAiHook(${a.id}, this)">
+              Auto-Optimize Hook
+            </button>
+          </div>
+        `;
+      }
+
+      // 3. Project pipeline approvals
+      if (a.type === "project") {
+        let statusBadge = `<span class="badge badge-indigo">Pipeline Completed</span>`;
+        let processBarColor = "var(--accent-green)";
+        if (a.status === "rejected") {
+          statusBadge = `<span class="badge badge-danger">Client Rejected</span>`;
+          processBarColor = "var(--accent-red)";
+        }
+
+        interactiveSegment = `
+          <div class="flex-column" style="width: 100%; margin-top: var(--space-xs); gap: var(--space-xs);">
+            <div class="flex-between">
+              <span class="text-detail font-bold text-muted">Progress Status:</span>
+              ${statusBadge}
+            </div>
+            <div style="width: 100%; height: 6px; background: var(--bg-tertiary); border-radius: var(--radius-full); overflow: hidden;">
+              <div style="width: ${a.progress}%; height: 100%; background: ${processBarColor};"></div>
+            </div>
+            ${a.status === "rejected" ? `
+              <div class="flex-center" style="gap: var(--space-sm); margin-top: var(--space-xxs); justify-content: flex-start;">
+                <button class="btn btn-secondary btn-sm" onclick="showToast('Loading revisions history...', 'info')">Review Feedback</button>
+                <button class="btn btn-primary btn-sm" onclick="showToast('Asset pipeline re-queued for render.', 'success')">Retry Render</button>
+              </div>
+            ` : `
+              <div class="flex-center" style="gap: var(--space-sm); margin-top: var(--space-xxs); justify-content: flex-start;">
+                <button class="btn btn-secondary btn-sm" onclick="showToast('Render player opened.', 'info')">Play Asset</button>
+                <button class="btn btn-primary btn-sm" onclick="showToast('Asset approved and copied to Brand Hub.', 'success')">Deploy Asset</button>
+              </div>
+            `}
+          </div>
+        `;
+      }
+
+      // 4. System / Security Log Details
+      if (a.type === "system") {
+        interactiveSegment = `
+          <div class="font-mono" style="width: 100%; margin-top: var(--space-xs); padding: var(--space-xs); background: var(--bg-primary); border-radius: var(--radius-md); border: 1px solid var(--border-default); font-size: 0.6875rem; color: var(--text-secondary);">
+            ${a.keyId ? `<div>[Key ID] : ${a.keyId}</div>` : ''}
+            ${a.location ? `<div>[Region] : ${a.location}</div>` : ''}
+            ${a.invoiceId ? `<div>[Invoice] : ${a.invoiceId} (${a.amount})</div>` : ''}
+            ${a.restrictions ? `<div>[Domains] : ${a.restrictions}</div>` : ''}
+            <div>[Security Node] : active-shield-v2.kontagi.com</div>
+          </div>
+        `;
+      }
+
+      // 5. Activity Feed visual timeline styling
+      let itemBorderColor = a.unread ? 'border-left: 3px solid var(--brand-primary);' : '';
+      if (a.type === "activity") {
+        itemBorderColor += ' border-left: 2px dashed var(--border-default);';
+      }
+
+      return `
+        <div class="notification-item ${a.unread ? 'unread' : ''}" style="${itemBorderColor}" onclick="toggleReadStatus(${a.id})">
+          ${getCategoryIconHTML(a)}
+          
+          <div class="flex-column" style="gap: 4px; flex-grow: 1; align-items: flex-start;">
+            <div class="flex-between" style="width: 100%;">
+              <div class="flex-center" style="gap: 8px;">
+                <span class="text-body-small font-bold text-primary">${a.title}</span>
+                ${priorityBadge}
+              </div>
+              <span class="text-detail text-muted">${a.date}</span>
+            </div>
+            <p class="text-detail text-secondary">${a.desc}</p>
+            <span class="text-detail text-muted font-mono" style="font-size: 0.6875rem; margin-top: 4px;">Triggered by: ${a.author}</span>
+            ${interactiveSegment}
+          </div>
+
+          <div class="notification-actions" onclick="event.stopPropagation()">
+            <button class="btn btn-sm btn-secondary" style="padding: 4px;" onclick="toggleReadStatus(${a.id})" title="Toggle read/unread">
+              <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/><path stroke-linecap="round" stroke-linejoin="round" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/></svg>
+            </button>
+            <button class="btn btn-sm btn-tertiary text-danger" style="padding: 4px;" onclick="removeNotification(${a.id})" title="Dismiss notification">
+              &times;
+            </button>
+          </div>
+        </div>
+      `;
+    }
+
+    // Toggle inline reply textbox
+    function toggleReplyBox(id, show) {
+      const container = document.getElementById(`reply-container-${id}`);
+      const btn = document.getElementById(`btn-reply-toggle-${id}`);
+      if (container) {
+        container.style.display = show ? 'block' : 'none';
+      }
+      if (btn) {
+        btn.style.display = show ? 'none' : 'block';
+      }
+    }
+
+    // Submit reply dynamically
+    function submitReply(id) {
+      const textarea = document.getElementById(`reply-text-${id}`);
+      if (!textarea || textarea.value.trim() === '') {
+        showToast("Please enter a reply message.", "error");
+        return;
+      }
+
+      const data = workspaceNotifications[activeWorkspace];
+      const alertItem = data.find(a => a.id === id);
+      if (alertItem) {
+        if (!alertItem.thread) alertItem.thread = [];
+        alertItem.thread.push({
+          author: "Jaiveer Hastar (You)",
+          date: "Just now",
+          text: textarea.value.trim()
+        });
+        alertItem.unread = false;
+        loadWorkspaceAlerts(activeWorkspace);
+        showToast("Reply posted successfully.", "success");
+      }
+    }
+
+    // Simulate AI Hook Optimization
+    function optimizeAiHook(id, btnElement) {
+      const originalText = btnElement.innerText;
+      btnElement.innerText = "Optimizing hook...";
+      btnElement.disabled = true;
+      showToast("Aura Orchestrator recalculating Hook metrics...", "info");
+      
+      setTimeout(() => {
+        const data = workspaceNotifications[activeWorkspace];
+        const alertItem = data.find(a => a.id === id);
+        if (alertItem) {
+          alertItem.metric = "12.4%";
+          alertItem.metricLabel = "Optimized Lift";
+          alertItem.desc = "Engagement hook fatigue solved. New variant generated automatically.";
+          alertItem.unread = false;
+          loadWorkspaceAlerts(activeWorkspace);
+          showToast("AI Optimization completed: variant updated in project hub.", "success");
+        }
+      }, 1500);
+    }
+
+    // Update unread count badges
+    function updateAllBadges(alerts) {
+      const inboxUnread = alerts.filter(a => a.unread).length;
+      const activityUnread = alerts.filter(a => a.category === "activity" && a.unread).length;
+      const mentionsUnread = alerts.filter(a => a.category === "mentions" && a.unread).length;
+      const aiUnread = alerts.filter(a => a.category === "aialerts" && a.unread).length;
+      const projectsUnread = alerts.filter(a => a.category === "projects" && a.unread).length;
+      const systemUnread = alerts.filter(a => a.category === "system" && a.unread).length;
+
+      const badgeInbox = document.getElementById('badge-inbox');
+      if (badgeInbox) badgeInbox.innerText = inboxUnread;
+
+      const badgeActivity = document.getElementById('badge-activity');
+      if (badgeActivity) badgeActivity.innerText = activityUnread;
+
+      const badgeMentions = document.getElementById('badge-mentions');
+      if (badgeMentions) badgeMentions.innerText = mentionsUnread;
+
+      const badgeAi = document.getElementById('badge-aialerts');
+      if (badgeAi) badgeAi.innerText = aiUnread;
+
+      const badgeProj = document.getElementById('badge-projects');
+      if (badgeProj) badgeProj.innerText = projectsUnread;
+
+      const badgeSys = document.getElementById('badge-system');
+      if (badgeSys) badgeSys.innerText = systemUnread;
+    }
+
+    // Toggle single read status
+    function toggleReadStatus(id) {
+      const data = workspaceNotifications[activeWorkspace];
+      const item = data.find(a => a.id === id);
+      if (item) {
+        item.unread = !item.unread;
+        loadWorkspaceAlerts(activeWorkspace);
+        showToast(item.unread ? "Alert marked unread." : "Alert marked read.", "info");
+      }
+    }
+
+    // Remove single alert
+    function removeNotification(id) {
+      const data = workspaceNotifications[activeWorkspace];
+      const idx = data.findIndex(a => a.id === id);
+      if (idx > -1) {
+        data.splice(idx, 1);
+        loadWorkspaceAlerts(activeWorkspace);
+        showToast("Notification dismissed.", "info");
+      }
+    }
+
+    // Mark all as read action
+    function markAllAsRead() {
+      const data = workspaceNotifications[activeWorkspace];
+      data.forEach(a => a.unread = false);
+      loadWorkspaceAlerts(activeWorkspace);
+      showToast("All workspace alerts marked as read.", "success");
+    }
+
+    // Clear all notifications
+    function clearAllNotifications() {
+      workspaceNotifications[activeWorkspace] = [];
+      loadWorkspaceAlerts(activeWorkspace);
+      showToast("All workspace alerts cleared.", "error");
+    }
+
+    // ==========================================================================
+    // PREFERENCES INTERACTIVE CONTROLS
+    // ==========================================================================
+    
+    // 1. Settings state changes
+    function toggleDndState(checked) {
+      dndState.enabled = checked;
+      const selectEl = document.getElementById('dnd-duration-select');
+      if (selectEl) selectEl.disabled = !checked;
+      showToast(checked ? "Do Not Disturb activated. Sounds & popups muted." : "Do Not Disturb deactivated. Alerts restored.", checked ? "warning" : "success");
+    }
+
+    function selectDndDuration(val) {
+      dndState.duration = val;
+      showToast(`Do Not Disturb duration set for ${val}`, "info");
+    }
+
+    function selectSchedule(type, element) {
+      dndState.schedule = type;
+      document.querySelectorAll('#sec-settings .schedule-card').forEach(el => el.classList.remove('active'));
+      element.classList.add('active');
+      
+      const customTimePicker = document.getElementById('schedule-custom-time');
+      if (customTimePicker) {
+        customTimePicker.style.display = (type === 'custom' || type === 'working') ? 'flex' : 'none';
+      }
+      showToast(`Alert schedule set to: ${type.toUpperCase()}`, "success");
+    }
+
+    function selectAlertSound(val) {
+      dndState.sound = val;
+      showToast(`Notification tone updated to: ${val}`, "info");
+    }
+
+    function previewAlertSound() {
+      showToast(`[Audio Preview] Playing '${dndState.sound}' sound alert... 🎵`, "success");
+      try {
+        const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const oscillator = audioCtx.createOscillator();
+        const gainNode = audioCtx.createGain();
+        oscillator.connect(gainNode);
+        gainNode.connect(audioCtx.destination);
+        
+        if (dndState.sound === 'default') {
+          oscillator.type = 'sine';
+          oscillator.frequency.setValueAtTime(523.25, audioCtx.currentTime); // C5
+          gainNode.gain.setValueAtTime(0.1, audioCtx.currentTime);
+          oscillator.start();
+          oscillator.stop(audioCtx.currentTime + 0.15);
+        } else if (dndState.sound === 'subtle') {
+          oscillator.type = 'triangle';
+          oscillator.frequency.setValueAtTime(440, audioCtx.currentTime); // A4
+          gainNode.gain.setValueAtTime(0.08, audioCtx.currentTime);
+          oscillator.start();
+          oscillator.stop(audioCtx.currentTime + 0.1);
+        } else if (dndState.sound === 'high') {
+          oscillator.type = 'sawtooth';
+          oscillator.frequency.setValueAtTime(880, audioCtx.currentTime); // A5
+          gainNode.gain.setValueAtTime(0.05, audioCtx.currentTime);
+          oscillator.start();
+          oscillator.stop(audioCtx.currentTime + 0.25);
+        } else if (dndState.sound === 'futuristic') {
+          oscillator.type = 'sine';
+          oscillator.frequency.setValueAtTime(600, audioCtx.currentTime);
+          oscillator.frequency.exponentialRampToValueAtTime(1200, audioCtx.currentTime + 0.2);
+          gainNode.gain.setValueAtTime(0.07, audioCtx.currentTime);
+          oscillator.start();
+          oscillator.stop(audioCtx.currentTime + 0.2);
+        }
+      } catch (e) {
+        console.log("AudioContext blocked or failed.");
+      }
+    }
+
+    // 2. Push notification preferences
+    function requestPushPermission() {
+      showToast("Requesting browser desktop permission...", "info");
+      setTimeout(() => {
+        pushState.granted = true;
+        updatePushPermissionUI();
+        showToast("Permission granted! Browser push notifications active.", "success");
+      }, 800);
+    }
+
+    function updatePushPermissionUI() {
+      const banner = document.getElementById('push-permission-status');
+      const btn = document.getElementById('btn-request-permission');
+      if (banner) {
+        if (pushState.granted) {
+          banner.innerHTML = `
+            <div class="flex-center" style="gap: 8px; justify-content: flex-start; color: var(--accent-green);">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M5 13l4 4L19 7"/></svg>
+              <span class="font-bold text-body-small">Push Notifications are Enabled for this Browser</span>
+            </div>
+          `;
+          if (btn) btn.style.display = 'none';
+        } else {
+          banner.innerHTML = `
+            <div class="flex-center" style="gap: 8px; justify-content: flex-start; color: var(--accent-orange);">
+              <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+              <span class="font-bold text-body-small">Permissions Pending - request approval to activate push alerts.</span>
+            </div>
+          `;
+          if (btn) btn.style.display = 'inline-flex';
+        }
+      }
+    }
+
+    function togglePushChannel(channel, checked) {
+      pushState.channels[channel] = checked;
+      showToast(`${channel.charAt(0).toUpperCase() + channel.slice(1)} push alerts ${checked ? 'enabled' : 'disabled'}.`, "info");
+    }
+
+    function testBrowserPushNotification() {
+      showToast("Dispatching mock push popup...", "info");
+      setTimeout(() => {
+        showToast("KONTAGI Alerts: Push pipeline operations are functional!", "success");
+      }, 600);
+    }
+
+    // 3. Email notifications preferences
+    function selectEmailDigest(frequency) {
+      emailSettings.digest = frequency;
+      document.querySelectorAll('#sec-email .radio-card').forEach(el => el.classList.remove('active'));
+      const activeCard = document.getElementById(`rc-digest-${frequency}`);
+      if (activeCard) activeCard.classList.add('active');
+      showToast(`Email summary delivery set to: ${frequency.toUpperCase()}`, "success");
+    }
+
+    function saveEmailAddress() {
+      const emailInput = document.getElementById('pref-email-input');
+      if (emailInput && emailInput.value.includes('@')) {
+        emailSettings.address = emailInput.value;
+        showToast(`Delivery destination updated to: ${emailSettings.address}`, "success");
+      } else {
+        showToast("Please input a valid email address.", "error");
+      }
+    }
+
+    function toggleEmailChannel(channel, checked) {
+      emailSettings.channels[channel] = checked;
+      showToast(`Email updates for ${channel} ${checked ? 'subscribed' : 'unsubscribed'}.`, "info");
+    }
+  </script>
+</body>
+</html>

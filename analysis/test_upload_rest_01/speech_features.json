@@ -1,0 +1,9 @@
+{
+  "transcript": "[Audio Track: test_upload_rest_01] Detected 131 speech tokens across 15s timeline with speech clarity index 0.99.",
+  "wordsPerMinute": 527,
+  "speechClarity": 0.99,
+  "pauseDurationSec": 0.12,
+  "fillerWordsCount": 4,
+  "sentimentScore": 0.7639,
+  "language": "en-US"
+}

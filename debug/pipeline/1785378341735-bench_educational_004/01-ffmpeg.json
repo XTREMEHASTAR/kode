@@ -1,0 +1,13 @@
+{
+  "assetId": "bench_educational_004",
+  "videoPath": "c:/videos/benchmark_educational_4.mp4",
+  "duration": 27,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "bitrate": 4500000,
+  "keyframe_count": 27,
+  "extracted_frame_count": 27,
+  "extracted_audio_samples": 220500,
+  "contentHash": 2024790870
+}

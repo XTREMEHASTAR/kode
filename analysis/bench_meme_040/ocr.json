@@ -1,0 +1,17 @@
+{
+  "screenText": "[OCR Text Segment] Asset bench_meme_040 text overlay density: 80.0%.",
+  "captionDensity": 0.8,
+  "fontSizeEstimatePx": 68,
+  "textTimingSec": [
+    {
+      "start": 0.5,
+      "end": 18
+    },
+    {
+      "start": 18,
+      "end": 40.5
+    }
+  ],
+  "ctaDetected": true,
+  "emojiCount": 1
+}

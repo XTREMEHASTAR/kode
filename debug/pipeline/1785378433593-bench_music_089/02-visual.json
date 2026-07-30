@@ -1,0 +1,41 @@
+{
+  "brightness": 0.3456,
+  "contrast": 0.4999,
+  "saturation": 0.5999,
+  "entropy": 0.7499,
+  "histogram": [
+    0.0175,
+    0.0088,
+    0.0439,
+    0.0614,
+    0.5789,
+    0.0526,
+    0.0263,
+    0.0439,
+    0.0526,
+    0.0263,
+    0.0526,
+    0.0351,
+    0,
+    0,
+    0,
+    0
+  ],
+  "dominant_colors": [
+    "#101828",
+    "#1F2937",
+    "#374151"
+  ],
+  "motion_score": 0.2034,
+  "scene_cuts": 10,
+  "face_count": 1,
+  "object_count": 2,
+  "detectedObjects": [
+    "high_contrast_foreground",
+    "dynamic_motion"
+  ],
+  "editingRhythmScore": 0.2632,
+  "thumbnailQualityScore": 0.4073,
+  "visualNoveltyScore": 0.644,
+  "cameraMovement": "PAN"
+}

@@ -1,0 +1,1876 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — Team & Workspace Management</title>
+  <meta name="description" content="Manage workspace members, assign custom roles, adjust security settings, invite collaborators, and view system audit logs.">
+  <link rel="stylesheet" href="design-system.css">
+  <script defer src="design-system.js"></script>
+  
+  <style>
+    /* ==========================================================================
+       SANDBOX CORE LAYOUT FRAMEWORK
+       ========================================================================== */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-smooth);
+    }
+
+    .sandbox-header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-xs) var(--space-lg);
+      z-index: 1000;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .sandbox-brand h1 {
+      font-size: 1.125rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .sandbox-brand span {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .sandbox-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-control-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      background-color: var(--bg-secondary);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+    }
+
+    .sandbox-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sandbox-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .sandbox-btn.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sandbox-workspace {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      position: relative;
+    }
+
+    .emulator-viewport {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      transition: width var(--transition-smooth), height var(--transition-smooth), border-radius var(--transition-smooth);
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .emulator-viewport.desktop {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      border: none;
+    }
+
+    .emulator-viewport.tablet {
+      width: 768px;
+      height: 95%;
+      border-radius: var(--radius-lg);
+    }
+
+    .emulator-viewport.mobile {
+      width: 375px;
+      height: 85%;
+      border-radius: var(--radius-2xl);
+    }
+
+    /* Shell Layout */
+    .dashboard-shell {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .dashboard-sidebar {
+      width: 260px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      transition: transform var(--transition-smooth), width var(--transition-smooth);
+    }
+
+    .sidebar-header {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .sidebar-nav {
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .sidebar-nav-item:hover, .sidebar-nav-item.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .sidebar-nav-item.active {
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .dashboard-main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-primary);
+    }
+
+    .dashboard-header {
+      height: 64px;
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-lg);
+      flex-shrink: 0;
+    }
+
+    .dashboard-body {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: var(--space-lg);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    /* Sub Navigation Tabs */
+    .subnav-tabs-wrapper {
+      display: flex;
+      border-bottom: 1px solid var(--border-default);
+      padding: 0 var(--space-lg);
+      background-color: var(--bg-secondary);
+      flex-shrink: 0;
+      gap: var(--space-md);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .subnav-tab {
+      padding: 16px 4px;
+      font-size: 0.875rem;
+      font-weight: 500;
+      color: var(--text-secondary);
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all var(--transition-fast);
+    }
+
+    .subnav-tab:hover, .subnav-tab.active {
+      color: var(--text-primary);
+    }
+
+    .subnav-tab.active {
+      border-bottom-color: var(--brand-primary);
+      font-weight: 600;
+    }
+
+    /* Branded Components */
+    .team-section {
+      display: none;
+      animation: fadeIn var(--transition-smooth);
+    }
+
+    .team-section.active {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    /* Table styling overrides */
+    .data-table th {
+      background-color: var(--bg-secondary);
+      font-weight: 600;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-secondary);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .data-table td {
+      border-bottom: 1px solid var(--border-default);
+      vertical-align: middle;
+    }
+
+    .member-avatar {
+      width: 36px;
+      height: 36px;
+      border-radius: var(--radius-full);
+      background-color: var(--brand-primary-glow);
+      color: var(--brand-primary);
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.875rem;
+      border: 1px solid var(--border-default);
+    }
+
+    /* Dropdown context menu */
+    .action-menu {
+      position: relative;
+    }
+
+    .action-menu-popover {
+      position: absolute;
+      top: 100%;
+      right: 0;
+      background-color: var(--bg-elevated);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      z-index: 100;
+      display: none;
+      width: 140px;
+      padding: 4px;
+    }
+
+    .action-menu-popover.active {
+      display: block;
+    }
+
+    .action-menu-item {
+      display: block;
+      width: 100%;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      text-align: left;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+    }
+
+    .action-menu-item:hover {
+      background-color: var(--bg-secondary);
+      color: var(--text-primary);
+    }
+
+    .action-menu-item.danger:hover {
+      background-color: var(--accent-red-glow);
+      color: var(--accent-red);
+    }
+
+    /* Timeline style */
+    .audit-timeline {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      position: relative;
+      padding-left: var(--space-md);
+    }
+
+    .audit-timeline::before {
+      content: '';
+      position: absolute;
+      left: 6px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background-color: var(--border-default);
+    }
+
+    .timeline-item {
+      position: relative;
+      display: flex;
+      gap: var(--space-sm);
+      align-items: flex-start;
+    }
+
+    .timeline-badge {
+      width: 14px;
+      height: 14px;
+      border-radius: var(--radius-full);
+      background-color: var(--bg-primary);
+      border: 2px solid var(--brand-primary);
+      position: absolute;
+      left: -20px;
+      top: 3px;
+      z-index: 2;
+    }
+
+    .timeline-badge.alert {
+      border-color: var(--accent-red);
+    }
+
+    .timeline-badge.security {
+      border-color: var(--accent-purple);
+    }
+
+    /* Access permission grid matrix */
+    .matrix-table th, .matrix-table td {
+      text-align: center;
+      padding: var(--space-sm);
+    }
+
+    .matrix-table td:first-child, .matrix-table th:first-child {
+      text-align: left;
+      font-weight: 500;
+    }
+
+    /* Custom Drawer (Right-side slide out) */
+    .drawer {
+      position: fixed;
+      top: 0;
+      right: -420px;
+      width: 400px;
+      height: 100%;
+      background-color: var(--bg-elevated);
+      border-left: 1px solid var(--border-default);
+      box-shadow: var(--shadow-2xl);
+      z-index: 2000;
+      transition: right var(--transition-smooth);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .drawer.active {
+      right: 0;
+    }
+
+    .drawer-header {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .drawer-body {
+      padding: var(--space-md);
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+    }
+
+    .drawer-footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      justify-content: flex-end;
+      gap: var(--space-xs);
+    }
+
+    /* Responsive Viewports */
+    .emulator-viewport.tablet .dashboard-sidebar { width: 70px; }
+    .emulator-viewport.tablet .sidebar-text-label,
+    .emulator-viewport.tablet .sidebar-footer { display: none; }
+    .emulator-viewport.tablet .grid-12 {
+      grid-template-columns: repeat(2, 1fr);
+    }
+    
+    .emulator-viewport.mobile #sidebar-toggle-btn { display: inline-flex !important; }
+    .emulator-viewport.mobile .dashboard-sidebar { display: none; }
+    .emulator-viewport.mobile .dashboard-sidebar.active {
+      display: flex;
+      position: absolute;
+      left: 0;
+      top: 64px;
+      bottom: 0;
+      z-index: 950;
+      height: calc(100% - 64px);
+      width: 240px;
+      box-shadow: var(--shadow-xl);
+    }
+    .emulator-viewport.mobile .grid-12 {
+      grid-template-columns: 1fr;
+    }
+    .emulator-viewport.mobile .col-span-8,
+    .emulator-viewport.mobile .col-span-7,
+    .emulator-viewport.mobile .col-span-6,
+    .emulator-viewport.mobile .col-span-5,
+    .emulator-viewport.mobile .col-span-4,
+    .emulator-viewport.mobile .col-span-3 {
+      grid-column: span 12 / span 12;
+    }
+    .emulator-viewport.mobile .dashboard-header {
+      padding: 0 var(--space-sm);
+    }
+  </style>
+</head>
+<body class="dark">
+
+  <!-- ==============================================
+       1. SANDBOX HEADER CONTROL PANEL
+       ============================================== -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M16 8L25 13V19L16 24L7 19V13L16 8Z" fill="var(--brand-primary)" opacity="0.15"/>
+        <circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/>
+      </svg>
+      <h1>KONTAGI Portal</h1>
+      <span class="version-badge" id="sandbox-version-badge">Team Admin</span>
+    </div>
+
+    <div class="sandbox-controls">
+      <!-- Active Brand Selector -->
+      <div style="display: flex; align-items: center; gap: var(--space-xxs);">
+        <span class="text-detail font-bold text-muted sidebar-text-label">Active Account:</span>
+        <select class="select select-sm" style="width: 170px;" id="workspace-dropdown-select" onchange="switchWorkspaceBrand(this.value)">
+          <option value="pulse_energy">Pulse Energy Corp</option>
+          <option value="retro_denim">Retro Denim Apparel</option>
+          <option value="smart_home">AuraSmart IoT Hub</option>
+        </select>
+      </div>
+
+      <!-- Viewports Emulator -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" data-viewport="desktop">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 21h12m-9-4l-1 4m8-4l1 4"/></svg>
+          Desktop
+        </button>
+        <button class="sandbox-btn" data-viewport="tablet">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          Tablet
+        </button>
+        <button class="sandbox-btn" data-viewport="mobile">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
+          Mobile
+        </button>
+      </div>
+
+      <!-- Theme Switcher -->
+      <button class="btn btn-tertiary btn-sm" id="theme-toggle" style="box-shadow: none;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        Light Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- ==============================================
+       2. WORKSPACE EMULATOR VIEWPORT FRAME
+       ============================================== -->
+  <main class="sandbox-workspace">
+    <div class="emulator-viewport desktop" id="viewport-frame">
+      
+      <div class="dashboard-shell" id="team-portal-shell">
+        
+        <!-- SIDEBAR NAVIGATION -->
+        <aside class="dashboard-sidebar">
+          <div>
+            <div class="sidebar-header">
+              <div class="flex-between select-wrapper" style="width: 100%;">
+                <div class="flex-center" style="gap: var(--space-xs); cursor: pointer;">
+                  <div class="workspace-avatar" id="team-sidebar-avatar" style="width: 28px; height: 28px; font-size: 0.75rem; background-color: var(--brand-primary-glow); color: var(--brand-primary);">PE</div>
+                  <div class="sidebar-text-label" style="display: flex; flex-direction: column;">
+                    <span class="text-body-small font-bold" style="line-height: 1.2;" id="team-sidebar-brand-name">Pulse Energy</span>
+                    <span class="text-detail text-muted">Workspace Owner</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Nav Links -->
+                        <nav class="sidebar-nav">
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-bottom: 6px; text-transform: uppercase;">Workspace</span>
+              <a class="sidebar-nav-item" href="dashboard.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="sidebar-text-label">Dashboard</span>
+              </a>
+              <a class="sidebar-nav-item" href="projects.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span class="sidebar-text-label">Projects</span>
+              </a>
+              <a class="sidebar-nav-item" href="library.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+                <span class="sidebar-text-label">Creative Library</span>
+              </a>
+              <a class="sidebar-nav-item" href="hooks.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                <span class="sidebar-text-label">Hook Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="retention.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Retention Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="script.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="sidebar-text-label">Script Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="thumbnail.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15l-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Thumbnail Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="caption.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                <span class="sidebar-text-label">Caption Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="audio.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                <span class="sidebar-text-label">Audio Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="visual.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-.447.894L15 18.5V10zM5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Visual Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="trend.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <span class="sidebar-text-label">Trend Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="upload.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span class="sidebar-text-label">Upload Center</span>
+              </a>
+              <a class="sidebar-nav-item" href="lab.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                <span class="sidebar-text-label">AI Creative Lab</span>
+              </a>
+              <a class="sidebar-nav-item" href="report.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="sidebar-text-label">AI Reports</span>
+              </a>
+              <a class="sidebar-nav-item" href="creators.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Creators</span>
+              </a>
+              <a class="sidebar-nav-item" href="brand.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17V9h3a2 2 0 110 4H9m0 4h3a2 2 0 100-4"/></svg>
+                <span class="sidebar-text-label">Brand Hub</span>
+              </a>
+              <a class="sidebar-nav-item" href="coach.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="sidebar-text-label">AI Coach</span>
+              </a>
+              <a class="sidebar-nav-item" onclick="window.showToast('Loading database insights...', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                <span class="sidebar-text-label">Analytics</span>
+              </a>
+              <a class="sidebar-nav-item" href="client.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Clients</span>
+              </a>
+              <a class="sidebar-nav-item active" href="team.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0zm3 10v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg>
+                <span class="sidebar-text-label">Team Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="billing.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span class="sidebar-text-label">Billing</span>
+              </a>
+              <a class="sidebar-nav-item" href="notifications.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="sidebar-text-label">Notifications</span>
+              </a>
+              <a class="sidebar-nav-item" href="settings.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="sidebar-text-label">Settings</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">System</span>
+              <a class="sidebar-nav-item" href="admin.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="sidebar-text-label">Admin Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="mobile.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Mobile App</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">Design</span>
+              <a class="sidebar-nav-item" href="index.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                <span class="sidebar-text-label">Design System</span>
+              </a>
+            </nav>
+          </div>
+
+          <div class="sidebar-footer">
+            <div class="avatar avatar-md font-bold" style="background-color: var(--brand-secondary); color: var(--text-inverse);">JH</div>
+            <div class="sidebar-text-label" style="display: flex; flex-direction: column;">
+              <span class="text-body-small font-bold" style="line-height: 1.2;">Jaiveer Hastar</span>
+              <span class="text-detail text-secondary">jaiveer@company.com</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- MAIN WORKSPACE -->
+        <div class="dashboard-main">
+          
+          <!-- Main Module Header -->
+          <header class="dashboard-header">
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <button class="btn btn-sm btn-tertiary" style="padding: 4px; display: none;" id="sidebar-toggle-btn">
+                <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              <h2 class="text-gradient" id="team-header-title">Team Management Dashboard</h2>
+              <span class="badge badge-indigo" id="team-workspace-badge">Pulse Workspace Active</span>
+            </div>
+
+            <div class="flex-center" style="gap: var(--space-xs);">
+              <span class="text-detail font-bold text-success flex-center" style="gap: 4px;">
+                <span style="width: 8px; height: 8px; border-radius: 50%; background-color: var(--accent-green); display: inline-block;"></span>
+                All Systems Operational
+              </span>
+              <button class="btn btn-primary btn-sm flex-center" style="gap: var(--space-xxs);" onclick="openInviteDrawer()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4"/></svg>
+                Invite Member
+              </button>
+            </div>
+          </header>
+
+          <!-- Tab Selector Bar -->
+          <div class="subnav-tabs-wrapper">
+            <div class="subnav-tab active" onclick="switchTeamTab('members', this)">Members & Departments</div>
+            <div class="subnav-tab" onclick="switchTeamTab('roles', this)">Roles & Access Grid</div>
+            <div class="subnav-tab" onclick="switchTeamTab('invitations', this)">Pending Invitations</div>
+            <div class="subnav-tab" onclick="switchTeamTab('security', this)">Security & Audit Logs</div>
+          </div>
+
+          <!-- Dashboard Content Body -->
+          <div class="dashboard-body">
+
+            <!-- ==============================================
+                 A. TAB: MEMBERS & DEPARTMENTS
+                 ============================================== -->
+            <div class="team-section active" id="sec-members">
+              
+              <!-- Stats Row -->
+              <div class="grid-12" style="gap: var(--space-md);">
+                <div class="col-span-3 card p-md flex-between" style="align-items: center;">
+                  <div>
+                    <span class="text-detail font-bold text-muted block" style="text-transform: uppercase;">Total Active Members</span>
+                    <h3 class="text-display-sm font-bold text-primary" style="margin-top: var(--space-xxs);" id="stat-total-active">5</h3>
+                  </div>
+                  <div class="badge badge-indigo">Workspace</div>
+                </div>
+
+                <div class="col-span-3 card p-md flex-between" style="align-items: center;">
+                  <div>
+                    <span class="text-detail font-bold text-muted block" style="text-transform: uppercase;">Pending Invitations</span>
+                    <h3 class="text-display-sm font-bold text-primary" style="margin-top: var(--space-xxs);" id="stat-pending-invites">2</h3>
+                  </div>
+                  <div class="badge badge-warning">Awaiting</div>
+                </div>
+
+                <div class="col-span-3 card p-md flex-between" style="align-items: center;">
+                  <div>
+                    <span class="text-detail font-bold text-muted block" style="text-transform: uppercase;">MFA Compliance</span>
+                    <h3 class="text-display-sm font-bold text-success" style="margin-top: var(--space-xxs);">80%</h3>
+                  </div>
+                  <div class="badge badge-success">Secured</div>
+                </div>
+
+                <div class="col-span-3 card p-md flex-between" style="align-items: center;">
+                  <div>
+                    <span class="text-detail font-bold text-muted block" style="text-transform: uppercase;">Suspended Accounts</span>
+                    <h3 class="text-display-sm font-bold text-muted" style="margin-top: var(--space-xxs);" id="stat-suspended-count">1</h3>
+                  </div>
+                  <div class="badge badge-danger">Revoked</div>
+                </div>
+              </div>
+
+              <!-- Main Filter & Grid Layout -->
+              <div class="grid-12" style="gap: var(--space-lg); align-items: start;">
+                
+                <!-- Left column: Members Directory Table -->
+                <div class="col-span-8 card" style="padding: var(--space-md); overflow: hidden;">
+                  <div class="flex-between" style="margin-bottom: var(--space-md); flex-wrap: wrap; gap: var(--space-sm);">
+                    <h4 class="text-body-base font-bold text-primary">Workspace Directory</h4>
+                    
+                    <div class="flex-center" style="gap: var(--space-xs); width: 100%; max-width: 420px;">
+                      <input type="text" class="input input-sm" style="flex-grow: 1;" placeholder="Search by name, email, or department..." id="member-search-input" onkeyup="filterMembersTable()">
+                      <select class="select select-sm" style="width: 140px;" id="filter-role-select" onchange="filterMembersTable()">
+                        <option value="all">All Roles</option>
+                        <option value="owner">Owner</option>
+                        <option value="admin">Admin</option>
+                        <option value="manager">Manager</option>
+                        <option value="editor">Editor</option>
+                        <option value="viewer">Viewer</option>
+                      </select>
+                    </div>
+                  </div>
+
+                  <!-- Members Table -->
+                  <div style="overflow-x: auto; width: 100%;">
+                    <table class="data-table" style="width: 100%; border-collapse: collapse;" id="members-list-table">
+                      <thead>
+                        <tr>
+                          <th>Member</th>
+                          <th>Role</th>
+                          <th>Department</th>
+                          <th>MFA</th>
+                          <th>Last Active</th>
+                          <th>Status</th>
+                          <th style="width: 50px;"></th>
+                        </tr>
+                      </thead>
+                      <tbody id="members-table-body">
+                        <!-- Dynamic content loaded via JS -->
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                <!-- Right column: Departments Hub -->
+                <div class="col-span-4 card" style="padding: var(--space-md);">
+                  <div class="flex-between" style="margin-bottom: var(--space-md);">
+                    <h4 class="text-body-base font-bold text-primary">Departments Hub</h4>
+                    <button class="btn btn-secondary btn-sm" onclick="openCreateDeptModal()">+ Create</button>
+                  </div>
+
+                  <div class="flex-column" style="gap: var(--space-sm);" id="departments-list-holder">
+                    <!-- Dynamic departments loaded via JS -->
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 B. TAB: ROLES & ACCESS GRID
+                 ============================================== -->
+            <div class="team-section" id="sec-roles">
+              <div class="grid-12" style="gap: var(--space-lg); align-items: start;">
+                
+                <!-- Left Column: Selector list -->
+                <div class="col-span-4 card" style="padding: var(--space-md);">
+                  <h4 class="text-body-base font-bold text-primary" style="margin-bottom: var(--space-xs);">Access Roles</h4>
+                  <p class="text-detail text-muted" style="margin-bottom: var(--space-md);">Select a workspace role to view and customize its authorization scopes.</p>
+
+                  <div class="flex-column" style="gap: var(--space-xs);" id="roles-selector-container">
+                    <!-- Loaded dynamically via JS -->
+                  </div>
+                </div>
+
+                <!-- Right Column: Granular Permission Matrix -->
+                <div class="col-span-8 card" style="padding: var(--space-md);">
+                  <div class="flex-between" style="margin-bottom: var(--space-sm); border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-sm);">
+                    <div>
+                      <h4 class="text-body-base font-bold text-primary" id="selected-role-title">Admin Scope</h4>
+                      <p class="text-detail text-muted" style="margin-top: 2px;" id="selected-role-desc">Full administrative privileges over the workspace, campaigns, billing and settings.</p>
+                    </div>
+                    <span class="badge badge-indigo" id="selected-role-badge">System Default</span>
+                  </div>
+
+                  <!-- Granular Toggles List -->
+                  <div class="flex-column" style="gap: var(--space-md);" id="permissions-matrix-container">
+                    
+                    <div style="border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-sm);">
+                      <h5 class="text-body-small font-bold text-primary" style="margin-bottom: var(--space-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--brand-primary);">1. Workspace Administration</h5>
+                      <div class="flex-column" style="gap: var(--space-xs); margin-top: var(--space-xs);">
+                        <div class="flex-between">
+                          <div>
+                            <span class="text-body-small font-bold text-primary">Manage Billing & Subscriptions</span>
+                            <span class="text-detail text-muted block">Can view invoices, change pricing plans, and update cards.</span>
+                          </div>
+                          <input type="checkbox" class="perm-chk" data-perm="manage_billing" onchange="togglePermissionState('manage_billing', this.checked)">
+                        </div>
+                        <div class="flex-between" style="margin-top: 8px;">
+                          <div>
+                            <span class="text-body-small font-bold text-primary">Invite & Manage Workspace Members</span>
+                            <span class="text-detail text-muted block">Can send invitations, revoke membership, and modify roles.</span>
+                          </div>
+                          <input type="checkbox" class="perm-chk" data-perm="manage_users" onchange="togglePermissionState('manage_users', this.checked)">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div style="border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-sm);">
+                      <h5 class="text-body-small font-bold text-primary" style="margin-bottom: var(--space-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-purple);">2. Content & Brand Management</h5>
+                      <div class="flex-column" style="gap: var(--space-xs); margin-top: var(--space-xs);">
+                        <div class="flex-between">
+                          <div>
+                            <span class="text-body-small font-bold text-primary">Modify Brand Assets & Guidelines</span>
+                            <span class="text-detail text-muted block">Can upload logos, change brand kit colors, and update fonts.</span>
+                          </div>
+                          <input type="checkbox" class="perm-chk" data-perm="manage_brands" onchange="togglePermissionState('manage_brands', this.checked)">
+                        </div>
+                        <div class="flex-between" style="margin-top: 8px;">
+                          <div>
+                            <span class="text-body-small font-bold text-primary">Publish and Delete Campaigns</span>
+                            <span class="text-detail text-muted block">Can edit project descriptions, finalize deliverables, and delete archives.</span>
+                          </div>
+                          <input type="checkbox" class="perm-chk" data-perm="publish_campaigns" onchange="togglePermissionState('publish_campaigns', this.checked)">
+                        </div>
+                      </div>
+                    </div>
+
+                    <div>
+                      <h5 class="text-body-small font-bold text-primary" style="margin-bottom: var(--space-xs); text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent-green);">3. Client & AI Operations</h5>
+                      <div class="flex-column" style="gap: var(--space-xs); margin-top: var(--space-xs);">
+                        <div class="flex-between">
+                          <div>
+                            <span class="text-body-small font-bold text-primary">Generate AI Reports & Predictions</span>
+                            <span class="text-detail text-muted block">Full access to run retention analysis and prediction models.</span>
+                          </div>
+                          <input type="checkbox" class="perm-chk" data-perm="ai_lab" onchange="togglePermissionState('ai_lab', this.checked)">
+                        </div>
+                        <div class="flex-between" style="margin-top: 8px;">
+                          <div>
+                            <span class="text-body-small font-bold text-primary">Client Portal Approval override</span>
+                            <span class="text-detail text-muted block">Can authorize deliverables on behalf of clients.</span>
+                          </div>
+                          <input type="checkbox" class="perm-chk" data-perm="client_override" onchange="togglePermissionState('client_override', this.checked)">
+                        </div>
+                      </div>
+                    </div>
+
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 C. TAB: PENDING INVITATIONS
+                 ============================================== -->
+            <div class="team-section" id="sec-invitations">
+              <div class="card" style="padding: var(--space-md);">
+                <div class="flex-between" style="margin-bottom: var(--space-md); flex-wrap: wrap; gap: var(--space-sm);">
+                  <div>
+                    <h4 class="text-body-base font-bold text-primary">Outstanding Invites</h4>
+                    <p class="text-detail text-muted" style="margin-top: 2px;">Invitations sent to external creators or team members awaiting sign-up.</p>
+                  </div>
+                  <button class="btn btn-primary btn-sm" onclick="openInviteDrawer()">+ Send Batch Invites</button>
+                </div>
+
+                <div style="overflow-x: auto; width: 100%;">
+                  <table class="data-table" style="width: 100%; border-collapse: collapse;">
+                    <thead>
+                      <tr>
+                        <th>Invitee Email</th>
+                        <th>Assigned Role</th>
+                        <th>Assigned Department</th>
+                        <th>Secure Token Link</th>
+                        <th>Sent Date</th>
+                        <th>Expires In</th>
+                        <th style="width: 180px; text-align: right;">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody id="invites-table-body">
+                      <!-- Dynamically rendered via JS -->
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 D. TAB: SECURITY & AUDIT LOGS
+                 ============================================== -->
+            <div class="team-section" id="sec-security">
+              <div class="grid-12" style="gap: var(--space-lg); align-items: start;">
+                
+                <!-- Left Column: Activity & Audit Logs -->
+                <div class="col-span-8 card" style="padding: var(--space-md);">
+                  <div class="flex-between" style="margin-bottom: var(--space-md); flex-wrap: wrap; gap: var(--space-sm);">
+                    <div>
+                      <h4 class="text-body-base font-bold text-primary">Activity Audit Logs</h4>
+                      <p class="text-detail text-muted" style="margin-top: 2px;">Chronological system logs capturing user activities and permission overrides.</p>
+                    </div>
+                    <div style="position: relative; width: 100%; max-width: 280px;">
+                      <input type="text" class="input input-sm" placeholder="Filter logs by keywords..." id="audit-log-search" onkeyup="filterAuditLogs()">
+                    </div>
+                  </div>
+
+                  <!-- Timeline List -->
+                  <div class="audit-timeline" id="audit-timeline-container" style="max-height: 480px; overflow-y: auto; padding-right: var(--space-xs);">
+                    <!-- Dynamic logs loaded via JS -->
+                  </div>
+                </div>
+
+                <!-- Right Column: Security Policies & SSO -->
+                <div class="col-span-4 card" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-md);">
+                  <h4 class="text-body-base font-bold text-primary" style="border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-xs);">Security Protocols</h4>
+
+                  <!-- MFA Enforcement -->
+                  <div class="flex-column" style="gap: var(--space-xs);">
+                    <div class="flex-between">
+                      <span class="text-body-small font-bold text-primary">Enforce Multi-Factor (MFA)</span>
+                      <input type="checkbox" checked style="accent-color: var(--brand-primary); width: 18px; height: 18px;" onchange="showToast('MFA policy configuration updated.', 'info')">
+                    </div>
+                    <span class="text-detail text-muted">All active administrators and managers must sign in with verification tokens.</span>
+                  </div>
+
+                  <!-- SSO SAML Lock -->
+                  <div class="flex-column" style="gap: var(--space-xs); border-top: 1px solid var(--border-default); padding-top: var(--space-sm);">
+                    <div class="flex-between">
+                      <span class="text-body-small font-bold text-primary">Single Sign-On (SSO) Lock</span>
+                      <input type="checkbox" id="sso-domain-lock-chk" style="accent-color: var(--brand-primary); width: 18px; height: 18px;" onchange="toggleSSOLockState(this.checked)">
+                    </div>
+                    <span class="text-detail text-muted">Restrict access exclusively to members logged in via Azure AD / Okta SAML.</span>
+                    <input type="text" class="input input-sm" style="margin-top: 4px;" placeholder="Authorized SSO domain, e.g. company.com" id="sso-domain-input" disabled value="company.com">
+                  </div>
+
+                  <!-- Idle session expiry -->
+                  <div class="flex-column" style="gap: var(--space-xs); border-top: 1px solid var(--border-default); padding-top: var(--space-sm);">
+                    <span class="text-body-small font-bold text-primary">Max Session Idle Timeout</span>
+                    <select class="select select-sm" onchange="showToast('Idle session timeout modified.', 'info')">
+                      <option value="15">15 Minutes</option>
+                      <option value="30" selected>30 Minutes</option>
+                      <option value="60">1 Hour</option>
+                      <option value="240">4 Hours</option>
+                    </select>
+                    <span class="text-detail text-muted">Automatically logout idle team members after period.</span>
+                  </div>
+
+                  <!-- API Keys Rotation -->
+                  <div class="flex-column" style="gap: var(--space-xs); border-top: 1px solid var(--border-default); padding-top: var(--space-sm);">
+                    <span class="text-body-small font-bold text-primary">API Secrets Auto-Rotation</span>
+                    <div class="flex-between" style="align-items: center;">
+                      <span class="badge badge-indigo">30 Days Cycle</span>
+                      <button class="btn btn-secondary btn-sm" onclick="showToast('Workspace secrets manually rotated successfully.', 'success')">Force Rotation</button>
+                    </div>
+                  </div>
+                </div>
+
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+
+      <!-- ==============================================
+           3. DRAWERS & MODALS (INTERACTIVE WORKFLOWS)
+           ============================================== -->
+      
+      <!-- Drawer: Invite Member -->
+      <div class="drawer" id="invite-member-drawer">
+        <div class="drawer-header">
+          <h4 class="text-body-base font-bold text-primary">Invite Workspace Member</h4>
+          <button class="btn btn-tertiary btn-sm" onclick="closeInviteDrawer()">&times;</button>
+        </div>
+        <div class="drawer-body">
+          
+          <div class="flex-column" style="gap: 4px;">
+            <label class="text-detail font-bold text-muted">Full Name</label>
+            <input type="text" class="input" placeholder="e.g. Alice Watson" id="invite-name-input">
+          </div>
+
+          <div class="flex-column" style="gap: 4px;">
+            <label class="text-detail font-bold text-muted">Email Address</label>
+            <input type="email" class="input" placeholder="e.g. alice@company.com" id="invite-email-input">
+          </div>
+
+          <div class="flex-column" style="gap: 4px;">
+            <label class="text-detail font-bold text-muted">Department</label>
+            <select class="select" id="invite-dept-select">
+              <option value="Design">Design</option>
+              <option value="Production">Production</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Creative Analytics">Creative Analytics</option>
+              <option value="Client Operations">Client Operations</option>
+            </select>
+          </div>
+
+          <div class="flex-column" style="gap: 4px;">
+            <label class="text-detail font-bold text-muted">Access Role</label>
+            <select class="select" id="invite-role-select" onchange="previewInvitePermissions(this.value)">
+              <option value="Viewer">Viewer (Read-only)</option>
+              <option value="Editor" selected>Editor (Content Creator)</option>
+              <option value="Manager">Manager (Workflow Coordinator)</option>
+              <option value="Admin">Admin (Full Workspace Controller)</option>
+            </select>
+          </div>
+
+          <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-sm); margin-top: var(--space-xs);">
+            <span class="text-detail font-bold text-muted block" style="margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.05em;">Granted Permissions Preview</span>
+            <ul style="padding-left: 18px; margin: 0;" class="text-detail text-muted flex-column" id="invite-perms-preview-list">
+              <li>Upload deliverables & media assets</li>
+              <li>View creative insights & retention matrices</li>
+              <li>Post comments on timeline drafts</li>
+            </ul>
+          </div>
+        </div>
+        <div class="drawer-footer">
+          <button class="btn btn-secondary btn-sm" onclick="closeInviteDrawer()">Cancel</button>
+          <button class="btn btn-primary btn-sm" id="btn-submit-invite" onclick="submitWorkspaceInvite()">Send Invitation</button>
+        </div>
+      </div>
+
+      <!-- Drawer: Edit Member -->
+      <div class="drawer" id="edit-member-drawer">
+        <input type="hidden" id="edit-member-id">
+        <div class="drawer-header">
+          <h4 class="text-body-base font-bold text-primary">Edit Member Role</h4>
+          <button class="btn btn-tertiary btn-sm" onclick="closeEditDrawer()">&times;</button>
+        </div>
+        <div class="drawer-body">
+          <div class="flex-column" style="gap: 4px;">
+            <label class="text-detail font-bold text-muted">Full Name</label>
+            <input type="text" class="input" id="edit-name-input" disabled>
+          </div>
+          <div class="flex-column" style="gap: 4px;">
+            <label class="text-detail font-bold text-muted">Email Address</label>
+            <input type="text" class="input" id="edit-email-input" disabled>
+          </div>
+          <div class="flex-column" style="gap: 4px;">
+            <label class="text-detail font-bold text-muted">Access Role</label>
+            <select class="select" id="edit-role-select">
+              <option value="Admin">Admin</option>
+              <option value="Manager">Manager</option>
+              <option value="Editor">Editor</option>
+              <option value="Viewer">Viewer</option>
+            </select>
+          </div>
+          <div class="flex-column" style="gap: 4px;">
+            <label class="text-detail font-bold text-muted">Department</label>
+            <select class="select" id="edit-dept-select">
+              <option value="Design">Design</option>
+              <option value="Production">Production</option>
+              <option value="Marketing">Marketing</option>
+              <option value="Creative Analytics">Creative Analytics</option>
+              <option value="Client Operations">Client Operations</option>
+              <option value="Executive">Executive</option>
+            </select>
+          </div>
+        </div>
+        <div class="drawer-footer">
+          <button class="btn btn-secondary btn-sm" onclick="closeEditDrawer()">Cancel</button>
+          <button class="btn btn-primary btn-sm" onclick="saveMemberEdits()">Save Changes</button>
+        </div>
+      </div>
+
+      <!-- Modal: Create Department -->
+      <div class="modal-overlay" id="create-dept-modal-overlay" style="position: fixed; inset: 0; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); z-index: 2500; display: none; align-items: center; justify-content: center; padding: var(--space-md);">
+        <div class="card p-md" style="width: 440px; background-color: var(--bg-elevated); border-radius: var(--radius-lg); border: 1px solid var(--border-default);">
+          <div class="flex-between" style="border-bottom: 1px solid var(--border-default); padding-bottom: var(--space-xs); margin-bottom: var(--space-md);">
+            <h4 class="text-body-base font-bold text-primary">Create Department</h4>
+            <button class="btn btn-tertiary btn-sm" style="font-size: 1.25rem;" onclick="closeCreateDeptModal()">&times;</button>
+          </div>
+
+          <div class="flex-column" style="gap: var(--space-sm);">
+            <div class="flex-column" style="gap: 4px;">
+              <label class="text-detail font-bold text-muted">Department Name</label>
+              <input type="text" class="input" placeholder="e.g. Global Operations" id="dept-name-input">
+            </div>
+            
+            <div class="flex-column" style="gap: 4px;">
+              <label class="text-detail font-bold text-muted">Department Lead</label>
+              <select class="select" id="dept-lead-select">
+                <option value="Jaiveer Hastar">Jaiveer Hastar</option>
+                <option value="Lana Croft">Lana Croft</option>
+                <option value="Tom Rivers">Tom Rivers</option>
+              </select>
+            </div>
+
+            <div class="flex-column" style="gap: 4px;">
+              <label class="text-detail font-bold text-muted">Description</label>
+              <textarea class="textarea" rows="3" placeholder="Brief outline of departmental operations..." id="dept-desc-input"></textarea>
+            </div>
+          </div>
+
+          <div class="flex-center" style="justify-content: flex-end; gap: var(--space-xs); margin-top: var(--space-md);">
+            <button class="btn btn-secondary btn-sm" onclick="closeCreateDeptModal()">Cancel</button>
+            <button class="btn btn-primary btn-sm" onclick="submitCreateDepartment()">Create Dept</button>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </main>
+
+  <!-- ==============================================
+       4. CLIENT SIDE INTERACTIVE LOGIC SCRIPT
+       ============================================== -->
+  <script>
+    // Mock Data Store
+    const brandWorkspaces = {
+      pulse_energy: {
+        code: "PE",
+        name: "Pulse Energy",
+        statActive: 5,
+        statPending: 2,
+        statSuspended: 1,
+        statMfa: "80%",
+        members: [
+          { id: 1, name: "Jaiveer Hastar", email: "jaiveer@company.com", role: "Owner", department: "Executive", mfa: true, status: "Active", lastActive: "Just now" },
+          { id: 2, name: "Lana Croft", email: "lana@company.com", role: "Admin", department: "Client Operations", mfa: true, status: "Active", lastActive: "15m ago" },
+          { id: 3, name: "Tom Rivers", email: "tom.r@company.com", role: "Manager", department: "Production", mfa: true, status: "Active", lastActive: "2h ago" },
+          { id: 4, name: "Sarah Jenkins", email: "sarah.j@company.com", role: "Editor", department: "Design", mfa: false, status: "Active", lastActive: "Yesterday" },
+          { id: 5, name: "Bruce Wayne", email: "bruce@company.com", role: "Admin", department: "Executive", mfa: true, status: "Suspended", lastActive: "2 weeks ago" }
+        ],
+        departments: [
+          { name: "Executive", members: 2, lead: "Jaiveer Hastar", desc: "Workspace owners and general executives." },
+          { name: "Client Operations", members: 1, lead: "Lana Croft", desc: "Coordinates client reviews & project delivery." },
+          { name: "Production", members: 1, lead: "Tom Rivers", desc: "Manages content timelines & AI generation." },
+          { name: "Design", members: 1, lead: "Sarah Jenkins", desc: "Visual branding guidelines & asset hub." }
+        ],
+        invites: [
+          { email: "alice.w@company.com", role: "Editor", department: "Design", link: "https://kontagi.com/invite/tok_8923a", sent: "2026-07-12", expires: "2026-07-19" },
+          { email: "david.k@company.com", role: "Manager", department: "Marketing", link: "https://kontagi.com/invite/tok_7812f", sent: "2026-07-13", expires: "2026-07-20" }
+        ],
+        logs: [
+          { time: "Just now", type: "Security", user: "Jaiveer Hastar", detail: "Enforced MFA policies on workspace members." },
+          { time: "20 mins ago", type: "Activity", user: "Tom Rivers", detail: "Resent pending invitation to alice.w@company.com" },
+          { time: "1 hour ago", type: "Security", user: "Lana Croft", detail: "Configured SAML Domain Lock properties" },
+          { time: "3 hours ago", type: "Activity", user: "Sarah Jenkins", detail: "Adjusted Design department guideline folder permissions" },
+          { time: "Yesterday", type: "Security", user: "Jaiveer Hastar", detail: "Suspended administrative account for Bruce Wayne" }
+        ]
+      },
+      retro_denim: {
+        code: "RD",
+        name: "Retro Denim",
+        statActive: 3,
+        statPending: 1,
+        statSuspended: 0,
+        statMfa: "100%",
+        members: [
+          { id: 1, name: "Jaiveer Hastar", email: "jaiveer@company.com", role: "Owner", department: "Executive", mfa: true, status: "Active", lastActive: "Just now" },
+          { id: 8, name: "Zendaya Coleman", email: "zendaya@retrodenim.com", role: "Manager", department: "Marketing", mfa: true, status: "Active", lastActive: "5m ago" },
+          { id: 9, name: "Jacob Elordi", email: "jacob@retrodenim.com", role: "Editor", department: "Production", mfa: true, status: "Active", lastActive: "1 day ago" }
+        ],
+        departments: [
+          { name: "Executive", members: 1, lead: "Jaiveer Hastar", desc: "Workspace owners." },
+          { name: "Marketing", members: 1, lead: "Zendaya Coleman", desc: "External client marketing strategies." },
+          { name: "Production", members: 1, lead: "Jacob Elordi", desc: "Raw video asset staging." }
+        ],
+        invites: [
+          { email: "hunter@retrodenim.com", role: "Viewer", department: "Marketing", link: "https://kontagi.com/invite/tok_6745z", sent: "2026-07-14", expires: "2026-07-21" }
+        ],
+        logs: [
+          { time: "2 hours ago", type: "Activity", user: "Zendaya Coleman", detail: "Imported brand typography kit into retro_denim bucket" },
+          { time: "1 day ago", type: "Activity", user: "Jacob Elordi", detail: "Initialized project Retro Autumn Stills" }
+        ]
+      },
+      smart_home: {
+        code: "AS",
+        name: "AuraSmart IoT",
+        statActive: 4,
+        statPending: 0,
+        statSuspended: 0,
+        statMfa: "75%",
+        members: [
+          { id: 1, name: "Jaiveer Hastar", email: "jaiveer@company.com", role: "Owner", department: "Executive", mfa: true, status: "Active", lastActive: "Just now" },
+          { id: 10, name: "Tim Cook", email: "tim@aurasmart.com", role: "Admin", department: "Executive", mfa: true, status: "Active", lastActive: "30m ago" },
+          { id: 11, name: "Craig Federighi", email: "craig@aurasmart.com", role: "Manager", department: "Production", mfa: true, status: "Active", lastActive: "2h ago" },
+          { id: 12, name: "Phil Schiller", email: "phil@aurasmart.com", role: "Viewer", department: "Marketing", mfa: false, status: "Active", lastActive: "3 days ago" }
+        ],
+        departments: [
+          { name: "Executive", members: 2, lead: "Tim Cook", desc: "Executive directors of Smart Home hub." },
+          { name: "Production", members: 1, lead: "Craig Federighi", desc: "Product rendering loops and assets." },
+          { name: "Marketing", members: 1, lead: "Phil Schiller", desc: "Public announcements & copy assets." }
+        ],
+        invites: [],
+        logs: [
+          { time: "1 day ago", type: "Security", user: "Tim Cook", detail: "Provisioned Azure AD SAML sync integrations" }
+        ]
+      }
+    };
+
+    let activeWorkspace = "pulse_energy";
+
+    // System roles and initial permissions mappings
+    const systemRoles = {
+      "Owner": {
+        desc: "Full administrative ownership over the entire workspace organization.",
+        badge: "Workspace Owner",
+        permissions: { manage_billing: true, manage_users: true, manage_brands: true, publish_campaigns: true, ai_lab: true, client_override: true }
+      },
+      "Admin": {
+        desc: "Workspace administrators with full workflow control, user setups, and brand access.",
+        badge: "Admin",
+        permissions: { manage_billing: false, manage_users: true, manage_brands: true, publish_campaigns: true, ai_lab: true, client_override: true }
+      },
+      "Manager": {
+        desc: "Workflow managers handling campaign pipelines, approvals, and AI lab analysis.",
+        badge: "Manager",
+        permissions: { manage_billing: false, manage_users: false, manage_brands: true, publish_campaigns: true, ai_lab: true, client_override: false }
+      },
+      "Editor": {
+        desc: "Content creators restricted to asset uploading, template modifications, and lab drafts.",
+        badge: "Collaborator",
+        permissions: { manage_billing: false, manage_users: false, manage_brands: false, publish_campaigns: false, ai_lab: true, client_override: false }
+      },
+      "Viewer": {
+        desc: "Read-only workspace guests restricted to auditing results, viewing reports and comments.",
+        badge: "Guest",
+        permissions: { manage_billing: false, manage_users: false, manage_brands: false, publish_campaigns: false, ai_lab: false, client_override: false }
+      }
+    };
+
+    let selectedMatrixRole = "Admin";
+
+    // On Load Initializer
+    document.addEventListener("DOMContentLoaded", () => {
+      loadWorkspaceWorkspace(activeWorkspace);
+      renderRolesListSelector();
+      loadPermissionsMatrix(selectedMatrixRole);
+
+      // Setup Viewport Resizing
+      document.querySelectorAll('.sandbox-btn[data-viewport]').forEach(btn => {
+        btn.addEventListener('click', () => {
+          document.querySelectorAll('.sandbox-btn[data-viewport]').forEach(b => b.classList.remove('active'));
+          btn.classList.add('active');
+          const frame = document.getElementById('viewport-frame');
+          const viewport = btn.getAttribute('data-viewport');
+          frame.className = `emulator-viewport ${viewport}`;
+          window.showToast(`Viewport set to ${viewport}`, 'info');
+        });
+      });
+
+      // Setup Mobile Sidebar Toggle
+      const toggleBtn = document.getElementById('sidebar-toggle-btn');
+      const sidebar = document.querySelector('.dashboard-sidebar');
+      if (toggleBtn && sidebar) {
+        toggleBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          sidebar.classList.toggle('active');
+        });
+        document.addEventListener('click', () => {
+          sidebar.classList.remove('active');
+        });
+      }
+    });
+
+    // Switch workspaces dynamically
+    function switchWorkspaceBrand(value) {
+      activeWorkspace = value;
+      loadWorkspaceWorkspace(activeWorkspace);
+      showToast(`Switched active profile to ${brandWorkspaces[activeWorkspace].name}`, "success");
+    }
+
+    // Load workspace data into HTML
+    function loadWorkspaceWorkspace(key) {
+      const data = brandWorkspaces[key];
+      
+      // Update sidebar avatar & brand names
+      const avatar = document.getElementById('team-sidebar-avatar');
+      avatar.innerText = data.code;
+      document.getElementById('team-sidebar-brand-name').innerText = data.name;
+      
+      // Update page headers
+      document.getElementById('team-header-title').innerText = `${data.name} Team Management`;
+      document.getElementById('team-workspace-badge').innerText = `${data.name} active`;
+
+      // Update stat fields
+      document.getElementById('stat-total-active').innerText = data.members.filter(m => m.status === 'Active').length;
+      document.getElementById('stat-pending-invites').innerText = data.invites.length;
+      document.getElementById('stat-suspended-count').innerText = data.members.filter(m => m.status === 'Suspended').length;
+
+      // Render Tables
+      renderMembersTable();
+      renderDepartmentsList();
+      renderInvitationsTable();
+      renderAuditLogs();
+    }
+
+    // Tab switcher router
+    function switchTeamTab(target, tabElement) {
+      document.querySelectorAll('.subnav-tab').forEach(el => el.classList.remove('active'));
+      tabElement.classList.add('active');
+
+      document.querySelectorAll('.team-section').forEach(el => el.classList.remove('active'));
+      const sec = document.getElementById(`sec-${target}`);
+      if (sec) sec.classList.add('active');
+    }
+
+    // Render Members Table
+    function renderMembersTable() {
+      const tbody = document.getElementById('members-table-body');
+      tbody.innerHTML = '';
+
+      const workspace = brandWorkspaces[activeWorkspace];
+      workspace.members.forEach(m => {
+        const initials = m.name.split(' ').map(n => n[0]).join('');
+        const mfaBadge = m.mfa ? 
+          `<span style="color: var(--accent-green);" title="MFA Enabled">✔ Secured</span>` : 
+          `<span style="color: var(--accent-red);" title="No MFA">✘ Unenforced</span>`;
+        
+        let statusBadgeClass = 'badge-success';
+        if (m.status === 'Idle') statusBadgeClass = 'badge-indigo';
+        if (m.status === 'Suspended') statusBadgeClass = 'badge-danger';
+        if (m.status === 'Invited') statusBadgeClass = 'badge-warning';
+
+        tbody.innerHTML += `
+          <tr>
+            <td>
+              <div class="flex-center" style="gap: var(--space-sm); justify-content: flex-start;">
+                <div class="member-avatar">${initials}</div>
+                <div class="flex-column" style="align-items: flex-start;">
+                  <span class="text-body-small font-bold text-primary">${m.name}</span>
+                  <span class="text-detail text-muted">${m.email}</span>
+                </div>
+              </div>
+            </td>
+            <td><span class="text-body-small">${m.role}</span></td>
+            <td><span class="badge badge-indigo">${m.department}</span></td>
+            <td><span class="text-detail">${mfaBadge}</span></td>
+            <td><span class="text-detail text-muted">${m.lastActive}</span></td>
+            <td><span class="badge ${statusBadgeClass}">${m.status}</span></td>
+            <td>
+              <div class="action-menu">
+                <button class="btn btn-tertiary btn-icon-only" onclick="toggleActionPopover(${m.id}, event)">
+                  <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 5h.01M12 12h.01M12 19h.01M12 6a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2zm0 7a1 1 0 110-2 1 1 0 010 2z"/></svg>
+                </button>
+                <div class="action-menu-popover" id="popover-${m.id}">
+                  <button class="action-menu-item" onclick="openEditDrawer(${m.id})">Change Role</button>
+                  <button class="action-menu-item" onclick="toggleMemberStatus(${m.id}, 'Active')">Set Active</button>
+                  <button class="action-menu-item danger" onclick="toggleMemberStatus(${m.id}, 'Suspended')">Suspend</button>
+                  <button class="action-menu-item danger" onclick="deleteMember(${m.id})">Remove Member</button>
+                </div>
+              </div>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    // Toggle custom action menus
+    function toggleActionPopover(id, event) {
+      event.stopPropagation();
+      document.querySelectorAll('.action-menu-popover').forEach(p => {
+        if (p.id !== `popover-${id}`) p.classList.remove('active');
+      });
+      const popover = document.getElementById(`popover-${id}`);
+      if (popover) popover.classList.toggle('active');
+    }
+
+    // Close action menus when clicking outside
+    window.addEventListener('click', () => {
+      document.querySelectorAll('.action-menu-popover').forEach(p => p.classList.remove('active'));
+    });
+
+    // Search and Filter Members table
+    function filterMembersTable() {
+      const searchVal = document.getElementById('member-search-input').value.toLowerCase();
+      const roleFilter = document.getElementById('filter-role-select').value.toLowerCase();
+      const tbody = document.getElementById('members-table-body');
+      const rows = tbody.getElementsByTagName('tr');
+
+      for (let i = 0; i < rows.length; i++) {
+        const text = rows[i].textContent.toLowerCase();
+        const role = rows[i].cells[1].textContent.toLowerCase();
+
+        const matchSearch = text.includes(searchVal);
+        const matchRole = roleFilter === 'all' || role.includes(roleFilter);
+
+        if (matchSearch && matchRole) {
+          rows[i].style.display = '';
+        } else {
+          rows[i].style.display = 'none';
+        }
+      }
+    }
+
+    // Suspend / Activate team member
+    function toggleMemberStatus(memberId, targetStatus) {
+      const workspace = brandWorkspaces[activeWorkspace];
+      const member = workspace.members.find(m => m.id === memberId);
+      if (member) {
+        member.status = targetStatus;
+        showToast(`${member.name}'s account is now ${targetStatus}.`, targetStatus === 'Active' ? 'success' : 'error');
+        
+        // Add log entry
+        workspace.logs.unshift({
+          time: "Just now",
+          type: "Security",
+          user: "Jaiveer Hastar",
+          detail: `${targetStatus === 'Active' ? 'Re-activated' : 'Suspended'} membership account for ${member.name}.`
+        });
+
+        loadWorkspaceWorkspace(activeWorkspace);
+      }
+    }
+
+    // Delete workspace member
+    function deleteMember(memberId) {
+      const workspace = brandWorkspaces[activeWorkspace];
+      const index = workspace.members.findIndex(m => m.id === memberId);
+      if (index > -1) {
+        const name = workspace.members[index].name;
+        workspace.members.splice(index, 1);
+        showToast(`${name} has been removed from workspace.`, "error");
+
+        workspace.logs.unshift({
+          time: "Just now",
+          type: "Security",
+          user: "Jaiveer Hastar",
+          detail: `Removed ${name} from organization access.`
+        });
+
+        loadWorkspaceWorkspace(activeWorkspace);
+      }
+    }
+
+    // Render Departments Hub
+    function renderDepartmentsList() {
+      const holder = document.getElementById('departments-list-holder');
+      holder.innerHTML = '';
+      const workspace = brandWorkspaces[activeWorkspace];
+      
+      workspace.departments.forEach(d => {
+        holder.innerHTML += `
+          <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-sm);" class="flex-column">
+            <div class="flex-between">
+              <span class="text-body-small font-bold text-primary">${d.name}</span>
+              <span class="badge badge-indigo">${d.members} Member(s)</span>
+            </div>
+            <p class="text-detail text-muted" style="margin-top: 4px;">Lead: <span class="text-primary font-medium">${d.lead}</span></p>
+            <p class="text-detail text-muted" style="margin-top: 2px;">${d.desc}</p>
+          </div>
+        `;
+      });
+    }
+
+    // Open/Close Create Department modal
+    function openCreateDeptModal() {
+      document.getElementById('create-dept-modal-overlay').style.display = 'flex';
+    }
+
+    function closeCreateDeptModal() {
+      document.getElementById('create-dept-modal-overlay').style.display = 'none';
+      document.getElementById('dept-name-input').value = '';
+      document.getElementById('dept-desc-input').value = '';
+    }
+
+    // Create Department submission
+    function submitCreateDepartment() {
+      const name = document.getElementById('dept-name-input').value.trim();
+      const lead = document.getElementById('dept-lead-select').value;
+      const desc = document.getElementById('dept-desc-input').value.trim();
+
+      if (!name) {
+        showToast("Please supply a department name.", "error");
+        return;
+      }
+
+      const workspace = brandWorkspaces[activeWorkspace];
+      workspace.departments.push({
+        name: name,
+        members: 0,
+        lead: lead,
+        desc: desc || "No description provided."
+      });
+
+      workspace.logs.unshift({
+        time: "Just now",
+        type: "Activity",
+        user: "Jaiveer Hastar",
+        detail: `Created department hub: ${name}`
+      });
+
+      closeCreateDeptModal();
+      loadWorkspaceWorkspace(activeWorkspace);
+      showToast(`Department '${name}' created successfully.`, "success");
+    }
+
+    // Render Invitations table
+    function renderInvitationsTable() {
+      const tbody = document.getElementById('invites-table-body');
+      tbody.innerHTML = '';
+
+      const workspace = brandWorkspaces[activeWorkspace];
+      if (workspace.invites.length === 0) {
+        tbody.innerHTML = `
+          <tr>
+            <td colspan="7" style="text-align: center; padding: var(--space-xl); color: var(--text-muted);">
+              No pending workspace invitations active.
+            </td>
+          </tr>
+        `;
+        return;
+      }
+
+      workspace.invites.forEach((i, idx) => {
+        tbody.innerHTML += `
+          <tr>
+            <td><span class="text-body-small font-medium text-primary">${i.email}</span></td>
+            <td><span class="text-detail font-medium">${i.role}</span></td>
+            <td><span class="badge badge-indigo">${i.department}</span></td>
+            <td>
+              <div class="flex-center" style="gap: var(--space-xxs); justify-content: flex-start;">
+                <span class="text-detail text-muted font-mono" style="background-color: var(--bg-secondary); padding: 2px 6px; border-radius: 4px; max-width: 140px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${i.link}</span>
+                <button class="btn btn-tertiary btn-icon-only" style="padding: 2px;" onclick="copyInviteLink('${i.link}')" title="Copy Link">
+                  <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 5H6a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2v-1M8 5a2 2 0 002 2h2a2 2 0 002-2M8 5a2 2 0 012-2h2a2 2 0 012 2m0 0h2a2 2 0 012 2v3m-6-6h1.586a1 1 0 01.707.293l2.414 2.414a1 1 0 01.293.707V14"/></svg>
+                </button>
+              </div>
+            </td>
+            <td><span class="text-detail text-muted">${i.sent}</span></td>
+            <td><span class="badge badge-warning">Expires ${i.expires}</span></td>
+            <td style="text-align: right;">
+              <button class="btn btn-secondary btn-sm" onclick="resendInvite('${i.email}')">Resend</button>
+              <button class="btn btn-tertiary btn-sm text-danger" onclick="revokeInvite(${idx})">Revoke</button>
+            </td>
+          </tr>
+        `;
+      });
+    }
+
+    // Copy invite link mock helper
+    function copyInviteLink(link) {
+      navigator.clipboard.writeText(link);
+      showToast("Invite link copied to clipboard.", "success");
+    }
+
+    // Resend invite
+    function resendInvite(email) {
+      showToast(`Resending invitation email to ${email}...`, "info");
+      setTimeout(() => {
+        showToast(`Invitation successfully resent to ${email}.`, "success");
+        // Log activity
+        const workspace = brandWorkspaces[activeWorkspace];
+        workspace.logs.unshift({
+          time: "Just now",
+          type: "Activity",
+          user: "Jaiveer Hastar",
+          detail: `Resent pending workspace invite to ${email}`
+        });
+        renderAuditLogs();
+      }, 800);
+    }
+
+    // Revoke invite
+    function revokeInvite(idx) {
+      const workspace = brandWorkspaces[activeWorkspace];
+      const invite = workspace.invites[idx];
+      workspace.invites.splice(idx, 1);
+      showToast(`Invitation for ${invite.email} has been revoked.`, "error");
+      
+      workspace.logs.unshift({
+        time: "Just now",
+        type: "Security",
+        user: "Jaiveer Hastar",
+        detail: `Revoked pending invite link for ${invite.email}`
+      });
+
+      loadWorkspaceWorkspace(activeWorkspace);
+    }
+
+    // Render Audit logs
+    function renderAuditLogs() {
+      const container = document.getElementById('audit-timeline-container');
+      container.innerHTML = '';
+
+      const workspace = brandWorkspaces[activeWorkspace];
+      workspace.logs.forEach(l => {
+        let badgeClass = '';
+        if (l.type === 'Security') badgeClass = 'security';
+        if (l.type === 'Alert') badgeClass = 'alert';
+
+        container.innerHTML += `
+          <div class="timeline-item">
+            <div class="timeline-badge ${badgeClass}"></div>
+            <div class="flex-column" style="align-items: flex-start; gap: 2px;">
+              <div class="flex-center" style="gap: var(--space-xs); justify-content: flex-start;">
+                <span class="text-body-small font-bold text-primary">${l.user}</span>
+                <span class="badge ${l.type === 'Security' ? 'badge-indigo' : 'badge-secondary'}">${l.type}</span>
+                <span class="text-detail text-muted">${l.time}</span>
+              </div>
+              <span class="text-body-small text-muted" style="margin-top: 2px;">${l.detail}</span>
+            </div>
+          </div>
+        `;
+      });
+    }
+
+    // Filter audit logs timeline
+    function filterAuditLogs() {
+      const searchVal = document.getElementById('audit-log-search').value.toLowerCase();
+      const container = document.getElementById('audit-timeline-container');
+      const items = container.getElementsByClassName('timeline-item');
+
+      for (let i = 0; i < items.length; i++) {
+        const text = items[i].textContent.toLowerCase();
+        if (text.includes(searchVal)) {
+          items[i].style.display = '';
+        } else {
+          items[i].style.display = 'none';
+        }
+      }
+    }
+
+    // Drawers Actions: Invite Member
+    function openInviteDrawer() {
+      document.getElementById('invite-member-drawer').classList.add('active');
+    }
+
+    function closeInviteDrawer() {
+      document.getElementById('invite-member-drawer').classList.remove('active');
+      document.getElementById('invite-name-input').value = '';
+      document.getElementById('invite-email-input').value = '';
+    }
+
+    // Submit workspace invite
+    function submitWorkspaceInvite() {
+      const name = document.getElementById('invite-name-input').value.trim();
+      const email = document.getElementById('invite-email-input').value.trim();
+      const dept = document.getElementById('invite-dept-select').value;
+      const role = document.getElementById('invite-role-select').value;
+
+      if (!name || !email) {
+        showToast("Please fill in Name and Email address.", "error");
+        return;
+      }
+
+      // Add loading spinner mock
+      const submitBtn = document.getElementById('btn-submit-invite');
+      const origText = submitBtn.innerText;
+      submitBtn.disabled = true;
+      submitBtn.innerText = "Sending...";
+
+      setTimeout(() => {
+        const workspace = brandWorkspaces[activeWorkspace];
+        
+        // Add to invites array
+        workspace.invites.push({
+          email: email,
+          role: role,
+          department: dept,
+          link: `https://kontagi.com/invite/tok_${Math.random().toString(36).substring(2, 7)}`,
+          sent: "Today",
+          expires: "In 7 Days"
+        });
+
+        // Add log
+        workspace.logs.unshift({
+          time: "Just now",
+          type: "Activity",
+          user: "Jaiveer Hastar",
+          detail: `Invited collaborator ${name} (${email}) as ${role} in ${dept} department.`
+        });
+
+        // Restore UI
+        submitBtn.disabled = false;
+        submitBtn.innerText = origText;
+        
+        closeInviteDrawer();
+        loadWorkspaceWorkspace(activeWorkspace);
+        showToast(`Invitation sent successfully to ${email}.`, "success");
+      }, 1000);
+    }
+
+    // Update invite preview info box when role selection changes
+    function previewInvitePermissions(role) {
+      const list = document.getElementById('invite-perms-preview-list');
+      list.innerHTML = '';
+      
+      const permissionsMap = {
+        "Viewer": ["Audit creative metrics", "View campaign files", "Read timeline conversations"],
+        "Editor": ["Upload media files", "Access AI Creative Lab prediction modules", "Leave pinned feedback annotations"],
+        "Manager": ["Lock approvals on deliverables", "Adjust brand assets guidelines", "Oversee creator campaign lists"],
+        "Admin": ["Manage organization members & departments", "Edit custom roles access grid", "Force rotate secret API tokens"]
+      };
+
+      const perms = permissionsMap[role] || permissionsMap["Editor"];
+      perms.forEach(p => {
+        list.innerHTML += `<li>${p}</li>`;
+      });
+    }
+
+    // Edit Member Role Drawers
+    function openEditDrawer(memberId) {
+      const workspace = brandWorkspaces[activeWorkspace];
+      const member = workspace.members.find(m => m.id === memberId);
+      if (member) {
+        document.getElementById('edit-member-id').value = member.id;
+        document.getElementById('edit-name-input').value = member.name;
+        document.getElementById('edit-email-input').value = member.email;
+        document.getElementById('edit-role-select').value = member.role;
+        document.getElementById('edit-dept-select').value = member.department;
+        document.getElementById('edit-member-drawer').classList.add('active');
+      }
+    }
+
+    function closeEditDrawer() {
+      document.getElementById('edit-member-drawer').classList.remove('active');
+    }
+
+    function saveMemberEdits() {
+      const id = parseInt(document.getElementById('edit-member-id').value);
+      const role = document.getElementById('edit-role-select').value;
+      const dept = document.getElementById('edit-dept-select').value;
+
+      const workspace = brandWorkspaces[activeWorkspace];
+      const member = workspace.members.find(m => m.id === id);
+      if (member) {
+        const oldRole = member.role;
+        const oldDept = member.department;
+        member.role = role;
+        member.department = dept;
+
+        workspace.logs.unshift({
+          time: "Just now",
+          type: "Security",
+          user: "Jaiveer Hastar",
+          detail: `Updated membership roles for ${member.name} (Changed ${oldRole} ➔ ${role}, ${oldDept} ➔ ${dept}).`
+        });
+
+        closeEditDrawer();
+        loadWorkspaceWorkspace(activeWorkspace);
+        showToast(`Successfully updated role for ${member.name}.`, "success");
+      }
+    }
+
+    // Render roles selectors list
+    function renderRolesListSelector() {
+      const container = document.getElementById('roles-selector-container');
+      container.innerHTML = '';
+
+      Object.keys(systemRoles).forEach(r => {
+        container.innerHTML += `
+          <button class="btn btn-tertiary flex-between text-body-small font-bold" style="width: 100%; text-align: left; padding: var(--space-sm); border: 1px solid ${selectedMatrixRole === r ? 'var(--brand-primary)' : 'var(--border-default)'}; background-color: ${selectedMatrixRole === r ? 'var(--brand-primary-glow)' : 'transparent'};" onclick="selectRoleForMatrix('${r}')">
+            <span>${r}</span>
+            <span class="text-detail text-muted font-normal">${systemRoles[r].badge}</span>
+          </button>
+        `;
+      });
+    }
+
+    // Select role to show inside Matrix
+    function selectRoleForMatrix(roleKey) {
+      selectedMatrixRole = roleKey;
+      renderRolesListSelector();
+      loadPermissionsMatrix(roleKey);
+    }
+
+    // Load granular checkbox matrix values
+    function loadPermissionsMatrix(roleKey) {
+      const roleData = systemRoles[roleKey];
+      
+      document.getElementById('selected-role-title').innerText = `${roleKey} Permissions Matrix`;
+      document.getElementById('selected-role-desc').innerText = roleData.desc;
+      document.getElementById('selected-role-badge').innerText = roleKey === 'Owner' ? 'Master Default' : 'Adjustable Access';
+
+      // Load toggles
+      const checkboxes = document.querySelectorAll('.perm-chk');
+      checkboxes.forEach(chk => {
+        const permKey = chk.getAttribute('data-perm');
+        chk.checked = !!roleData.permissions[permKey];
+        // Owners permissions cannot be toggled (must remain all active)
+        chk.disabled = (roleKey === 'Owner');
+      });
+    }
+
+    // Toggle Matrix Checkboxes
+    function togglePermissionState(permKey, checked) {
+      systemRoles[selectedMatrixRole].permissions[permKey] = checked;
+      showToast(`Permission scopes adjusted for role '${selectedMatrixRole}'.`, "success");
+      
+      const workspace = brandWorkspaces[activeWorkspace];
+      workspace.logs.unshift({
+        time: "Just now",
+        type: "Security",
+        user: "Jaiveer Hastar",
+        detail: `Modified permission matrix for ${selectedMatrixRole}: set ${permKey} ➔ ${checked ? 'ON' : 'OFF'}`
+      });
+      renderAuditLogs();
+    }
+
+    // SSO Enable domain input toggle
+    function toggleSSOLockState(checked) {
+      document.getElementById('sso-domain-input').disabled = !checked;
+      showToast(checked ? "SAML/SSO Lock configuration active." : "SSO enforcement deactivated.", "info");
+
+      const workspace = brandWorkspaces[activeWorkspace];
+      workspace.logs.unshift({
+        time: "Just now",
+        type: "Security",
+        user: "Jaiveer Hastar",
+        detail: `${checked ? 'Enabled' : 'Disabled'} SAML SSO domain locking restrictions.`
+      });
+      renderAuditLogs();
+    }
+  </script>
+</body>
+</html>

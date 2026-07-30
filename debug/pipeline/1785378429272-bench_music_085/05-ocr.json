@@ -1,0 +1,19 @@
+{
+  "detected_text": "[OCR Text Segment] Asset bench_music_085 text overlay density: 64.0%.",
+  "text_count": 9,
+  "text_density": 0.64,
+  "confidence": 0.96,
+  "regions": [
+    {
+      "start": 0.5,
+      "end": 18
+    },
+    {
+      "start": 18,
+      "end": 40.5
+    }
+  ],
+  "fontSizeEstimatePx": 62,
+  "ctaDetected": true,
+  "emojiCount": 1
+}

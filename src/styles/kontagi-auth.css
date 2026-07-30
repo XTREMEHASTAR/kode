@@ -1,0 +1,432 @@
+/* ==========================================================================
+   KONTAGI AUTHENTICATION SYSTEM — MASTER STYLESHEET
+   Design System: Warm Off-White (#FAF8F3), Deep Navy (#162A3B), Brand Orange (#FF6B3D)
+   Aesthetics: Apple, Linear, Arc, Notion, Raycast, Vercel
+   ========================================================================== */
+
+.kontagi-auth-root {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #FAF8F3;
+  color: #162A3B;
+  font-family: 'Satoshi', 'General Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  display: flex;
+  overflow-x: hidden;
+  opacity: 0;
+  animation: kontagiAuthFadeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes kontagiAuthFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.995);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+/* ==========================================================================
+   LAYOUT: DESKTOP SPLIT (40% LEFT / 60% RIGHT)
+   ========================================================================== */
+
+.kontagi-auth-left {
+  width: 40%;
+  min-width: 380px;
+  background-color: #FAF8F3;
+  border-right: 1px solid #E8E3DA;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 48px;
+  position: relative;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+
+.kontagi-auth-right {
+  width: 60%;
+  flex-grow: 1;
+  background-color: #FAF8F3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 32px;
+  position: relative;
+  min-height: 100vh;
+}
+
+.kontagi-auth-form-card {
+  width: 100%;
+  max-width: 460px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+/* ==========================================================================
+   LEFT PANEL EDITORIAL & PRODUCT PREVIEW
+   ========================================================================== */
+
+.kontagi-auth-brand-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  cursor: pointer;
+  width: fit-content;
+  user-select: none;
+  transition: transform 0.2s ease;
+}
+
+.kontagi-auth-brand-row:hover {
+  transform: translateY(-1px);
+}
+
+.kontagi-auth-headline-box {
+  margin-top: 32px;
+  margin-bottom: 24px;
+}
+
+.kontagi-auth-editorial-title {
+  font-size: 2.35rem;
+  font-weight: 800;
+  line-height: 1.15;
+  letter-spacing: -0.035em;
+  color: #162A3B;
+  margin: 0 0 14px 0;
+}
+
+.kontagi-auth-editorial-subtitle {
+  font-size: 1.05rem;
+  line-height: 1.6;
+  color: #5E7182;
+  font-weight: 500;
+  margin: 0;
+  max-width: 420px;
+}
+
+/* Floating Interactive Preview Cards */
+.kontagi-preview-container {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  margin: 24px 0;
+  position: relative;
+}
+
+.kontagi-float-card {
+  background: #FFFFFF;
+  border: 1px solid #E8E3DA;
+  border-radius: 18px;
+  padding: 18px 20px;
+  box-shadow: 0 10px 28px -6px rgba(22, 42, 59, 0.05), 0 2px 6px rgba(22, 42, 59, 0.03);
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  position: relative;
+}
+
+.kontagi-float-card-1 {
+  animation: kontagiFloatSlow 4s ease-in-out infinite alternate;
+}
+
+.kontagi-float-card-2 {
+  animation: kontagiFloatSlow 4s ease-in-out infinite alternate;
+  animation-delay: -1.5s;
+  margin-left: 20px;
+}
+
+.kontagi-float-card-3 {
+  animation: kontagiFloatSlow 4s ease-in-out infinite alternate;
+  animation-delay: -3s;
+}
+
+@keyframes kontagiFloatSlow {
+  0% {
+    transform: translateY(0px);
+  }
+  100% {
+    transform: translateY(-4px);
+  }
+}
+
+.kontagi-float-card:hover {
+  transform: translateY(-4px) scale(1.01);
+  border-color: rgba(255, 107, 61, 0.4);
+  box-shadow: 0 14px 32px -6px rgba(255, 107, 61, 0.12), 0 4px 12px rgba(22, 42, 59, 0.05);
+}
+
+.kontagi-auth-left-footer {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-size: 12.5px;
+  color: #758796;
+  font-weight: 500;
+  margin-top: 24px;
+}
+
+.kontagi-auth-left-footer a {
+  color: #758796;
+  text-decoration: none;
+  transition: color 0.15s ease;
+}
+
+.kontagi-auth-left-footer a:hover {
+  color: #162A3B;
+}
+
+/* ==========================================================================
+   INPUTS & FORM CONTROLS
+   ========================================================================== */
+
+.kontagi-auth-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.kontagi-auth-label {
+  font-size: 13.5px;
+  font-weight: 700;
+  color: #162A3B;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.kontagi-auth-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.kontagi-auth-input {
+  width: 100%;
+  height: 52px;
+  border-radius: 16px;
+  background-color: #FFFFFF;
+  border: 1px solid #E8E3DA;
+  padding: 0 18px;
+  font-size: 14.5px;
+  color: #162A3B;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+}
+
+.kontagi-auth-input::placeholder {
+  color: #94A3B8;
+  font-weight: 400;
+}
+
+.kontagi-auth-input:focus {
+  border-color: #FF6B3D;
+  box-shadow: 0 0 0 4px rgba(255, 107, 61, 0.15);
+  background-color: #FFFFFF;
+}
+
+.kontagi-auth-input.has-icon-left {
+  padding-left: 46px;
+}
+
+.kontagi-auth-input.has-icon-right {
+  padding-right: 46px;
+}
+
+.kontagi-auth-icon-left {
+  position: absolute;
+  left: 16px;
+  color: #758796;
+  pointer-events: none;
+  display: flex;
+  align-items: center;
+}
+
+.kontagi-auth-icon-right-btn {
+  position: absolute;
+  right: 14px;
+  background: transparent;
+  border: none;
+  color: #758796;
+  cursor: pointer;
+  padding: 6px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  transition: color 0.15s ease;
+}
+
+.kontagi-auth-icon-right-btn:hover {
+  color: #162A3B;
+}
+
+/* ==========================================================================
+   BUTTONS: PRIMARY & SOCIAL
+   ========================================================================== */
+
+.kontagi-auth-btn-primary {
+  width: 100%;
+  height: 52px;
+  border-radius: 16px;
+  background-color: #162A3B;
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 700;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 4px 14px rgba(22, 42, 59, 0.15);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kontagi-auth-btn-primary:hover:not(:disabled) {
+  transform: translateY(-1.5px);
+  background-color: #0F1E2B;
+  box-shadow: 0 8px 24px rgba(22, 42, 59, 0.22);
+}
+
+.kontagi-auth-btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.kontagi-auth-btn-primary:disabled {
+  opacity: 0.65;
+  cursor: not-allowed;
+}
+
+.kontagi-auth-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 0;
+  color: #94A3B8;
+  font-size: 13px;
+  font-weight: 600;
+  width: 100%;
+}
+
+.kontagi-auth-divider::before,
+.kontagi-auth-divider::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background-color: #E8E3DA;
+}
+
+.kontagi-google-btn-container {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.kontagi-google-btn-container > div {
+  width: 100% !important;
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.kontagi-auth-social-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.kontagi-auth-btn-social {
+  height: 52px;
+  border-radius: 16px;
+  background-color: #FFFFFF;
+  border: 1px solid #E8E3DA;
+  color: #162A3B;
+  font-size: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.kontagi-auth-btn-social:hover:not(:disabled) {
+  transform: translateY(-1px);
+  border-color: #CBD5E1;
+  background-color: #FAF8F3;
+  box-shadow: 0 4px 12px rgba(22, 42, 59, 0.06);
+}
+
+/* ==========================================================================
+   ALERTS & NOTIFICATIONS
+   ========================================================================== */
+
+.kontagi-auth-alert {
+  padding: 14px 18px;
+  border-radius: 14px;
+  font-size: 13.5px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  line-height: 1.45;
+}
+
+.kontagi-auth-alert-error {
+  background-color: #FEF2F2;
+  border: 1px solid #FECDD3;
+  color: #991B1B;
+}
+
+.kontagi-auth-alert-success {
+  background-color: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  color: #166534;
+}
+
+/* ==========================================================================
+   RESPONSIVE DESIGN (TABLET & MOBILE)
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  .kontagi-auth-left {
+    width: 40%;
+    padding: 32px 24px;
+  }
+  .kontagi-auth-right {
+    width: 60%;
+    padding: 32px 24px;
+  }
+}
+
+@media (max-width: 768px) {
+  .kontagi-auth-root {
+    flex-direction: column;
+  }
+  .kontagi-auth-left {
+    width: 100%;
+    min-width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #E8E3DA;
+    padding: 32px 20px 24px 20px;
+  }
+  .kontagi-auth-right {
+    width: 100%;
+    padding: 32px 20px 48px 20px;
+    min-height: auto;
+  }
+  .kontagi-preview-container {
+    display: none; /* Collapse heavy preview on mobile to keep focus on form */
+  }
+  .kontagi-auth-editorial-title {
+    font-size: 1.75rem;
+  }
+  .kontagi-auth-social-row {
+    grid-template-columns: 1fr;
+  }
+}

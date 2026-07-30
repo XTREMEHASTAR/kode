@@ -1,0 +1,13 @@
+{
+  "assetId": "bench_travel_079",
+  "videoPath": "c:/videos/benchmark_travel_9.mp4",
+  "duration": 27,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "bitrate": 4500000,
+  "keyframe_count": 27,
+  "extracted_frame_count": 27,
+  "extracted_audio_samples": 220500,
+  "contentHash": 1622218520
+}

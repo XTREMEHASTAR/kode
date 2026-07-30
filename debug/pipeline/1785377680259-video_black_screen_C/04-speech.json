@@ -1,0 +1,12 @@
+{
+  "transcript": "[Audio Track: video_black_screen_C] Detected 261 speech tokens across 30s timeline with speech clarity index 0.99.",
+  "transcript_length": 114,
+  "speech_duration": 29.88,
+  "speech_ratio": 0.9961,
+  "confidence": 0.99,
+  "language": "en-US",
+  "clarity": 0.99,
+  "wordsPerMinute": 527,
+  "fillerWordsCount": 8,
+  "sentimentScore": 0.7639
+}

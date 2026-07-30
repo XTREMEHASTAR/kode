@@ -1,0 +1,17 @@
+{
+  "screenText": "[OCR Text Segment] Asset ov7mb5aak text overlay density: 80.0%.",
+  "captionDensity": 0.8,
+  "fontSizeEstimatePx": 68,
+  "textTimingSec": [
+    {
+      "start": 0.5,
+      "end": 2
+    },
+    {
+      "start": 2,
+      "end": 4.5
+    }
+  ],
+  "ctaDetected": true,
+  "emojiCount": 1
+}

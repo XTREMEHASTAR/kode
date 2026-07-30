@@ -1,0 +1,9 @@
+{
+  "bpm": 60,
+  "loudnessDb": -11.43,
+  "rmsEnergy": 0.2683,
+  "silenceRatio": 0.2836,
+  "dynamicRangeDb": 6.99,
+  "spectralCentroidHz": 3798,
+  "tempoStabilityScore": 0.7164
+}

@@ -1,0 +1,87 @@
+{
+  "full_structured_payload": {
+    "visual": {
+      "sceneCount": 1,
+      "shotLengthSec": 30,
+      "motionIntensity": 0.0098,
+      "brightness": 0.4625,
+      "saturation": 0.4862,
+      "contrast": 0.4052,
+      "faceCount": 1,
+      "faceSizePct": 0.35,
+      "cameraMovement": "STATIC",
+      "editingRhythmScore": 0.05,
+      "thumbnailQualityScore": 0.4396,
+      "visualNoveltyScore": 0.3359,
+      "colorHistogram": [
+        0,
+        0,
+        0,
+        0,
+        0.5,
+        0,
+        0,
+        0,
+        0,
+        0.25,
+        0.25,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "detectedObjects": [
+        "high_contrast_foreground"
+      ]
+    },
+    "speech": {
+      "transcript": "[Acoustic Speech Track] Detected 79 spoken dialogue tokens with speech clarity index 0.95.",
+      "wordsPerMinute": 221,
+      "speechClarity": 0.95,
+      "pauseDurationSec": 8.51,
+      "fillerWordsCount": 2,
+      "sentimentScore": 0.283,
+      "language": "en-US"
+    },
+    "ocr": {
+      "screenText": "",
+      "captionDensity": 0,
+      "fontSizeEstimatePx": 0,
+      "textTimingSec": [],
+      "ctaDetected": false,
+      "emojiCount": 0
+    },
+    "audio": {
+      "bpm": 60,
+      "loudnessDb": -11.43,
+      "rmsEnergy": 0.2683,
+      "silenceRatio": 0.2836,
+      "dynamicRangeDb": 6.99,
+      "spectralCentroidHz": 3798,
+      "tempoStabilityScore": 0.7164
+    }
+  },
+  "generated_reasoning": "Opening segment evaluates visual rhythm score (0.05) and speech clarity (0.95).",
+  "detected_niche": "TECH_EDUCATION",
+  "detected_topic": "Educational & Thought Leadership Narrative",
+  "storytelling_structure": "PROBLEM -> SOLUTION -> CTA",
+  "hook_reasoning": "Opening segment evaluates visual rhythm score (0.05) and speech clarity (0.95).",
+  "creatorIntent": "AUTHORITY_BUILDING",
+  "audienceIntent": "LEARNING",
+  "ctaQuality": 0.85,
+  "emotionalTriggers": [
+    "Curiosity",
+    "Aspiration",
+    "Learning"
+  ],
+  "strengths": [
+    "Editing Rhythm Score: 0.05",
+    "Speech Clarity: 0.95",
+    "Audio Energy RMS: 0.27"
+  ],
+  "weaknesses": [
+    "Motion Intensity Variance: 0.01",
+    "Silence Ratio: 0.28"
+  ]
+}

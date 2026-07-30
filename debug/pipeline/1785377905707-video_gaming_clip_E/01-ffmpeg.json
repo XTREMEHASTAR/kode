@@ -1,0 +1,13 @@
+{
+  "assetId": "video_gaming_clip_E",
+  "videoPath": "c:/videos/gaming_clip.mp4",
+  "duration": 60,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "bitrate": 4500000,
+  "keyframe_count": 60,
+  "extracted_frame_count": 60,
+  "extracted_audio_samples": 220500,
+  "contentHash": 1964842372
+}

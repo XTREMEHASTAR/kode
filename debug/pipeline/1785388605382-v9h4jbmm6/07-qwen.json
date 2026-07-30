@@ -1,0 +1,85 @@
+{
+  "full_structured_payload": {
+    "visual": {
+      "sceneCount": 1,
+      "shotLengthSec": 8,
+      "motionIntensity": 0.0434,
+      "brightness": 0.3913,
+      "saturation": 0.0943,
+      "contrast": 0.0786,
+      "faceCount": 1,
+      "faceSizePct": 0.35,
+      "cameraMovement": "STATIC",
+      "editingRhythmScore": 0.1875,
+      "thumbnailQualityScore": 0.2662,
+      "visualNoveltyScore": 0.115,
+      "colorHistogram": [
+        0.114,
+        0.0956,
+        0.0478,
+        0.1176,
+        0.1838,
+        0.0662,
+        0.0221,
+        0.0147,
+        0.0331,
+        0.0331,
+        0.0147,
+        0.0735,
+        0.0809,
+        0.0588,
+        0.011,
+        0.0331
+      ],
+      "detectedObjects": []
+    },
+    "speech": {
+      "transcript": "",
+      "wordsPerMinute": 0,
+      "speechClarity": 0.4815,
+      "pauseDurationSec": 0.3,
+      "fillerWordsCount": 0,
+      "sentimentScore": 0.2262,
+      "language": "none"
+    },
+    "ocr": {
+      "screenText": "",
+      "captionDensity": 0,
+      "fontSizeEstimatePx": 0,
+      "textTimingSec": [],
+      "ctaDetected": false,
+      "emojiCount": 0
+    },
+    "audio": {
+      "bpm": 159,
+      "loudnessDb": -12.87,
+      "rmsEnergy": 0.2272,
+      "silenceRatio": 0.037,
+      "dynamicRangeDb": 12.39,
+      "spectralCentroidHz": 8000,
+      "tempoStabilityScore": 0.963
+    }
+  },
+  "generated_reasoning": "Opening segment evaluates visual rhythm score (0.19) and speech clarity (0.48).",
+  "detected_niche": "TECH_EDUCATION",
+  "detected_topic": "Educational & Thought Leadership Narrative",
+  "storytelling_structure": "PROBLEM -> SOLUTION -> CTA",
+  "hook_reasoning": "Opening segment evaluates visual rhythm score (0.19) and speech clarity (0.48).",
+  "creatorIntent": "AUTHORITY_BUILDING",
+  "audienceIntent": "LEARNING",
+  "ctaQuality": 0.43,
+  "emotionalTriggers": [
+    "Curiosity",
+    "Aspiration",
+    "Learning"
+  ],
+  "strengths": [
+    "Editing Rhythm Score: 0.19",
+    "Speech Clarity: 0.48",
+    "Audio Energy RMS: 0.23"
+  ],
+  "weaknesses": [
+    "Motion Intensity Variance: 0.04",
+    "Silence Ratio: 0.04"
+  ]
+}

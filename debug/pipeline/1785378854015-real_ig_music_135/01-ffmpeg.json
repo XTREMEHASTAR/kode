@@ -1,0 +1,13 @@
+{
+  "assetId": "real_ig_music_135",
+  "videoPath": "c:/videos/real_ig_music_135.mp4",
+  "duration": 30,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "bitrate": 4500000,
+  "keyframe_count": 30,
+  "extracted_frame_count": 30,
+  "extracted_audio_samples": 220500,
+  "contentHash": 1264077629
+}

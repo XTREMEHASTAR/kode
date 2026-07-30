@@ -1,0 +1,13 @@
+{
+  "assetId": "bench_meme_032",
+  "videoPath": "c:/videos/benchmark_meme_2.mp4",
+  "duration": 21,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "bitrate": 4500000,
+  "keyframe_count": 21,
+  "extracted_frame_count": 21,
+  "extracted_audio_samples": 220500,
+  "contentHash": 560997273
+}

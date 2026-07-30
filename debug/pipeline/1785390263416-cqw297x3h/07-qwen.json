@@ -1,0 +1,96 @@
+{
+  "full_structured_payload": {
+    "visual": {
+      "sceneCount": 1,
+      "shotLengthSec": 5,
+      "motionIntensity": 0,
+      "brightness": 0.1131,
+      "saturation": 0.7937,
+      "contrast": 0.6614,
+      "faceCount": 0,
+      "faceSizePct": 0,
+      "cameraMovement": "STATIC",
+      "editingRhythmScore": 0.3,
+      "thumbnailQualityScore": 0.3324,
+      "visualNoveltyScore": 0.5291,
+      "colorHistogram": [
+        0,
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "detectedObjects": [
+        "high_contrast_foreground"
+      ]
+    },
+    "speech": {
+      "transcript": "",
+      "wordsPerMinute": 0,
+      "speechClarity": 0.4857,
+      "pauseDurationSec": 0.14,
+      "fillerWordsCount": 0,
+      "sentimentScore": 0.111,
+      "language": "none"
+    },
+    "ocr": {
+      "screenText": "[OCR Text Segment] Asset cqw297x3h text overlay density: 80.0%.",
+      "captionDensity": 0.8,
+      "fontSizeEstimatePx": 68,
+      "textTimingSec": [
+        {
+          "start": 0.5,
+          "end": 2
+        },
+        {
+          "start": 2,
+          "end": 4.5
+        }
+      ],
+      "ctaDetected": true,
+      "emojiCount": 1
+    },
+    "audio": {
+      "bpm": 110,
+      "loudnessDb": -21.09,
+      "rmsEnergy": 0.0882,
+      "silenceRatio": 0.0286,
+      "dynamicRangeDb": 3.16,
+      "spectralCentroidHz": 8000,
+      "tempoStabilityScore": 0.9714
+    }
+  },
+  "generated_reasoning": "Opening segment evaluates visual rhythm score (0.30) and speech clarity (0.49).",
+  "detected_niche": "TECH_EDUCATION",
+  "detected_topic": "Educational & Thought Leadership Narrative",
+  "storytelling_structure": "PROBLEM -> SOLUTION -> CTA",
+  "hook_reasoning": "Opening segment evaluates visual rhythm score (0.30) and speech clarity (0.49).",
+  "creatorIntent": "AUTHORITY_BUILDING",
+  "audienceIntent": "LEARNING",
+  "ctaQuality": 0.64,
+  "emotionalTriggers": [
+    "Curiosity",
+    "Aspiration",
+    "Learning"
+  ],
+  "strengths": [
+    "Editing Rhythm Score: 0.30",
+    "Speech Clarity: 0.49",
+    "Audio Energy RMS: 0.09"
+  ],
+  "weaknesses": [
+    "Motion Intensity Variance: 0.10",
+    "Silence Ratio: 0.03"
+  ]
+}

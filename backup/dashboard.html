@@ -1,0 +1,1641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — Enterprise AI SaaS Dashboard</title>
+  <!-- Design System Base Styles -->
+  <link rel="stylesheet" href="design-system.css">
+  
+  <style>
+    /* Sandbox Framework Header Layout */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-smooth);
+    }
+
+    /* Sandbox Header Control Panel */
+    .sandbox-header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-xs) var(--space-lg);
+      z-index: 1000;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .sandbox-brand h1 {
+      font-size: 1.125rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .sandbox-brand span {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .sandbox-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-control-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      background-color: var(--bg-secondary);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+    }
+
+    .sandbox-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sandbox-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .sandbox-btn.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    /* Emulator Display Frame */
+    .sandbox-workspace {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      position: relative;
+    }
+
+    /* Device Viewport Simulators */
+    .emulator-viewport {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      transition: width var(--transition-smooth), height var(--transition-smooth), border-radius var(--transition-smooth);
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .emulator-viewport.desktop {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      border: none;
+    }
+
+    .emulator-viewport.tablet {
+      width: 768px;
+      height: 95%;
+      border-radius: var(--radius-lg);
+    }
+
+    .emulator-viewport.mobile {
+      width: 375px;
+      height: 85%;
+      border-radius: var(--radius-2xl);
+    }
+
+    /* Real Dashboard Shell Styling */
+    .dashboard-shell {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    /* Sidebar Layout */
+    .dashboard-sidebar {
+      width: 260px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      transition: transform var(--transition-smooth), width var(--transition-smooth);
+    }
+
+    .sidebar-header {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .sidebar-nav {
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .sidebar-nav-item:hover, .sidebar-nav-item.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .sidebar-nav-item.active {
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    /* Content Area */
+    .dashboard-main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-primary);
+    }
+
+    /* Header */
+    .dashboard-header {
+      height: 64px;
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-lg);
+      flex-shrink: 0;
+    }
+
+    .dashboard-search-bar {
+      display: flex;
+      align-items: center;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 6px 12px;
+      gap: var(--space-xs);
+      width: 240px;
+      max-width: 100%;
+    }
+
+    /* Dashboard Scrollable Body */
+    .dashboard-body {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: var(--space-xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    /* Hero section grid mesh visual */
+    .dashboard-hero {
+      background: radial-gradient(circle at 80% 20%, rgba(99, 102, 241, 0.08) 0%, transparent 40%),
+                  linear-gradient(135deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-xl);
+      padding: var(--space-xl);
+      position: relative;
+      overflow: hidden;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: var(--space-lg);
+    }
+
+    .dashboard-hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(var(--border-default) 1px, transparent 1px),
+                        linear-gradient(90deg, var(--border-default) 1px, transparent 1px);
+      background-size: 32px 32px;
+      mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+      -webkit-mask-image: radial-gradient(circle at center, black 60%, transparent 100%);
+      opacity: 0.3;
+      pointer-events: none;
+    }
+
+    /* Score and gauges components */
+    .score-circle-container {
+      position: relative;
+      width: 80px;
+      height: 80px;
+    }
+
+    .score-circle-bg {
+      fill: none;
+      stroke: var(--border-default);
+      stroke-width: 6;
+    }
+
+    .score-circle-fill {
+      fill: none;
+      stroke: var(--brand-primary);
+      stroke-width: 6;
+      stroke-linecap: round;
+      stroke-dasharray: 251.2;
+      stroke-dashoffset: 32.6; /* 87% score value */
+      transition: stroke-dashoffset 1s ease-out;
+    }
+
+    /* Charts SVGs grids */
+    .chart-container-card {
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      padding: var(--space-md);
+      background-color: var(--bg-elevated);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+    }
+
+    .svg-line-chart {
+      width: 100%;
+      height: 180px;
+      overflow: visible;
+    }
+
+    .svg-grid-line {
+      stroke: var(--border-default);
+      stroke-width: 1;
+      stroke-dasharray: 4;
+    }
+
+    .svg-trend-path {
+      stroke: var(--brand-primary);
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      fill: none;
+    }
+
+    .svg-trend-area {
+      fill: url(#trend-gradient);
+    }
+
+    /* Activity timeline styling */
+    .timeline-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-md);
+      position: relative;
+      padding-left: var(--space-lg);
+    }
+
+    .timeline-container::before {
+      content: '';
+      position: absolute;
+      left: 7px;
+      top: 4px;
+      bottom: 4px;
+      width: 2px;
+      background-color: var(--border-default);
+    }
+
+    .timeline-item {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -21px;
+      top: 4px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background-color: var(--brand-primary);
+      border: 2px solid var(--bg-primary);
+    }
+
+    /* Upload preview horizontal container */
+    .uploads-horizontal-grid {
+      display: flex;
+      gap: var(--space-md);
+      overflow-x: auto;
+      padding-bottom: var(--space-xs);
+    }
+
+    .upload-asset-card {
+      width: 200px;
+      flex-shrink: 0;
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      background-color: var(--bg-elevated);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+
+    .upload-asset-card:hover {
+      transform: translateY(-2px);
+      border-color: var(--brand-primary);
+    }
+
+    .upload-asset-thumb {
+      height: 100px;
+      background: linear-gradient(135deg, var(--bg-tertiary) 0%, var(--bg-secondary) 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* Global AI Assistant Floating Drawer */
+    .ai-chat-drawer {
+      position: absolute;
+      top: 64px;
+      right: -360px;
+      bottom: 0;
+      width: 360px;
+      background-color: var(--bg-elevated);
+      border-left: 1px solid var(--border-default);
+      box-shadow: var(--shadow-2xl);
+      z-index: 900;
+      display: flex;
+      flex-direction: column;
+      transition: right var(--transition-smooth);
+    }
+
+    .ai-chat-drawer.active {
+      right: 0;
+    }
+
+    /* Grid Spans (Missing from base design system) */
+    .col-span-1 { grid-column: span 1 / span 1; }
+    .col-span-2 { grid-column: span 2 / span 2; }
+    .col-span-3 { grid-column: span 3 / span 3; }
+    .col-span-4 { grid-column: span 4 / span 4; }
+    .col-span-5 { grid-column: span 5 / span 5; }
+    .col-span-6 { grid-column: span 6 / span 6; }
+    .col-span-7 { grid-column: span 7 / span 7; }
+    .col-span-8 { grid-column: span 8 / span 8; }
+    .col-span-9 { grid-column: span 9 / span 9; }
+    .col-span-10 { grid-column: span 10 / span 10; }
+    .col-span-11 { grid-column: span 11 / span 11; }
+    .col-span-12 { grid-column: span 12 / span 12; }
+
+    /* Viewport adjustments */
+    /* Tablet Simulation Overrides */
+    .emulator-viewport.tablet .dashboard-sidebar {
+      width: 70px;
+    }
+
+    .emulator-viewport.tablet .sidebar-text-label,
+    .emulator-viewport.tablet .sidebar-footer {
+      display: none;
+    }
+
+    .emulator-viewport.tablet .dashboard-hero {
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .emulator-viewport.tablet .grid-12 {
+      grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+    }
+
+    .emulator-viewport.tablet .col-span-4 {
+      grid-column: span 12 / span 12 !important;
+    }
+
+    .emulator-viewport.tablet .col-span-8 {
+      grid-column: span 12 / span 12 !important;
+    }
+
+    .emulator-viewport.tablet .col-span-6 {
+      grid-column: span 12 / span 12 !important;
+    }
+
+    /* Override for top cards on tablet (Card 1 and Card 2 span 6, Card 3 spans 12) */
+    .emulator-viewport.tablet .dashboard-body > .grid-12:first-of-type > .col-span-4:nth-child(-n+2) {
+      grid-column: span 6 / span 6 !important;
+    }
+
+    /* Mobile Simulation Overrides */
+    .emulator-viewport.mobile #sidebar-toggle-btn {
+      display: inline-flex !important;
+    }
+
+    .emulator-viewport.mobile .dashboard-sidebar {
+      display: none;
+    }
+
+    .emulator-viewport.mobile .dashboard-sidebar.active {
+      display: flex;
+      position: absolute;
+      left: 0;
+      top: 64px;
+      bottom: 0;
+      z-index: 950;
+      height: calc(100% - 64px);
+      width: 240px;
+      box-shadow: var(--shadow-xl);
+      animation: dropdownEnter var(--transition-fast) forwards;
+    }
+
+    .emulator-viewport.mobile .dashboard-header {
+      padding: 0 var(--space-sm);
+    }
+
+    .emulator-viewport.mobile .dashboard-search-bar {
+      display: none;
+    }
+
+    .emulator-viewport.mobile .dashboard-hero {
+      flex-direction: column;
+      align-items: flex-start;
+      padding: var(--space-md);
+    }
+
+    .emulator-viewport.mobile .text-display-md {
+      font-size: 1.5rem !important;
+    }
+
+    .emulator-viewport.mobile .grid-12 {
+      grid-template-columns: 1fr !important;
+    }
+
+    .emulator-viewport.mobile .grid-4 {
+      grid-template-columns: 1fr !important;
+    }
+
+    .emulator-viewport.mobile .grid-3 {
+      grid-template-columns: 1fr !important;
+    }
+
+    .emulator-viewport.mobile .col-span-1,
+    .emulator-viewport.mobile .col-span-2,
+    .emulator-viewport.mobile .col-span-3,
+    .emulator-viewport.mobile .col-span-4,
+    .emulator-viewport.mobile .col-span-5,
+    .emulator-viewport.mobile .col-span-6,
+    .emulator-viewport.mobile .col-span-7,
+    .emulator-viewport.mobile .col-span-8,
+    .emulator-viewport.mobile .col-span-9,
+    .emulator-viewport.mobile .col-span-10,
+    .emulator-viewport.mobile .col-span-11,
+    .emulator-viewport.mobile .col-span-12 {
+      grid-column: span 1 / span 1 !important;
+    }
+
+    /* Skeletons loader overlay display toggles */
+    .skeleton-view-panel {
+      display: none !important;
+    }
+
+    .loading-state-active .skeleton-view-panel {
+      display: flex !important;
+    }
+
+    .loading-state-active .real-view-panel {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 1. SANDBOX HEADER CONTROL PANEL -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M16 8L25 13V19L16 24L7 19V13L16 8Z" fill="var(--brand-primary)" opacity="0.15"/>
+        <circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/>
+      </svg>
+      <h1>KONTAGI Dashboard</h1>
+      <span>Sandbox</span>
+    </div>
+
+    <div class="sandbox-controls">
+      <!-- Viewport Emulator buttons -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" data-viewport="desktop" title="Desktop emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 21h12m-9-4l-1 4m8-4l1 4"/></svg>
+          Desktop
+        </button>
+        <button class="sandbox-btn" data-viewport="tablet" title="Tablet emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          Tablet
+        </button>
+        <button class="sandbox-btn" data-viewport="mobile" title="Mobile emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
+          Mobile
+        </button>
+      </div>
+
+      <!-- State Modifiers -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" id="state-normal">Normal</button>
+        <button class="sandbox-btn" id="state-loading">Loading State</button>
+        <button class="sandbox-btn" id="state-ai-chat">Ask Aura AI</button>
+      </div>
+
+      <!-- Mode Toggles -->
+      <button class="btn btn-tertiary btn-sm" id="theme-toggle" style="box-shadow: none;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        Dark Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- 2. MAIN WORKSPACE WITH VIEWPORT SIMULATOR -->
+  <main class="sandbox-workspace">
+    <div class="emulator-viewport desktop" id="viewport-frame">
+      
+      <div class="dashboard-shell" id="dashboard-main-shell">
+        
+        <!-- ==============================================
+             SIDEBAR COMPONENT
+             ============================================== -->
+        <aside class="dashboard-sidebar">
+          <div>
+            <!-- Header Workspace Selector -->
+            <div class="sidebar-header">
+              <div class="flex-between select-wrapper" style="width: 100%;">
+                <div class="flex-center" style="gap: var(--space-xs); cursor: pointer;" onclick="toggleWorkspaceDropdown()">
+                  <div class="workspace-avatar" style="width: 28px; height: 28px; font-size: 0.75rem; background-color: var(--brand-primary-glow); color: var(--brand-primary);">GD</div>
+                  <span class="text-body-small font-bold sidebar-text-label" id="current-workspace-name">Deepmind Dev</span>
+                </div>
+                <svg class="sidebar-text-label" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </div>
+
+            <!-- Sidebar Navigations -->
+                        <nav class="sidebar-nav">
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-bottom: 6px; text-transform: uppercase;">Workspace</span>
+              <a class="sidebar-nav-item active" href="dashboard.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="sidebar-text-label">Dashboard</span>
+              </a>
+              <a class="sidebar-nav-item" href="projects.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span class="sidebar-text-label">Projects</span>
+              </a>
+              <a class="sidebar-nav-item" href="library.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+                <span class="sidebar-text-label">Creative Library</span>
+              </a>
+              <a class="sidebar-nav-item" href="memory.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/></svg>
+                <span class="sidebar-text-label">Performance Memory</span>
+              </a>
+              <a class="sidebar-nav-item" href="hooks.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                <span class="sidebar-text-label">Hook Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="retention.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Retention Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="script.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="sidebar-text-label">Script Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="thumbnail.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15l-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Thumbnail Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="caption.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                <span class="sidebar-text-label">Caption Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="audio.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                <span class="sidebar-text-label">Audio Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="visual.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-.447.894L15 18.5V10zM5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Visual Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="trend.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <span class="sidebar-text-label">Trend Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="upload.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span class="sidebar-text-label">Upload Center</span>
+              </a>
+              <a class="sidebar-nav-item" href="lab.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                <span class="sidebar-text-label">AI Creative Lab</span>
+              </a>
+              <a class="sidebar-nav-item" href="report.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="sidebar-text-label">AI Reports</span>
+              </a>
+              <a class="sidebar-nav-item" href="creators.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Creators</span>
+              </a>
+              <a class="sidebar-nav-item" href="brand.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17V9h3a2 2 0 110 4H9m0 4h3a2 2 0 100-4"/></svg>
+                <span class="sidebar-text-label">Brand Hub</span>
+              </a>
+              <a class="sidebar-nav-item" href="coach.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="sidebar-text-label">AI Coach</span>
+              </a>
+              <a class="sidebar-nav-item" onclick="window.showToast('Loading database insights...', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                <span class="sidebar-text-label">Analytics</span>
+              </a>
+              <a class="sidebar-nav-item" href="client.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Clients</span>
+              </a>
+              <a class="sidebar-nav-item" href="team.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0zm3 10v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg>
+                <span class="sidebar-text-label">Team Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="billing.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span class="sidebar-text-label">Billing</span>
+              </a>
+              <a class="sidebar-nav-item" href="notifications.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="sidebar-text-label">Notifications</span>
+              </a>
+              <a class="sidebar-nav-item" href="settings.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="sidebar-text-label">Settings</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">System</span>
+              <a class="sidebar-nav-item" href="admin.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="sidebar-text-label">Admin Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="mobile.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Mobile App</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">Design</span>
+              <a class="sidebar-nav-item" href="index.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                <span class="sidebar-text-label">Design System</span>
+              </a>
+            </nav>
+          </div>
+
+          <!-- Sidebar Footer User Profile -->
+          <div class="sidebar-footer">
+            <div class="workspace-avatar" style="background-color: var(--accent-purple-bg); color: var(--accent-purple); width: 32px; height: 32px; font-size: 0.875rem;">JH</div>
+            <div style="flex-grow: 1; overflow: hidden;" class="sidebar-text-label">
+              <span class="text-body-small font-bold" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Jaiveer Hastar</span>
+              <span class="text-detail text-secondary" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">jaiveer@company.com</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- ==============================================
+             DASHBOARD CONTENT PANEL
+             ============================================== -->
+        <div class="dashboard-main">
+          
+          <!-- Header Area -->
+          <header class="dashboard-header">
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <!-- Toggle Sidebar mobile only icon -->
+              <button class="btn btn-sm btn-tertiary" style="padding: 4px; display: none;" id="sidebar-toggle-btn">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              
+              <!-- Breadcrumbs -->
+              <nav class="text-detail font-medium text-muted flex-center" style="gap: 4px;">
+                <span>Workspaces</span>
+                <span style="color: var(--border-active);">&bull;</span>
+                <span class="text-gradient">Deepmind Dev</span>
+                <span style="color: var(--border-active);">&bull;</span>
+                <span class="text-primary font-bold">Dashboard</span>
+              </nav>
+            </div>
+
+            <!-- Header Controls -->
+            <div class="flex-center" style="gap: var(--space-md);">
+              <!-- Global Search -->
+              <div class="dashboard-search-bar" onclick="window.showToast('Global Search opened (Press ⌘K)', 'info')">
+                <svg width="14" height="14" fill="none" stroke="var(--text-secondary)" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <span class="text-detail text-secondary">Search...</span>
+                <span class="text-detail text-muted font-mono" style="margin-left: auto; background-color: var(--bg-tertiary); padding: 1px 4px; border-radius: var(--radius-sm); font-size: 0.625rem; border: 1px solid var(--border-default);">⌘K</span>
+              </div>
+
+              <!-- Notifications Icon -->
+              <button class="btn btn-sm btn-tertiary" style="padding: 6px; position: relative;" onclick="toggleNotificationsMenu(this)">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span style="position: absolute; top: 1px; right: 1px; width: 6px; height: 6px; background-color: var(--accent-red); border-radius: 50%;"></span>
+              </button>
+
+              <!-- Global AI Assistant Trigger -->
+              <button class="btn btn-sm btn-ai" style="gap: var(--space-xs);" onclick="toggleAIChatDrawer()">
+                <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1"/></svg>
+                Aura AI
+              </button>
+            </div>
+          </header>
+
+          <!-- Dashboard Body -->
+          <div class="dashboard-body">
+            
+            <!-- ==============================================
+                 HERO SECTION
+                 ============================================== -->
+            <section class="dashboard-hero">
+              <div>
+                <h1 class="text-display-md text-gradient" style="margin-bottom: var(--space-xxs);">Welcome Back, Jaiveer</h1>
+                <p class="text-body-small text-muted" style="max-width: 480px; line-height: 1.5;">Your workspaces are configured correctly. Aura AI has mapped 3 clusters and analyzed 4 creative assets in the last 24 hours.</p>
+                
+                <div style="display: flex; gap: var(--space-sm); margin-top: var(--space-md);">
+                  <button class="btn btn-primary btn-sm" onclick="window.showToast('Loading new model setup...', 'info')">Deploy Model</button>
+                  <button class="btn btn-secondary btn-sm" onclick="window.showToast('Initiating model training...', 'info')">Run Analysis</button>
+                </div>
+              </div>
+
+              <!-- System Uptime Badge Group -->
+              <div class="card elevation-1" style="background-color: var(--glass-bg); backdrop-filter: blur(10px); border-color: var(--glass-border); width: 220px; flex-shrink: 0; display: flex; flex-direction: column; gap: 8px;">
+                <div class="flex-between">
+                  <span class="text-detail font-mono text-secondary">CLUSTERS LOAD</span>
+                  <span class="badge badge-success">98.4% UPTIME</span>
+                </div>
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                  <div class="flex-between">
+                    <span class="text-detail text-muted">CPU (3 nodes)</span>
+                    <span class="text-detail font-bold font-mono">42.8%</span>
+                  </div>
+                  <div class="skeleton" style="height: 4px; width: 100%; border-radius: var(--radius-sm); overflow: hidden; background-color: var(--border-default);">
+                    <div style="height: 100%; width: 42.8%; background-color: var(--brand-primary);"></div>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ==============================================
+                 KPI BLOCK ROW: CREATIVE SCORE, PUBLISH READINESS, QUICK ACTIONS
+                 ============================================== -->
+            <div class="grid-12" style="gap: var(--space-lg);">
+              
+              <!-- [1] Creative Score Card -->
+              <div class="card col-span-4 flex-between" style="align-items: center; gap: var(--space-md);">
+                <div style="flex-grow: 1;">
+                  <span class="text-detail font-bold text-muted font-mono" style="text-transform: uppercase;">CREATIVE SCORE</span>
+                  <h2 style="margin: var(--space-xxs) 0;">Optimal</h2>
+                  <p class="text-detail text-secondary">Asset engagement metrics exceed industry benchmark ranges.</p>
+                </div>
+                
+                <div class="score-circle-container">
+                  <svg viewBox="0 0 100 100" style="transform: rotate(-90deg); width: 100%; height: 100%;">
+                    <circle class="score-circle-bg" cx="50" cy="50" r="40"/>
+                    <circle class="score-circle-fill" cx="50" cy="50" r="40"/>
+                  </svg>
+                  <div class="flex-center" style="position: absolute; inset: 0; font-size: 1.125rem; font-weight: 700; font-family: var(--font-sans);">
+                    87%
+                  </div>
+                </div>
+              </div>
+
+              <!-- [2] Publish Readiness Card -->
+              <div class="card col-span-4" style="display: flex; flex-direction: column; justify-content: space-between; gap: var(--space-sm);">
+                <div>
+                  <span class="text-detail font-bold text-muted font-mono" style="text-transform: uppercase;">PUBLISH READINESS</span>
+                  <div class="flex-between" style="align-items: baseline; margin-top: var(--space-xs);">
+                    <span class="text-display-md" id="readiness-score-val" style="font-size: 1.75rem;">94%</span>
+                    <span class="badge badge-success" id="readiness-badge-el">HIGHLY DEPLOYABLE</span>
+                  </div>
+                </div>
+
+                <div style="display: flex; flex-direction: column; gap: 4px;">
+                  <div class="skeleton" style="height: 6px; width: 100%; border-radius: var(--radius-sm); overflow: hidden; background-color: var(--border-default);">
+                    <div id="readiness-bar-fill" style="height: 100%; width: 94%; background-color: var(--accent-green);"></div>
+                  </div>
+                  <span class="text-detail text-secondary" id="readiness-checklist-text">11 of 12 checklist compliance standards resolved.</span>
+                </div>
+              </div>
+
+              <!-- [3] Quick Actions -->
+              <div class="card col-span-4" style="display: flex; flex-direction: column; gap: var(--space-xs);">
+                <span class="text-detail font-bold text-muted font-mono" style="text-transform: uppercase; margin-bottom: 4px;">QUICK PIPELINE ACTIONS</span>
+                <div class="grid-12" style="gap: 8px;">
+                  <button class="btn btn-tertiary btn-sm col-span-6" onclick="window.showToast('Opening telemetry logs...', 'info')">View Log</button>
+                  <button class="btn btn-tertiary btn-sm col-span-6" onclick="window.showToast('Rebuilding edge models...', 'info')">Rebuild</button>
+                  <button class="btn btn-tertiary btn-sm col-span-6" onclick="window.showToast('Configuring API limits...', 'info')">Limits</button>
+                  <button class="btn btn-tertiary btn-sm col-span-6" onclick="window.showToast('Opening invites menu...', 'info')">Invite</button>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ==============================================
+                 MIDDLE ROW: PROJECTS OVERVIEW & AI SUGGESTIONS
+                 ============================================== -->
+            <div class="grid-12" style="gap: var(--space-lg);">
+              
+              <!-- [1] Projects Overview Table -->
+              <div class="card col-span-8" style="display: flex; flex-direction: column; gap: var(--space-md);">
+                <div class="flex-between">
+                  <div>
+                    <h3 style="margin-bottom: var(--space-xxs);">Projects Overview</h3>
+                    <p class="text-detail text-secondary">Recent operational inference pipeline run tracking logs.</p>
+                  </div>
+                  <button class="btn btn-tertiary btn-sm" onclick="window.showToast('Refreshing pipelines table...', 'info')">Refresh</button>
+                </div>
+
+                <!-- Simulation State (Real Content) -->
+                <div class="real-view-panel table-container">
+                  <table class="table">
+                    <thead>
+                      <tr>
+                        <th>Asset Name</th>
+                        <th>Status</th>
+                        <th>Confidence</th>
+                        <th>Latency</th>
+                        <th>Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td class="font-bold text-primary">hero_video_inference.mp4</td>
+                        <td><span class="badge badge-success">COMPLETED</span></td>
+                        <td class="font-mono">98.2%</td>
+                        <td class="text-secondary font-mono">14ms</td>
+                        <td>
+                          <button class="btn btn-ghost btn-sm" onclick="window.showToast('Opening video report...', 'info')">Report</button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="font-bold text-primary">banner_creative_ad.png</td>
+                        <td><span class="badge badge-success">COMPLETED</span></td>
+                        <td class="font-mono">96.8%</td>
+                        <td class="text-secondary font-mono">8ms</td>
+                        <td>
+                          <button class="btn btn-ghost btn-sm" onclick="window.showToast('Opening banner report...', 'info')">Report</button>
+                        </td>
+                      </tr>
+                      <tr>
+                        <td class="font-bold text-primary">model_v4_test_loop.pt</td>
+                        <td><span class="badge badge-info">RUNNING</span></td>
+                        <td class="font-mono">--</td>
+                        <td class="text-secondary font-mono">180ms</td>
+                        <td>
+                          <button class="btn btn-ghost btn-sm" onclick="window.showToast('Connecting debug terminal...', 'info')">Monitor</button>
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+
+                <!-- Simulation State (Loading Skeletons) -->
+                <div class="skeleton-view-panel" style="display: none; flex-direction: column; gap: var(--space-md);">
+                  <div class="skeleton" style="height: 32px; width: 100%; border-radius: var(--radius-sm);"></div>
+                  <div class="skeleton" style="height: 32px; width: 100%; border-radius: var(--radius-sm);"></div>
+                  <div class="skeleton" style="height: 32px; width: 100%; border-radius: var(--radius-sm);"></div>
+                </div>
+              </div>
+
+              <!-- [2] AI Suggestions Panel -->
+              <div class="card col-span-4" style="display: flex; flex-direction: column; gap: var(--space-md);">
+                <div>
+                  <h3 style="margin-bottom: var(--space-xxs);">AI Suggestion Nodes</h3>
+                  <p class="text-detail text-secondary">Neural pipeline warning alerts and configuration tips.</p>
+                </div>
+
+                <div class="real-view-panel" style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                  <!-- Suggestion Item 1 -->
+                  <div class="card elevation-1" style="background-color: var(--bg-secondary); border-left: 3px solid var(--accent-orange); display: flex; flex-direction: column; gap: var(--space-xxs); padding: var(--space-sm);">
+                    <div class="flex-between">
+                      <span class="text-detail font-bold text-primary">⚠️ Video compression config</span>
+                      <span class="text-detail text-muted">2h ago</span>
+                    </div>
+                    <p class="text-detail text-secondary">Aura AI recommends re-encoding `hero_video_inference.mp4` using H.264 profile metrics to resolve mobile playback latencies.</p>
+                  </div>
+
+                  <!-- Suggestion Item 2 -->
+                  <div class="card elevation-1" style="background-color: var(--bg-secondary); border-left: 3px solid var(--accent-red); display: flex; flex-direction: column; gap: var(--space-xxs); padding: var(--space-sm);">
+                    <div class="flex-between">
+                      <span class="text-detail font-bold text-primary">⚡ Domain ownership check</span>
+                      <span class="text-detail text-muted">1d ago</span>
+                    </div>
+                    <p class="text-detail text-secondary">Confirm DNS mappings for `.deepmind-dev.insaas.ai` to unlock workspace team invites.</p>
+                  </div>
+                </div>
+
+                <div class="skeleton-view-panel" style="display: none; flex-direction: column; gap: var(--space-sm);">
+                  <div class="skeleton" style="height: 80px; width: 100%; border-radius: var(--radius-md);"></div>
+                  <div class="skeleton" style="height: 80px; width: 100%; border-radius: var(--radius-md);"></div>
+                </div>
+              </div>
+
+            </div>
+
+            <!-- ==============================================
+                 ANALYTICS & PERFORMANCE TRENDS
+                 ============================================== -->
+            <div class="grid-12" style="gap: var(--space-lg);">
+              
+              <!-- Performance trends Line Chart -->
+              <div class="card col-span-8 chart-container-card">
+                <div class="flex-between">
+                  <div>
+                    <h3 style="margin-bottom: var(--space-xxs);">Performance Trends</h3>
+                    <p class="text-detail text-secondary">Active query latency monitoring over the previous 7 operational cycles.</p>
+                  </div>
+                  <div class="flex-center" style="gap: var(--space-xs);">
+                    <span class="badge badge-info">LATENCY (MS)</span>
+                    <span class="badge badge-success">COMPUTE LOAD</span>
+                  </div>
+                </div>
+
+                <!-- SVG Graph simulation -->
+                <div class="real-view-panel">
+                  <svg class="svg-line-chart" viewBox="0 0 700 180">
+                    <defs>
+                      <linearGradient id="trend-gradient" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stop-color="var(--brand-primary)" stop-opacity="0.15"/>
+                        <stop offset="100%" stop-color="var(--brand-primary)" stop-opacity="0.0"/>
+                      </linearGradient>
+                    </defs>
+                    <!-- Grid Lines -->
+                    <line x1="0" y1="30" x2="700" y2="30" class="svg-grid-line"/>
+                    <line x1="0" y1="80" x2="700" y2="80" class="svg-grid-line"/>
+                    <line x1="0" y1="130" x2="700" y2="130" class="svg-grid-line"/>
+                    
+                    <!-- Graph path -->
+                    <path d="M 0 140 Q 116 110 233 130 T 466 70 T 700 40 L 700 180 L 0 180 Z" class="svg-trend-area"/>
+                    <path d="M 0 140 Q 116 110 233 130 T 466 70 T 700 40" class="svg-trend-path"/>
+                    
+                    <!-- Nodes -->
+                    <circle cx="233" cy="130" r="4" fill="var(--bg-primary)" stroke="var(--brand-primary)" stroke-width="2"/>
+                    <circle cx="466" cy="70" r="4" fill="var(--bg-primary)" stroke="var(--brand-primary)" stroke-width="2"/>
+                    <circle cx="700" cy="40" r="4" fill="var(--bg-primary)" stroke="var(--brand-primary)" stroke-width="2"/>
+                  </svg>
+                </div>
+
+                <div class="skeleton-view-panel" style="display: none; height: 180px; width: 100%; border-radius: var(--radius-md);">
+                  <div class="skeleton" style="height: 100%; width: 100%; border-radius: var(--radius-md);"></div>
+                </div>
+              </div>
+
+              <!-- Mini metrics cards (Recent clients, timelines) -->
+              <div class="col-span-4" style="display: flex; flex-direction: column; gap: var(--space-lg);">
+                
+                <!-- Recent Clients -->
+                <div class="card" style="display: flex; flex-direction: column; gap: var(--space-sm);">
+                  <span class="text-detail font-bold text-muted font-mono" style="text-transform: uppercase;">ACTIVE API CLIENTS</span>
+                  <div class="flex-center" style="gap: var(--space-xs); justify-content: flex-start;">
+                    <div class="workspace-avatar" style="background-color: var(--accent-blue-bg); color: var(--accent-blue); width: 28px; height: 28px; font-size: 0.75rem;">G</div>
+                    <div class="workspace-avatar" style="background-color: var(--accent-purple-bg); color: var(--accent-purple); width: 28px; height: 28px; font-size: 0.75rem;">S</div>
+                    <div class="workspace-avatar" style="background-color: var(--accent-green-bg); color: var(--accent-green); width: 28px; height: 28px; font-size: 0.75rem;">V</div>
+                    <div class="workspace-avatar" style="background-color: var(--bg-secondary); color: var(--text-secondary); width: 28px; height: 28px; font-size: 0.75rem; font-weight: 500;">+2</div>
+                  </div>
+                </div>
+
+                <!-- Recent Analysis -->
+                <div class="card" style="display: flex; flex-direction: column; gap: var(--space-xs);">
+                  <span class="text-detail font-bold text-muted font-mono" style="text-transform: uppercase; margin-bottom: 4px;">RECENT COMPLETED ANALYSIS</span>
+                  <div class="flex-between">
+                    <span class="text-body-small font-medium text-primary">contrast_report_v2.json</span>
+                    <span class="text-detail text-secondary font-mono">1.2 KB</span>
+                  </div>
+                  <div class="flex-between" style="border-top: 1px solid var(--border-default); padding-top: var(--space-xxs);">
+                    <span class="text-body-small font-medium text-primary">metadata_index.csv</span>
+                    <span class="text-detail text-secondary font-mono">48 KB</span>
+                  </div>
+                </div>
+
+              </div>
+
+            </div>
+
+            <!-- ==============================================
+                 RECENT UPLOADS HORIZONTAL GRID
+                 ============================================== -->
+            <section style="display: flex; flex-direction: column; gap: var(--space-md);">
+              <div>
+                <h3>Recent Uploads</h3>
+                <p class="text-detail text-secondary">Media assets recently added to organization workspaces for neural indexing.</p>
+              </div>
+
+              <div class="uploads-horizontal-grid">
+                <!-- Asset Card 1 -->
+                <div class="upload-asset-card" onclick="window.showToast('Viewing video media preview...', 'info')">
+                  <div class="upload-asset-thumb">
+                    <!-- Fake placeholder image logo -->
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 10l5.555-3.678A1 1 0 0122 7.158v9.684a1 1 0 01-1.445.892L15 14v-4z"/><rect x="2" y="5" width="13" height="14" rx="2"/></svg>
+                    <span class="badge badge-success" style="position: absolute; bottom: 8px; right: 8px;">98% CONF</span>
+                  </div>
+                  <div style="padding: var(--space-sm); display: flex; flex-direction: column; gap: 2px;">
+                    <span class="text-body-small font-bold" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">hero_video_inference.mp4</span>
+                    <span class="text-detail text-secondary">24.8 MB &bull; Video format</span>
+                  </div>
+                </div>
+
+                <!-- Asset Card 2 -->
+                <div class="upload-asset-card" onclick="window.showToast('Viewing image asset preview...', 'info')">
+                  <div class="upload-asset-thumb">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+                    <span class="badge badge-success" style="position: absolute; bottom: 8px; right: 8px;">96% CONF</span>
+                  </div>
+                  <div style="padding: var(--space-sm); display: flex; flex-direction: column; gap: 2px;">
+                    <span class="text-body-small font-bold" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">banner_creative_ad.png</span>
+                    <span class="text-detail text-secondary">1.4 MB &bull; PNG vector</span>
+                  </div>
+                </div>
+
+                <!-- Asset Card 3 -->
+                <div class="upload-asset-card" onclick="window.showToast('Viewing data csv asset preview...', 'info')">
+                  <div class="upload-asset-thumb">
+                    <svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>
+                    <span class="badge badge-info" style="position: absolute; bottom: 8px; right: 8px;">UNINDEXED</span>
+                  </div>
+                  <div style="padding: var(--space-sm); display: flex; flex-direction: column; gap: 2px;">
+                    <span class="text-body-small font-bold" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">model_validation_log.csv</span>
+                    <span class="text-detail text-secondary">420 KB &bull; CSV database</span>
+                  </div>
+                </div>
+              </div>
+            </section>
+
+            <!-- ==============================================
+                 BOTTOM ROW: ACTIVITY TIMELINE
+                 ============================================== -->
+            <section class="card" style="display: flex; flex-direction: column; gap: var(--space-md);">
+              <div>
+                <h3>Workspace Activity Timeline</h3>
+                <p class="text-detail text-secondary">Real-time system events, audit reports, and user logs.</p>
+              </div>
+
+              <div class="timeline-container">
+                <!-- Timeline 1 -->
+                <div class="timeline-item">
+                  <div class="timeline-dot"></div>
+                  <div class="flex-between">
+                    <span class="text-body-small font-bold text-primary">Inference pipeline run success</span>
+                    <span class="text-detail text-muted font-mono">10:48 AM</span>
+                  </div>
+                  <p class="text-detail text-secondary">Model `model_v4` processed `hero_video_inference.mp4` accurately with a latency rating of 14ms.</p>
+                </div>
+
+                <!-- Timeline 2 -->
+                <div class="timeline-item">
+                  <div class="timeline-dot"></div>
+                  <div class="flex-between">
+                    <span class="text-body-small font-bold text-primary">New workspace client configured</span>
+                    <span class="text-detail text-muted font-mono">08:14 AM</span>
+                  </div>
+                  <p class="text-detail text-secondary">API client credentials generated for user `jaiveer-dev` with member permissions.</p>
+                </div>
+
+                <!-- Timeline 3 -->
+                <div class="timeline-item">
+                  <div class="timeline-dot" style="background-color: var(--accent-orange);"></div>
+                  <div class="flex-between">
+                    <span class="text-body-small font-bold text-primary">Subscription tier updated to Growth Pro</span>
+                    <span class="text-detail text-muted font-mono">Yesterday</span>
+                  </div>
+                  <p class="text-detail text-secondary">Billing manager upgraded account status from Starter Tier to Growth Pro Tier.</p>
+                </div>
+              </div>
+            </section>
+
+          </div>
+        </div>
+
+        <!-- ==============================================
+             AI ASSISTANT DRAWER COMPONENT
+             ============================================== -->
+        <div class="ai-chat-drawer" id="ai-chat-drawer">
+          <!-- Drawer Header -->
+          <div class="flex-between" style="padding: var(--space-md); border-bottom: 1px solid var(--border-default); background-color: var(--bg-secondary);">
+            <div class="flex-center" style="gap: var(--space-xs);">
+              <svg width="18" height="18" fill="none" stroke="var(--brand-primary)" stroke-width="2" viewBox="0 0 24 24"><path d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1"/></svg>
+              <span class="text-body-small font-bold text-gradient">Aura AI Assistant</span>
+            </div>
+            <button class="btn btn-sm btn-ghost" onclick="toggleAIChatDrawer()" style="padding: 4px; font-size: 1.25rem;">&times;</button>
+          </div>
+
+          <!-- Drawer Messages List -->
+          <div class="sidebar-nav" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-md);" id="ai-chat-messages">
+            <!-- Message 1 -->
+            <div class="card elevation-1" style="align-self: flex-start; background-color: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-sm); width: 85%;">
+              <span class="text-detail font-bold" style="color: var(--brand-primary); display: block; margin-bottom: 2px;">Aura AI</span>
+              <p class="text-detail text-secondary" style="line-height: 1.4;">Hello Jaiveer! I have scanned your workspace layout. Let me know if you need assistance configuring the model clusters or resolving playback latency issues.</p>
+            </div>
+          </div>
+
+          <!-- Drawer Input Form -->
+          <form style="padding: var(--space-md); border-top: 1px solid var(--border-default); background-color: var(--bg-secondary); display: flex; gap: var(--space-xs);" id="ai-chat-form" onsubmit="handleAIChatSubmit(event)">
+            <input type="text" class="input" style="flex-grow: 1;" placeholder="Ask Aura AI..." id="ai-chat-input" required>
+            <button type="submit" class="btn btn-primary" style="padding: 0 var(--space-md);">Send</button>
+          </form>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Global Toast Alerts -->
+  <div class="toast-container" id="global-toast-container"></div>
+
+  <!-- Interactive JavaScript Logic -->
+  <script src="db-client.js"></script>
+  <script>
+    // 1. Theme and Viewport State Controllers
+    let currentTheme = 'light';
+    let currentViewport = 'desktop';
+
+    let currentProjectId = '';
+
+    async function initDashboardData() {
+      try {
+        const workspaces = await window.dbClient.getWorkspaces();
+        const activeWSKey = localStorage.getItem('kontagi-active-workspace') || 'pulse_energy';
+        const currentWS = workspaces.find(w => w.slug === activeWSKey.replace('_', '-')) || workspaces[0];
+        
+        // Update sidebar / workspace names
+        document.getElementById('current-workspace-name').innerText = currentWS.name;
+        const avatar = document.querySelector('.sidebar-header .workspace-avatar');
+        if (avatar) {
+          avatar.innerText = currentWS.avatar_text || 'WS';
+          avatar.style.backgroundColor = currentWS.avatar_bg || 'var(--brand-primary-glow)';
+          avatar.style.color = currentWS.avatar_color || 'var(--brand-primary)';
+        }
+
+        const projects = await window.dbClient.getProjects(currentWS.id);
+        const currentProject = projects[0] || { id: 'd4e5f67a-8b9c-0d1e-2f3a-4b5c6d7e8f9a' };
+        currentProjectId = currentProject.id;
+
+        const videos = await window.dbClient.getVideos(currentProjectId);
+        
+        // Parse selected video ID from URL query parameters
+        const urlParams = new URLSearchParams(window.location.search);
+        const selectedId = urlParams.get('id');
+        
+        let targetVideo = null;
+        if (selectedId) {
+          targetVideo = videos.find(v => v.id === selectedId);
+        }
+        
+        // Fallback to first completed video if no selected ID or if target video not found
+        const completedVideos = videos.filter(v => v.status === 'completed');
+        if (!targetVideo && completedVideos.length > 0) {
+          targetVideo = completedVideos[0];
+        }
+
+        // 1. Creative Score Card
+        const scoreVal = targetVideo ? targetVideo.score : 0;
+        let scoreLabel = 'No Data';
+        if (scoreVal >= 90) scoreLabel = 'Excellent';
+        else if (scoreVal >= 80) scoreLabel = 'Optimal';
+        else if (scoreVal >= 60) scoreLabel = 'Average';
+        else if (scoreVal > 0) scoreLabel = 'Needs Work';
+        
+        const scoreHeading = document.querySelector('.score-circle-container').parentNode.querySelector('h2');
+        if (scoreHeading) scoreHeading.innerText = scoreLabel;
+        
+        const scoreText = document.querySelector('.score-circle-container .flex-center');
+        if (scoreText) scoreText.innerText = `${scoreVal}%`;
+        
+        const scoreFill = document.querySelector('.score-circle-fill');
+        if (scoreFill) {
+          // Circumference is 2 * pi * r = 2 * 3.14159 * 40 = 251.3
+          const strokeDashOffset = 251.3 - (251.3 * scoreVal) / 100;
+          scoreFill.style.strokeDasharray = '251.3';
+          scoreFill.style.strokeDashoffset = strokeDashOffset;
+        }
+
+        // 2. Publish Readiness Card
+        // Calculate dynamic checklist compliance
+        let readinessVal = 0;
+        let checklistCompleted = 0;
+        if (targetVideo) {
+          if (targetVideo.hook_score >= 80) checklistCompleted++;
+          if (targetVideo.visual_score >= 80) checklistCompleted++;
+          if (targetVideo.audio_score >= 80) checklistCompleted++;
+          if (targetVideo.resolution_width >= 720) checklistCompleted++;
+          if (targetVideo.fps >= 24) checklistCompleted++;
+          if (targetVideo.duration <= 30) checklistCompleted++; // Short duration is good for ads
+          if (targetVideo.mean_volume_db >= -25) checklistCompleted++;
+          if (targetVideo.silence_duration < 2) checklistCompleted++;
+          if (targetVideo.transcript && targetVideo.transcript.length > 10) checklistCompleted++;
+          if (targetVideo.tags && targetVideo.tags.length > 0) checklistCompleted++;
+          if (targetVideo.caption && targetVideo.caption.length > 0) checklistCompleted++;
+          
+          readinessVal = Math.round((checklistCompleted / 11) * 100);
+        }
+        
+        const readinessDisplay = document.getElementById('readiness-score-val');
+        if (readinessDisplay) readinessDisplay.innerText = `${readinessVal}%`;
+        
+        const readinessBadge = document.getElementById('readiness-badge-el');
+        if (readinessBadge) {
+          if (readinessVal >= 85) {
+            readinessBadge.innerText = 'HIGHLY DEPLOYABLE';
+            readinessBadge.className = 'badge badge-success';
+          } else if (readinessVal >= 60) {
+            readinessBadge.innerText = 'STABLE';
+            readinessBadge.className = 'badge badge-info';
+          } else {
+            readinessBadge.innerText = 'RISKY';
+            readinessBadge.className = 'badge badge-error';
+          }
+        }
+        
+        const readinessProgress = document.getElementById('readiness-bar-fill');
+        if (readinessProgress) readinessProgress.style.width = `${readinessVal}%`;
+        
+        const readinessDesc = document.getElementById('readiness-checklist-text');
+        if (readinessDesc) readinessDesc.innerText = `${checklistCompleted} of 11 compliance standards resolved.`;
+
+        // 3. Projects Overview Table
+        const tableBody = document.querySelector('.table tbody');
+        tableBody.innerHTML = '';
+        if (videos.length === 0) {
+          tableBody.innerHTML = `<tr><td colspan="5" style="text-align: center; color: var(--text-secondary);">No active pipeline assets yet.</td></tr>`;
+        } else {
+          videos.forEach(v => {
+            const isTarget = targetVideo && v.id === targetVideo.id ? 'style="background-color: var(--brand-primary-glow);"' : '';
+            let badgeClass = 'badge-info';
+            if (v.status === 'completed') badgeClass = 'badge-success';
+            if (v.status === 'failed') badgeClass = 'badge-error';
+            
+            const btnUrl = v.status === 'completed' ? `report.html?id=${v.id}` : `upload.html`;
+            const scoreDisplay = v.status === 'completed' ? `${v.score}%` : '--';
+            const latencyDisplay = v.duration ? `${Math.round(v.duration * 0.4)}ms` : '180ms';
+
+            tableBody.insertAdjacentHTML('beforeend', `
+              <tr ${isTarget}>
+                <td class="font-bold text-primary">${v.title}</td>
+                <td><span class="badge ${badgeClass}">${v.status.toUpperCase()}</span></td>
+                <td class="font-mono">${scoreDisplay}</td>
+                <td class="text-secondary font-mono">${latencyDisplay}</td>
+                <td>
+                  <a class="btn btn-ghost btn-sm" href="${btnUrl}">Visual Report</a>
+                </td>
+              </tr>
+            `);
+          });
+        }
+
+        // 4. Recent Uploads Horizontal Strip
+        const uploadsContainer = document.querySelector('.uploads-horizontal-grid');
+        uploadsContainer.innerHTML = '';
+        if (videos.length === 0) {
+          uploadsContainer.innerHTML = `
+            <div style="font-size: 0.8125rem; color: var(--text-secondary); width: 100%; text-align: center; padding: var(--space-md);">No recently uploaded assets.</div>
+          `;
+        } else {
+          videos.forEach(v => {
+            let confBadge = '';
+            let thumbContent = '';
+            if (v.status === 'completed') {
+              confBadge = `<span class="badge badge-success" style="position: absolute; bottom: 8px; right: 8px;">${v.score}% SCORE</span>`;
+              thumbContent = v.poster_url 
+                ? `<img src="${v.poster_url}" style="width:100%; height:100%; object-fit:cover;" alt="${v.title}">` 
+                : `<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 10l5.555-3.678A1 1 0 0122 7.158v9.684a1 1 0 01-1.445.892L15 14v-4z"/><rect x="2" y="5" width="13" height="14" rx="2"/></svg>`;
+            } else {
+              confBadge = `<span class="badge badge-info" style="position: absolute; bottom: 8px; right: 8px;">ANALYZING</span>`;
+              thumbContent = `<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M7 21h10a2 2 0 002-2V9.414a1 1 0 00-.293-.707l-5.414-5.414A1 1 0 0012.586 3H7a2 2 0 00-2 2v14a2 2 0 002 2z"/></svg>`;
+            }
+
+            uploadsContainer.insertAdjacentHTML('beforeend', `
+              <div class="upload-asset-card" onclick="window.location.href='report.html?id=${v.id}'">
+                <div class="upload-asset-thumb" style="position: relative;">
+                  ${thumbContent}
+                  ${confBadge}
+                </div>
+                <div style="padding: var(--space-sm); display: flex; flex-direction: column; gap: 2px;">
+                  <span class="text-body-small font-bold" style="white-space: nowrap; overflow: hidden; text-overflow: ellipsis; display: block;">${v.title}</span>
+                  <span class="text-detail text-secondary">${v.duration ? v.duration + 's' : 'unknown duration'} &bull; ${v.status}</span>
+                </div>
+              </div>
+            `);
+          });
+        }
+
+        // 5. AI Suggestions Node
+        const suggestionsContainer = document.querySelector('.real-view-panel');
+        if (suggestionsContainer) {
+          suggestionsContainer.innerHTML = '';
+          if (!targetVideo) {
+            suggestionsContainer.innerHTML = `
+              <div class="card elevation-1" style="background-color: var(--bg-secondary); border-left: 3px solid var(--accent-blue); padding: var(--space-sm);">
+                <p class="text-detail text-secondary">Aura AI requires a completed video analysis to derive optimization insights.</p>
+              </div>
+            `;
+          } else {
+            // Generate 2 context-aware suggestions
+            let title1 = '⚠️ Audio Level Check';
+            let desc1 = `Aura AI detected mean volume at ${targetVideo.mean_volume_db}dB. Recommend normalizing to -14LUFS for optimal playback loudness.`;
+            let color1 = 'var(--accent-orange)';
+            
+            if (targetVideo.mean_volume_db > -10) {
+              title1 = '⚡ High Peak Volume Alert';
+              desc1 = 'Audio peaks exceed threshold. This may sound distorted on mobile speakers.';
+              color1 = 'var(--accent-red)';
+            }
+
+            let title2 = '🎨 Visual Contrast Scan';
+            let desc2 = `The video has a color contrast of ${targetVideo.visual_score}%. Visual hook is optimal for Gen-Z readability formats.`;
+            let color2 = 'var(--accent-green)';
+            
+            if (targetVideo.visual_score < 75) {
+              title2 = '⚠️ Low Hook Contrast Warning';
+              desc2 = 'First 3 seconds has low visual contrast. Recommend overlaying high contrast text elements.';
+              color2 = 'var(--accent-orange)';
+            }
+
+            suggestionsContainer.insertAdjacentHTML('beforeend', `
+              <div class="card elevation-1" style="background-color: var(--bg-secondary); border-left: 3px solid ${color1}; display: flex; flex-direction: column; gap: var(--space-xxs); padding: var(--space-sm); margin-bottom: 8px;">
+                <div class="flex-between">
+                  <span class="text-detail font-bold text-primary">${title1}</span>
+                  <span class="text-detail text-muted">Just now</span>
+                </div>
+                <p class="text-detail text-secondary">${desc1}</p>
+              </div>
+              <div class="card elevation-1" style="background-color: var(--bg-secondary); border-left: 3px solid ${color2}; display: flex; flex-direction: column; gap: var(--space-xxs); padding: var(--space-sm);">
+                <div class="flex-between">
+                  <span class="text-detail font-bold text-primary">${title2}</span>
+                  <span class="text-detail text-muted">Just now</span>
+                </div>
+                <p class="text-detail text-secondary">${desc2}</p>
+              </div>
+            `);
+          }
+        }
+
+        // 6. Recent Analysis List
+        const recentAnalysisPanel = document.querySelector('.col-span-4 .card:nth-child(2)');
+        if (recentAnalysisPanel) {
+          recentAnalysisPanel.innerHTML = `
+            <span class="text-detail font-bold text-muted font-mono" style="text-transform: uppercase; margin-bottom: 4px;">RECENT COMPLETED ANALYSIS</span>
+            ${completedVideos.slice(0, 3).map(cv => `
+              <div class="flex-between" style="border-top: 1px solid var(--border-default); padding-top: var(--space-xxs); padding-bottom: var(--space-xxs);">
+                <span class="text-body-small font-medium text-primary">${cv.title}</span>
+                <span class="text-detail text-secondary font-mono">${cv.score}%</span>
+              </div>
+            `).join('') || '<div class="text-detail text-secondary">None yet.</div>'}
+          `;
+        }
+
+      } catch (e) {
+        console.error("Failed to load dashboard data:", e);
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      initDashboardData();
+    });
+
+    const viewportFrame = document.getElementById('viewport-frame');
+
+    // 2. Viewport Switcher
+    const viewportBtns = document.querySelectorAll('[data-viewport]');
+    viewportBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        viewportBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const size = btn.getAttribute('data-viewport');
+        viewportFrame.className = `emulator-viewport ${size}`;
+        currentViewport = size;
+      });
+    });
+
+    // 3. Theme Toggle
+    const themeBtn = document.getElementById('theme-toggle');
+    themeBtn.addEventListener('click', () => {
+      const isDark = document.body.classList.toggle('dark');
+      currentTheme = isDark ? 'dark' : 'light';
+      themeBtn.innerHTML = isDark ? 
+        `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 5a7 7 0 100 14 7 7 0 000-14z"/></svg> Light Mode` :
+        `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg> Dark Mode`;
+    });
+
+    // 4. UI States Simulator (Normal, Loading/Skeletons, AI drawer)
+    const stateNormalBtn = document.getElementById('state-normal');
+    const stateLoadingBtn = document.getElementById('state-loading');
+    const stateAIChatBtn = document.getElementById('state-ai-chat');
+
+    stateNormalBtn.addEventListener('click', () => toggleUIState('normal'));
+    stateLoadingBtn.addEventListener('click', () => toggleUIState('loading'));
+    stateAIChatBtn.addEventListener('click', () => toggleUIState('ai-chat'));
+
+    function toggleUIState(state) {
+      stateNormalBtn.classList.remove('active');
+      stateLoadingBtn.classList.remove('active');
+      stateAIChatBtn.classList.remove('active');
+
+      const shell = document.getElementById('dashboard-main-shell');
+
+      if (state === 'normal') {
+        stateNormalBtn.classList.add('active');
+        shell.classList.remove('loading-state-active');
+        closeAIChatDrawer();
+      } else if (state === 'loading') {
+        stateLoadingBtn.classList.add('active');
+        shell.classList.add('loading-state-active');
+        window.showToast("Loading state & skeleton loader panels active.", "info");
+      } else if (state === 'ai-chat') {
+        stateAIChatBtn.classList.add('active');
+        shell.classList.remove('loading-state-active');
+        openAIChatDrawer();
+      }
+    }
+
+    // 5. Sidebar Toggle (Mobile layout only)
+    const sidebarToggle = document.getElementById('sidebar-toggle-btn');
+    if (sidebarToggle) {
+      sidebarToggle.addEventListener('click', () => {
+        const sidebar = document.querySelector('.dashboard-sidebar');
+        sidebar.classList.toggle('active');
+      });
+    }
+
+    // 6. Global AI Assistant Floating Drawer Toggle
+    const aiDrawer = document.getElementById('ai-chat-drawer');
+    function toggleAIChatDrawer() {
+      aiDrawer.classList.toggle('active');
+    }
+
+    function openAIChatDrawer() {
+      aiDrawer.classList.add('active');
+    }
+
+    function closeAIChatDrawer() {
+      aiDrawer.classList.remove('active');
+    }
+
+    // 7. Workspace Switcher Menu Dropdown Emulator
+    function toggleWorkspaceDropdown() {
+      window.showToast("Workspace Switcher clicked: Swapping cluster target...", "info");
+      const name = document.getElementById('current-workspace-name');
+      if (name.innerText === 'Deepmind Dev') {
+        name.innerText = 'Personal Lab';
+        document.querySelector('.sidebar-header .workspace-avatar').innerText = 'PL';
+      } else {
+        name.innerText = 'Deepmind Dev';
+        document.querySelector('.sidebar-header .workspace-avatar').innerText = 'GD';
+      }
+    }
+
+    // 8. Notifications Dropdown trigger Emulator
+    function toggleNotificationsMenu(btn) {
+      window.showToast("Notification panel: 1 warning regarding API credit thresholds.", "info");
+    }
+
+    // 9. AI Chat dynamic dialogue
+    function handleAIChatSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('ai-chat-input');
+      const val = input.value.trim();
+      if (!val) return;
+
+      appendChatMessage(val, 'user');
+      input.value = '';
+
+      // Auto-reply
+      setTimeout(() => {
+        let reply = '';
+        if (val.toLowerCase().includes('score')) {
+          reply = "Your Creative Score is calculated at 87% based on model weight distributions. Visual assets performance trends are high.";
+        } else if (val.toLowerCase().includes('latency')) {
+          reply = "Edge model loops are running with a latency baseline of 14ms on Frankfurt servers. Recommend H.264 compression.";
+        } else {
+          reply = `Acknowledged. I have indexed query: "${val}" against active cluster logs. Everything resolves normally.`;
+        }
+        appendChatMessage(reply, 'ai');
+      }, 1000);
+    }
+
+    function appendChatMessage(text, role) {
+      const messages = document.getElementById('ai-chat-messages');
+      const card = document.createElement('div');
+      card.className = 'card elevation-1';
+      
+      if (role === 'ai') {
+        card.style.alignSelf = 'flex-start';
+        card.style.backgroundColor = 'var(--bg-secondary)';
+        card.style.width = '85%';
+        card.innerHTML = `
+          <span class="text-detail font-bold" style="color: var(--brand-primary); display: block; margin-bottom: 2px;">Aura AI</span>
+          <p class="text-detail text-secondary" style="line-height: 1.4;">${text}</p>
+        `;
+      } else {
+        card.style.alignSelf = 'flex-end';
+        card.style.backgroundColor = 'var(--brand-primary-glow)';
+        card.style.borderColor = 'var(--brand-primary)';
+        card.style.width = '85%';
+        card.innerHTML = `
+          <span class="text-detail font-bold" style="color: var(--text-primary); display: block; margin-bottom: 2px;">You</span>
+          <p class="text-detail text-secondary" style="line-height: 1.4;">${text}</p>
+        `;
+      }
+      messages.appendChild(card);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    // 10. Dynamic Toast Alert System
+    window.showToast = function(message, type = 'success') {
+      const container = document.getElementById('global-toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      
+      let icon = '';
+      if (type === 'success') {
+        icon = `<svg width="18" height="18" fill="none" stroke="var(--accent-green)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      } else if (type === 'error') {
+        icon = `<svg width="18" height="18" fill="none" stroke="var(--accent-red)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      } else {
+        icon = `<svg width="18" height="18" fill="none" stroke="var(--accent-blue)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      }
+
+      toast.innerHTML = `
+        ${icon}
+        <span class="text-body-small font-medium">${message}</span>
+        <button style="background:transparent; border:none; margin-left: auto; color: var(--text-secondary); cursor: pointer; font-size: 1.125rem;" onclick="this.parentElement.remove()">&times;</button>
+      `;
+
+      container.appendChild(toast);
+      
+      // Slide in animation
+      setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+      }, 50);
+
+      // Automatic cleanup
+      setTimeout(() => {
+        toast.style.transition = 'opacity 500ms, transform 500ms';
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(20px)';
+        setTimeout(() => toast.remove(), 500);
+      }, 4000);
+    };
+  </script>
+
+  <script src="design-system.js"></script>
+</body>
+</html>

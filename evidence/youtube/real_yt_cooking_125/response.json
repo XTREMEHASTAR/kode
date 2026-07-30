@@ -1,0 +1,26 @@
+{
+  "kind": "youtube#videoListResponse",
+  "etag": "yt_etag_real_yt_cooking_125",
+  "items": [
+    {
+      "kind": "youtube#video",
+      "id": "real_yt_cooking_125",
+      "snippet": {
+        "publishedAt": "2026-03-27T02:33:44.643Z",
+        "channelId": "UC_creator_yt_7",
+        "title": "Cooking Benchmark Short Reel",
+        "categoryId": "27"
+      },
+      "contentDetails": {
+        "duration": "PT20S",
+        "dimension": "2d",
+        "definition": "hd"
+      },
+      "statistics": {
+        "viewCount": "302500",
+        "likeCount": "19900",
+        "commentCount": "1045"
+      }
+    }
+  ]
+}

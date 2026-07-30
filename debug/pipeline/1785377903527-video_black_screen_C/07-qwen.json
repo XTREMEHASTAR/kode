@@ -1,0 +1,83 @@
+{
+  "full_structured_payload": {
+    "visual": {
+      "sceneCount": 1,
+      "shotLengthSec": 30,
+      "motionIntensity": 0,
+      "brightness": 0.1495,
+      "saturation": 0.4,
+      "contrast": 0.3333,
+      "faceCount": 0,
+      "faceSizePct": 0,
+      "cameraMovement": "STATIC",
+      "editingRhythmScore": 0.05,
+      "thumbnailQualityScore": 0.223,
+      "visualNoveltyScore": 0.2666,
+      "colorHistogram": [
+        0.5,
+        0,
+        0,
+        0,
+        0.5,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0,
+        0
+      ],
+      "detectedObjects": [
+        "high_contrast_foreground"
+      ]
+    },
+    "speech": {
+      "transcript": "",
+      "wordsPerMinute": 0,
+      "speechClarity": 0,
+      "pauseDurationSec": 30,
+      "fillerWordsCount": 0,
+      "sentimentScore": 0,
+      "language": "none"
+    },
+    "ocr": {
+      "screenText": "",
+      "captionDensity": 0,
+      "fontSizeEstimatePx": 0,
+      "textTimingSec": [],
+      "ctaDetected": false,
+      "emojiCount": 0
+    },
+    "audio": {
+      "bpm": 0,
+      "loudnessDb": -60,
+      "rmsEnergy": 0,
+      "silenceRatio": 1,
+      "dynamicRangeDb": 0,
+      "spectralCentroidHz": 50,
+      "tempoStabilityScore": 0
+    }
+  },
+  "generated_reasoning": "Content lacks vocal acoustic triggers or dialogue hooks.",
+  "detected_niche": "MINIMAL_MEDIA",
+  "detected_topic": "Silent / Low Audio Media",
+  "storytelling_structure": "FLAT_LINE",
+  "hook_reasoning": "Content lacks vocal acoustic triggers or dialogue hooks.",
+  "creatorIntent": "TESTING",
+  "audienceIntent": "LOW_ENGAGEMENT",
+  "ctaQuality": 0,
+  "emotionalTriggers": [
+    "Curiosity"
+  ],
+  "strengths": [
+    "Low background acoustic noise"
+  ],
+  "weaknesses": [
+    "Zero voice energy",
+    "Low dialogue engagement"
+  ]
+}

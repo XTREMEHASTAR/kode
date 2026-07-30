@@ -1,0 +1,13 @@
+{
+  "assetId": "bench_finance_054",
+  "videoPath": "c:/videos/benchmark_finance_4.mp4",
+  "duration": 42,
+  "fps": 30,
+  "width": 1080,
+  "height": 1920,
+  "bitrate": 4500000,
+  "keyframe_count": 42,
+  "extracted_frame_count": 42,
+  "extracted_audio_samples": 220500,
+  "contentHash": 124636943
+}

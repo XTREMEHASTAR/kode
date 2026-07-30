@@ -1,0 +1,67 @@
+{
+  "predictedViews": 154228,
+  "confidenceInterval95": {
+    "lowerBound": 131094,
+    "upperBound": 177362
+  },
+  "predictedWatchTimeMs": 2023471360,
+  "retentionCurve": [
+    1,
+    0.972,
+    0.945,
+    0.919,
+    0.894,
+    0.869,
+    0.845,
+    0.821,
+    0.799,
+    0.776,
+    0.755,
+    0.734,
+    0.714,
+    0.694,
+    0.675,
+    0.656,
+    0.638,
+    0.62,
+    0.603,
+    0.586,
+    0.57,
+    0.554,
+    0.539,
+    0.524,
+    0.509,
+    0.495,
+    0.481,
+    0.468,
+    0.455,
+    0.442
+  ],
+  "predictedCompletionRate": 0.42,
+  "predictedLikes": 7051,
+  "predictedComments": 1172,
+  "predictedShares": 3312,
+  "predictedSaves": 1587,
+  "predictedFollowers": 530,
+  "viralityProbability": 0.859,
+  "peakDistributionWave": 5,
+  "explainability": {
+    "topPositiveFactors": [
+      "Opening Hook score (0.844) derived from Content DNA vector signal (0.5715).",
+      "Brand Authority (0.85) driving initial Wave 1 distribution."
+    ],
+    "topNegativePenalties": [
+      "Active platform trend competition count: 3."
+    ],
+    "confidenceScore": 0.95,
+    "alternativeOutcomes": {
+      "worstCaseP10": 69403,
+      "baseCaseP50": 154228,
+      "bestCaseP90": 323879
+    },
+    "improvementSuggestions": [
+      "Add visual pattern interrupts in opening 3s to boost scroll-stop probability.",
+      "Optimize caption hashtags for active platform trend clusters."
+    ]
+  }
+}

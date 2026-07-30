@@ -1,0 +1,26 @@
+{
+  "kind": "youtube#videoListResponse",
+  "etag": "yt_etag_real_yt_podcast_105",
+  "items": [
+    {
+      "kind": "youtube#video",
+      "id": "real_yt_podcast_105",
+      "snippet": {
+        "publishedAt": "2026-04-16T02:33:44.643Z",
+        "channelId": "UC_creator_yt_2",
+        "title": "Podcast Benchmark Short Reel",
+        "categoryId": "27"
+      },
+      "contentDetails": {
+        "duration": "PT30S",
+        "dimension": "2d",
+        "definition": "hd"
+      },
+      "statistics": {
+        "viewCount": "274100",
+        "likeCount": "18060",
+        "commentCount": "945"
+      }
+    }
+  ]
+}

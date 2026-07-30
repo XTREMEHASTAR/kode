@@ -1,0 +1,19 @@
+{
+  "data": {
+    "videos": [
+      {
+        "id": "real_tt_finance_122",
+        "create_time": 1774838024,
+        "duration": 17,
+        "view_count": 298240,
+        "like_count": 19624,
+        "comment_count": 1030,
+        "share_count": 2564
+      }
+    ]
+  },
+  "error": {
+    "code": "ok",
+    "message": ""
+  }
+}

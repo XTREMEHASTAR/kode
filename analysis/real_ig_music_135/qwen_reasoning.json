@@ -1,0 +1,23 @@
+{
+  "topic": "Dynamic Visual & Short-Form Content",
+  "niche": "ENTERTAINMENT",
+  "creatorIntent": "VIRAL_REACH",
+  "audienceIntent": "ENTERTAINMENT",
+  "hookExplanation": "Opening segment evaluates visual rhythm score (0.30) and speech clarity (0.50).",
+  "emotionalTriggers": [
+    "Excitement",
+    "Amusement",
+    "Relatability"
+  ],
+  "storytellingStructure": "FAST_PACED_CLIPS -> HOOK",
+  "ctaQuality": 0.65,
+  "strengths": [
+    "Editing Rhythm Score: 0.30",
+    "Speech Clarity: 0.50",
+    "Audio Energy RMS: 0.41"
+  ],
+  "weaknesses": [
+    "Motion Intensity Variance: 0.20",
+    "Silence Ratio: 0.00"
+  ]
+}

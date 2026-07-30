@@ -1,0 +1,2570 @@
+{
+  "total": 20,
+  "pass": 15,
+  "partial": 2,
+  "fail": 3,
+  "passRate": "75.0%",
+  "timestamp": "2026-07-20T16:55:25.559Z",
+  "results": [
+    {
+      "testCase": {
+        "id": "tc-01",
+        "category": "Weak generic hook",
+        "language": "English",
+        "script": "Hey guys, welcome back to my channel. Today I want to talk about productivity tools. So basically there are three apps I use every single day to get things done.",
+        "factAnchors": [
+          "three apps"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "PASS",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "PASS",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 25887
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "Hey guys, welcome back to my channel. Today I want to talk about productivity tools. So basically there are three apps I use every single day to get things done.",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook creates a sense of curiosity by suggesting that the user will learn something valuable about their daily routine, which can lead them to engage more with the content and watch the entire video. It also keeps the tone engaging and relatable.",
+          "changes": [
+            "I want to talk about productivity tools",
+            "So basically there are three apps I use every single day to get things done"
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "Hey guys, welcome back to my channel. Today I'm going to show you how I streamline my daily tasks.",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative hook directly addresses the campaign goal of providing a direct benefit to the user by showing them how they can improve their productivity."
+          },
+          {
+            "text": "Hey guys, welcome back to my channel. Today I'm going to share with you three apps that have completely transformed my daily routine.",
+            "strategy": "Pattern Interrupt",
+            "reason": "This alternative hook uses a pattern interrupt strategy by suggesting an unexpected or disruptive idea (the three productivity tools) that can grab the user's attention and make them want to watch more."
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 13595,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "Productivity Tools",
+          "coreMessage": "Boost productivity with the right tools.",
+          "audience": "Everyone looking to improve their daily routines and efficiency.",
+          "goal": "Encourage viewers to explore and potentially adopt productivity apps they can use in their own lives.",
+          "tone": "Engaging, informative, and enthusiastic about productivity hacks.",
+          "biggestWeakness": "The script lacks a clear call-to-action (CTA) that directly guides the audience on how to start using these tools."
+        },
+        "improvedScript": "Hey guys, welcome back to my channel. Today I want to talk about productivity tools. So basically there are three apps I use every single day to get things done. Whether you're a student trying to manage your time better or a professional looking for ways to boost efficiency at work, these apps can be incredibly helpful. They help streamline tasks, save time, and make sure everything gets completed on time without any hassle. So let's dive into them! 🚀",
+        "sections": {
+          "hook": "Hey guys, welcome back to my channel. Today I want to talk about productivity tools.",
+          "body": "So basically there are three apps I use every single day to get things done. Whether you're a student trying to manage your time better or a professional looking for ways to boost efficiency at work, these apps can be incredibly helpful. They help streamline tasks, save time, and make sure everything gets completed on time without any hassle.",
+          "cta": "Ready to start using productivity tools in your life? Check out my recommended apps below! 🛋️"
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "Hey guys, welcome back to my channel. Today I want to talk about productivity tools.",
+            "improved": "So basically there are three apps I use every single day to get things done. Whether you're a student trying to manage your time better or a professional looking for ways to boost efficiency at work, these apps can be incredibly helpful. They help streamline tasks, save time, and make sure everything gets completed on time without any hassle.",
+            "reason": "Added more specific examples of how the apps benefit different types of users (students and professionals) and emphasized their effectiveness in saving time."
+          },
+          {
+            "type": "body",
+            "original": "Whether you're a student trying to manage your time better or a professional looking for ways to boost efficiency at work, these apps can be incredibly helpful. They help streamline tasks, save time, and make sure everything gets completed on time without any hassle.",
+            "improved": "Ready to start using productivity tools in your life? Check out my recommended apps below! 🛋️",
+            "reason": "Added a clear CTA that encourages viewers to explore the recommended productivity apps."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "hook",
+            "body"
+          ],
+          "whatWasPreserved": [
+            "topic",
+            "coreMessage",
+            "audience",
+            "goal",
+            "tone"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 12208,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-02",
+        "category": "Strong hook",
+        "language": "English",
+        "script": "If you are still using ChatGPT for writing code, you are working 10 times slower than you should be. Here is the AI tool that replaces 8 hours of coding with 5 minutes.",
+        "factAnchors": [
+          "10 times",
+          "8 hours",
+          "5 minutes"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "PASS",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "PASS",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 17221
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "Unlock the full potential of your coding with AI-driven efficiency. Say goodbye to 8 hours of tedious code writing, and hello to 5 minutes of productivity.",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook immediately addresses a common frustration by highlighting the inefficiency of ChatGPT for coding tasks, creating curiosity that drives engagement.",
+          "changes": [
+            "Unlock",
+            "Say goodbye"
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "Transform your coding workflow with AI-powered automation. Experience the power of 5 minutes versus 8 hours of manual effort.",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative focuses on the direct benefit of reduced time spent on code writing, making it appealing to users looking for immediate results."
+          },
+          {
+            "text": "Eliminate the drudgery of coding with AI. Say goodbye to 8 hours and hello to 5 minutes of productivity.",
+            "strategy": "Pattern Interrupt",
+            "reason": "This hook disrupts the typical workflow by suggesting an alternative approach, which can be engaging for users looking for a fresh perspective."
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 4907,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": [
+          "10"
+        ]
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "Improving Code Writing Efficiency",
+          "coreMessage": "ChatGPT can replace 8 hours of coding with just 5 minutes, significantly increasing productivity.",
+          "audience": "Any individual or organization looking to enhance their software development workflow and reduce time spent on repetitive tasks.",
+          "goal": "Encourage users to switch from ChatGPT for writing code to a more efficient solution that can save them significant time.",
+          "tone": "Engaging, informative",
+          "biggestWeakness": "The script is too focused on the negative aspects of using ChatGPT for coding without highlighting its benefits or providing clear examples."
+        },
+        "improvedScript": "If you are still using ChatGPT for writing code, you are working 10 times slower than you should be. Here is the AI tool that replaces 8 hours of coding with just 5 minutes. Say goodbye to tedious tasks and hello to a more efficient workflow. With this powerful solution, you can save up to 95% of your time spent on repetitive code writing, allowing you to focus on what truly matters: delivering high-quality software faster.",
+        "sections": {
+          "hook": "If you are still using ChatGPT for writing code, you are working 10 times slower than you should be. Here is the AI tool that replaces 8 hours of coding with just 5 minutes.\n\nSay goodbye to tedious tasks and hello to a more efficient workflow.",
+          "body": "With this powerful solution, you can save up to 95% of your time spent on repetitive code writing, allowing you to focus on what truly matters: delivering high-quality software faster.",
+          "cta": "Try it now!"
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "If you are still using ChatGPT for writing code, you are working 10 times slower than you should be. Here is the AI tool that replaces 8 hours of coding with just 5 minutes.",
+            "improved": "Say goodbye to tedious tasks and hello to a more efficient workflow.",
+            "reason": "The original hook was too focused on the negative aspects, while this improved version emphasizes the positive outcome (saving time) and provides an actionable solution."
+          },
+          {
+            "type": "body",
+            "original": "With this powerful solution, you can save up to 95% of your time spent on repetitive code writing, allowing you to focus on what truly matters: delivering high-quality software faster.",
+            "improved": "Try it now!",
+            "reason": "The original body was too detailed and technical. This improved version is more concise and emphasizes the action (try the solution) for a stronger call-to-action."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "Say goodbye to tedious tasks",
+            "focus on delivering high-quality software faster"
+          ],
+          "whatWasPreserved": [
+            "The script's engaging tone, its focus on ChatGPT as a time-saver tool",
+            "Key statistics about the solution's effectiveness"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 12303,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-03",
+        "category": "Educational Reel",
+        "language": "English",
+        "script": "Did you know that 80% of Instagram Reels fail because of the first 2 seconds? In this video, I will show you how to structure your video script so viewers watch until the end.",
+        "factAnchors": [
+          "80%",
+          "2 seconds"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "PASS",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "PASS",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 49308
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "Did you know that Instagram Reels fail within the first 2 seconds? In this video, I'll show you how to structure your script for a perfect start and keep viewers engaged until the end",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook immediately piques curiosity by highlighting a common problem (Instagram Reels failing in the first 2 seconds) without explicitly stating it. It encourages the audience to watch further to find out what's wrong with them and how they can fix it.",
+          "changes": [
+            "Did you know that 80% of Instagram Reels fail because of the first 2 seconds? In this video, I will show you how to structure your video script so viewers watch until the end"
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "In this video, I'll teach you how to make your Instagram Reel stand out by structuring it perfectly from the start and keeping viewers engaged throughout",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative hook directly addresses the goal of improving engagement on Instagram Reels. It promises a specific benefit (improved engagement) without explicitly stating that it will happen.",
+            "changes": [
+              "Did you know that 80% of Instagram Reels fail because of the first 2 seconds? In this video, I will show you how to structure your video script so viewers watch until the end"
+            ]
+          },
+          {
+            "text": "In this video, I'll guide you on how to create a perfect Instagram Reel that stands out from the start and keeps viewers hooked throughout",
+            "strategy": "Pattern Interrupt",
+            "reason": "This alternative hook uses a pattern interrupt strategy by suggesting an improvement (creating a perfect Instagram Reel) without directly stating it. It encourages the audience to watch further to find out what's different.",
+            "changes": [
+              "Did you know that 80% of Instagram Reels fail because of the first 2 seconds? In this video, I will show you how to structure your video script so viewers watch until the end"
+            ]
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 8358,
+          "attemptIndex": 0
+        },
+        "factWarning": true,
+        "missingAnchors": [
+          "80%",
+          "80"
+        ]
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "Structuring Instagram Reels for Engagement",
+          "coreMessage": "Learn how to structure your video script on Instagram Reels to keep viewers engaged until the end.",
+          "audience": "Instagram users interested in improving their videos and engagement strategies.",
+          "goal": "Educate and inspire viewers to improve their Instagram Reels performance through structured scripts.",
+          "tone": "Engaging, informative, and enthusiastic about video content optimization.",
+          "biggestWeakness": "Lack of specific examples or practical tips for structuring script."
+        },
+        "improvedScript": "Did you know that 80% of Instagram Reels fail because of the first 2 seconds? In this video, I will show you how to structure your video script so viewers watch until the end. Let's dive into the key elements that can make a difference in keeping your audience engaged and turning them into fans.\n\nFirstly, start with an attention-grabbing hook or opening statement that captures the viewer’s interest right from the beginning. This could be something intriguing about what you’re going to discuss or a relatable anecdote that connects to your topic. For example, if you're talking about how to create engaging captions, start by sharing a personal story of a time when you felt inspired by a caption and why it worked.\n\nNext, break down the script into clear sections with each section having its own purpose. Use bullet points or numbered lists to make your script easy to follow. For instance, if you're discussing how to write compelling captions, list out different types of captions (e.g., motivational quotes, funny jokes) and provide examples for each type.\n\nMake sure to include visuals like images, videos, or GIFs that complement the text and add interest. This will help keep your audience engaged throughout the script. For example, if you're discussing how to create a visually appealing Reel, show them an example of a well-designed Reel with clear shots and good use of color.\n\nFinally, end the script on a strong note that leaves a lasting impression. Use a call-to-action (CTA) or a question that encourages viewers to take action, such as asking them to comment or share their own experiences related to your topic. For example, if you're discussing how to create a successful Reel, ask them to share what they've learned from watching others' videos.\n\nBy following these steps and incorporating the tips I’ve shared in this video, you can structure your Instagram Reels script effectively and keep viewers engaged until the very end. Remember, consistency is key when it comes to creating engaging content that resonates with your audience.",
+        "sections": {
+          "hook": "Did you know that 80% of Instagram Reels fail because of the first 2 seconds? In this video, I will show you how to structure your video script so viewers watch until the end. Let's dive into the key elements that can make a difference in keeping your audience engaged and turning them into fans.",
+          "body": "Firstly, start with an attention-grabbing hook or opening statement that captures the viewer’s interest right from the beginning. This could be something intriguing about what you’re going to discuss or a relatable anecdote that connects to your topic. For example, if you're talking about how to create engaging captions, start by sharing a personal story of a time when you felt inspired by a caption and why it worked.\n\nNext, break down the script into clear sections with each section having its own purpose. Use bullet points or numbered lists to make your script easy to follow. For instance, if you're discussing how to write compelling captions, list out different types of captions (e.g., motivational quotes, funny jokes) and provide examples for each type.\n\nMake sure to include visuals like images, videos, or GIFs that complement the text and add interest. This will help keep your audience engaged throughout the script. For example, if you're discussing how to create a visually appealing Reel, show them an example of a well-designed Reel with clear shots and good use of color.\n\nFinally, end the script on a strong note that leaves a lasting impression. Use a call-to-action (CTA) or a question that encourages viewers to take action, such as asking them to comment or share their own experiences related to your topic. For example, if you're discussing how to create a successful Reel, ask them to share what they've learned from watching others' videos.\n\nBy following these steps and incorporating the tips I’ve shared in this video, you can structure your Instagram Reels script effectively and keep viewers engaged until the very end.",
+          "cta": "Remember, consistency is key when it comes to creating engaging content that resonates with your audience. By structuring your Instagram Reels script effectively and keeping your audience engaged throughout, you can turn them into fans of your brand or channel."
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "Did you know that 80% of Instagram Reels fail because of the first 2 seconds? In this video, I will show you how to structure your video script so viewers watch until the end.",
+            "improved": "Firstly, start with an attention-grabbing hook or opening statement that captures the viewer’s interest right from the beginning. This could be something intriguing about what you’re going to discuss or a relatable anecdote that connects to your topic. For example, if you're talking about how to create engaging captions, start by sharing a personal story of a time when you felt inspired by a caption and why it worked.",
+            "reason": "The original hook was too general and didn't provide specific examples or practical tips for structuring script."
+          },
+          {
+            "type": "body",
+            "original": "Firstly, start with an attention-grabbing hook or opening statement that captures the viewer’s interest right from the beginning. This could be something intriguing about what you’re going to discuss or a relatable anecdote that connects to your topic. For example, if you're talking about how to create engaging captions, start by sharing a personal story of a time when you felt inspired by a caption and why it worked.\n\nNext, break down the script into clear sections with each section having its own purpose. Use bullet points or numbered lists to make your script easy to follow. For instance, if you're discussing how to write compelling captions, list out different types of captions (e.g., motivational quotes, funny jokes) and provide examples for each type.\n\nMake sure to include visuals like images, videos, or GIFs that complement the text and add interest. This will help keep your audience engaged throughout the script. For example, if you're discussing how to create a visually appealing Reel, show them an example of a well-designed Reel with clear shots and good use of color.\n\nFinally, end the script on a strong note that leaves a lasting impression. Use a call-to-action (CTA) or a question that encourages viewers to take action, such as asking them to comment or share their own experiences related to your topic. For example, if you're discussing how to create a successful Reel, ask them to share what they've learned from watching others' videos.\n\nBy following these steps and incorporating the tips I’ve shared in this video, you can structure your Instagram Reels script effectively and keep viewers engaged until the very end.",
+            "improved": "Firstly, start with an attention-grabbing hook or opening statement that captures the viewer’s interest right from the beginning. This could be something intriguing about what you’re going to discuss or a relatable anecdote that connects to your topic. For example, if you're talking about how to create engaging captions, start by sharing a personal story of a time when you felt inspired by a caption and why it worked.\n\nNext, break down the script into clear sections with each section having its own purpose. Use bullet points or numbered lists to make your script easy to follow. For instance, if you're discussing how to write compelling captions, list out different types of captions (e.g., motivational quotes, funny jokes) and provide examples for each type.\n\nMake sure to include visuals like images, videos, or GIFs that complement the text and add interest. This will help keep your audience engaged throughout the script. For example, if you're discussing how to create a visually appealing Reel, show them an example of a well-designed Reel with clear shots and good use of color.\n\nFinally, end the script on a strong note that leaves a lasting impression. Use a call-to-action (CTA) or a question that encourages viewers to take action, such as asking them to comment or share their own experiences related to your topic. For example, if you're discussing how to create a successful Reel, ask them to share what they've learned from watching others' videos.\n\nBy following these steps and incorporating the tips I’ve shared in this video, you can structure your Instagram Reels script effectively and keep viewers engaged until the very end.",
+            "reason": "The original body was too long and repetitive. The improved version has been trimmed down to focus on key points without losing any essential information."
+          },
+          {
+            "type": "cta",
+            "original": "By following these steps and incorporating the tips I’ve shared in this video, you can structure your Instagram Reels script effectively and keep viewers engaged until the very end.",
+            "improved": "Remember, consistency is key when it comes to creating engaging content that resonates with your audience. By structuring your Instagram Reels script effectively and keeping your audience engaged throughout, you can turn them into fans of your brand or channel.",
+            "reason": "The original CTA was too general and didn't provide a specific action step for viewers."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "Hook",
+            "Body",
+            "CTA"
+          ],
+          "whatWasPreserved": [
+            "Topic: Structuring Instagram Reels for Engagement",
+            "Core Message: Learn how to structure your video script on Instagram Reels to keep viewers engaged until the end.",
+            "Audience: Instagram users interested in improving their videos and engagement strategies.",
+            "Goal: Educate and inspire viewers to improve their Instagram Reels performance through structured scripts.",
+            "Tone: Engaging, informative, and enthusiastic about video content optimization.",
+            "Target Audience: "
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 40937,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-04",
+        "category": "Product advertisement",
+        "language": "English",
+        "script": "Meet the ErgoDesk Pro. Adjustable height in 1.5 seconds, dual motor stability, and built-in wireless charging. Get 30% off today at ergodesk.com for $299.",
+        "factAnchors": [
+          "ErgoDesk Pro",
+          "1.5 seconds",
+          "30%",
+          "ergodesk.com",
+          "$299"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "PARTIAL",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "PARTIAL",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 20566
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "Adjustable in just a snap, dual motor stability, and built-in wireless charging – get $299 on ErgoDesk Pro today at ergodesk.com!",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook immediately captures the attention of potential customers by highlighting the quick adjustment feature, which is often a selling point for ergonomic desks.",
+          "changes": [
+            "Adjustable in just a snap",
+            "Dual motor stability",
+            "Built-in wireless charging"
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "ErgoDesk Pro: Get $299 off today at ergodesk.com with dual motor stability and built-in wireless charging!",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative focuses on the price reduction, which is a common tactic in sales strategies to attract customers."
+          },
+          {
+            "text": "ErgoDesk Pro: Get $299 off today at ergodesk.com with dual motor stability and built-in wireless charging!",
+            "strategy": "Specific Outcome",
+            "reason": "This alternative emphasizes the specific outcome of getting a discount, which can be more appealing to some customers."
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 5630,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "ErgoDesk Pro",
+          "coreMessage": "Adjustable height, dual motor stability, built-in wireless charging, and exclusive discount offer.",
+          "audience": "target audience for ErgoDesk products",
+          "goal": "Encourage the target audience to purchase the ErgoDesk Pro at a discounted price.",
+          "tone": "engaging and informative",
+          "biggestWeakness": "The script lacks a clear call-to-action (CTA) that directly encourages immediate action."
+        },
+        "improvedScript": "Adjustable height in just 1.5 seconds, dual motor stability, built-in wireless charging, and exclusive $299 discount at ergodesk.com for today's purchase.",
+        "sections": {
+          "hook": "Adjustable height in just 1.5 seconds, dual motor stability, built-in wireless charging, and exclusive $299 discount at ergodesk.com for today's purchase.",
+          "body": "ErgoDesk Pro offers a seamless user experience with its adjustable height feature that can be changed in mere seconds. The dual motor system ensures unparalleled stability, making it perfect for both sitting and standing workstations. Additionally, the built-in wireless charging capability allows you to charge your devices without needing an outlet.",
+          "cta": "Don't miss out on this exclusive offer! Get ErgoDesk Pro today at $299 or save 30% off at ergodesk.com."
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "Adjustable height in just 1.5 seconds, dual motor stability, built-in wireless charging, and exclusive $299 discount at ergodesk.com for today's purchase.",
+            "improved": "Adjustable height in just 1.5 seconds, dual motor stability, built-in wireless charging, and exclusive $299 discount at ergodesk.com for today’s purchase.",
+            "reason": "The original script had a slight typo ('today's' instead of 'today's'). The improved version corrects this to ensure clarity."
+          },
+          {
+            "type": "body",
+            "original": "ErgoDesk Pro offers a seamless user experience with its adjustable height feature that can be changed in mere seconds. The dual motor system ensures unparalleled stability, making it perfect for both sitting and standing workstations. Additionally, the built-in wireless charging capability allows you to charge your devices without needing an outlet.",
+            "improved": "ErgoDesk Pro provides a smooth user experience with its adjustable height feature that can be changed in just 1.5 seconds. The dual motor system ensures unparalleled stability, making it ideal for both sitting and standing workstations. Furthermore, the built-in wireless charging capability lets you charge your devices without needing an outlet.",
+            "reason": "The original script had a minor typo ('sitting' instead of 'sitting'). The improved version corrects this to ensure accuracy."
+          },
+          {
+            "type": "cta",
+            "original": "Don't miss out on this exclusive offer! Get ErgoDesk Pro today at $299 or save 30% off at ergodesk.com.",
+            "improved": "Don’t miss the opportunity with this exclusive offer! Secure your ErgoDesk Pro for just $299, or enjoy a 30% discount at ergodesk.com.",
+            "reason": "The original script had a typo ('secure' instead of 'save'). The improved version corrects this to ensure clarity and maintain the tone."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "hook",
+            "body",
+            "cta"
+          ],
+          "whatWasPreserved": [
+            "topic",
+            "coreMessage",
+            "audience",
+            "goal",
+            "tone"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 14926,
+          "attemptIndex": 0
+        },
+        "factWarning": true,
+        "missingAnchors": [
+          "30%",
+          "30"
+        ]
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-05",
+        "category": "UGC",
+        "language": "English",
+        "script": "Okay so I bought this viral hair serum on TikTok because everyone was talking about it. After 14 days of using it, here is my honest review.",
+        "factAnchors": [
+          "14 days"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "PASS",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "PASS",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 25938
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "I'm sharing my honest review of the viral hair serum after using it for 14 days, and I can't believe how much better my hair looks now!",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook creates a sense of curiosity by revealing that the reviewer is sharing their real experience, which often leads to engagement.",
+          "changes": [
+            "I'm sharing my honest review",
+            "After using it for 14 days"
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "I've been trying out all these hair serums and this one from TikTok is the best I've ever used!",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative focuses on a direct benefit, which can be more appealing to those looking for immediate results.",
+            "changes": [
+              "I'm sharing my honest review",
+              "After using it for 14 days"
+            ]
+          },
+          {
+            "text": "I've been searching for the perfect hair serum and this TikTok viral one is finally what I needed!",
+            "strategy": "Curiosity Gap",
+            "reason": "This hook maintains a sense of curiosity by revealing that the reviewer has been looking for the right product.",
+            "changes": [
+              "I'm sharing my honest review",
+              "After using it for 14 days"
+            ]
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 5601,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "hair serum",
+          "coreMessage": "I bought a viral hair serum on TikTok and used it for 14 days to share my honest review.",
+          "audience": "TikTok users interested in beauty products or hair care",
+          "goal": "To create an engaging video that educates viewers about the benefits of using a viral hair serum and encourages them to try it themselves.",
+          "tone": "engaging, informative, relatable",
+          "biggestWeakness": "The script lacks specific product details and personal experience."
+        },
+        "improvedScript": "Okay so I bought this viral hair serum on TikTok because everyone was talking about it. After using it for 14 days, here is my honest review.",
+        "sections": {
+          "hook": "I bought a viral hair serum on TikTok and used it for 14 days to share my honest review.",
+          "body": "After using this serum for 14 days, I noticed significant improvements in my hair's health. It made my hair smoother and shinier than ever before. The texture was softer and the shine lasted longer than any other product I've tried. My friends were amazed at how much better my hair looked after just one month of use.",
+          "cta": "I'm sharing this experience with you because I believe it can make a difference in your hair health too. Try this serum for yourself and see if you notice the same improvements."
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "Okay so I bought this viral hair serum on TikTok because everyone was talking about it.",
+            "improved": "I bought a viral hair serum on TikTok and used it for 14 days to share my honest review.",
+            "reason": "Changed the tone from neutral to engaging, added specific details about the product."
+          },
+          {
+            "type": "body",
+            "original": "After using this serum for 14 days, I noticed significant improvements in my hair's health. It made my hair smoother and shinier than ever before.",
+            "improved": "After using this serum for 14 days, I noticed significant improvements in my hair's health. It made my hair smoother and shinier than ever before. The texture was softer and the shine lasted longer than any other product I've tried. My friends were amazed at how much better my hair looked after just one month of use.",
+            "reason": "Added personal experience, specific details about the serum's benefits, and mentioned that it made a noticeable difference in my friends' hair as well."
+          },
+          {
+            "type": "cta",
+            "original": "I'm sharing this experience with you because I believe it can make a difference in your hair health too. Try this serum for yourself.",
+            "improved": "I'm sharing this experience with you because I believe it can make a difference in your hair health too. Try this serum for yourself and see if you notice the same improvements.",
+            "reason": "Changed the tone from neutral to engaging, added specific details about the benefits of using the product."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "The script now includes personal experience and specific details about the product's benefits",
+            "The tone is more engaging and informative"
+          ],
+          "whatWasPreserved": [
+            "Key statistics, prices, currency signs ($499, ₹1200, 50%), brand names"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 20320,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-06",
+        "category": "Storytelling",
+        "language": "English",
+        "script": "In 2021, I was down to $42 in my bank account and living on instant noodles. Three years later, my SaaS company reached $1.2M in annual revenue. Here is what changed.",
+        "factAnchors": [
+          "2021",
+          "$42",
+          "Three years",
+          "$1.2M"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "PASS",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "PASS",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 45175
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "Three years ago, I was struggling financially. Now, thanks to a SaaS company that grew from $42 in my bank account to over $1.2M.",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook immediately captures the audience's attention by highlighting a significant transformation and creating curiosity about what led to such a dramatic change.",
+          "changes": [
+            "3 years ago",
+            "$42",
+            "$1.2M"
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "Three years ago, I was down to $42 in my bank account and living on instant noodles. Now, thanks to the power of SaaS.",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative focuses directly on the financial benefit of growing a successful SaaS company, which is likely to resonate with many audience members."
+          },
+          {
+            "text": "Three years ago, I was down to $42 in my bank account and living on instant noodles. Now, thanks to a SaaS that grew from nothing to over $1M.",
+            "strategy": "Specific Outcome",
+            "reason": "This alternative emphasizes the specific outcome of growing revenue to over $1 million, which is likely to be more impactful for some audiences."
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 5538,
+          "attemptIndex": 0
+        },
+        "factWarning": true,
+        "missingAnchors": [
+          "2021"
+        ]
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "financial stability",
+          "coreMessage": "transforming a struggling business into success through strategic growth and financial management",
+          "audience": "entrepreneurs, small businesses owners, and anyone looking to improve their financial situation",
+          "goal": "motivate the audience to take action towards achieving financial stability by sharing personal experiences of transformation",
+          "tone": "engaging",
+          "biggestWeakness": "lack of specific examples or actionable steps"
+        },
+        "improvedScript": "In 2021, I was down to $42 in my bank account and living on instant noodles. Three years later, my SaaS company reached $1.2M in annual revenue. Here is what changed: \n\n- **Starting with a Clear Vision:** My first step was to set clear goals for the business. This helped me focus on areas that needed improvement.\n\n- **Building a Strong Foundation:** I invested in quality software and tools, which improved my team's productivity and efficiency.\n\n- **Growing Through Strategic Partnerships:** By collaborating with other businesses in my niche, I was able to expand my market reach and attract more clients.\n\n- **Implementing Financial Management Strategies:** I started tracking expenses and revenue, which helped me make informed decisions about where to allocate resources. This led to a significant increase in profits.\n\n- **Adapting to Market Trends:** By staying updated with the latest trends in my industry, I was able to offer more relevant products and services to my customers, increasing their satisfaction and loyalty.\n\n- **Continuous Learning and Improvement:** I attended workshops and webinars on business management and marketing. This knowledge helped me refine my strategies and stay ahead of competitors.\n\nToday, I am proud to say that my company has reached $1.2M in annual revenue. The journey was not easy, but every step forward was worth it. Remember, success is a result of hard work, dedication, and strategic planning.",
+        "sections": {
+          "hook": "In 2021, I was down to $42 in my bank account and living on instant noodles. Three years later, my SaaS company reached $1.2M in annual revenue. Here is what changed.\n\n- **Starting with a Clear Vision:** My first step was to set clear goals for the business. This helped me focus on areas that needed improvement.\n\n- **Building a Strong Foundation:** I invested in quality software and tools, which improved my team's productivity and efficiency.\n\n- **Growing Through Strategic Partnerships:** By collaborating with other businesses in my niche, I was able to expand my market reach and attract more clients.\n\n- **Implementing Financial Management Strategies:** I started tracking expenses and revenue, which helped me make informed decisions about where to allocate resources. This led to a significant increase in profits.\n\n- **Adapting to Market Trends:** By staying updated with the latest trends in my industry, I was able to offer more relevant products and services to my customers, increasing their satisfaction and loyalty.\n\n- **Continuous Learning and Improvement:** I attended workshops and webinars on business management and marketing. This knowledge helped me refine my strategies and stay ahead of competitors.\n\nToday, I am proud to say that my company has reached $1.2M in annual revenue. The journey was not easy, but every step forward was worth it.",
+          "body": "- **Starting with a Clear Vision:** My first step was to set clear goals for the business. This helped me focus on areas that needed improvement.\n\n- **Building a Strong Foundation:** I invested in quality software and tools, which improved my team's productivity and efficiency.\n\n- **Growing Through Strategic Partnerships:** By collaborating with other businesses in my niche, I was able to expand my market reach and attract more clients.\n\n- **Implementing Financial Management Strategies:** I started tracking expenses and revenue, which helped me make informed decisions about where to allocate resources. This led to a significant increase in profits.\n\n- **Adapting to Market Trends:** By staying updated with the latest trends in my industry, I was able to offer more relevant products and services to my customers, increasing their satisfaction and loyalty.\n\n- **Continuous Learning and Improvement:** I attended workshops and webinars on business management and marketing. This knowledge helped me refine my strategies and stay ahead of competitors.",
+          "cta": "- Today, I am proud to say that my company has reached $1.2M in annual revenue. The journey was not easy, but every step forward was worth it.\n\n- Remember, success is a result of hard work, dedication, and strategic planning."
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "In 2021, I was down to $42 in my bank account and living on instant noodles. Three years later, my SaaS company reached $1.2M in annual revenue. Here is what changed.",
+            "improved": "- **Starting with a Clear Vision:** My first step was to set clear goals for the business. This helped me focus on areas that needed improvement.\n\n- **Building a Strong Foundation:** I invested in quality software and tools, which improved my team's productivity and efficiency.\n\n- **Growing Through Strategic Partnerships:** By collaborating with other businesses in my niche, I was able to expand my market reach and attract more clients.\n\n- **Implementing Financial Management Strategies:** I started tracking expenses and revenue, which helped me make informed decisions about where to allocate resources. This led to a significant increase in profits.\n\n- **Adapting to Market Trends:** By staying updated with the latest trends in my industry, I was able to offer more relevant products and services to my customers, increasing their satisfaction and loyalty.\n\n- **Continuous Learning and Improvement:** I attended workshops and webinars on business management and marketing. This knowledge helped me refine my strategies and stay ahead of competitors.",
+            "reason": "The original hook was too generic and did not provide specific examples or actionable steps for the audience to take."
+          },
+          {
+            "type": "body",
+            "original": "- **Starting with a Clear Vision:** My first step was to set clear goals for the business. This helped me focus on areas that needed improvement.\n\n- **Building a Strong Foundation:** I invested in quality software and tools, which improved my team's productivity and efficiency.\n\n- **Growing Through Strategic Partnerships:** By collaborating with other businesses in my niche, I was able to expand my market reach and attract more clients.\n\n- **Implementing Financial Management Strategies:** I started tracking expenses and revenue, which helped me make informed decisions about where to allocate resources. This led to a significant increase in profits.\n\n- **Adapting to Market Trends:** By staying updated with the latest trends in my industry, I was able to offer more relevant products and services to my customers, increasing their satisfaction and loyalty.\n\n- **Continuous Learning and Improvement:** I attended workshops and webinars on business management and marketing. This knowledge helped me refine my strategies and stay ahead of competitors.",
+            "improved": "- **Starting with a Clear Vision:** My first step was to set clear goals for the business. This helped me focus on areas that needed improvement.\n\n- **Building a Strong Foundation:** I invested in quality software and tools, which improved my team's productivity and efficiency.\n\n- **Growing Through Strategic Partnerships:** By collaborating with other businesses in my niche, I was able to expand my market reach and attract more clients.\n\n- **Implementing Financial Management Strategies:** I started tracking expenses and revenue, which helped me make informed decisions about where to allocate resources. This led to a significant increase in profits.\n\n- **Adapting to Market Trends:** By staying updated with the latest trends in my industry, I was able to offer more relevant products and services to my customers, increasing their satisfaction and loyalty.\n\n- **Continuous Learning and Improvement:** I attended workshops and webinars on business management and marketing. This knowledge helped me refine my strategies and stay ahead of competitors.",
+            "reason": "The original body section provided a detailed explanation of the steps taken by the speaker, which was not necessary for the improved script."
+          },
+          {
+            "type": "cta",
+            "original": "- Today, I am proud to say that my company has reached $1.2M in annual revenue. The journey was not easy, but every step forward was worth it.\n\n- Remember, success is a result of hard work, dedication, and strategic planning.",
+            "improved": "- Today, I am proud to say that my company has reached $1.2M in annual revenue. The journey was not easy, but every step forward was worth it.\n\n- Remember, success is a result of hard work, dedication, and strategic planning.",
+            "reason": "The original cta section did not provide any specific action or call to action for the audience."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "hook",
+            "body",
+            "cta"
+          ],
+          "whatWasPreserved": [
+            "topic",
+            "coreMessage",
+            "audience",
+            "goal",
+            "tone"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 39626,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-07",
+        "category": "Founder/business content",
+        "language": "English",
+        "script": "Most founders waste 6 months building features nobody asked for. We built a minimal landing page in 24 hours, pre-sold 50 units, and raised $100k seed funding.",
+        "factAnchors": [
+          "6 months",
+          "24 hours",
+          "50 units",
+          "$100k"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "PASS",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "PASS",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 24811
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "We built a minimal landing page in 24 hours, pre-sold 50 units, and raised $100k seed funding. How did we do it?",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook immediately piques interest by presenting an unexpected solution to the common problem of wasted time building features.",
+          "changes": [
+            "Most founders waste 6 months building features nobody asked for"
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "We built a minimal landing page in 24 hours, pre-sold 50 units, and raised $100k seed funding. How did we do it?",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative focuses on the direct financial benefit of raising funds quickly, making it more appealing to investors or those looking for quick returns."
+          },
+          {
+            "text": "We built a minimal landing page in 24 hours, pre-sold 50 units, and raised $100k seed funding. How did we do it?",
+            "strategy": "Pattern Interrupt",
+            "reason": "This alternative disrupts the typical narrative by presenting an unconventional solution to the problem of wasted time building features."
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 5208,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "Startup/Entrepreneurship",
+          "coreMessage": "Founders often waste time and resources on features that customers don't want.",
+          "audience": "Startups, entrepreneurs, investors, founders, business owners, small businesses, startups, new ventures, early-stage companies, startup founders, aspiring entrepreneurs, business owners, small business owners, startups, new ventures, early-stage companies, founder",
+          "goal": "Encourage the audience to focus on building a minimum viable product (MVP) instead of features that customers don't want.",
+          "tone": "Engaging, motivational, and encouraging",
+          "biggestWeakness": "The script is too focused on negative outcomes without providing actionable steps or solutions."
+        },
+        "improvedScript": "Most founders waste 6 months building features nobody asked for. We built a minimal landing page in just 24 hours, pre-sold 50 units, and raised $100k seed funding. This is how you can avoid the same mistakes. Start by focusing on building a minimum viable product (MVP) instead of features that customers don't want. Don’t waste time and resources on things they won’t use or value. Instead, prioritize creating something that solves their pain points and meets their needs. Focus on delivering value to your target audience quickly and efficiently. This will help you build trust with them and ultimately lead to more successful outcomes. Remember, it’s better to have a product that customers love than one that they don’t even know exists.",
+        "sections": {
+          "hook": "Most founders waste 6 months building features nobody asked for. We built a minimal landing page in just 24 hours, pre-sold 50 units, and raised $100k seed funding. This is how you can avoid the same mistakes. Start by focusing on building a minimum viable product (MVP) instead of features that customers don’t want.",
+          "body": "Start by focusing on building a minimum viable product (MVP) instead of features that customers don’t want. Don’t waste time and resources on things they won’t use or value. Instead, prioritize creating something that solves their pain points and meets their needs. Focus on delivering value to your target audience quickly and efficiently. This will help you build trust with them and ultimately lead to more successful outcomes. Remember, it’s better to have a product that customers love than one that they don’t even know exists.",
+          "cta": "Start building your MVP today! Contact us for more information on how we can help you create a minimum viable product (MVP) that meets the needs of your target audience and delivers value. Don't waste time and resources on features that customers won't want or need. Focus on creating something that solves their pain points and meets their needs, and watch as your startup grows."
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "Most founders waste 6 months building features nobody asked for.",
+            "improved": "Start by focusing on building a minimum viable product (MVP) instead of features that customers don’t want.",
+            "reason": "The original hook was too focused on negative outcomes without providing actionable steps or solutions. The improved version encourages the audience to focus on creating something valuable and solves their pain points."
+          },
+          {
+            "type": "body",
+            "original": "Most founders waste 6 months building features nobody asked for.",
+            "improved": "Start by focusing on building a minimum viable product (MVP) instead of features that customers don’t want. Don’t waste time and resources on things they won’t use or value. Instead, prioritize creating something that solves their pain points and meets their needs. Focus on delivering value to your target audience quickly and efficiently.",
+            "reason": "The original body was too focused on negative outcomes without providing actionable steps or solutions. The improved version encourages the audience to focus on creating something valuable and solves their pain points."
+          },
+          {
+            "type": "cta",
+            "original": "Most founders waste 6 months building features nobody asked for.",
+            "improved": "Start by focusing on building a minimum viable product (MVP) instead of features that customers won’t want. Focus on creating something that solves their pain points and meets their needs, and watch as your startup grows.",
+            "reason": "The original CTA was too focused on negative outcomes without providing actionable steps or solutions. The improved version encourages the audience to focus on creating something valuable and solves their pain points."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "Encourages founders to build a minimum viable product (MVP) instead of features that customers don’t want.",
+            "Provides actionable steps for focusing on building value rather than features that won’t be used or valued by customers."
+          ],
+          "whatWasPreserved": [
+            "The script's engaging tone and motivational content",
+            "The original message about the negative outcomes of wasting time and resources on features that customers don't want"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 19596,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-08",
+        "category": "Personal brand",
+        "language": "English",
+        "script": "I spent 10,000 hours studying top creators on YouTube. Here are 3 subtle habits that separate 10k follower accounts from 1M follower channels.",
+        "factAnchors": [
+          "10,000 hours",
+          "3 subtle habits",
+          "10k",
+          "1M"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "PARTIAL",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "PASS",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PARTIAL",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 22751
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "I spent 10,000 hours watching the best of YouTube to find out what separates 10k followers from millions!",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook creates curiosity by suggesting a journey into the world of top creators on YouTube, which is engaging and intriguing.",
+          "changes": [
+            "I spent 10,000 hours watching the best of YouTube to find out what separates 10k followers from millions!"
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "Unlocking Secrets: The Journey into Top Creators on YouTube",
+            "strategy": "Curiosity Gap",
+            "reason": "This alternative hook uses the same strategy as the recommended hook but with a slightly different wording, maintaining engagement.",
+            "changes": [
+              "Unlocking Secrets: The Journey into Top Creators on YouTube"
+            ]
+          },
+          {
+            "text": "The 10k vs. 1M Rule: What Makes the Difference?",
+            "strategy": "Curiosity Gap",
+            "reason": "This alternative hook uses a different strategy but still maintains engagement by focusing on the comparison between top creators.",
+            "changes": [
+              "The 10k vs. 1M Rule: What Makes the Difference?"
+            ]
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 5499,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "Subtle Habits for Growing Your YouTube Following",
+          "coreMessage": "Learn how to achieve a million followers by mimicking the habits of top creators on YouTube.",
+          "audience": "YouTube creators looking to grow their following, especially those aiming for millions of subscribers.",
+          "goal": "To provide actionable insights and tips that can help individuals increase their YouTube subscriber count from 10k to over 1M.",
+          "tone": "Engaging",
+          "biggestWeakness": "The script is somewhat generic without specific examples or case studies."
+        },
+        "improvedScript": "I spent 10,000 hours studying top creators on YouTube. Here are 3 subtle habits that separate 10k follower accounts from 1M follower channels. By mimicking these habits, you can achieve a million followers by following the lead of successful YouTubers.",
+        "sections": {
+          "hook": "I spent 10,000 hours studying top creators on YouTube. Here are 3 subtle habits that separate 10k follower accounts from 1M follower channels. By mimicking these habits, you can achieve a million followers by following the lead of successful YouTubers.",
+          "body": "Subtle Habits for Growing Your YouTube Following\n\n- **Habit 1: Consistent Content Creation**: Create content consistently and regularly to keep your audience engaged.\n- **Habit 2: Engaging Thumbnails**: Use eye-catching thumbnails that make viewers want to click through to the video.\n- **Habit 3: Active Engagement**: Respond to comments, engage with your followers, and interact with your channel's community.",
+          "cta": "Start implementing these habits today and watch your YouTube following grow from 10k to over 1M. Join thousands of creators who have already seen amazing results by mimicking the habits of top YouTubers."
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "I spent 10,000 hours studying top creators on YouTube.",
+            "improved": "Subtle Habits for Growing Your YouTube Following\n\n- **Habit 1: Consistent Content Creation**: Create content consistently and regularly to keep your audience engaged.\n- **Habit 2: Engaging Thumbnails**: Use eye-catching thumbnails that make viewers want to click through to the video.\n- **Habit 3: Active Engagement**: Respond to comments, engage with your followers, and interact with your channel's community.",
+            "reason": "The original hook was too generic. The improved version provides specific examples of habits that can help YouTube creators grow their following."
+          },
+          {
+            "type": "body",
+            "original": "By mimicking these habits, you can achieve a million followers by following the lead of successful YouTubers.",
+            "improved": "Subtle Habits for Growing Your YouTube Following\n\n- **Habit 1: Consistent Content Creation**: Create content consistently and regularly to keep your audience engaged.\n- **Habit 2: Engaging Thumbnails**: Use eye-catching thumbnails that make viewers want to click through to the video.\n- **Habit 3: Active Engagement**: Respond to comments, engage with your followers, and interact with your channel's community.",
+            "reason": "The original body was too generic. The improved version provides specific examples of habits that can help YouTube creators grow their following."
+          },
+          {
+            "type": "cta",
+            "original": "Join thousands of creators who have already seen amazing results by mimicking the habits of top YouTubers.",
+            "improved": "Start implementing these habits today and watch your YouTube following grow from 10k to over 1M. Join thousands of creators who have already seen amazing results by mimicking the habits of top YouTubers.",
+            "reason": "The original CTA was too generic. The improved version provides a specific action that can help YouTube creators grow their following."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "Subtle Habits for Growing Your YouTube Following",
+            "Join thousands of creators who have already seen amazing results by mimicking the habits of top YouTubers"
+          ],
+          "whatWasPreserved": [
+            "I spent 10,000 hours studying top creators on YouTube.",
+            "By mimicking these habits, you can achieve a million followers by following the lead of successful YouTubers."
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 17245,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-09",
+        "category": "Informational/news-style",
+        "language": "English",
+        "script": "Breaking update: Google just released Gemini 2.5 with 2x speed boost and 50% lower API pricing. Here is how it impacts developers right now.",
+        "factAnchors": [
+          "Google",
+          "Gemini 2.5",
+          "2x",
+          "50%"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "FAIL",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "FAIL",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 26978
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "Breaking update: Google just released Gemini 2.5 with a staggering 2x speed boost and an unprecedented 50% lower API pricing, making it the game-changer for developers right now.",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook immediately captures attention by highlighting significant improvements in performance and cost efficiency without revealing too much detail upfront. It piques curiosity about what's new and why this update is so impactful.",
+          "changes": [
+            "Breaking update: Google just released Gemini 2.5 with a staggering 2x speed boost and an unprecedented 50% lower API pricing, making it the game-changer for developers right now."
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "Google just unveiled a major upgrade to Gemini 2.5: 2x speed boost and 50% lower API prices.",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative focuses on the direct benefits of the update, emphasizing cost savings for developers without revealing too much detail."
+          },
+          {
+            "text": "Google just released Gemini 2.5: A game-changer with a 2x speed boost and 50% lower API pricing.",
+            "strategy": "Pattern Interrupt",
+            "reason": "This hook disrupts the typical pattern of updates by highlighting both performance improvements and cost savings, which can be surprising to developers."
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 5807,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "Google Gemini update",
+          "coreMessage": "Google's Gemini 2.5 release with improved speed and lower API pricing impacts developers.",
+          "audience": "developers, tech enthusiasts, software engineers",
+          "goal": "inform about the new features of Google Gemini 2.5",
+          "tone": "engaging, informative",
+          "biggestWeakness": "None identified"
+        },
+        "improvedScript": "Breaking update: Google just released Gemini 2.5 with a significant speed boost and a substantial reduction in API pricing. This release is poised to revolutionize the development landscape for developers right now. Here’s how it impacts you:\n\n**Speed Boost:** The new version of Gemini promises twice the performance, making your applications run faster than ever before.\n\n**Lower Pricing:** With 50% lower API costs, developers can now afford more features and functionalities without breaking the bank. This makes development projects more accessible and cost-effective.\n\n**Enhanced Features:** Expect a range of new tools and improvements that will streamline workflows and enhance productivity. Whether you're building web applications or mobile apps, this update is set to make your work easier and faster.\n\n**Community Support:** Google has also introduced community support features, making it easier for developers to collaborate with peers and share knowledge. This collaborative environment fosters innovation and helps in solving complex problems more efficiently.\n\nStay tuned as we provide detailed insights into how you can leverage these new features to enhance your development process and achieve better results.\n\n**Actionable Tips:**\n- Start exploring the new speed boost options now.\n- Look out for the lower pricing plans available on Google’s marketplace.\n- Join the community support forums to connect with fellow developers and share experiences.\n\nDon’t miss this opportunity to upgrade your development tools and experience. Let’s make the most of these improvements together!\n\n**Call to Action:**\nUpgrade now and unlock the full potential of Gemini 2.5.",
+        "sections": {
+          "hook": "Breaking update: Google just released Gemini 2.5 with a significant speed boost and lower API pricing.\n\nHere’s how it impacts you:\n\n- **Speed Boost:** Twice the performance for faster applications.\n- **Lower Pricing:** 50% reduction in API costs, making development more accessible.",
+          "body": "Google's Gemini 2.5 release is set to transform the way developers work. With a speed boost of twice its previous version and lower API pricing, this update promises to revolutionize your projects. Expect new tools and improvements that will streamline workflows and enhance productivity.\n\nCommunity support features have also been introduced, making it easier for you to collaborate with peers and share knowledge. This collaborative environment fosters innovation and helps in solving complex problems more efficiently.",
+          "cta": "Upgrade now and unlock the full potential of Gemini 2.5."
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "Breaking update: Google just released Gemini 2.5 with a significant speed boost and lower API pricing.\n\nHere’s how it impacts you:\n\n- **Speed Boost:** Twice the performance for faster applications.\n- **Lower Pricing:** 50% reduction in API costs, making development more accessible.",
+            "improved": "Google just released Gemini 2.5 with a significant speed boost and lower API pricing. This update is poised to transform your projects. Expect new tools and improvements that will streamline workflows and enhance productivity.\n\nCommunity support features have also been introduced, making it easier for you to collaborate with peers and share knowledge.",
+            "reason": "The original hook was too long and repetitive. The improved version retains the core message but reduces repetition by focusing on the key points."
+          },
+          {
+            "type": "body",
+            "original": "Google's Gemini 2.5 release is set to transform the way developers work. With a speed boost of twice its previous version and lower API pricing, this update promises to revolutionize your projects. Expect new tools and improvements that will streamline workflows and enhance productivity.\n\nCommunity support features have also been introduced, making it easier for you to collaborate with peers and share knowledge.",
+            "improved": "Google just released Gemini 2.5 with a significant speed boost and lower API pricing. This update is poised to transform your projects. Expect new tools and improvements that will streamline workflows and enhance productivity.\n\nCommunity support features have also been introduced, making it easier for you to collaborate with peers and share knowledge.",
+            "reason": "The original body was too long and repetitive. The improved version retains the core message but reduces repetition by focusing on key points."
+          },
+          {
+            "type": "cta",
+            "original": "Don’t miss this opportunity to upgrade your development tools and experience.\n\nLet’s make the most of these improvements together!\n\n**Call to Action:**\nUpgrade now and unlock the full potential of Gemini 2.5.",
+            "improved": "Upgrading now unlocks the full potential of Gemini 2.5, transforming your projects with a speed boost and lower API pricing.\n\nJoin us in making the most of these improvements together!",
+            "reason": "The original call to action was too long and repetitive. The improved version retains the core message but reduces repetition by focusing on key points."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "Speed boost",
+            "Lower API pricing"
+          ],
+          "whatWasPreserved": [
+            "New tools and improvements",
+            "Streamlined workflows",
+            "Enhanced productivity"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 21163,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-10",
+        "category": "CTA-heavy",
+        "language": "English",
+        "script": "Stop scrolling right now! Click the link below, sign up for our free masterclass, and download your 50-page cheat sheet before registration closes tonight at 11:59 PM.",
+        "factAnchors": [
+          "50-page",
+          "11:59 PM"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "PASS",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "PASS",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 15132
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "Don't miss out! Sign up for our free masterclass now and get your 50-page cheat sheet before the registration deadline at 11:59 PM tonight!",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook creates a sense of urgency by highlighting the limited time left to sign up, which is likely to increase engagement.",
+          "changes": [
+            "Don't miss out! Sign up for our free masterclass now and get your 50-page cheat sheet before the registration deadline at 11:59 PM tonight!"
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "Sign up for our free masterclass right away to claim your exclusive 50-page cheat sheet, available until midnight tonight!",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative focuses on the direct benefit of signing up and getting the cheat sheet, making it more appealing.",
+            "changes": [
+              "Sign up for our free masterclass right away to claim your exclusive 50-page cheat sheet, available until midnight tonight!"
+            ]
+          },
+          {
+            "text": "Don't miss this opportunity! Sign up for our free masterclass now and get your 50-page cheat sheet before the registration deadline at 11:59 PM tonight!",
+            "strategy": "Question",
+            "reason": "This alternative uses a question format to create curiosity, encouraging the audience to click.",
+            "changes": [
+              "Don't miss this opportunity! Sign up for our free masterclass now and get your 50-page cheat sheet before the registration deadline at 11:59 PM tonight!"
+            ]
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 6787,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "",
+          "coreMessage": "Stop scrolling right now! Click the link below, sign up for our free masterclass, and download your 50-page cheat sheet before registration closes tonight at 11:59 PM.",
+          "audience": "Everyone",
+          "goal": "Encourage immediate action to sign up for a free masterclass and download a cheat sheet",
+          "tone": "Engaging",
+          "biggestWeakness": ""
+        },
+        "improvedScript": "Stop scrolling right now! Click the link below, sign up for our free masterclass, and download your 50-page cheat sheet before registration closes tonight at 11:59 PM.",
+        "sections": {
+          "hook": "",
+          "body": "",
+          "cta": ""
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "Stop scrolling right now! Click the link below, sign up for our free masterclass, and download your 50-page cheat sheet before registration closes tonight at 11:59 PM.",
+            "improved": "Stop scrolling right now! Sign up for our free masterclass and download your 50-page cheat sheet before it's too late!",
+            "reason": "Added urgency by mentioning 'before it's too late' to encourage immediate action."
+          },
+          {
+            "type": "body",
+            "original": "",
+            "improved": "Sign up for our free masterclass and download your 50-page cheat sheet before registration closes tonight at 11:59 PM.",
+            "reason": "Removed unnecessary details, keeping the focus on the main offer."
+          },
+          {
+            "type": "cta",
+            "original": "",
+            "improved": "Sign up for our free masterclass and download your 50-page cheat sheet before it's too late!",
+            "reason": "Added urgency by mentioning 'before it's too late' to encourage immediate action."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "hook",
+            "body"
+          ],
+          "whatWasPreserved": [
+            "coreMessage"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 8339,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-11",
+        "category": "No CTA",
+        "language": "English",
+        "script": "The secret behind Apple's packaging design isn't aesthetics. It's sensory anticipation. When you slide open an iPhone box, it takes exactly 7 seconds due to controlled air pressure.",
+        "factAnchors": [
+          "Apple",
+          "iPhone",
+          "7 seconds"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "PASS",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "PASS",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 21507
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "Why the exact time it takes to open an iPhone box is a key factor in its success, not just aesthetics.",
+          "strategy": "Pattern Interrupt",
+          "reason": "This hook immediately captures attention by highlighting a surprising and relevant detail about Apple's packaging design that goes beyond mere aesthetics. It shifts focus from surface-level marketing claims to the underlying principles of product presentation.",
+          "changes": [
+            "The secret behind Apple's packaging design isn't just aesthetics, but its precise timing."
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "Why does Apple use controlled air pressure when opening iPhone boxes?",
+            "strategy": "Curiosity Gap",
+            "reason": "This alternative hook creates a sense of curiosity by asking why the specific method is used, encouraging audience members to seek out more information.",
+            "changes": [
+              "Why does Apple use controlled air pressure when opening iPhone boxes?"
+            ]
+          },
+          {
+            "text": "How does the precise timing of an iPhone box's opening contribute to its success?",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative hook directly addresses a potential benefit or advantage of the packaging design, making it more actionable and relatable.",
+            "changes": [
+              "How does the precise timing of an iPhone box's opening contribute to its success?"
+            ]
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 5306,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "Apple's packaging design",
+          "coreMessage": "The secret behind Apple's packaging design is sensory anticipation.",
+          "audience": "any audience interested in technology or product design",
+          "goal": "to educate the audience about Apple's packaging strategy and its impact on customer experience",
+          "tone": "engaging, informative",
+          "biggestWeakness": "lack of specific examples or real-world applications"
+        },
+        "improvedScript": "The secret behind Apple’s packaging design isn’t just aesthetics. It’s sensory anticipation. When you slide open an iPhone box, it takes exactly 7 seconds due to controlled air pressure. This precise timing not only enhances the visual appeal but also creates a sense of excitement and anticipation for what's inside. Imagine if every time you opened your phone case, there was a slight delay or a different sensation – how would that change your experience? Apple’s packaging design is more than just packaging; it’s an extension of their brand promise. When customers open their iPhone boxes, they’re not only greeted with the product but also feel a sense of satisfaction and anticipation for what's inside. This approach has been instrumental in building trust and loyalty among consumers.",
+        "sections": {
+          "hook": "Imagine if every time you opened your phone case, there was a slight delay or a different sensation – how would that change your experience? Apple’s packaging design is more than just packaging; it’s an extension of their brand promise. When customers open their iPhone boxes, they’re not only greeted with the product but also feel a sense of satisfaction and anticipation for what's inside.",
+          "body": "When you slide open an iPhone box, it takes exactly 7 seconds due to controlled air pressure. This precise timing not only enhances the visual appeal but also creates a sense of excitement and anticipation for what’s inside. Imagine if every time you opened your phone case, there was a slight delay or a different sensation – how would that change your experience? Apple’s packaging design is more than just packaging; it’s an extension of their brand promise. When customers open their iPhone boxes, they’re not only greeted with the product but also feel a sense of satisfaction and anticipation for what's inside.",
+          "cta": "Learn more about Apple's packaging strategy and how it impacts customer experience."
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "The secret behind Apple’s packaging design isn’t just aesthetics. It’s sensory anticipation.",
+            "improved": "Imagine if every time you opened your phone case, there was a slight delay or a different sensation – how would that change your experience? Apple’s packaging design is more than just packaging; it’s an extension of their brand promise. When customers open their iPhone boxes, they’re not only greeted with the product but also feel a sense of satisfaction and anticipation for what's inside.",
+            "reason": "Added specific examples to illustrate how sensory anticipation enhances customer experience."
+          },
+          {
+            "type": "body",
+            "original": "When you slide open an iPhone box, it takes exactly 7 seconds due to controlled air pressure. This precise timing not only enhances the visual appeal but also creates a sense of excitement and anticipation for what’s inside.",
+            "improved": "When you slide open an iPhone box, it takes exactly 7 seconds due to controlled air pressure. This precise timing not only enhances the visual appeal but also creates a sense of excitement and anticipation for what’s inside. Imagine if every time you opened your phone case, there was a slight delay or a different sensation – how would that change your experience? Apple’s packaging design is more than just packaging; it’s an extension of their brand promise.",
+            "reason": "Added specific examples to illustrate how sensory anticipation enhances customer experience."
+          },
+          {
+            "type": "cta",
+            "original": "Learn more about Apple's packaging strategy and how it impacts customer experience.",
+            "improved": "Learn more about Apple's packaging strategy and how it impacts customer experience.",
+            "reason": "No changes needed as the goal is to educate the audience."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "Added specific examples",
+            "Enhanced sensory anticipation"
+          ],
+          "whatWasPreserved": [
+            "The core message about Apple's packaging design"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 16195,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-12",
+        "category": "Hindi local business",
+        "language": "Hindi",
+        "script": "क्या आप भी मुंबई में सबसे बढ़िया वड़ा पाव की तलाश में हैं? दादर मार्केट की यह ५० साल पुरानी दुकान आपको असली स्वाद देगी। केवल ₹२० में गरम-गरम वड़ा पाव!",
+        "factAnchors": [
+          "मुंबई",
+          "दादर",
+          "५० साल",
+          "₹२०"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "PASS",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "PASS",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 46744
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "दादर मार्केट की यह ५० साल पुरानी दुकान आपको असली स्वाद देगी। केवल ₹२० में गरम-गरम वड़ा पाव! जब आप इसे पाव करते हैं, तो अपनी स्वाद बढ़िया और मुख्य रूप से निशापद भविष्य उठाएगी।",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook creates a curiosity gap by suggesting that the old market stall has something special, which piques the audience's interest and encourages them to learn more.",
+          "changes": [
+            "दादर मार्केट की यह ५० साल पुरानी दुकान",
+            "अपनी स्वाद बढ़िया",
+            "मुख्य रूप से निशापद भविष्य"
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "दादर मार्केट की यह ५० साल पुरानी दुकान आपको असली स्वाद देगी। केवल ₹२० में गरम-गरम वड़ा पाव! जब आप इसे पाव करते हैं, तो अपनी स्वाद बढ़िया और मुख्य रूप से निशापद भविष्य उठाएगी।",
+            "strategy": "Curiosity Gap",
+            "reason": "This alternative hook maintains the same strategy as the original, creating a curiosity gap to encourage further interest.",
+            "changes": [
+              "दादर मार्केट की यह ५० साल पुरानी दुकान",
+              "अपनी स्वाद बढ़िया",
+              "मुख्य रूप से निशापद भविष्य"
+            ]
+          },
+          {
+            "text": "दादर मार्केट की यह ५० साल पुरानी दुकान आपको असली स्वाद देगी। केवल ₹२० में गरम-गरम वड़ा पाव! जब आप इसे पाव करते हैं, तो अपनी स्वाद बढ़िया और मुख्य रूप से निशापद भविष्य उठाएगी।",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative hook focuses on the direct benefit of purchasing the product, which is a different strategy and may appeal to those who are more interested in practical outcomes.",
+            "changes": [
+              "दादर मार्केट की यह ५० साल पुरानी दुकान",
+              "अपनी स्वाद बढ़िया",
+              "मुख्य रूप से निशापद भविष्य"
+            ]
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 16930,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "वड़ा पाव",
+          "coreMessage": "दादर मार्केट की यह ५० साल पुरानी दुकान आपको असली स्वाद देगी। केवल ₹२० में गरम-गरम वड़ा पाव!",
+          "audience": "भारतीय लोग",
+          "goal": "वड़ा पाव स्वाद के अनुसार उचित नियंत्रण करना",
+          "tone": "अपनी आदतें से बहुत खुशी है, लेकिन भी प्रोत्साहन और विश्वसनीयता के अधीन।",
+          "biggestWeakness": "अपनी संदेशों को बहुत दूरी पर ही नहीं मिलते।"
+        },
+        "improvedScript": "मुंबई में सबसे बढ़िया वड़ा पाव की तलाश में हैं? दादर मार्केट की ५० साल पुरानी दुकान आपको असली स्वाद देगी। केवल ₹२० में गरम-गरम वड़ा पाव! इसे जारिया करने के लिए, आपको अच्छी सुविधाओं के साथ सेवानी करने की चाहता है।",
+        "sections": {
+          "hook": "मुंबई में सबसे बढ़िया वड़ा पाव की तलाश में हैं? दादर मार्केट की ५० साल पुरानी दुकान आपको असली स्वाद देगी।",
+          "body": "केवल ₹२० में गरम-गरम वड़ा पाव! इसे जारिया करने के लिए, आपको अच्छी सुविधाओं के साथ सेवानी करने की चाहता है।",
+          "cta": "आपको इस प्रकार की सेवाएँ मिलना चाहिए?"
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "मुंबई में सबसे बढ़िया वड़ा पाव की तलाश में हैं? दादर मार्केट की ५० साल पुरानी दुकान आपको असली स्वाद देगी।",
+            "improved": "केवल ₹२० में गरम-गरम वड़ा पाव! इसे जारिया करने के लिए, आपको अच्छी सुविधाओं के साथ सेवानी करने की चाहता है।",
+            "reason": "सबसे पहले बातचीज़ में, आपको इस प्रकार की सुविधाएँ मिलना चाहिए।"
+          },
+          {
+            "type": "body",
+            "original": "मुंबई में सबसे बढ़िया वड़ा पाव की तलाश में हैं? दादर मार्केट की ५० साल पुरानी दुकान आपको असली स्वाद देगी।",
+            "improved": "केवल ₹२० में गरम-गरम वड़ा पाव! इसे जारिया करने के लिए, आपको अच्छी सुविधाओं के साथ सेवानी करने की चाहता है।",
+            "reason": "सबसे पहले बातचीज़ में, आपको इस प्रकार की सुविधाएँ मिलना चाहिए।"
+          },
+          {
+            "type": "cta",
+            "original": "आपको इस प्रकार की सेवाएँ मिलना चाहिए?",
+            "improved": "आपको इस प्रकार की सेवाएँ मिलना चाहिए?",
+            "reason": "सबसे पहले बातचीज़ में, आपको इस प्रकार की सुविधाएँ मिलना चाहिए।"
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "सबसे पहले बातचीज़ में, आपको इस प्रकार की सुविधाएँ मिलना चाहिए।"
+          ],
+          "whatWasPreserved": [
+            "मुंबई में सबसे बढ़िया वड़ा पाव की तलाश में हैं? दादर मार्केट की ५० साल पुरानी दुकान आपको असली स्वाद देगी।"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 29808,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-13",
+        "category": "Hinglish creator content",
+        "language": "Hinglish",
+        "script": "Bhai agar tum bhi reels daal daal ke thak gaye ho aur views 500 pe stuck hain, toh ye 1 setting instantly change karo. Maine try kiya aur 10k views aaye in 24 hours.",
+        "factAnchors": [
+          "500",
+          "1 setting",
+          "10k",
+          "24 hours"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "PASS",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "PASS",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 22385
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "Bhai agar tum bhi reels daal daal ke thak gaye ho aur views 500 pe stuck hain, toh ye 1 setting instantly change karo. Maine try kiya aur 10k views aaye in 24 hours.",
+          "strategy": "Direct Benefit",
+          "reason": "This hook directly addresses the target audience's immediate concern of low views and provides a clear solution within a short timeframe, making it highly engaging and actionable.",
+          "changes": [
+            "Maine try kiya aur 10k views aaye in 24 hours."
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "Bhai agar tum bhi reels daal daal ke thak gaye ho aur views 500 pe stuck hain, toh ye 1 setting instantly change karo. Maine try kiya aur 10k views aaye in 24 hours.",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative hook is identical to the original and does not provide any additional value or strategy."
+          },
+          {
+            "text": "Bhai agar tum bhi reels daal daal ke thak gaye ho aur views 500 pe stuck hain, toh ye 1 setting instantly change karo. Maine try kiya aur 10k views aaye in 24 hours.",
+            "strategy": "Curiosity Gap",
+            "reason": "This alternative hook uses the curiosity gap strategy by creating an intriguing scenario that prompts the audience to want to know more."
+          },
+          {
+            "text": "Bhai agar tum bhi reels daal daal ke thak gaye ho aur views 500 pe stuck hain, toh ye 1 setting instantly change karo. Maine try kiya aur 10k views aaye in 24 hours.",
+            "strategy": "Question",
+            "reason": "This alternative hook uses the question strategy by posing a direct and relevant question that encourages engagement."
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 8340,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "Improving video performance",
+          "coreMessage": "Unlock the power of setting changes to boost your YouTube channel's views instantly.",
+          "audience": "YouTube creators looking for quick boosts in their subscriber count and view growth.",
+          "goal": "To encourage viewers to try out the 1-setting change method described in the script, leading them to subscribe or like the video.",
+          "tone": "Engaging",
+          "biggestWeakness": "The script lacks a clear call-to-action (CTA) that directly encourages viewers to try the 1-setting change."
+        },
+        "improvedScript": "Bhai agar tum bhi reels daal daal ke thak gaye ho aur views 500 pe stuck hain, toh ye 1 setting instantly change karo. Maine try kiya aur 10k views aaye in 24 hours. Aapko subscribe karne ka link de sakte hai: [Insert Subscription Link Here].",
+        "sections": {
+          "hook": "Bhai agar tum bhi reels daal daal ke thak gaye ho aur views 500 pe stuck hain, toh ye 1 setting instantly change karo. Maine try kiya aur 10k views aaye in 24 hours.",
+          "body": "Aapko subscribe karne ka link de sakte hai: [Insert Subscription Link Here].",
+          "cta": "Subscribe now and unlock the power of setting changes to boost your YouTube channel's views instantly. Aapko subscribe karne ka link de sakte hai: [Insert Subscription Link Here]."
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "Bhai agar tum bhi reels daal daal ke thak gaye ho aur views 500 pe stuck hain, toh ye 1 setting instantly change karo. Maine try kiya aur 10k views aaye in 24 hours.",
+            "improved": "Subscribe now and unlock the power of setting changes to boost your YouTube channel's views instantly. Aapko subscribe karne ka link de sakte hai: [Insert Subscription Link Here].",
+            "reason": "The original hook was too long, so it has been shortened to a more concise version that directly encourages viewers to try out the 1-setting change method."
+          },
+          {
+            "type": "body",
+            "original": "Aapko subscribe karne ka link de sakte hai: [Insert Subscription Link Here].",
+            "improved": "Subscribe now and unlock the power of setting changes to boost your YouTube channel's views instantly. Aapko subscribe karne ka link de sakte hai: [Insert Subscription Link Here].",
+            "reason": "The body section was kept as is, but it has been simplified for a more engaging reading experience."
+          },
+          {
+            "type": "cta",
+            "original": "Subscribe now and unlock the power of setting changes to boost your YouTube channel's views instantly. Aapko subscribe karne ka link de sakte hai: [Insert Subscription Link Here].",
+            "improved": "Subscribe now and unlock the power of setting changes to boost your YouTube channel's views instantly.",
+            "reason": "The original CTA was kept as is, but it has been simplified for a more direct call-to-action."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "Hook",
+            "Body",
+            "CTA"
+          ],
+          "whatWasPreserved": [
+            "Key statistics and brand names"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 14038,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-14",
+        "category": "Short script",
+        "language": "English",
+        "script": "Stop wasting money on Meta ads until you fix your landing page speed. Under 2 seconds or zero conversions.",
+        "factAnchors": [
+          "Meta",
+          "2 seconds"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "PASS",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "PASS",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 12692
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "Fix your landing page speed and boost conversions in just 2 seconds!",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook immediately addresses the pain point of slow landing pages, creating a sense of urgency that encourages immediate action.",
+          "changes": [
+            "Stop wasting money on Meta ads until you fix your landing page speed"
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "Boost conversions with faster landing pages",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative focuses directly on the benefit of improved conversion rates, making it a clear and compelling message."
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 2927,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "Fixing Landing Page Speed",
+          "coreMessage": "Stop wasting money on Meta ads until you improve your landing page speed.",
+          "audience": "any business owner or marketer looking to increase conversions and reduce ad spend.",
+          "goal": "improve website performance for better conversion rates and reduced advertising costs.",
+          "tone": "engaging, informative",
+          "biggestWeakness": "lack of specific action items"
+        },
+        "improvedScript": "Stop wasting money on Meta ads until you fix your landing page speed. Under 2 seconds or zero conversions.",
+        "sections": {
+          "hook": "Fixing your landing page speed can significantly boost conversion rates and reduce ad spend. Don't waste any more time on Meta ads!",
+          "body": "Are you tired of seeing lower conversion rates despite investing in high-quality ads? It might be time to take a closer look at your landing pages.",
+          "cta": "Start improving your landing page speed today! Visit our website for free tools and resources to help you achieve faster loading times."
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "Stop wasting money on Meta ads until you fix your landing page speed. Under 2 seconds or zero conversions.",
+            "improved": "Fixing your landing page speed can significantly boost conversion rates and reduce ad spend. Don't waste any more time on Meta ads!",
+            "reason": "Added a stronger hook that emphasizes the immediate impact of improving landing page speed."
+          },
+          {
+            "type": "body",
+            "original": "Are you tired of seeing lower conversion rates despite investing in high-quality ads? It might be time to take a closer look at your landing pages.",
+            "improved": "Start improving your landing page speed today! Visit our website for free tools and resources to help you achieve faster loading times.",
+            "reason": "Added a clear call-to-action that encourages immediate action."
+          },
+          {
+            "type": "cta",
+            "original": "Start improving your landing page speed today! Visit our website for free tools and resources to help you achieve faster loading times.",
+            "improved": "Don't wait any longer. Start improving your landing page speed now!",
+            "reason": "Changed the tone from informative to more engaging, encouraging immediate action."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "hook",
+            "body"
+          ],
+          "whatWasPreserved": [
+            "coreMessage"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 9759,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-15",
+        "category": "Long script",
+        "language": "English",
+        "script": "If you're running a boutique digital agency in 2026, client retention is your biggest struggle. Most agency owners think clients leave because of pricing, but our audit of 45 agencies proved that 82% of cancellations happen due to poor weekly reporting. When clients don't see clear ROI breakdowns every Friday, they lose trust. To fix this, implement a automated 3-metric dashboard that updates every 24 hours. Send them a 60-second video walkthrough every Monday morning. You'll instantly see retention jump from 4 months to over 14 months.",
+        "factAnchors": [
+          "2026",
+          "45 agencies",
+          "82%",
+          "Friday",
+          "24 hours",
+          "60-second",
+          "Monday",
+          "4 months",
+          "14 months"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "PASS",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "PASS",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 27803
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "Implement an automated 3-metric dashboard that updates every 24 hours and send a 60-second video walkthrough every Monday morning to instantly see client retention jump from 4 months to over 14 months.",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook immediately captures the audience's attention by highlighting an urgent problem (client retention struggle) that most digital agency owners are facing, creating a sense of urgency and engagement. It also introduces a potential solution in a way that feels like it could be relevant to their business.",
+          "changes": [
+            "If you're running a boutique digital agency in 2026, client retention is your biggest struggle."
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "Fix the problem of poor weekly reporting by implementing an automated 3-metric dashboard that updates every 24 hours and send a 60-second video walkthrough every Monday morning to instantly see client retention jump from 4 months to over 14 months.",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative hook focuses on the direct benefit of implementing an automated dashboard, which is a clear and tangible outcome that most agency owners would find appealing. It also emphasizes the immediate results they can expect."
+          },
+          {
+            "text": "Implement an automated 3-metric dashboard that updates every 24 hours and send a 60-second video walkthrough every Monday morning to instantly see client retention jump from 4 months to over 14 months.",
+            "strategy": "Specific Outcome",
+            "reason": "This alternative hook directly states the specific outcome of improved client retention, which is a clear and measurable goal that most agency owners would find motivating. It also emphasizes the immediate results they can expect."
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 7283,
+          "attemptIndex": 0
+        },
+        "factWarning": true,
+        "missingAnchors": [
+          "2026"
+        ]
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "Client Retention",
+          "coreMessage": "Implementing a 3-metric automated dashboard and weekly video reports can significantly improve client retention in digital agencies.",
+          "audience": "Digital agency owners, especially those running boutique businesses in the future.",
+          "goal": "Reduce client churn by improving communication and transparency with clients.",
+          "tone": "Engaging",
+          "biggestWeakness": "Most agency owners believe poor pricing is the reason for client cancellations."
+        },
+        "improvedScript": "If you're running a boutique digital agency in 2026, client retention is your biggest struggle. Most agency owners think clients leave because of pricing, but our audit of 45 agencies proved that 82% of cancellations happen due to poor weekly reporting. When clients don't see clear ROI breakdowns every Friday, they lose trust. To fix this, implement a automated 3-metric dashboard that updates every 24 hours. Send them a 60-second video walkthrough every Monday morning. You'll instantly see retention jump from 4 months to over 14 months.",
+        "sections": {
+          "hook": "If you're running a boutique digital agency in 2026, client retention is your biggest struggle.",
+          "body": "Most agency owners think clients leave because of pricing, but our audit of 45 agencies proved that 82% of cancellations happen due to poor weekly reporting. When clients don't see clear ROI breakdowns every Friday, they lose trust. To fix this, implement a automated 3-metric dashboard that updates every 24 hours. Send them a 60-second video walkthrough every Monday morning. You'll instantly see retention jump from 4 months to over 14 months.",
+          "cta": "Implement the solution today and watch your client churn rate plummet."
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "If you're running a boutique digital agency in 2026, client retention is your biggest struggle.",
+            "improved": "If you're running a boutique digital agency in 2026, client retention is your biggest struggle. Most agency owners think clients leave because of pricing, but our audit of 45 agencies proved that 82% of cancellations happen due to poor weekly reporting. When clients don't see clear ROI breakdowns every Friday, they lose trust.",
+            "reason": "The original hook was too generic and didn't capture the urgency or specific problem faced by boutique digital agency owners."
+          },
+          {
+            "type": "body",
+            "original": "When clients don't see clear ROI breakdowns every Friday, they lose trust. To fix this, implement a automated 3-metric dashboard that updates every 24 hours. Send them a 60-second video walkthrough every Monday morning. You'll instantly see retention jump from 4 months to over 14 months.",
+            "improved": "When clients don't see clear ROI breakdowns every Friday, they lose trust. To fix this, implement a automated 3-metric dashboard that updates every 24 hours. Send them a 60-second video walkthrough every Monday morning. You'll instantly see retention jump from 4 months to over 14 months.",
+            "reason": "The original body was too long and repetitive, but the core message remained unchanged."
+          },
+          {
+            "type": "cta",
+            "original": "You'll instantly see retention jump from 4 months to over 14 months.",
+            "improved": "Implement the solution today and watch your client churn rate plummet.",
+            "reason": "The original CTA was too generic, but it still aligned with the core message."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "hook",
+            "body",
+            "cta"
+          ],
+          "whatWasPreserved": [
+            "coreMessage"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 20514,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-16",
+        "category": "Already optimized script",
+        "language": "English",
+        "script": "Don't post your next Reel until you check this 3-second hook test. 9 out of 10 creators miss step #2. Save this post before it gets buried.",
+        "factAnchors": [
+          "3-second",
+          "9 out of 10",
+          "step #2"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "PASS",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "PASS",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 18259
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "Save yourself the frustration of missing step #2 with our quick, 3-second hook test. Don’t miss out on a 9/10 creator’s success!",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook uses curiosity to prompt action, making it highly engaging and likely to encourage immediate attention.",
+          "changes": [
+            "Don't post your next Reel until you check this 3-second hook test."
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "Get ahead of the curve with our quick, 3-second hook test. Don’t miss out on a 9/10 creator’s success!",
+            "strategy": "Curiosity Gap",
+            "reason": "This alternative uses curiosity to create an engaging and attention-grabbing message.",
+            "changes": [
+              "Save yourself the frustration of missing step #2 with our quick, 3-second hook test."
+            ]
+          },
+          {
+            "text": "Don’t let your Reel go unnoticed. Our quick, 3-second hook test will help you avoid a 9/10 creator’s mistakes.",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative focuses on the direct benefit of avoiding mistakes and achieving success, making it more appealing to creators looking for practical advice.",
+            "changes": [
+              "Don't post your next Reel until you check this 3-second hook test."
+            ]
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 5926,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "Reel creation",
+          "coreMessage": "Check the 3-second hook test before posting your next Reel.",
+          "audience": "creators of short videos (e.g., TikTok, Instagram Reels users)",
+          "goal": "Encourage creators to improve their video quality by focusing on the first step in the process",
+          "tone": "engaging and informative",
+          "biggestWeakness": "The script is too generic and doesn't provide specific details about what to focus on."
+        },
+        "improvedScript": "Don’t post your next Reel until you check this quick 3-second hook test. 9 out of 10 creators miss step #2. Save this post before it gets buried.",
+        "sections": {
+          "hook": "Don’t post your next Reel until you check this quick 3-second hook test. 9 out of 10 creators miss step #2. Save this post before it gets buried.",
+          "body": "The first step in creating a successful Reel is to make sure the hook grabs attention right away. This 3-second test will help you identify what works and what doesn’t. By focusing on step #2, you can improve your videos significantly.",
+          "cta": "Start improving your Reels today by following these steps."
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "Don’t post your next Reel until you check this quick 3-second hook test. 9 out of 10 creators miss step #2.",
+            "improved": "Don’t post your next Reel until you check this quick 3-second hook test. 9 out of 10 creators miss step #2. Save this post before it gets buried.",
+            "reason": "The original script was too generic and didn't provide specific details about what to focus on, which is why the tone became more engaging."
+          },
+          {
+            "type": "body",
+            "original": "The first step in creating a successful Reel is to make sure the hook grabs attention right away. This 3-second test will help you identify what works and what doesn’t.",
+            "improved": "The first step in creating a successful Reel is to make sure the hook grabs attention right away. This 3-second test will help you identify what works and what doesn’t. By focusing on step #2, you can improve your videos significantly.",
+            "reason": "The original body was too generic and didn't provide specific details about how to focus on step #2."
+          },
+          {
+            "type": "cta",
+            "original": "Start improving your Reels today by following these steps.",
+            "improved": "Start improving your Reels today by following these steps.",
+            "reason": "The original CTA was too generic and didn't provide specific details about what to focus on."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "Hook",
+            "Body",
+            "CTA"
+          ],
+          "whatWasPreserved": [
+            "Target Audience",
+            "Campaign Goal",
+            "Tone",
+            "Biggest Weakness"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 12326,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-17",
+        "category": "Script containing prices/numbers",
+        "language": "Hinglish",
+        "script": "Aaj hum compare karne waile hain ₹499 wali smartwatch aur ₹4999 wali Apple Watch lookalike. Kya 10x price difference worth hai?",
+        "factAnchors": [
+          "₹499",
+          "₹4999",
+          "Apple Watch",
+          "10x"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "FAIL",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "FAIL",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 20981
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "Aaj hum compare karne waile hain ₹499 wali smartwatch aur ₹4999 wali Apple Watch lookalike. Kya 10x price difference worth hai?",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook creates curiosity by highlighting the significant price difference without directly stating it, encouraging the audience to engage further.",
+          "changes": [
+            "Aaj hum compare karne waile hain ₹499 wali smartwatch aur ₹4999 wali Apple Watch lookalike"
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "Kya ₹10,000 worth of features in a watch is really worth it?",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative hook directly addresses the core message by emphasizing the perceived value of additional features without using numbers."
+          },
+          {
+            "text": "Aaj hum compare karne waile hain ₹499 wali smartwatch aur ₹4999 wali Apple Watch lookalike. Kya 10x price difference worth hai?",
+            "strategy": "Pattern Interrupt",
+            "reason": "This alternative hook uses a pattern interrupt strategy by repeating the original text, which can be engaging and memorable."
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 5392,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "Smartwatch Comparison",
+          "coreMessage": "Compare the ₹499 smartwatch with its ₹4999 Apple Watch lookalike to determine if a $10 price difference is worth it.",
+          "audience": "Tech enthusiasts, budget-conscious consumers, and those interested in comparing different products.",
+          "goal": "Encourage viewers to make an informed decision about whether the higher-priced watch is truly worth the extra cost.",
+          "tone": "Engaging",
+          "biggestWeakness": "The script lacks a clear comparison between the two watches."
+        },
+        "improvedScript": "Hey there! Today, we're comparing the ₹499 smartwatch with its ₹4999 Apple Watch lookalike. Do you think it's worth paying $10 more for this difference in price? Let’s dive into the details to find out!",
+        "sections": {
+          "hook": "Hey there! Today, we're comparing the ₹499 smartwatch with its ₹4999 Apple Watch lookalike. Do you think it's worth paying $10 more for this difference in price? Let’s dive into the details to find out!",
+          "body": "Firstly, let’s break down what each watch offers. The ₹499 smartwatch is a budget-friendly option with basic features and battery life. On the other hand, the ₹4999 Apple Watch lookalike comes packed with advanced technology and sleek design.",
+          "cta": "If you’re still unsure, check out our video for more details on both watches. Which one do you think fits your needs better? Share your thoughts in the comments below!"
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "Hey there! Today, we're comparing the ₹499 smartwatch with its ₹4999 Apple Watch lookalike. Do you think it's worth paying $10 more for this difference in price? Let’s dive into the details to find out!",
+            "improved": "Hey there! Today, we’re comparing the ₹499 smartwatch with its ₹4999 Apple Watch lookalike. Do you think it’s worth paying $10 more for this difference in price? Let’s dive into the details to find out!",
+            "reason": "The original hook was a bit too long and didn’t provide enough information, so we trimmed it down to make it more engaging."
+          },
+          {
+            "type": "body",
+            "original": "Firstly, let’s break down what each watch offers. The ₹499 smartwatch is a budget-friendly option with basic features and battery life. On the other hand, the ₹4999 Apple Watch lookalike comes packed with advanced technology and sleek design.",
+            "improved": "Firstly, let’s compare the key features of both watches: the ₹499 smartwatch offers basic features and battery life, while the ₹4999 Apple Watch lookalike boasts advanced technology and a sleek design.",
+            "reason": "The original body section was too long and detailed. We simplified it to make it more concise without losing any important information."
+          },
+          {
+            "type": "cta",
+            "original": "If you’re still unsure, check out our video for more details on both watches. Which one do you think fits your needs better? Share your thoughts in the comments below!",
+            "improved": "If you’re still unsure, check out our video for more details on both watches. Do you think the ₹499 smartwatch or the ₹4999 Apple Watch lookalike is a better fit for your needs? Let us know in the comments below!",
+            "reason": "The original CTA was too long and didn’t provide enough information, so we trimmed it down to make it more engaging."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "Hook",
+            "Body",
+            "CTA"
+          ],
+          "whatWasPreserved": [
+            "Key features comparison"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 15582,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-18",
+        "category": "Script with brand names",
+        "language": "English",
+        "script": "We tested Nike Pegasus 40 against Adidas Ultraboost 5 on a 15km trail run in rainy conditions. Here is the winner.",
+        "factAnchors": [
+          "Nike Pegasus 40",
+          "Adidas Ultraboost 5",
+          "15km"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "FAIL",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "FAIL",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 15657
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "Nike Pegasus 40 vs. Adidas Ultraboost 5: The Trail Run Challenge in Rainy Conditions",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook creates curiosity by presenting a comparison between two popular brands, which is likely to engage the audience's interest.",
+          "changes": [
+            "Nike Pegasus 40 vs. Adidas Ultraboost 5"
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "The Trail Run Challenge: Nike Pegasus 40 vs. Adidas Ultraboost 5 in Rainy Conditions",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative hook emphasizes the direct benefit of choosing one brand over another, which is likely to resonate with the target audience.",
+            "changes": [
+              "The Trail Run Challenge"
+            ]
+          },
+          {
+            "text": "Nike Pegasus 40 vs. Adidas Ultraboost 5: The Winner in a 15km Rainy Trail Run",
+            "strategy": "Pattern Interrupt",
+            "reason": "This hook disrupts the usual narrative by presenting a winner, which is likely to catch the audience's attention and make them want to know more.",
+            "changes": [
+              "Nike Pegasus 40 vs. Adidas Ultraboost 5"
+            ]
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 5346,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "Nike Pegasus 40 vs Adidas Ultraboost 5 Trail Run",
+          "coreMessage": "The winner of a 15km trail run in rainy conditions.",
+          "audience": "athletes, fitness enthusiasts, and those interested in running performance comparison",
+          "goal": "To showcase the superiority of Nike Pegasus 40 over Adidas Ultraboost 5 in challenging weather conditions",
+          "tone": "engaging and informative",
+          "biggestWeakness": "Lack of detailed results or specific metrics to compare"
+        },
+        "improvedScript": "In a recent trail run, we tested the Nike Pegasus 40 against the Adidas Ultraboost 5 in challenging rainy conditions. Here is the winner.",
+        "sections": {
+          "hook": "The winner of a 15km trail run in rainy conditions.",
+          "body": "We set out on a 15km trail run, expecting both brands to perform well but were surprised by the results. The Nike Pegasus 40 emerged victorious in this intense test.",
+          "cta": "Discover how the Nike Pegasus 40 stands out from Adidas Ultraboost 5 in rainy conditions."
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "We tested Nike Pegasus 40 against Adidas Ultraboost 5 on a 15km trail run in rainy conditions.",
+            "improved": "The winner of a 15km trail run in rainy conditions.",
+            "reason": "Changed the focus to the outcome, making it more engaging and specific."
+          },
+          {
+            "type": "body",
+            "original": "We set out on a 15km trail run, expecting both brands to perform well but were surprised by the results. The Nike Pegasus 40 emerged victorious in this intense test.",
+            "improved": "The winner of a 15km trail run in rainy conditions.",
+            "reason": "Maintained the core message while simplifying and focusing on the outcome."
+          },
+          {
+            "type": "cta",
+            "original": "Discover how the Nike Pegasus 40 stands out from Adidas Ultraboost 5 in rainy conditions.",
+            "improved": "Discover how the Nike Pegasus 40 emerged victorious in this intense test.",
+            "reason": "Changed the focus to highlight the victory and eliminated unnecessary details."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "hook",
+            "body",
+            "cta"
+          ],
+          "whatWasPreserved": [
+            "topic",
+            "coreMessage",
+            "audience",
+            "goal",
+            "tone"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 10305,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-19",
+        "category": "Poor grammar / messy user input",
+        "language": "Hinglish",
+        "script": "plz help me my reel view not comming i make food video in delhi cost rs 100 fast food but zero like. how to viral fast bro tell me tips",
+        "factAnchors": [
+          "delhi",
+          "rs 100"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "PASS",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "PASS",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 19646
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "Plz help me, my reel views aren't coming. I'm making a food video in Delhi for Rs 100 and getting zero likes.",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook immediately captures the audience's attention by addressing their immediate concern about low engagement on social media platforms, which is relatable to many creators facing similar challenges. It creates a sense of urgency that encourages them to read further for potential solutions or tips.",
+          "changes": [
+            "Plz help me",
+            "my reel views aren't coming"
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "Plz help me, my food video in Delhi isn't getting any likes. I'm spending Rs 100 on it and need some viral tips.",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative hook focuses directly on the creator's goal of increasing their views, which is a common concern for many content creators looking to boost their visibility. It provides a clear benefit that can be easily understood by the audience."
+          },
+          {
+            "text": "Plz help me, my food video in Delhi isn't getting any likes. I'm spending Rs 100 on it and need some viral tips.",
+            "strategy": "Pattern Interrupt",
+            "reason": "This alternative hook uses a pattern interrupt strategy by introducing an unexpected element (the cost of the video) that catches the audience's attention, making them curious about what will happen next."
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 6167,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "Reel View Not Coming",
+          "coreMessage": "I'm trying to make a food video in Delhi, but my reel view isn't coming. I've spent Rs 100 on it and have zero likes.",
+          "audience": "Anyone interested in making content or looking for tips on viral growth",
+          "goal": "Increase rewatch count and engagement by providing effective strategies to increase views quickly",
+          "tone": "Engaging, Informative",
+          "biggestWeakness": "Poor grammar and messy input"
+        },
+        "improvedScript": "Hey there! I'm trying my hand at making a food video in Delhi. I've spent Rs 100 on it but haven't received any likes yet. How do I get more views quickly? Any tips or tricks to make my content go viral? Let me know what you think!",
+        "sections": {
+          "hook": "Hey there! I'm trying my hand at making a food video in Delhi. I've spent Rs 100 on it but haven't received any likes yet. How do I get more views quickly?",
+          "body": "I'm excited to share some tips and tricks that can help you increase your rewatch count and engagement with your content. Whether you're just starting out or looking for ways to boost your viral potential, these strategies will definitely come in handy.",
+          "cta": "If you found this helpful, please hit the 'Like' button below! Also, feel free to share your own tips in the comments section. I'd love to hear from you and help more people like me grow their content."
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "plz help me my reel view not comming i make food video in delhi cost rs 100 fast food but zero like. how to viral fast bro tell me tips",
+            "improved": "Hey there! I'm trying my hand at making a food video in Delhi. I've spent Rs 100 on it but haven't received any likes yet. How do I get more views quickly?",
+            "reason": "The original script had poor grammar and was difficult to understand, which is why the changes were made."
+          },
+          {
+            "type": "body",
+            "original": "how to viral fast bro tell me tips",
+            "improved": "How do I get more views quickly? Any tips or tricks to make my content go viral?",
+            "reason": "The original script was too vague and lacked specific details, which is why the changes were made."
+          },
+          {
+            "type": "cta",
+            "original": "If you found this helpful, please hit the 'Like' button below! Also, feel free to share your own tips in the comments section. I'd love to hear from you and help more people like me grow their content.",
+            "improved": "If you found this helpful, please hit the 'Like' button below! Feel free to share your own tips in the comments section. I'd love to hear from you and help more people like me grow their content.",
+            "reason": "The original script was too long and lacked a clear call-to-action, which is why the changes were made."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "Hook",
+            "Body",
+            "CTA"
+          ],
+          "whatWasPreserved": [
+            "Key statistics (Rs 100)",
+            "Brand name (not mentioned in script)"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 13473,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    },
+    {
+      "testCase": {
+        "id": "tc-20",
+        "category": "Real estate Reel",
+        "language": "Hinglish",
+        "script": "Mumbai ke Seawoods location mein 2 BHK luxury flat only ₹85 Lakhs mein. Prime location, 5 mins from station, ready possession. Direct builder deal!",
+        "factAnchors": [
+          "Mumbai",
+          "Seawoods",
+          "2 BHK",
+          "₹85 Lakhs",
+          "5 mins"
+        ]
+      },
+      "evalResult": {
+        "overallStatus": "PASS",
+        "scores": {
+          "contextPreservation": "PASS",
+          "meaningPreservation": "PASS",
+          "hookQuality": "PASS",
+          "specificity": "PASS",
+          "naturalLanguage": "PASS",
+          "voicePreservation": "PASS",
+          "factPreservation": "PASS",
+          "languagePreservation": "PASS",
+          "variantDiversity": "PASS",
+          "noFabrication": "PASS"
+        },
+        "durationMs": 21279
+      },
+      "hookRes": {
+        "recommendedHook": {
+          "text": "Mumbai's prime location, just 5 mins from the station! Get your hands on a luxurious 2 BHK flat for only ₹85 Lakhs.",
+          "strategy": "Curiosity Gap",
+          "reason": "This hook creates curiosity by highlighting the exclusive nature of the property at an affordable price point, which is likely to attract potential buyers who are looking for luxury in their budget.",
+          "changes": [
+            "₹85 Lakhs",
+            "only ₹85 Lakhs"
+          ]
+        },
+        "alternatives": [
+          {
+            "text": "Mumbai's prime location, just 5 mins from the station! Get your hands on a luxurious 2 BHK flat for only ₹85 Lakhs.",
+            "strategy": "Direct Benefit",
+            "reason": "This alternative focuses on the direct benefit of getting a luxury property at an affordable price, which is likely to appeal to buyers who are looking for value and exclusivity in their real estate investment.",
+            "changes": [
+              "₹85 Lakhs",
+              "only ₹85 Lakhs"
+            ]
+          },
+          {
+            "text": "Mumbai's prime location, just 5 mins from the station! Get your hands on a luxurious 2 BHK flat for only ₹85 Lakhs. Ready possession available.",
+            "strategy": "Specific Outcome",
+            "reason": "This alternative emphasizes the ready possession feature, which is likely to appeal to buyers who are looking for convenience and immediate satisfaction in their real estate investment.",
+            "changes": [
+              "₹85 Lakhs",
+              "only ₹85 Lakhs"
+            ]
+          }
+        ],
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 6416,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "scriptRes": {
+        "analysis": {
+          "topic": "Luxury Real Estate",
+          "coreMessage": "Get a 2 BHK luxury flat in Mumbai's Seawoods location for just ₹85 Lakhs.",
+          "audience": "High-end buyers and investors looking for prime real estate in Mumbai.",
+          "goal": "Encourage immediate interest and conversion to the offer.",
+          "tone": "Engaging, informative, and enthusiastic",
+          "biggestWeakness": "Lack of specific details about location amenities or additional features."
+        },
+        "improvedScript": "Mumbai ke Seawoods location mein 2 BHK luxury flat only ₹85 Lakhs mein. Prime location, 5 mins from station, ready possession. Direct builder deal! 🏖️✨ Discover the perfect home for your next big move in Mumbai's elite Seawoods neighborhood. This stunning 2-BHK luxury flat is priced at just ₹85 Lakhs, making it an unbeatable investment opportunity. Situated right on the bustling Seawoods waterfront, this prime location offers breathtaking views and easy access to all amenities. Don't miss out on this incredible deal! 🚗💨 Ready for possession immediately. Contact us today to secure your dream home before it's too late.",
+        "sections": {
+          "hook": "Discover the perfect home in Seawoods waterfront, just ₹85 Lakhs!",
+          "body": "Prime location, 5 mins from station, ready possession. Direct builder deal! 🏖️✨ Discover the perfect home for your next big move in Mumbai's elite Seawoods neighborhood. This stunning 2-BHK luxury flat is priced at just ₹85 Lakhs, making it an unbeatable investment opportunity. Situated right on the bustling Seawoods waterfront, this prime location offers breathtaking views and easy access to all amenities. Don't miss out on this incredible deal! 🚗💨 Ready for possession immediately. Contact us today to secure your dream home before it's too late.",
+          "cta": "Contact Us Now"
+        },
+        "changes": [
+          {
+            "type": "hook",
+            "original": "Mumbai ke Seawoods location mein 2 BHK luxury flat only ₹85 Lakhs mein. Prime location, 5 mins from station, ready possession. Direct builder deal!",
+            "improved": "Discover the perfect home in Seawoods waterfront, just ₹85 Lakhs!",
+            "reason": "Added specific details about the prime location and waterfront views to make it more engaging."
+          },
+          {
+            "type": "body",
+            "original": "Prime location, 5 mins from station, ready possession. Direct builder deal! 🏖️✨ Discover the perfect home for your next big move in Mumbai's elite Seawoods neighborhood. This stunning 2-BHK luxury flat is priced at just ₹85 Lakhs, making it an unbeatable investment opportunity. Situated right on the bustling Seawoods waterfront, this prime location offers breathtaking views and easy access to all amenities. Don't miss out on this incredible deal! 🚗💨 Ready for possession immediately. Contact us today to secure your dream home before it's too late.",
+            "improved": "Prime location, 5 mins from station, ready possession. Direct builder deal! 🏖️✨ Discover the perfect home in Seawoods waterfront, just ₹85 Lakhs!",
+            "reason": "Removed filler words and simplified language for a more polished flow."
+          },
+          {
+            "type": "cta",
+            "original": "Contact Us Now",
+            "improved": "Contact Us Now",
+            "reason": "No changes needed as the CTA was already strong and clear."
+          }
+        ],
+        "summary": {
+          "whatImproved": [
+            "Added specific details about location amenities",
+            "Removed filler words for a polished flow"
+          ],
+          "whatWasPreserved": [
+            "Engaging tone, strong core message"
+          ]
+        },
+        "providerInfo": {
+          "type": "real",
+          "name": "Local AI",
+          "model": "qwen2.5:1.5b",
+          "isRealAI": true,
+          "fallbackUsed": false,
+          "latencyMs": 14857,
+          "attemptIndex": 0
+        },
+        "factWarning": false,
+        "missingAnchors": []
+      },
+      "errors": {
+        "hookErr": null,
+        "scriptErr": null
+      }
+    }
+  ]
+}

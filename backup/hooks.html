@@ -1,0 +1,2369 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KONTAGI — AI Hook Intelligence Dashboard</title>
+  <link rel="stylesheet" href="design-system.css">
+  <style>
+    /* ==========================================================================
+       SANDBOX CORE LAYOUT FRAMEWORK
+       ========================================================================== */
+    body {
+      display: flex;
+      flex-direction: column;
+      height: 100vh;
+      overflow: hidden;
+      background-color: var(--bg-secondary);
+      transition: background-color var(--transition-smooth);
+    }
+
+    .sandbox-header {
+      background-color: var(--bg-primary);
+      border-bottom: 1px solid var(--border-default);
+      padding: var(--space-xs) var(--space-lg);
+      z-index: 1000;
+      flex-shrink: 0;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: var(--space-md);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-brand {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xs);
+    }
+
+    .sandbox-brand h1 {
+      font-size: 1.125rem;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .sandbox-brand span {
+      background: linear-gradient(135deg, var(--brand-primary) 0%, var(--accent-purple) 100%);
+      color: var(--text-inverse);
+      font-size: 0.625rem;
+      padding: 2px 6px;
+      border-radius: var(--radius-full);
+      font-weight: 700;
+      letter-spacing: 0.05em;
+    }
+
+    .sandbox-controls {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      flex-wrap: wrap;
+    }
+
+    .sandbox-control-group {
+      display: flex;
+      align-items: center;
+      gap: var(--space-xxs);
+      background-color: var(--bg-secondary);
+      padding: 3px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border-default);
+    }
+
+    .sandbox-btn {
+      background: transparent;
+      border: none;
+      color: var(--text-muted);
+      font-family: var(--font-sans);
+      font-size: 0.75rem;
+      font-weight: 500;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sandbox-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .sandbox-btn.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sandbox-workspace {
+      flex-grow: 1;
+      overflow-y: auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: var(--space-lg);
+      position: relative;
+    }
+
+    .emulator-viewport {
+      background-color: var(--bg-primary);
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      transition: width var(--transition-smooth), height var(--transition-smooth), border-radius var(--transition-smooth);
+      position: relative;
+      display: flex;
+      overflow: hidden;
+      height: 100%;
+    }
+
+    .emulator-viewport.desktop {
+      width: 100%;
+      height: 100%;
+      border-radius: 0;
+      border: none;
+    }
+
+    .emulator-viewport.tablet {
+      width: 768px;
+      height: 95%;
+      border-radius: var(--radius-lg);
+    }
+
+    .emulator-viewport.mobile {
+      width: 375px;
+      height: 85%;
+      border-radius: var(--radius-2xl);
+    }
+
+    /* ==========================================================================
+       DASHBOARD AND SIDEBAR STRUCTURE
+       ========================================================================== */
+    .dashboard-shell {
+      display: flex;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+    }
+
+    .dashboard-sidebar {
+      width: 260px;
+      background-color: var(--bg-secondary);
+      border-right: 1px solid var(--border-default);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      transition: transform var(--transition-smooth), width var(--transition-smooth);
+    }
+
+    .sidebar-header {
+      padding: var(--space-md);
+      border-bottom: 1px solid var(--border-default);
+    }
+
+    .sidebar-nav {
+      padding: var(--space-sm);
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      overflow-y: auto;
+    }
+
+    .sidebar-nav-item {
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+      padding: 10px 12px;
+      border-radius: var(--radius-md);
+      color: var(--text-secondary);
+      font-size: 0.875rem;
+      font-weight: 500;
+      text-decoration: none;
+      transition: all var(--transition-fast);
+      cursor: pointer;
+    }
+
+    .sidebar-nav-item:hover, .sidebar-nav-item.active {
+      background-color: var(--bg-elevated);
+      color: var(--text-primary);
+    }
+
+    .sidebar-nav-item.active {
+      border: 1px solid var(--border-default);
+      box-shadow: var(--shadow-sm);
+    }
+
+    .sidebar-footer {
+      padding: var(--space-md);
+      border-top: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      gap: var(--space-sm);
+    }
+
+    .dashboard-main {
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      height: 100%;
+      overflow: hidden;
+      background-color: var(--bg-primary);
+    }
+
+    .dashboard-header {
+      height: 64px;
+      border-bottom: 1px solid var(--border-default);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 var(--space-lg);
+      flex-shrink: 0;
+    }
+
+    .dashboard-search-bar {
+      display: flex;
+      align-items: center;
+      background-color: var(--bg-secondary);
+      border: 1px solid var(--border-default);
+      border-radius: var(--radius-md);
+      padding: 6px 12px;
+      gap: var(--space-xs);
+      width: 240px;
+      max-width: 100%;
+    }
+
+    .dashboard-body {
+      flex-grow: 1;
+      overflow-y: auto;
+      padding: var(--space-xl);
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-lg);
+    }
+
+    /* Emulator viewports responsive overrides */
+    .emulator-viewport.tablet .dashboard-sidebar {
+      width: 70px;
+    }
+    .emulator-viewport.tablet .sidebar-text-label,
+    .emulator-viewport.tablet .sidebar-footer {
+      display: none;
+    }
+
+    .emulator-viewport.mobile #sidebar-toggle-btn {
+      display: inline-flex !important;
+    }
+    .emulator-viewport.mobile .dashboard-sidebar {
+      display: none;
+    }
+    .emulator-viewport.mobile .dashboard-sidebar.active {
+      display: flex;
+      position: absolute;
+      left: 0;
+      top: 64px;
+      bottom: 0;
+      z-index: 950;
+      height: calc(100% - 64px);
+      width: 240px;
+      box-shadow: var(--shadow-xl);
+      animation: dropdownEnter var(--transition-fast) forwards;
+    }
+
+    /* Skeleton Loading State Sync */
+    .skeleton-view-panel {
+      display: none;
+      flex-direction: column;
+      gap: var(--space-lg);
+      width: 100%;
+    }
+
+    .loading-state-active .skeleton-view-panel {
+      display: flex !important;
+    }
+    .loading-state-active .real-view-panel {
+      display: none !important;
+    }
+
+    .skeleton-pulse {
+      background: linear-gradient(90deg, var(--bg-secondary) 25%, var(--border-default) 50%, var(--bg-secondary) 75%);
+      background-size: 200% 100%;
+      animation: skeletonGlow 1.5s infinite;
+      border-radius: var(--radius-md);
+    }
+
+    @keyframes skeletonGlow {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    /* ==========================================================================
+       HOOK INTELLIGENCE CUSTOM SPECIFIC ELEMENTS
+       ========================================================================== */
+    .tab-btn {
+      background: transparent;
+      border: none;
+      padding: var(--space-xs) var(--space-md);
+      font-family: var(--font-display);
+      font-size: 0.875rem;
+      font-weight: 600;
+      color: var(--text-secondary);
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all var(--transition-fast);
+      white-space: nowrap;
+    }
+
+    .tab-btn:hover {
+      color: var(--text-primary);
+    }
+
+    .tab-btn.active {
+      color: var(--brand-primary) !important;
+      border-bottom-color: var(--brand-primary) !important;
+    }
+
+    .hook-tab-panel {
+      display: none;
+      animation: fadeInState 400ms ease-out forwards;
+    }
+
+    .hook-tab-panel.active {
+      display: block;
+    }
+
+    /* Interactive filmstrip frames */
+    .timeline-container {
+      display: flex;
+      flex-direction: column;
+      gap: var(--space-sm);
+      background-color: var(--bg-secondary);
+      padding: var(--space-md);
+      border-radius: var(--radius-xl);
+      border: 1px solid var(--border-default);
+    }
+
+    .timeline-filmstrip {
+      display: flex;
+      gap: var(--space-sm);
+      overflow-x: auto;
+      padding-bottom: var(--space-xs);
+    }
+
+    .frame-card {
+      min-width: 130px;
+      flex: 1;
+      aspect-ratio: 9/16;
+      border-radius: var(--radius-lg);
+      border: 2px solid var(--border-default);
+      cursor: pointer;
+      position: relative;
+      overflow: hidden;
+      transition: all var(--transition-smooth);
+    }
+
+    .frame-card:hover, .frame-card.active-frame {
+      border-color: var(--brand-primary);
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .frame-card.active-frame::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border: 2px solid var(--brand-primary);
+      border-radius: inherit;
+      pointer-events: none;
+    }
+
+    .frame-badge {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      background-color: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      font-size: 0.625rem;
+      font-weight: 700;
+      padding: 1px 4px;
+      border-radius: var(--radius-xs);
+    }
+
+    .frame-label {
+      position: absolute;
+      bottom: 4px;
+      left: 4px;
+      right: 4px;
+      background-color: rgba(0, 0, 0, 0.8);
+      color: #fff;
+      font-size: 0.625rem;
+      padding: 2px 4px;
+      border-radius: var(--radius-xs);
+      text-align: center;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Heatmap grid simulator */
+    .heatmap-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      grid-template-rows: repeat(5, 1fr);
+      width: 100%;
+      height: 100%;
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .heatmap-cell {
+      transition: background-color var(--transition-smooth);
+    }
+
+    /* Floating AI Chat Assistant Drawer */
+    .ai-chat-drawer {
+      position: fixed;
+      top: 0;
+      right: -360px;
+      width: 350px;
+      height: 100%;
+      background-color: var(--bg-elevated);
+      border-left: 1px solid var(--border-default);
+      box-shadow: var(--shadow-xl);
+      z-index: 1500;
+      display: flex;
+      flex-direction: column;
+      transition: right var(--transition-smooth);
+    }
+
+    .ai-chat-drawer.active {
+      right: 0;
+    }
+
+    /* SVG Radial Chart animation */
+    .radar-polygon {
+      transition: points 0.5s ease-in-out;
+    }
+
+    /* Sound waveform lines */
+    .wave-line {
+      transition: height 0.3s ease;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ==============================================
+       1. SANDBOX HEADER CONTROL PANEL
+       ============================================== -->
+  <header class="sandbox-header">
+    <div class="sandbox-brand">
+      <svg width="24" height="24" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M16 2L30 10V22L16 30L2 22V10L16 2Z" stroke="var(--brand-primary)" stroke-width="3" stroke-linejoin="round"/>
+        <path d="M16 8L25 13V19L16 24L7 19V13L16 8Z" fill="var(--brand-primary)" opacity="0.15"/>
+        <circle cx="16" cy="16" r="3" fill="var(--brand-primary)"/>
+      </svg>
+      <h1>KONTAGI AI Hook Intelligence</h1>
+      <span>Beta</span>
+    </div>
+
+    <div class="sandbox-controls">
+      <!-- Project Context Selector -->
+      <div style="display: flex; align-items: center; gap: var(--space-xxs);">
+        <span class="text-detail font-bold text-muted sidebar-text-label">Context:</span>
+        <select class="select select-sm" style="width: 180px;" id="project-context-select" onchange="switchProjectContext(this.value)">
+          <option value="none">Loading...</option>
+        </select>
+      </div>
+
+      <!-- Viewport Emulator buttons -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" data-viewport="desktop" title="Desktop emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M6 21h12m-9-4l-1 4m8-4l1 4"/></svg>
+          Desktop
+        </button>
+        <button class="sandbox-btn" data-viewport="tablet" title="Tablet emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M12 18h.01"/></svg>
+          Tablet
+        </button>
+        <button class="sandbox-btn" data-viewport="mobile" title="Mobile emulation">
+          <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="3"/><path d="M12 18h.01"/></svg>
+          Mobile
+        </button>
+      </div>
+
+      <!-- State Modifiers -->
+      <div class="sandbox-control-group">
+        <button class="sandbox-btn active" id="state-normal">Normal</button>
+        <button class="sandbox-btn" id="state-loading">Loading State</button>
+        <button class="sandbox-btn" id="state-ai-chat">Ask Aura AI</button>
+      </div>
+
+      <!-- Mode Toggles -->
+      <button class="btn btn-tertiary btn-sm" id="theme-toggle" style="box-shadow: none;">
+        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg>
+        Dark Mode
+      </button>
+    </div>
+  </header>
+
+  <!-- ==============================================
+       2. MAIN WORKSPACE WITH VIEWPORT SIMULATOR
+       ============================================== -->
+  <main class="sandbox-workspace">
+    <div class="emulator-viewport desktop" id="viewport-frame">
+      
+      <div class="dashboard-shell" id="dashboard-main-shell">
+        
+        <!-- SIDEBAR COMPONENT -->
+        <aside class="dashboard-sidebar">
+          <div>
+            <!-- Header Workspace Selector -->
+            <div class="sidebar-header">
+              <div class="flex-between select-wrapper" style="width: 100%;">
+                <div class="flex-center" style="gap: var(--space-xs); cursor: pointer;" onclick="toggleWorkspaceDropdown()">
+                  <div class="workspace-avatar" style="width: 28px; height: 28px; font-size: 0.75rem; background-color: var(--brand-primary-glow); color: var(--brand-primary);">GD</div>
+                  <span class="text-body-small font-bold sidebar-text-label" id="current-workspace-name">Deepmind Dev</span>
+                </div>
+                <svg class="sidebar-text-label" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 9l-7 7-7-7"/></svg>
+              </div>
+            </div>
+
+            <!-- Sidebar Navigations -->
+                        <nav class="sidebar-nav">
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-bottom: 6px; text-transform: uppercase;">Workspace</span>
+              <a class="sidebar-nav-item" href="dashboard.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+                <span class="sidebar-text-label">Dashboard</span>
+              </a>
+              <a class="sidebar-nav-item" href="projects.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 7v10a2 2 0 002 2h14a2 2 0 002-2V9a2 2 0 00-2-2h-6l-2-2H5a2 2 0 00-2 2z"/></svg>
+                <span class="sidebar-text-label">Projects</span>
+              </a>
+              <a class="sidebar-nav-item" href="library.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 4H6a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-2m-4-1v8m0 0l3-3m-3 3L9 8m-5 5h2.586a1 1 0 01.707.293l2.414 2.414a1 1 0 00.707.293h3.172a1 1 0 00.707-.293l2.414-2.414a1 1 0 01.707-.293H20"/></svg>
+                <span class="sidebar-text-label">Creative Library</span>
+              </a>
+              <a class="sidebar-nav-item active" href="hooks.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13.828 10.172a4 4 0 00-5.656 0l-4 4a4 4 0 105.656 5.656l1.102-1.101m-.758-4.899a4 4 0 005.656 0l4-4a4 4 0 00-5.656-5.656l-1.1 1.1"/></svg>
+                <span class="sidebar-text-label">Hook Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="retention.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Retention Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="script.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
+                <span class="sidebar-text-label">Script Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="thumbnail.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="8.5" cy="8.5" r="1.5" stroke-linecap="round" stroke-linejoin="round"/><path d="M21 15l-5-5L5 21" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Thumbnail Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="caption.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M7 8h10M7 12h4m1 8l-4-4H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-3l-4 4z"/></svg>
+                <span class="sidebar-text-label">Caption Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="audio.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M19 11a7 7 0 01-7 7m0 0a7 7 0 01-7-7m7 7v4m0 0H8m4 0h4m-4-8a3 3 0 01-3-3V5a3 3 0 116 0v6a3 3 0 01-3 3z"/></svg>
+                <span class="sidebar-text-label">Audio Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="visual.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-.447.894L15 18.5V10zM5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/></svg>
+                <span class="sidebar-text-label">Visual Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="trend.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/></svg>
+                <span class="sidebar-text-label">Trend Intelligence</span>
+              </a>
+              <a class="sidebar-nav-item" href="upload.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"/></svg>
+                <span class="sidebar-text-label">Upload Center</span>
+              </a>
+              <a class="sidebar-nav-item" href="lab.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+                <span class="sidebar-text-label">AI Creative Lab</span>
+              </a>
+              <a class="sidebar-nav-item" href="report.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+                <span class="sidebar-text-label">AI Reports</span>
+              </a>
+              <a class="sidebar-nav-item" href="creators.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Creators</span>
+              </a>
+              <a class="sidebar-nav-item" href="brand.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="18" height="18" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M9 17V9h3a2 2 0 110 4H9m0 4h3a2 2 0 100-4"/></svg>
+                <span class="sidebar-text-label">Brand Hub</span>
+              </a>
+              <a class="sidebar-nav-item" href="coach.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/></svg>
+                <span class="sidebar-text-label">AI Coach</span>
+              </a>
+              <a class="sidebar-nav-item" onclick="window.showToast('Loading database insights...', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 002 2h2a2 2 0 002-2z"/></svg>
+                <span class="sidebar-text-label">Analytics</span>
+              </a>
+              <a class="sidebar-nav-item" href="client.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                <span class="sidebar-text-label">Clients</span>
+              </a>
+              <a class="sidebar-nav-item" href="team.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2m16-10a4 4 0 11-8 0 4 4 0 018 0zm3 10v-2a4 4 0 00-3-3.87m-4-12a4 4 0 010 7.75"/></svg>
+                <span class="sidebar-text-label">Team Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="billing.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z"/></svg>
+                <span class="sidebar-text-label">Billing</span>
+              </a>
+              <a class="sidebar-nav-item" href="notifications.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span class="sidebar-text-label">Notifications</span>
+              </a>
+              <a class="sidebar-nav-item" href="settings.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/><circle cx="12" cy="12" r="3"/></svg>
+                <span class="sidebar-text-label">Settings</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">System</span>
+              <a class="sidebar-nav-item" href="admin.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+                <span class="sidebar-text-label">Admin Portal</span>
+              </a>
+              <a class="sidebar-nav-item" href="mobile.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="5" y="2" width="14" height="20" rx="2" stroke-linecap="round" stroke-linejoin="round"/><path d="M12 18h.01" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <span class="sidebar-text-label">Mobile App</span>
+              </a>
+              <span class="text-detail font-bold text-muted sidebar-text-label" style="padding-left: 12px; margin-top: 12px; margin-bottom: 6px; text-transform: uppercase;">Design</span>
+              <a class="sidebar-nav-item" href="index.html">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.5" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M12 6.042A8.967 8.967 0 006 3.75c-1.052 0-2.062.18-3 .512v14.25A8.987 8.987 0 016 18c2.305 0 4.408.867 6 2.292m0-14.25a8.966 8.966 0 016-2.292c1.052 0 2.062.18 3 .512v14.25A8.987 8.987 0 0018 18a8.967 8.967 0 00-6 2.292m0-14.25v14.25"/></svg>
+                <span class="sidebar-text-label">Design System</span>
+              </a>
+            </nav>
+          </div>
+
+          <!-- Sidebar Footer User Profile -->
+          <div class="sidebar-footer">
+            <div class="workspace-avatar" style="background-color: var(--accent-purple-bg); color: var(--accent-purple); width: 32px; height: 32px; font-size: 0.875rem;">JH</div>
+            <div style="flex-grow: 1; overflow: hidden;" class="sidebar-text-label">
+              <span class="text-body-small font-bold" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">Jaiveer Hastar</span>
+              <span class="text-detail text-secondary" style="display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">jaiveer@company.com</span>
+            </div>
+          </div>
+        </aside>
+
+        <!-- DASHBOARD CONTENT PANEL -->
+        <div class="dashboard-main">
+          
+          <!-- Header Area -->
+          <header class="dashboard-header">
+            <div class="flex-center" style="gap: var(--space-sm);">
+              <button class="btn btn-sm btn-tertiary" style="padding: 4px; display: none;" id="sidebar-toggle-btn">
+                <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 6h16M4 12h16M4 18h16"/></svg>
+              </button>
+              
+              <!-- Breadcrumbs -->
+              <nav class="text-detail font-medium text-muted flex-center" style="gap: 4px;">
+                <span>Workspaces</span>
+                <span style="color: var(--border-active);">&bull;</span>
+                <span class="text-gradient">Deepmind Dev</span>
+                <span style="color: var(--border-active);">&bull;</span>
+                <span class="text-primary font-bold">Hook Intelligence</span>
+              </nav>
+            </div>
+
+            <!-- Header Controls -->
+            <div class="flex-center" style="gap: var(--space-md);">
+              <div class="dashboard-search-bar" onclick="window.showToast('Global Search opened', 'info')">
+                <svg width="14" height="14" fill="none" stroke="var(--text-secondary)" stroke-width="2" viewBox="0 0 24 24"><path d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+                <span class="text-detail text-secondary">Search...</span>
+                <span class="text-detail text-muted font-mono" style="margin-left: auto; background-color: var(--bg-tertiary); padding: 1px 4px; border-radius: var(--radius-sm); font-size: 0.625rem; border: 1px solid var(--border-default);">⌘K</span>
+              </div>
+
+              <button class="btn btn-sm btn-tertiary" style="padding: 6px; position: relative;" onclick="window.showToast('Notifications: Cluster analysis complete.', 'info')">
+                <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"/></svg>
+                <span style="position: absolute; top: 1px; right: 1px; width: 6px; height: 6px; background-color: var(--accent-red); border-radius: 50%;"></span>
+              </button>
+            </div>
+          </header>
+
+          <!-- DASHBOARD MAIN BODY -->
+          <div class="dashboard-body">
+
+            <!-- SUB-TABS INTERACTIVE MENU -->
+            <div class="tabs-container" style="margin-bottom: var(--space-xs); flex-shrink: 0; overflow-x: auto;">
+              <div class="flex" style="border-bottom: 1px solid var(--border-default); gap: var(--space-md); padding-bottom: 2px;">
+                <button class="tab-btn active" data-tab-group="hook-tabs" data-tab-target="hook-tab-overview">
+                  1. Hook Overview & Scoring
+                </button>
+                <button class="tab-btn" data-tab-group="hook-tabs" data-tab-target="hook-tab-timeline" onclick="initTimelineTab()">
+                  2. First 3-Second Timeline
+                </button>
+                <button class="tab-btn" data-tab-group="hook-tabs" data-tab-target="hook-tab-cognitive">
+                  3. Emotion & Cognitive Metrics
+                </button>
+                <button class="tab-btn" data-tab-group="hook-tabs" data-tab-target="hook-tab-studio">
+                  4. AI Generation & A/B Tests
+                </button>
+                <button class="tab-btn" data-tab-group="hook-tabs" data-tab-target="hook-tab-history">
+                  5. History & Comparisons
+                </button>
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 A. SKELETON LOADER PANEL
+                 ============================================== -->
+            <div class="skeleton-view-panel">
+              <div class="grid-12">
+                <div class="col-span-8 card elevation-1" style="height: 380px; display: flex; flex-direction: column; gap: var(--space-md);">
+                  <div class="skeleton-pulse" style="width: 40%; height: 28px;"></div>
+                  <div class="skeleton-pulse" style="width: 80%; height: 16px;"></div>
+                  <div class="skeleton-pulse" style="width: 100%; flex-grow: 1; border-radius: var(--radius-lg);"></div>
+                </div>
+                <div class="col-span-4 card elevation-1" style="height: 380px; display: flex; flex-direction: column; gap: var(--space-md);">
+                  <div class="skeleton-pulse" style="width: 60%; height: 24px;"></div>
+                  <div class="skeleton-pulse" style="width: 100%; height: 120px; border-radius: 50%; max-width: 120px; margin: auto;"></div>
+                  <div class="skeleton-pulse" style="width: 80%; height: 16px;"></div>
+                  <div class="skeleton-pulse" style="width: 50%; height: 16px;"></div>
+                </div>
+              </div>
+              <div class="grid-12">
+                <div class="col-span-4 card elevation-1" style="height: 180px;">
+                  <div class="skeleton-pulse" style="width: 70%; height: 20px; margin-bottom: 12px;"></div>
+                  <div class="skeleton-pulse" style="width: 100%; height: 100px;"></div>
+                </div>
+                <div class="col-span-4 card elevation-1" style="height: 180px;">
+                  <div class="skeleton-pulse" style="width: 70%; height: 20px; margin-bottom: 12px;"></div>
+                  <div class="skeleton-pulse" style="width: 100%; height: 100px;"></div>
+                </div>
+                <div class="col-span-4 card elevation-1" style="height: 180px;">
+                  <div class="skeleton-pulse" style="width: 70%; height: 20px; margin-bottom: 12px;"></div>
+                  <div class="skeleton-pulse" style="width: 100%; height: 100px;"></div>
+                </div>
+              </div>
+            </div>
+
+            <!-- ==============================================
+                 B. REAL DATA DASHBOARD
+                 ============================================== -->
+            <div class="real-view-panel" style="width: 100%;">
+
+              <!-- ----------------------------------------------
+                   TAB 1: HOOK OVERVIEW & SCORING
+                   ---------------------------------------------- -->
+              <div class="hook-tab-panel active" id="hook-tab-overview" data-tab-panel-group="hook-tabs">
+                <div class="grid-12" style="margin-bottom: var(--space-lg);">
+                  
+                  <!-- Left: Interactive Before/After Frame Slider -->
+                  <div class="col-span-7 card flex-column" style="gap: var(--space-sm);">
+                    <div class="flex-between">
+                      <div>
+                        <h3 class="font-bold text-primary">A/B Interactive Frame Comparison</h3>
+                        <p class="text-body-small text-muted">Slide to preview original baseline clip visual frame vs. AI optimized hook framing.</p>
+                      </div>
+                      <span class="badge badge-info">Pattern Interrupt</span>
+                    </div>
+
+                    <!-- Interactive Before/After Slider Component -->
+                    <div class="before-after-container" style="position: relative; width: 100%; height: 320px; border-radius: var(--radius-lg); overflow: hidden; border: 1px solid var(--border-default); margin-top: var(--space-xs);">
+                      <!-- Before Frame -->
+                      <div class="before-frame" style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(200,200,200,0.1) 0%, rgba(100,100,100,0.3) 100%); display: flex; flex-direction: column; justify-content: center; align-items: center;">
+                        <span class="badge badge-danger" style="position: absolute; top: var(--space-md); left: var(--space-md); z-index: 5; box-shadow: var(--shadow-sm);">Before (Score: 42%)</span>
+                        <div style="text-align: center; color: var(--text-muted); font-size: 0.875rem; padding: var(--space-md);">
+                          <svg width="48" height="48" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom: 8px; opacity: 0.7;"><path stroke-linecap="round" stroke-linejoin="round" d="M15.75 6a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0zM4.501 20.118a7.5 7.5 0 0114.998 0A17.933 17.933 0 0112 21.75c-2.676 0-5.216-.584-7.499-1.632z"/></svg>
+                          <p class="font-semibold text-primary">Raw Mobile Camera Intake</p>
+                          <p class="text-detail" style="margin-top: 4px;">No text copy overlay, off-center eye level, muted background exposure.</p>
+                        </div>
+                      </div>
+                      
+                      <!-- After Frame -->
+                      <div class="after-frame" id="after-frame-overlay" style="position: absolute; inset: 0; width: 50%; border-right: 2px solid var(--brand-primary); background: linear-gradient(135deg, rgba(88,80,236,0.1) 0%, rgba(99,102,241,0.2) 100%); overflow: hidden; transition: width 50ms ease-out;">
+                        <div style="position: absolute; width: 100%; height: 100%; min-width: 450px; display: flex; flex-direction: column; justify-content: space-between; padding: var(--space-lg); box-sizing: border-box;">
+                          <span id="after-score-badge" class="badge badge-success" style="align-self: flex-start; z-index: 5; box-shadow: var(--shadow-sm);">After AI Optimizations (Score: 94%)</span>
+                          
+                          <!-- Typography overlay -->
+                          <div style="background: rgba(10, 10, 14, 0.9); border: 2px solid var(--brand-primary); border-radius: var(--radius-md); padding: var(--space-sm) var(--space-md); text-align: center; max-width: 80%; margin: auto; z-index: 2; box-shadow: var(--shadow-lg);">
+                            <span id="after-typography-text" style="color: #FFF; font-family: var(--font-display); font-weight: 800; font-size: 1.125rem; text-transform: uppercase; letter-spacing: 0.05em; display: block; line-height: 1.2;">
+                              Do NOT Make This <span style="color: var(--accent-orange);">Ad Mistake!</span>
+                            </span>
+                          </div>
+
+                          <!-- Face bounding box -->
+                          <div style="position: absolute; top: 30%; left: 35%; width: 110px; height: 110px; border: 2px dashed var(--accent-green); border-radius: var(--radius-md); display: flex; flex-direction: column; justify-content: space-between; padding: 6px; box-sizing: border-box; z-index: 1;">
+                            <span id="after-joy-badge" class="text-micro" style="color: var(--accent-green); font-weight: bold; background: rgba(0,0,0,0.7); padding: 1px 4px; border-radius: 2px; align-self: flex-start; font-size: 8px;">JOY EXPRESSION (92%)</span>
+                            <span class="text-micro" style="color: var(--accent-green); font-weight: bold; background: rgba(0,0,0,0.7); padding: 1px 4px; border-radius: 2px; align-self: flex-end; font-size: 8px;">EYE LEVEL COMPLY</span>
+                          </div>
+
+                          <div id="after-contrast-badge" style="align-self: flex-end; z-index: 5; background: rgba(0, 0, 0, 0.8); padding: 4px 8px; border-radius: var(--radius-sm); font-size: 0.75rem; color: #fff; font-weight: 600; border: 1px solid rgba(255,255,255,0.1);">
+                            Light Corrected: +18% Contrast
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <!-- Handle -->
+                      <div class="slider-handle" id="slider-handle" style="position: absolute; top: 0; bottom: 0; left: 50%; width: 4px; background: var(--brand-primary); transform: translateX(-50%); z-index: 10; display: flex; align-items: center; justify-content: center; pointer-events: none; transition: left 50ms ease-out;">
+                        <div style="width: 28px; height: 28px; border-radius: 50%; background: var(--brand-primary); border: 2px solid #FFF; display: flex; align-items: center; justify-content: center; box-shadow: var(--shadow-md);">
+                          <svg width="14" height="14" fill="none" stroke="#FFF" stroke-width="2.5" viewBox="0 0 24 24"><path d="M8 7l-5 5 5 5m8-10l5 5-5 5"/></svg>
+                        </div>
+                      </div>
+
+                      <!-- Transparent Range input overlay -->
+                      <input type="range" min="0" max="100" value="50" id="before-after-range" style="position: absolute; inset: 0; width: 100%; height: 100%; opacity: 0; cursor: ew-resize; z-index: 20;" oninput="updateBeforeAfterSlider(this.value)">
+                    </div>
+                  </div>
+
+                  <!-- Right: Core Hook Score radial gauge -->
+                  <div class="col-span-5 card flex-column" style="gap: var(--space-md); justify-content: space-between;">
+                    <div>
+                      <h3 class="font-bold text-primary">Hook Score Dashboard</h3>
+                      <p class="text-body-small text-muted">Multi-modal AI rating of visual, text, motion, and psychological hook dynamics.</p>
+                    </div>
+
+                    <!-- SVG Circular Progress Rings -->
+                    <div class="flex-center" style="gap: var(--space-lg); margin: var(--space-sm) 0;">
+                      <div class="flex-center" style="position: relative; width: 130px; height: 130px;">
+                        <svg width="130" height="130" viewBox="0 0 120 120" style="transform: rotate(-90deg); filter: drop-shadow(var(--shadow-sm));">
+                          <circle cx="60" cy="60" r="50" stroke="var(--border-default)" stroke-width="8" fill="transparent" />
+                          <circle id="hook-score-circle" cx="60" cy="60" r="50" stroke="url(#hookScoreGrad)" stroke-width="10" stroke-dasharray="314.16" stroke-dashoffset="37.7" fill="transparent" stroke-linecap="round" />
+                          <defs>
+                            <linearGradient id="hookScoreGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                              <stop offset="0%" stop-color="var(--brand-primary)" />
+                              <stop offset="100%" stop-color="var(--accent-purple)" />
+                            </linearGradient>
+                          </defs>
+                        </svg>
+                        <div style="position: absolute; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+                          <span id="hook-score-val" class="text-display-xl font-bold" style="font-size: 2.25rem; line-height: 1; letter-spacing: -0.02em;">88</span>
+                          <span class="text-micro font-bold text-muted" style="margin-top: 4px;">Out of 100</span>
+                        </div>
+                      </div>
+
+                      <!-- Sub-ratings breakdown -->
+                      <div class="flex-column" style="gap: var(--space-xs); flex-grow: 1;">
+                        <div>
+                          <div class="flex-between text-detail font-semibold" style="margin-bottom: 2px;">
+                            <span>Visual Contrast</span>
+                            <span id="sub-visual-val" class="text-primary">90%</span>
+                          </div>
+                          <div style="height: 4px; background-color: var(--bg-tertiary); border-radius: var(--radius-full); overflow: hidden;">
+                            <div id="sub-visual-bar" style="width: 90%; height: 100%; background-color: var(--accent-blue);"></div>
+                          </div>
+                        </div>
+                        <div>
+                          <div class="flex-between text-detail font-semibold" style="margin-bottom: 2px;">
+                            <span>Text Legibility</span>
+                            <span id="sub-text-val" class="text-purple">85%</span>
+                          </div>
+                          <div style="height: 4px; background-color: var(--bg-tertiary); border-radius: var(--radius-full); overflow: hidden;">
+                            <div id="sub-text-bar" style="width: 85%; height: 100%; background-color: var(--accent-purple);"></div>
+                          </div>
+                        </div>
+                        <div>
+                          <div class="flex-between text-detail font-semibold" style="margin-bottom: 2px;">
+                            <span>Emotional Trigger</span>
+                            <span id="sub-emotional-val" class="text-green">92%</span>
+                          </div>
+                          <div style="height: 4px; background-color: var(--bg-tertiary); border-radius: var(--radius-full); overflow: hidden;">
+                            <div id="sub-emotional-bar" style="width: 92%; height: 100%; background-color: var(--accent-green);"></div>
+                          </div>
+                        </div>
+                        <div>
+                          <div class="flex-between text-detail font-semibold" style="margin-bottom: 2px;">
+                            <span>Motion Interrupt</span>
+                            <span id="sub-motion-val" class="text-orange">80%</span>
+                          </div>
+                          <div style="height: 4px; background-color: var(--bg-tertiary); border-radius: var(--radius-full); overflow: hidden;">
+                            <div id="sub-motion-bar" style="width: 80%; height: 100%; background-color: var(--accent-orange);"></div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div class="flex-center" style="gap: var(--space-md); border-top: 1px solid var(--border-default); padding-top: var(--space-sm);">
+                      <div class="text-center" style="flex: 1;">
+                        <span class="text-micro text-secondary font-bold" style="display: block;">Analyzed Hooks</span>
+                        <span class="text-body-large font-bold">284</span>
+                      </div>
+                      <div style="width: 1px; height: 30px; background-color: var(--border-default);"></div>
+                      <div class="text-center" style="flex: 1;">
+                        <span class="text-micro text-secondary font-bold" style="display: block;">Avg CTR Lift</span>
+                        <span class="text-body-large font-bold text-green">+34.6%</span>
+                      </div>
+                      <div style="width: 1px; height: 30px; background-color: var(--border-default);"></div>
+                      <div class="text-center" style="flex: 1;">
+                        <span class="text-micro text-secondary font-bold" style="display: block;">Status</span>
+                        <span class="badge badge-success">Optimized</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Bottom row: Scroll Stop Probability & platform distributions -->
+                <div class="grid-12">
+                  <div class="col-span-12 card flex-column" style="gap: var(--space-md);">
+                    <div>
+                      <h3 class="font-bold text-primary">Scroll Stop Probability</h3>
+                      <p class="text-body-small text-muted">Predicted likelihood of a viewer ceasing to scroll in the first 3 seconds across channels.</p>
+                    </div>
+
+                    <div class="grid-12" style="gap: var(--space-lg);">
+                      <!-- TikTok -->
+                      <div class="col-span-4 flex-column" style="gap: var(--space-xs); padding: var(--space-sm); border: 1px solid var(--border-default); border-radius: var(--radius-lg); background-color: var(--bg-secondary);">
+                        <div class="flex-between">
+                          <div class="flex-center" style="gap: var(--space-xs);">
+                            <span style="width: 24px; height: 24px; border-radius: 50%; background-color: #000; color: #FFF; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold;">T</span>
+                            <span class="text-body-small font-bold">TikTok Feed</span>
+                          </div>
+                          <span id="tiktok-prob-badge" class="badge badge-success">94% Probability</span>
+                        </div>
+                        <div style="height: 8px; background-color: var(--bg-tertiary); border-radius: var(--radius-full); overflow: hidden; margin-top: 4px;">
+                          <div id="tiktok-prob-bar" style="width: 94%; height: 100%; background: linear-gradient(90deg, var(--brand-primary) 0%, var(--accent-green) 100%);"></div>
+                        </div>
+                        <span class="text-micro text-secondary font-semibold" style="margin-top: 2px;">Confidence interval: &plusmn;1.5% &bull; Sample threshold met</span>
+                      </div>
+
+                      <!-- Instagram Reels -->
+                      <div class="col-span-4 flex-column" style="gap: var(--space-xs); padding: var(--space-sm); border: 1px solid var(--border-default); border-radius: var(--radius-lg); background-color: var(--bg-secondary);">
+                        <div class="flex-between">
+                          <div class="flex-center" style="gap: var(--space-xs);">
+                            <span style="width: 24px; height: 24px; border-radius: 50%; background: linear-gradient(135deg, #F9CE34, #EE2A7B, #6228D7); color: #FFF; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold;">I</span>
+                            <span class="text-body-small font-bold">Instagram Reels</span>
+                          </div>
+                          <span id="instagram-prob-badge" class="badge badge-info">88% Probability</span>
+                        </div>
+                        <div style="height: 8px; background-color: var(--bg-tertiary); border-radius: var(--radius-full); overflow: hidden; margin-top: 4px;">
+                          <div id="instagram-prob-bar" style="width: 88%; height: 100%; background: linear-gradient(90deg, var(--brand-primary) 0%, var(--accent-blue) 100%);"></div>
+                        </div>
+                        <span class="text-micro text-secondary font-semibold" style="margin-top: 2px;">Confidence interval: &plusmn;2.1% &bull; Sample threshold met</span>
+                      </div>
+
+                      <!-- YouTube Shorts -->
+                      <div class="col-span-4 flex-column" style="gap: var(--space-xs); padding: var(--space-sm); border: 1px solid var(--border-default); border-radius: var(--radius-lg); background-color: var(--bg-secondary);">
+                        <div class="flex-between">
+                          <div class="flex-center" style="gap: var(--space-xs);">
+                            <span style="width: 24px; height: 24px; border-radius: 50%; background-color: #FF0000; color: #FFF; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold;">Y</span>
+                            <span class="text-body-small font-bold">YouTube Shorts</span>
+                          </div>
+                          <span id="youtube-prob-badge" class="badge badge-info" style="background-color: var(--accent-orange-bg); color: var(--accent-orange);">82% Probability</span>
+                        </div>
+                        <div style="height: 8px; background-color: var(--bg-tertiary); border-radius: var(--radius-full); overflow: hidden; margin-top: 4px;">
+                          <div id="youtube-prob-bar" style="width: 82%; height: 100%; background: linear-gradient(90deg, var(--brand-primary) 0%, var(--accent-orange) 100%);"></div>
+                        </div>
+                        <span class="text-micro text-secondary font-semibold" style="margin-top: 2px;">Confidence interval: &plusmn;2.9% &bull; Sample threshold met</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <!-- ----------------------------------------------
+                   TAB 2: FIRST 3-SECOND TIMELINE
+                   ---------------------------------------------- -->
+              <div class="hook-tab-panel" id="hook-tab-timeline" data-tab-panel-group="hook-tabs">
+                <div class="grid-12">
+                  <!-- Left: Clickable frame timeline -->
+                  <div class="col-span-8 flex-column" style="gap: var(--space-md);">
+                    <div class="timeline-container">
+                      <div class="flex-between">
+                        <span class="text-body-small font-bold text-primary">Interactive Timeline Strip (First 3.0 Seconds)</span>
+                        <span class="text-micro text-muted font-bold">Click frame card to inspect metadata</span>
+                      </div>
+                      
+                      <!-- Filmstrip frame strip -->
+                      <div class="timeline-filmstrip" id="filmstrip-wrapper">
+                        <!-- Frame 0.0s -->
+                        <div class="frame-card active-frame" data-frame-index="0" onclick="selectTimelineFrame(0)">
+                          <span class="frame-badge">0.0s</span>
+                          <div style="width:100%; height:100%; background: linear-gradient(180deg, #1e1b4b, #312e81); position: relative;">
+                            <div class="heatmap-grid" id="heatmap-0">
+                              <div class="heatmap-cell" style="grid-row:3; grid-column:3; background-color:rgba(239,68,68,0.7); filter:blur(4px); border-radius:50%;"></div>
+                            </div>
+                            <div style="position: absolute; bottom: 15px; left: 5px; right: 5px; background: rgba(0,0,0,0.6); height: 2px; border-radius:1px; border: 1px solid var(--accent-red);"></div>
+                          </div>
+                          <span class="frame-label">Voice Intro</span>
+                        </div>
+
+                        <!-- Frame 0.5s -->
+                        <div class="frame-card" data-frame-index="1" onclick="selectTimelineFrame(1)">
+                          <span class="frame-badge">0.5s</span>
+                          <div style="width:100%; height:100%; background: linear-gradient(180deg, #311b92, #4527a0); position: relative;">
+                            <div class="heatmap-grid" id="heatmap-1">
+                              <div class="heatmap-cell" style="grid-row:2; grid-column:3; background-color:rgba(245,158,11,0.5); filter:blur(4px); border-radius:50%;"></div>
+                              <div class="heatmap-cell" style="grid-row:4; grid-column:2; background-color:rgba(239,68,68,0.6); filter:blur(3px); border-radius:50%;"></div>
+                            </div>
+                            <div style="position: absolute; bottom: 10px; left: 8px; width: 60%; background: var(--brand-primary); height: 6px; border-radius: 2px;"></div>
+                          </div>
+                          <span class="frame-label">Text Pop-in</span>
+                        </div>
+
+                        <!-- Frame 1.0s -->
+                        <div class="frame-card" data-frame-index="2" onclick="selectTimelineFrame(2)">
+                          <span class="frame-badge">1.0s</span>
+                          <div style="width:100%; height:100%; background: linear-gradient(180deg, #4a148c, #6a1b9a); position: relative;">
+                            <div class="heatmap-grid" id="heatmap-2">
+                              <div class="heatmap-cell" style="grid-row:2; grid-column:3; background-color:rgba(239,68,68,0.8); filter:blur(4px); border-radius:50%;"></div>
+                              <div class="heatmap-cell" style="grid-row:4; grid-column:3; background-color:rgba(16,185,129,0.5); filter:blur(3px); border-radius:50%;"></div>
+                            </div>
+                          </div>
+                          <span class="frame-label">Zoom Punch</span>
+                        </div>
+
+                        <!-- Frame 1.5s -->
+                        <div class="frame-card" data-frame-index="3" onclick="selectTimelineFrame(3)">
+                          <span class="frame-badge">1.5s</span>
+                          <div style="width:100%; height:100%; background: linear-gradient(180deg, #1A237E, #283593); position: relative;">
+                            <div class="heatmap-grid" id="heatmap-3">
+                              <div class="heatmap-cell" style="grid-row:2; grid-column:3; background-color:rgba(239,68,68,0.9); filter:blur(4px); border-radius:50%;"></div>
+                            </div>
+                          </div>
+                          <span class="frame-label">Eye Contact</span>
+                        </div>
+
+                        <!-- Frame 2.0s -->
+                        <div class="frame-card" data-frame-index="4" onclick="selectTimelineFrame(4)">
+                          <span class="frame-badge">2.0s</span>
+                          <div style="width:100%; height:100%; background: linear-gradient(180deg, #0D47A1, #1565C0); position: relative;">
+                            <div class="heatmap-grid" id="heatmap-4">
+                              <div class="heatmap-cell" style="grid-row:3; grid-column:2; background-color:rgba(245,158,11,0.6); filter:blur(4px); border-radius:50%;"></div>
+                            </div>
+                          </div>
+                          <span class="frame-label">Graphic B-roll</span>
+                        </div>
+
+                        <!-- Frame 2.5s -->
+                        <div class="frame-card" data-frame-index="5" onclick="selectTimelineFrame(5)">
+                          <span class="frame-badge">2.5s</span>
+                          <div style="width:100%; height:100%; background: linear-gradient(180deg, #006064, #00838F); position: relative;">
+                            <div class="heatmap-grid" id="heatmap-5">
+                              <div class="heatmap-cell" style="grid-row:3; grid-column:4; background-color:rgba(239,68,68,0.5); filter:blur(4px); border-radius:50%;"></div>
+                            </div>
+                          </div>
+                          <span class="frame-label">Color Shift</span>
+                        </div>
+
+                        <!-- Frame 3.0s -->
+                        <div class="frame-card" data-frame-index="6" onclick="selectTimelineFrame(6)">
+                          <span class="frame-badge">3.0s</span>
+                          <div style="width:100%; height:100%; background: linear-gradient(180deg, #004D40, #00695C); position: relative;">
+                            <div class="heatmap-grid" id="heatmap-6">
+                              <div class="heatmap-cell" style="grid-row:2; grid-column:3; background-color:rgba(239,68,68,0.75); filter:blur(4px); border-radius:50%;"></div>
+                            </div>
+                          </div>
+                          <span class="frame-label">Action Hook End</span>
+                        </div>
+                      </div>
+
+                      <!-- Audio waveform map -->
+                      <div class="flex-column" style="gap: 4px; border-top: 1px solid var(--border-default); padding-top: var(--space-sm);">
+                        <div class="flex-between text-detail text-muted font-mono">
+                          <span>Audio Track decibels (dB)</span>
+                          <span class="text-orange" id="waveform-status-indicator">VOICE INTAKE SYNCED</span>
+                        </div>
+                        <div style="width:100%; height: 50px; background-color: var(--bg-primary); border-radius: var(--radius-md); border: 1px solid var(--border-default); display: flex; align-items: center; justify-content: space-around; padding: 0 var(--space-sm);">
+                          <!-- SVG Waveform lines -->
+                          <svg viewBox="0 0 700 40" width="100%" height="100%">
+                            <!-- Dynamic sound bars -->
+                            <rect class="wave-line" x="10" y="10" width="4" height="20" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="25" y="5" width="4" height="30" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="40" y="8" width="4" height="24" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="55" y="15" width="4" height="10" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="70" y="2" width="4" height="36" rx="2" fill="var(--accent-red)"></rect>
+                            <rect class="wave-line" x="85" y="12" width="4" height="16" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="100" y="10" width="4" height="20" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="115" y="14" width="4" height="12" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="130" y="5" width="4" height="30" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="145" y="8" width="4" height="24" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="160" y="15" width="4" height="10" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="175" y="3" width="4" height="34" rx="2" fill="var(--accent-red)"></rect>
+                            <rect class="wave-line" x="190" y="12" width="4" height="16" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="205" y="10" width="4" height="20" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="220" y="14" width="4" height="12" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="235" y="5" width="4" height="30" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="250" y="8" width="4" height="24" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="265" y="15" width="4" height="10" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="280" y="4" width="4" height="32" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="295" y="12" width="4" height="16" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="310" y="10" width="4" height="20" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="325" y="14" width="4" height="12" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="340" y="5" width="4" height="30" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="355" y="8" width="4" height="24" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="370" y="15" width="4" height="10" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="385" y="2" width="4" height="36" rx="2" fill="var(--accent-red)"></rect>
+                            <rect class="wave-line" x="400" y="12" width="4" height="16" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="415" y="10" width="4" height="20" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="430" y="14" width="4" height="12" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="445" y="5" width="4" height="30" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="460" y="8" width="4" height="24" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="475" y="15" width="4" height="10" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="490" y="3" width="4" height="34" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="505" y="12" width="4" height="16" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="520" y="10" width="4" height="20" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="535" y="14" width="4" height="12" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="550" y="5" width="4" height="30" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="565" y="8" width="4" height="24" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="580" y="15" width="4" height="10" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="595" y="1" width="4" height="38" rx="2" fill="var(--accent-red)"></rect>
+                            <rect class="wave-line" x="610" y="12" width="4" height="16" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="625" y="10" width="4" height="20" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="640" y="14" width="4" height="12" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="655" y="5" width="4" height="30" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="670" y="8" width="4" height="24" rx="2" fill="var(--brand-primary)"></rect>
+                            <rect class="wave-line" x="685" y="15" width="4" height="10" rx="2" fill="var(--brand-primary)"></rect>
+                          </svg>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Visual Hook Analysis / Text Hook analysis summary -->
+                    <div class="grid-12" style="gap: var(--space-md);">
+                      <div class="col-span-6 card">
+                        <div class="flex-between" style="margin-bottom: var(--space-xs);">
+                          <h4 class="font-bold text-primary">Visual Hook Analysis</h4>
+                          <span class="badge badge-success">Grade A</span>
+                        </div>
+                        <ul class="text-body-small text-secondary" style="padding-left: 20px; display: flex; flex-direction: column; gap: var(--space-xxs);">
+                          <li>Brightness shift: <strong class="text-primary">+18% interrupt</strong> at 0.5s.</li>
+                          <li>Overlay contrast ratio: <strong class="text-green">7.4:1 (Pass AAA)</strong>.</li>
+                          <li>Visual hook category: <strong class="text-primary">Pattern Disrupt Grid</strong>.</li>
+                          <li>Blur/Focus factor: High face clarity center-weight.</li>
+                        </ul>
+                      </div>
+                      <div class="col-span-6 card">
+                        <div class="flex-between" style="margin-bottom: var(--space-xs);">
+                          <h4 class="font-bold text-primary">Text Hook Analysis</h4>
+                          <span class="badge badge-success">Grade A-</span>
+                        </div>
+                        <ul class="text-body-small text-secondary" style="padding-left: 20px; display: flex; flex-direction: column; gap: var(--space-xxs);">
+                          <li>Readability index: <strong class="text-green">Very Easy (88 grade)</strong>.</li>
+                          <li>Power words found: <strong class="text-orange">"NOT", "Mistake", "Lose"</strong>.</li>
+                          <li>Copy angle target: <strong class="text-primary">Curiosity Gap + Risk Aversion</strong>.</li>
+                          <li>Typography scale: Bold Display sans-serif overlay.</li>
+                        </ul>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Right: Frame Inspector Panel -->
+                  <div class="col-span-4 card flex-column" style="gap: var(--space-sm); height: 100%; min-height: 480px; justify-content: space-between;" id="frame-inspector-panel">
+                    <div>
+                      <div class="flex-between" style="margin-bottom: var(--space-xxs);">
+                        <h3 class="font-bold text-primary" id="inspector-frame-time">Frame 0.0s Inspector</h3>
+                        <span class="badge badge-indigo" id="inspector-frame-label">Voice Intro</span>
+                      </div>
+                      <p class="text-body-small text-muted">Deep neural diagnostics of the current video slice.</p>
+                    </div>
+
+                    <!-- Focus spot preview grid -->
+                    <div class="flex-column" style="gap: 4px;">
+                      <span class="text-micro text-secondary font-bold">Focus Heatmap Distribution</span>
+                      <div style="width: 100%; height: 120px; background-color: #000; border-radius: var(--radius-md); position: relative; border: 1px solid var(--border-default); overflow: hidden;">
+                        <div class="heatmap-grid" id="inspector-heatmap">
+                          <!-- Filled by js -->
+                          <div class="heatmap-cell" style="grid-row:3; grid-column:3; background-color:rgba(239,68,68,0.7); filter:blur(4px); border-radius:50%;"></div>
+                        </div>
+                        <div style="position: absolute; bottom: 8px; left: 8px; right: 8px; height: 4px; background-color: rgba(255,255,255,0.2); border-radius: 2px;">
+                          <div style="width: 10%; height: 100%; background-color: var(--accent-red); border-radius: 2px;" id="inspector-timeline-bar"></div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Metrics -->
+                    <div class="flex-column" style="gap: var(--space-xs); border-top: 1px solid var(--border-default); padding-top: var(--space-sm);">
+                      <div class="flex-between text-detail">
+                        <span class="text-secondary font-semibold">Face Detection Coordinates:</span>
+                        <span class="font-mono text-primary" id="inspector-face-coords">[X: 180, Y: 120, W: 90, H: 90]</span>
+                      </div>
+                      <div class="flex-between text-detail">
+                        <span class="text-secondary font-semibold">Eye Contact Alignment:</span>
+                        <span class="font-mono text-green" id="inspector-eye-contact">98.4% Compliance</span>
+                      </div>
+                      <div class="flex-between text-detail">
+                        <span class="text-secondary font-semibold">Camera Zoom Velocity:</span>
+                        <span class="font-mono text-primary" id="inspector-zoom-vel">0.0 px/frame (Static)</span>
+                      </div>
+                      <div class="flex-between text-detail">
+                        <span class="text-secondary font-semibold">Decibel Level Peak:</span>
+                        <span class="font-mono text-orange" id="inspector-audio-db">-4.8 dB</span>
+                      </div>
+                    </div>
+
+                    <div style="background-color: var(--bg-secondary); padding: var(--space-xs); border-radius: var(--radius-md); border: 1px solid var(--border-default); font-size: 0.75rem; color: var(--text-muted); line-height: 1.4;" id="inspector-summary-text">
+                      Intake phase. Audio frequency matches baseline human voice. Face focus is stable and gaze vector is locked with device viewport, establishing direct user engagement immediately.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <!-- ----------------------------------------------
+                   TAB 3: EMOTION & COGNITIVE METRICS
+                   ---------------------------------------------- -->
+              <div class="hook-tab-panel" id="hook-tab-cognitive" data-tab-panel-group="hook-tabs">
+                <div class="grid-12">
+                  
+                  <!-- Left: Curiosity and Emotion Radar -->
+                  <div class="col-span-6 card flex-column" style="gap: var(--space-md);">
+                    <div>
+                      <h3 class="font-bold text-primary">Curiosity & Intrigue Analysis</h3>
+                      <p class="text-body-small text-muted">Intrigue rating of narrative loops and information gaps opened in the hook.</p>
+                    </div>
+
+                    <div class="grid-12" style="gap: var(--space-sm);">
+                      <!-- Metrics -->
+                      <div class="col-span-6 flex-column" style="gap: var(--space-sm); justify-content: center;">
+                        <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-sm); text-align: center;">
+                          <span class="text-micro font-bold text-secondary" style="display: block;">Curiosity Index</span>
+                          <span class="text-gradient" style="font-size: 2.25rem; font-weight: 800; font-family: var(--font-display);">89%</span>
+                        </div>
+                        <div class="flex-column" style="gap: 4px;">
+                          <span class="text-detail font-bold text-secondary">Narrative Open Loops:</span>
+                          <div class="flex" style="gap: 4px; flex-wrap: wrap;">
+                            <span class="badge badge-indigo">Visual Loop</span>
+                            <span class="badge badge-success">Text Loop</span>
+                            <span class="badge badge-warning">FOMO Tease</span>
+                          </div>
+                        </div>
+                      </div>
+
+                      <!-- Concentric SVG radar chart -->
+                      <div class="col-span-6 flex-center" style="position: relative; height: 180px;">
+                        <svg width="180" height="180" viewBox="0 0 200 200">
+                          <!-- Circles -->
+                          <circle cx="100" cy="100" r="80" stroke="var(--border-default)" stroke-width="1" fill="none"/>
+                          <circle cx="100" cy="100" r="60" stroke="var(--border-muted)" stroke-width="1" fill="none"/>
+                          <circle cx="100" cy="100" r="40" stroke="var(--border-muted)" stroke-width="1" fill="none"/>
+                          <circle cx="100" cy="100" r="20" stroke="var(--border-muted)" stroke-width="1" fill="none"/>
+                          
+                          <!-- Axes -->
+                          <line x1="100" y1="20" x2="100" y2="180" stroke="var(--border-default)" stroke-width="1" />
+                          <line x1="20" y1="100" x2="180" y2="100" stroke="var(--border-default)" stroke-width="1" />
+                          <line x1="43.4" y1="43.4" x2="156.6" y2="156.6" stroke="var(--border-default)" stroke-width="1" />
+                          <line x1="43.4" y1="156.6" x2="156.6" y2="43.4" stroke="var(--border-default)" stroke-width="1" />
+
+                          <!-- Labels -->
+                          <text x="100" y="15" text-anchor="middle" font-size="8" fill="var(--text-secondary)" font-weight="bold">Excitement</text>
+                          <text x="185" y="103" text-anchor="start" font-size="8" fill="var(--text-secondary)" font-weight="bold">FOMO</text>
+                          <text x="100" y="193" text-anchor="middle" font-size="8" fill="var(--text-secondary)" font-weight="bold">Joy</text>
+                          <text x="15" y="103" text-anchor="end" font-size="8" fill="var(--text-secondary)" font-weight="bold">Surprise</text>
+
+                          <!-- Radar Area -->
+                          <polygon class="radar-polygon" points="100,36 172,100 100,164 52,100" fill="rgba(88,80,236,0.3)" stroke="var(--brand-primary)" stroke-width="2" />
+                        </svg>
+                      </div>
+                    </div>
+
+                    <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-default); border-radius: var(--radius-md); padding: var(--space-sm); font-size: 0.8125rem; color: var(--text-muted); line-height: 1.4;">
+                      <strong>Cognitive Diagnostic:</strong> The hook opens an instant loop by pairing visual mismatch (a high contrast phone icon alert) with a FOMO warning copy angle ("Do NOT make this ad mistake"). Viewer curiosity is sustained until the zoom punch at 1.0s.
+                    </div>
+                  </div>
+
+                  <!-- Right: Face & Motion Detection -->
+                  <div class="col-span-6 flex-column" style="gap: var(--space-md);">
+                    <!-- Face Detection -->
+                    <div class="card flex-column" style="gap: var(--space-xs);">
+                      <div class="flex-between">
+                        <h4 class="font-bold text-primary">Face Detection & Expression Vector</h4>
+                        <span class="badge badge-success">Expression: Joy</span>
+                      </div>
+                      <p class="text-body-small text-muted" style="margin-bottom: 4px;">Real-time gaze direction, eye level and expression ratios.</p>
+                      
+                      <div class="grid-12" style="gap: var(--space-sm);">
+                        <div class="col-span-6 flex-column" style="gap: 8px;">
+                          <div class="flex-between text-detail">
+                            <span class="text-secondary font-semibold">Face Screen-Time:</span>
+                            <span class="text-primary font-bold">2.8s / 3.0s</span>
+                          </div>
+                          <div class="flex-between text-detail">
+                            <span class="text-secondary font-semibold">Eye Contact Rate:</span>
+                            <span class="text-primary font-bold text-green">98.4%</span>
+                          </div>
+                          <div class="flex-between text-detail">
+                            <span class="text-secondary font-semibold">Smile Ratio:</span>
+                            <span class="text-primary font-bold">0.82 (High)</span>
+                          </div>
+                        </div>
+                        <div class="col-span-6 flex-column" style="gap: 8px;">
+                          <div class="flex-between text-detail">
+                            <span class="text-secondary font-semibold">Average Gaze Vector:</span>
+                            <span class="font-mono text-primary">[X: 0.05, Y: 0.12]</span>
+                          </div>
+                          <div class="flex-between text-detail">
+                            <span class="text-secondary font-semibold">Emotion Confidence:</span>
+                            <span class="text-primary font-bold">96.8%</span>
+                          </div>
+                          <div class="flex-between text-detail">
+                            <span class="text-secondary font-semibold">Micro-Expressions:</span>
+                            <span class="text-primary font-bold">None detected</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    <!-- Motion Detection -->
+                    <div class="card flex-column" style="gap: var(--space-xs);">
+                      <div class="flex-between">
+                        <h4 class="font-bold text-primary">Motion Detection & Optical Flow</h4>
+                        <span class="badge badge-info">Stable Pan</span>
+                      </div>
+                      <p class="text-body-small text-muted" style="margin-bottom: 4px;">Camera zoom speed and optical displacement velocity curve.</p>
+                      
+                      <!-- Motion velocity Sparkline -->
+                      <div style="width: 100%; height: 50px; background-color: var(--bg-secondary); border-radius: var(--radius-md); border: 1px solid var(--border-default); overflow: hidden; display: flex; align-items: flex-end;">
+                        <svg viewBox="0 0 300 40" width="100%" height="100%" preserveAspectRatio="none">
+                          <path d="M0,35 Q30,10 60,32 T120,5 T180,28 T240,15 L300,38" fill="none" stroke="var(--accent-blue)" stroke-width="2" />
+                          <path d="M0,35 Q30,10 60,32 T120,5 T180,28 T240,15 L300,38 L300,40 L0,40 Z" fill="rgba(59,130,246,0.1)" />
+                        </svg>
+                      </div>
+
+                      <div class="grid-12" style="gap: var(--space-xs); margin-top: 4px;">
+                        <div class="col-span-4 text-center">
+                          <span class="text-micro text-secondary font-bold" style="display: block;">Camera Cut Rate</span>
+                          <span class="font-semibold text-primary">1.2 cuts / sec</span>
+                        </div>
+                        <div class="col-span-4 text-center">
+                          <span class="text-micro text-secondary font-bold" style="display: block;">Stability Index</span>
+                          <span class="font-semibold text-green">95.4%</span>
+                        </div>
+                        <div class="col-span-4 text-center">
+                          <span class="text-micro text-secondary font-bold" style="display: block;">Peak Velocity</span>
+                          <span class="font-semibold text-primary">8.2 px / frame</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <!-- ----------------------------------------------
+                   TAB 4: AI GENERATION & A/B TESTS
+                   ---------------------------------------------- -->
+              <div class="hook-tab-panel" id="hook-tab-studio" data-tab-panel-group="hook-tabs">
+                <div class="grid-12">
+                  
+                  <!-- Left: Interactive Generator console -->
+                  <div class="col-span-6 card flex-column" style="gap: var(--space-md);">
+                    <div>
+                      <h3 class="font-bold text-primary">Generate Better Hooks</h3>
+                      <p class="text-body-small text-muted">Generate high-scoring visual script hook configurations using neural models.</p>
+                    </div>
+
+                    <!-- Input form -->
+                    <div class="flex-column" style="gap: var(--space-sm);">
+                      <div class="form-group">
+                        <label class="form-label">Creative Brief & Target Audience</label>
+                        <textarea class="input" rows="3" id="ai-generator-prompt" style="resize: none;" placeholder="Make the hook curiosity-driven for startup founders who are struggling to get ad conversions..."></textarea>
+                      </div>
+                      <div class="grid-12" style="gap: var(--space-sm);">
+                        <div class="col-span-6 form-group">
+                          <label class="form-label">Psychological Angle</label>
+                          <div class="select-wrapper">
+                            <select class="select" id="ai-generator-angle">
+                              <option value="curiosity">Curiosity Gap</option>
+                              <option value="fomo">Urgency & FOMO</option>
+                              <option value="direct">Direct Value Statement</option>
+                              <option value="question">Socratic Questioning</option>
+                            </select>
+                            <svg class="select-arrow" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+                          </div>
+                        </div>
+                        <div class="col-span-6 form-group">
+                          <label class="form-label">Visual Template</label>
+                          <div class="select-wrapper">
+                            <select class="select" id="ai-generator-template">
+                              <option value="talking">Talking Head Close-up</option>
+                              <option value="broll">Split-Screen Graphic</option>
+                              <option value="unboxing">Product Texture Demo</option>
+                            </select>
+                            <svg class="select-arrow" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 9l-7 7-7-7"/></svg>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button class="btn btn-ai" onclick="triggerScriptGeneration()">
+                        <svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813z"/></svg>
+                        Synthesize Optimized Hook
+                      </button>
+                    </div>
+
+                    <!-- Dynamic Output box -->
+                    <div style="background-color: var(--bg-secondary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); padding: var(--space-md); position: relative; min-height: 140px; display: flex; flex-direction: column; justify-content: center;" id="ai-generation-output">
+                      <div class="flex-column" style="gap: var(--space-xs);" id="ai-gen-empty-state">
+                        <div style="text-align: center; color: var(--text-disabled);">
+                          <svg width="32" height="32" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24" style="margin-bottom: var(--space-xxs);"><path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813z"/></svg>
+                          <p class="text-detail">Input prompt above and click synthesize to load variant scripts.</p>
+                        </div>
+                      </div>
+
+                      <!-- Loading state (hidden by default) -->
+                      <div class="flex-column" style="gap: var(--space-sm); display: none;" id="ai-gen-loading-state">
+                        <div class="flex-between">
+                          <span class="text-detail font-bold text-primary">Running neural simulation...</span>
+                          <span class="text-micro text-secondary" id="ai-gen-percentage">0%</span>
+                        </div>
+                        <div style="height: 6px; background-color: var(--bg-tertiary); border-radius: var(--radius-full); overflow: hidden;">
+                          <div style="width: 0%; height: 100%; background-color: var(--brand-primary); transition: width 100ms ease;" id="ai-gen-progress-bar"></div>
+                        </div>
+                      </div>
+
+                      <!-- Content state (hidden by default) -->
+                      <div class="flex-column" style="gap: var(--space-sm); display: none;" id="ai-gen-result-state">
+                        <div class="flex-between">
+                          <span class="badge badge-success" id="gen-variant-badge">Variant 1 (Predicted Score: 93)</span>
+                          <button class="btn btn-sm btn-tertiary" style="padding: 2px 6px;" onclick="copyGeneratedScript()">Copy Script</button>
+                        </div>
+                        <div style="border-left: 3px solid var(--brand-primary); padding-left: var(--space-sm); margin: var(--space-xs) 0;">
+                          <span class="text-detail font-bold text-muted" style="display: block; margin-bottom: 2px;">Voice Hook:</span>
+                          <p class="text-body-small font-semibold text-primary" id="gen-voice-copy">"You are losing 30% of your sales to this one simple website error..."</p>
+                        </div>
+                        <div class="grid-12" style="gap: var(--space-xs); border-top: 1px solid var(--border-default); padding-top: var(--space-sm);">
+                          <div class="col-span-6 text-detail">
+                            <span class="text-secondary font-semibold" style="display: block;">Visual Staging:</span>
+                            <span class="text-primary" id="gen-visual-staging">Zoom close-up at 1.0s, high contrast overlay pop</span>
+                          </div>
+                          <div class="col-span-6 text-detail">
+                            <span class="text-secondary font-semibold" style="display: block;">Sound cue:</span>
+                            <span class="text-primary" id="gen-sound-cue">Digital alarm bell chime at 0.0s</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <!-- Right: A/B Testing panel -->
+                  <div class="col-span-6 card flex-column" style="gap: var(--space-md); justify-content: space-between;">
+                    <div>
+                      <div class="flex-between">
+                        <h3 class="font-bold text-primary">Hook A/B Test Sandbox</h3>
+                        <span class="badge badge-success">Active Significance</span>
+                      </div>
+                      <p class="text-body-small text-muted">Simulate and evaluate variant performance thresholds inside target ad structures.</p>
+                    </div>
+
+                    <!-- A/B Curve visualization -->
+                    <div class="flex-column" style="gap: 4px;">
+                      <div class="flex-between text-detail font-semibold">
+                        <span>A/B Retention Decay Curve</span>
+                        <div class="flex" style="gap: var(--space-xs);">
+                          <span style="color: var(--brand-primary);">&bull; Variant A (91.4%)</span>
+                          <span style="color: var(--accent-orange);">&bull; Variant B (84.6%)</span>
+                        </div>
+                      </div>
+                      <div style="width: 100%; height: 120px; background-color: var(--bg-secondary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); position: relative; overflow: hidden; display: flex; align-items: flex-end;">
+                        <svg viewBox="0 0 400 120" width="100%" height="100%" preserveAspectRatio="none" style="position: absolute; inset:0;">
+                          <!-- Grid lines -->
+                          <line x1="0" y1="30" x2="400" y2="30" stroke="var(--border-muted)" stroke-width="1" />
+                          <line x1="0" y1="60" x2="400" y2="60" stroke="var(--border-muted)" stroke-width="1" />
+                          <line x1="0" y1="90" x2="400" y2="90" stroke="var(--border-muted)" stroke-width="1" />
+                          
+                          <!-- Variant A line (brand-primary) -->
+                          <path d="M0,10 Q50,15 100,20 T200,45 T300,55 L400,60" fill="none" stroke="var(--brand-primary)" stroke-width="3" />
+                          
+                          <!-- Variant B line (accent-orange) -->
+                          <path d="M0,10 Q50,25 100,45 T200,75 T300,90 L400,100" fill="none" stroke="var(--accent-orange)" stroke-width="3" />
+                        </svg>
+                        <span class="text-micro text-secondary font-mono" style="position: absolute; bottom: 4px; left: 8px;">0.0s</span>
+                        <span class="text-micro text-secondary font-mono" style="position: absolute; bottom: 4px; right: 8px;">3.0s</span>
+                      </div>
+                    </div>
+
+                    <!-- Setup inputs -->
+                    <div class="grid-12" style="gap: var(--space-xs); border-top: 1px solid var(--border-default); padding-top: var(--space-sm);">
+                      <div class="col-span-6 form-group">
+                        <label class="form-label">Variant A (Control)</label>
+                        <input type="text" class="input input-sm" value="original_concept_draft" readonly>
+                      </div>
+                      <div class="col-span-6 form-group">
+                        <label class="form-label">Variant B (Challenger)</label>
+                        <input type="text" class="input input-sm" id="ab-challenger-input" value="ai_optimized_bold_fomo">
+                      </div>
+                    </div>
+
+                    <div style="background-color: var(--brand-primary-glow); border: 1px solid var(--brand-primary); border-radius: var(--radius-md); padding: var(--space-sm); font-size: 0.8125rem;">
+                      <div class="flex-between font-bold text-primary" style="margin-bottom: 2px;">
+                        <span>Statistical Significance Summary</span>
+                        <span>99.8% Conf.</span>
+                      </div>
+                      <p class="text-detail text-secondary" style="line-height: 1.4;">
+                        Variant A outperforms Variant B by a margin of 6.8% Stop rate and +14% click-through intensity. The result is mathematically valid.
+                      </p>
+                    </div>
+
+                    <div class="flex-center" style="gap: var(--space-xs); width: 100%;">
+                      <button class="btn btn-primary" style="flex: 1;" onclick="declareABWinner('Variant A')">Apply Variant A as Winner</button>
+                      <button class="btn btn-tertiary" style="flex: 1;" onclick="window.showToast('Test session reset. Starting new split run...', 'info')">Reset Test Run</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+
+              <!-- ----------------------------------------------
+                   TAB 5: HISTORY & COMPARISONS
+                   ---------------------------------------------- -->
+              <div class="hook-tab-panel" id="hook-tab-history" data-tab-panel-group="hook-tabs">
+                <div class="grid-12" style="margin-bottom: var(--space-lg);">
+                  
+                  <!-- Left: Hook Variant Side-by-Side Comparison -->
+                  <div class="col-span-12 card flex-column" style="gap: var(--space-md);">
+                    <div>
+                      <h3 class="font-bold text-primary">Creative Variant Comparison Grid</h3>
+                      <p class="text-body-small text-muted">Detailed side-by-side comparison of multiple creative script variants analyzed by KONTAGI.</p>
+                    </div>
+
+                    <div class="table-container">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Metric Element</th>
+                            <th>Variant A (Control)</th>
+                            <th>Variant B (AI Optimized)</th>
+                            <th>Variant C (High Curiosity)</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td class="font-semibold text-primary">Predicted Hook Score</td>
+                            <td class="font-mono text-secondary">82 / 100</td>
+                            <td class="font-mono text-green font-bold">88 / 100</td>
+                            <td class="font-mono text-primary">85 / 100</td>
+                          </tr>
+                          <tr>
+                            <td class="font-semibold text-primary">Scroll-Stop Probability</td>
+                            <td class="font-mono text-secondary">84.2% Stop</td>
+                            <td class="font-mono text-green font-bold">91.4% Stop</td>
+                            <td class="font-mono text-primary">87.5% Stop</td>
+                          </tr>
+                          <tr>
+                            <td class="font-semibold text-primary">CTR Level Performance</td>
+                            <td class="font-mono text-secondary">2.84%</td>
+                            <td class="font-mono text-green font-bold">3.92%</td>
+                            <td class="font-mono text-primary">3.22%</td>
+                          </tr>
+                          <tr>
+                            <td class="font-semibold text-primary">Emotional Frequency</td>
+                            <td class="text-secondary">Surprise: High (88)</td>
+                            <td class="text-secondary">Excitement: Peak (92)</td>
+                            <td class="text-secondary">Intrigue: Peak (89)</td>
+                          </tr>
+                          <tr>
+                            <td class="font-semibold text-primary">Motion Interrupt rating</td>
+                            <td class="text-secondary">Static view</td>
+                            <td class="text-green">Visual Zoom ( AAA )</td>
+                            <td class="text-secondary">Stable pan shift</td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="grid-12">
+                  <!-- Left: Hook Performance Trends -->
+                  <div class="col-span-6 card flex-column" style="gap: var(--space-md);">
+                    <div>
+                      <h4 class="font-bold text-primary">Hook Performance Trends (30 Days)</h4>
+                      <p class="text-body-small text-muted">Weekly rolling averages of Stop rate and fatigue indexes.</p>
+                    </div>
+
+                    <!-- SVG Trend chart -->
+                    <div style="width: 100%; height: 150px; background-color: var(--bg-secondary); border: 1px solid var(--border-default); border-radius: var(--radius-lg); position: relative; overflow: hidden; display: flex; align-items: flex-end;">
+                      <svg viewBox="0 0 350 120" width="100%" height="100%" preserveAspectRatio="none" style="position: absolute; inset:0;">
+                        <path d="M0,100 L50,85 L100,75 L150,55 L200,60 L250,42 L300,30 L350,22" fill="none" stroke="var(--brand-primary)" stroke-width="3" />
+                        <path d="M0,100 L50,85 L100,75 L150,55 L200,60 L250,42 L300,30 L350,22 L350,120 L0,120 Z" fill="rgba(88,80,236,0.1)" />
+                      </svg>
+                      <span class="text-micro text-secondary font-mono" style="position: absolute; bottom: 4px; left: 8px;">Week 1</span>
+                      <span class="text-micro text-secondary font-mono" style="position: absolute; bottom: 4px; right: 8px;">Week 4</span>
+                    </div>
+
+                    <div class="flex-between text-detail">
+                      <span class="text-secondary font-semibold">Creative Fatigue Index:</span>
+                      <span class="badge badge-success">Low (0.12)</span>
+                    </div>
+                  </div>
+
+                  <!-- Right: Hook History table -->
+                  <div class="col-span-6 card flex-column" style="gap: var(--space-md);">
+                    <div>
+                      <h4 class="font-bold text-primary">Hook Optimization Run Logs</h4>
+                      <p class="text-body-small text-muted">Latest creative intake runs completed on active models.</p>
+                    </div>
+
+                    <div class="table-container" style="max-height: 180px; overflow-y: auto;">
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th>Run File</th>
+                            <th>Avg Score</th>
+                            <th>State</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td class="font-semibold text-primary">concept_pitch_v2.mp4</td>
+                            <td class="font-mono text-green">88 / 100</td>
+                            <td><span class="badge badge-success">Complete</span></td>
+                          </tr>
+                          <tr>
+                            <td class="font-semibold text-primary">ad_tiktok_fomo.mp4</td>
+                            <td class="font-mono text-green">94 / 100</td>
+                            <td><span class="badge badge-success">Active A/B</span></td>
+                          </tr>
+                          <tr>
+                            <td class="font-semibold text-primary">shorts_variant_3.mp4</td>
+                            <td class="font-mono text-secondary">78 / 100</td>
+                            <td><span class="badge badge-info">Draft</span></td>
+                          </tr>
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+        </div>
+
+        <!-- ==============================================
+             AI ASSISTANT DRAWER PANEL
+             ============================================== -->
+        <div class="ai-chat-drawer" id="ai-chat-drawer">
+          <!-- Drawer Header -->
+          <div class="sidebar-header flex-between" style="border-bottom: 1px solid var(--border-default); background-color: var(--bg-secondary);">
+            <div class="flex-center" style="gap: var(--space-xs);">
+              <svg width="18" height="18" fill="none" stroke="var(--brand-primary)" stroke-width="2.5" viewBox="0 0 24 24"><path d="M9.813 15.904L9 21m0 0l-.813-5.096L3 15.094l5.096-.813L9 9.187l.813 5.094 5.096.813-5.096.813zM19.071 4.929l-1.414 1.414m0-1.414l1.414 1.414M12 3v1m0 16v1M3 12h1m16 0h1m-1.586-7.586l-1.414 1.414"/></svg>
+              <span class="text-body-small font-bold">Aura AI Assistant</span>
+            </div>
+            <button class="btn btn-sm btn-ghost" style="padding: 2px; font-size: 1.125rem;" onclick="closeAIChatDrawer()">&times;</button>
+          </div>
+
+          <!-- Drawer Messages List -->
+          <div class="sidebar-nav" style="padding: var(--space-md); display: flex; flex-direction: column; gap: var(--space-md); overflow-y: auto;" id="ai-chat-messages">
+            <!-- Message 1 -->
+            <div class="card elevation-1" style="align-self: flex-start; background-color: var(--bg-secondary); border-radius: var(--radius-lg); padding: var(--space-sm); width: 85%;">
+              <span class="text-detail font-bold" style="color: var(--brand-primary); display: block; margin-bottom: 2px;">Aura AI</span>
+              <p class="text-detail text-secondary" style="line-height: 1.4;">Hello Jaiveer! I have scanned your video hook metrics. Variant A has a strong visual contrast but Variant B's typography and FOMO angle are statistically outperforming it in the active A/B test split.</p>
+            </div>
+          </div>
+
+          <!-- Drawer Input Form -->
+          <form style="padding: var(--space-md); border-top: 1px solid var(--border-default); background-color: var(--bg-secondary); display: flex; gap: var(--space-xs);" id="ai-chat-form" onsubmit="handleAIChatSubmit(event)">
+            <input type="text" class="input" style="flex-grow: 1;" placeholder="Ask Aura AI..." id="ai-chat-input" required>
+            <button type="submit" class="btn btn-primary" style="padding: 0 var(--space-md);">Send</button>
+          </form>
+        </div>
+
+      </div>
+
+    </div>
+  </main>
+
+  <!-- Global Toast Alerts Container -->
+  <div class="toast-container" id="global-toast-container" style="position: fixed; bottom: 20px; right: 20px; display: flex; flex-direction: column; gap: 8px; z-index: 2000;"></div>
+
+  <!-- Interactive JavaScript Logic -->
+  <script>
+    // 1. Theme and Viewport State Controllers
+    let currentTheme = 'dark';
+    let currentViewport = 'desktop';
+
+    const viewportFrame = document.getElementById('viewport-frame');
+
+    // 2. Viewport Switcher
+    const viewportBtns = document.querySelectorAll('[data-viewport]');
+    viewportBtns.forEach(btn => {
+      btn.addEventListener('click', () => {
+        viewportBtns.forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        
+        const size = btn.getAttribute('data-viewport');
+        viewportFrame.className = `emulator-viewport ${size}`;
+        currentViewport = size;
+      });
+    });
+
+    // 3. Theme Toggle
+    const themeBtn = document.getElementById('theme-toggle');
+    themeBtn.addEventListener('click', () => {
+      const isDark = document.body.classList.toggle('dark');
+      currentTheme = isDark ? 'dark' : 'light';
+      themeBtn.innerHTML = isDark ? 
+        `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m0-12.728l.707.707m11.314 11.314l.707.707M12 5a7 7 0 100 14 7 7 0 000-14z"/></svg> Light Mode` :
+        `<svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"/></svg> Dark Mode`;
+    });
+
+    // 4. UI States Simulator (Normal, Loading/Skeletons, AI drawer)
+    const stateNormalBtn = document.getElementById('state-normal');
+    const stateLoadingBtn = document.getElementById('state-loading');
+    const stateAIChatBtn = document.getElementById('state-ai-chat');
+
+    stateNormalBtn.addEventListener('click', () => toggleUIState('normal'));
+    stateLoadingBtn.addEventListener('click', () => toggleUIState('loading'));
+    stateAIChatBtn.addEventListener('click', () => toggleUIState('ai-chat'));
+
+    function toggleUIState(state) {
+      stateNormalBtn.classList.remove('active');
+      stateLoadingBtn.classList.remove('active');
+      stateAIChatBtn.classList.remove('active');
+
+      const shell = document.getElementById('dashboard-main-shell');
+
+      if (state === 'normal') {
+        stateNormalBtn.classList.add('active');
+        shell.classList.remove('loading-state-active');
+        closeAIChatDrawer();
+      } else if (state === 'loading') {
+        stateLoadingBtn.classList.add('active');
+        shell.classList.add('loading-state-active');
+        window.showToast("Loading state & skeleton loader panels active.", "info");
+      } else if (state === 'ai-chat') {
+        stateAIChatBtn.classList.add('active');
+        shell.classList.remove('loading-state-active');
+        openAIChatDrawer();
+      }
+    }
+
+    // 5. Sidebar Toggle (Mobile layout only)
+    const sidebarToggle = document.getElementById('sidebar-toggle-btn');
+    if (sidebarToggle) {
+      sidebarToggle.addEventListener('click', () => {
+        const sidebar = document.querySelector('.dashboard-sidebar');
+        sidebar.classList.toggle('active');
+      });
+    }
+
+    // 6. Global AI Assistant Floating Drawer Toggle
+    const aiDrawer = document.getElementById('ai-chat-drawer');
+    function toggleAIChatDrawer() {
+      aiDrawer.classList.toggle('active');
+    }
+
+    function openAIChatDrawer() {
+      aiDrawer.classList.add('active');
+    }
+
+    function closeAIChatDrawer() {
+      aiDrawer.classList.remove('active');
+    }
+
+    // 7. Workspace Switcher Menu Dropdown Emulator
+    function toggleWorkspaceDropdown() {
+      window.showToast("Workspace Switcher clicked: Swapping cluster target...", "info");
+      const name = document.getElementById('current-workspace-name');
+      if (name.innerText === 'Deepmind Dev') {
+        name.innerText = 'Personal Lab';
+        document.querySelector('.sidebar-header .workspace-avatar').innerText = 'PL';
+      } else {
+        name.innerText = 'Deepmind Dev';
+        document.querySelector('.sidebar-header .workspace-avatar').innerText = 'GD';
+      }
+    }
+
+    // 8. AI Chat dynamic dialogue
+    function handleAIChatSubmit(e) {
+      e.preventDefault();
+      const input = document.getElementById('ai-chat-input');
+      const val = input.value.trim();
+      if (!val) return;
+
+      appendChatMessage(val, 'user');
+      input.value = '';
+
+      // Auto-reply
+      setTimeout(() => {
+        let reply = '';
+        if (val.toLowerCase().includes('score')) {
+          reply = "The Hook Score on your current video is 88/100, driven by excellent face focus and a strong FOMO copywriting angle.";
+        } else if (val.toLowerCase().includes('ab') || val.toLowerCase().includes('test')) {
+          reply = "Active A/B test shows Variant A (Control) leading by 6.8% Stop rate and +14% CTR intensity. Statistical significance is 99.8%.";
+        } else {
+          reply = `Acknowledged. I have indexed query: "${val}" against active hook telemetry parameters. All metrics display normally.`;
+        }
+        appendChatMessage(reply, 'ai');
+      }, 1000);
+    }
+
+    function appendChatMessage(text, role) {
+      const messages = document.getElementById('ai-chat-messages');
+      const card = document.createElement('div');
+      card.className = 'card elevation-1';
+      
+      if (role === 'ai') {
+        card.style.alignSelf = 'flex-start';
+        card.style.backgroundColor = 'var(--bg-secondary)';
+        card.style.width = '85%';
+        card.innerHTML = `
+          <span class="text-detail font-bold" style="color: var(--brand-primary); display: block; margin-bottom: 2px;">Aura AI</span>
+          <p class="text-detail text-secondary" style="line-height: 1.4;">${text}</p>
+        `;
+      } else {
+        card.style.alignSelf = 'flex-end';
+        card.style.backgroundColor = 'var(--brand-primary-glow)';
+        card.style.borderColor = 'var(--brand-primary)';
+        card.style.width = '85%';
+        card.innerHTML = `
+          <span class="text-detail font-bold" style="color: var(--text-primary); display: block; margin-bottom: 2px;">You</span>
+          <p class="text-detail text-secondary" style="line-height: 1.4;">${text}</p>
+        `;
+      }
+      messages.appendChild(card);
+      messages.scrollTop = messages.scrollHeight;
+    }
+
+    // 9. Interactive Before/After slider
+    function updateBeforeAfterSlider(val) {
+      const overlay = document.getElementById('after-frame-overlay');
+      const handle = document.getElementById('slider-handle');
+      overlay.style.width = `${val}%`;
+      handle.style.left = `${val}%`;
+    }
+
+    // 10. Frame timeline click behavior
+    let frameDetails = [
+      {
+        time: "Frame 0.0s Inspector",
+        label: "Voice Intro",
+        face: "[X: 180, Y: 120, W: 90, H: 90]",
+        eyeContact: "98.4% Compliance",
+        zoom: "0.0 px/frame (Static)",
+        db: "-4.8 dB",
+        text: "Intake phase. Audio frequency matches baseline human voice. Face focus is stable and gaze vector is locked with device viewport, establishing direct user engagement immediately.",
+        progress: 10,
+        heatmap: `<div class="heatmap-cell" style="grid-row:3; grid-column:3; background-color:rgba(239,68,68,0.7); filter:blur(4px); border-radius:50%;"></div>`
+      },
+      {
+        time: "Frame 0.5s Inspector",
+        label: "Text Pop-in",
+        face: "[X: 182, Y: 121, W: 90, H: 90]",
+        eyeContact: "97.2% Compliance",
+        zoom: "2.4 px/frame (Slow Zoom)",
+        db: "-5.2 dB",
+        text: "Text hook 'Do NOT Make This Ad Mistake!' triggers in. Contrasting bright yellow background pops, matching critical pattern interrupt velocity metrics.",
+        progress: 25,
+        heatmap: `<div class="heatmap-cell" style="grid-row:2; grid-column:3; background-color:rgba(245,158,11,0.6); filter:blur(4px); border-radius:50%;"></div>
+                  <div class="heatmap-cell" style="grid-row:4; grid-column:2; background-color:rgba(239,68,68,0.7); filter:blur(3px); border-radius:50%;"></div>`
+      },
+      {
+        time: "Frame 1.0s Inspector",
+        label: "Zoom Punch",
+        face: "[X: 160, Y: 90, W: 130, H: 130]",
+        eyeContact: "99.1% Compliance",
+        zoom: "8.2 px/frame (Rapid Punch)",
+        db: "-2.1 dB (Chime)",
+        text: "Camera executes a rapid scale/punch-in by 1.2x. Sound chime triggers to sync with typography scale transition, reinforcing attention lock.",
+        progress: 45,
+        heatmap: `<div class="heatmap-cell" style="grid-row:2; grid-column:3; background-color:rgba(239,68,68,0.85); filter:blur(4px); border-radius:50%;"></div>
+                  <div class="heatmap-cell" style="grid-row:4; grid-column:3; background-color:rgba(16,185,129,0.5); filter:blur(3px); border-radius:50%;"></div>`
+      },
+      {
+        time: "Frame 1.5s Inspector",
+        label: "Eye Contact",
+        face: "[X: 162, Y: 92, W: 130, H: 130]",
+        eyeContact: "100.0% Compliance",
+        zoom: "0.2 px/frame (Static)",
+        db: "-4.6 dB",
+        text: "Facial keypoint tracking reports optimal alignment. Gaze vector deviation remains near zero, securing micro-attention stop factors.",
+        progress: 60,
+        heatmap: `<div class="heatmap-cell" style="grid-row:2; grid-column:3; background-color:rgba(239,68,68,0.9); filter:blur(4px); border-radius:50%;"></div>`
+      },
+      {
+        time: "Frame 2.0s Inspector",
+        label: "Graphic B-roll",
+        face: "No face detected in center",
+        eyeContact: "0.0% (Off-screen)",
+        zoom: "4.8 px/frame (Motion Pan)",
+        db: "-5.0 dB",
+        text: "Graphic overlay representing user landing page error sweeps the screen, triggering visual information curiosity loop.",
+        progress: 75,
+        heatmap: `<div class="heatmap-cell" style="grid-row:3; grid-column:2; background-color:rgba(245,158,11,0.65); filter:blur(4px); border-radius:50%;"></div>`
+      },
+      {
+        time: "Frame 2.5s Inspector",
+        label: "Color Shift",
+        face: "[X: 178, Y: 118, W: 92, H: 92]",
+        eyeContact: "94.2% Compliance",
+        zoom: "1.2 px/frame (Gently drifting)",
+        db: "-4.9 dB",
+        text: "Return to talking head screen state. Background hues shift from warm white to indigo, preventing cognitive fatigue drop-offs.",
+        progress: 88,
+        heatmap: `<div class="heatmap-cell" style="grid-row:3; grid-column:4; background-color:rgba(239,68,68,0.6); filter:blur(4px); border-radius:50%;"></div>`
+      },
+      {
+        time: "Frame 3.0s Inspector",
+        label: "Action Hook End",
+        face: "[X: 180, Y: 120, W: 90, H: 90]",
+        eyeContact: "96.4% Compliance",
+        zoom: "0.5 px/frame (Static)",
+        db: "-3.2 dB (Slight rise)",
+        text: "First 3-second attention threshold completed successfully. Model projects high probability of retention past 10 seconds based on these parameters.",
+        progress: 100,
+        heatmap: `<div class="heatmap-cell" style="grid-row:2; grid-column:3; background-color:rgba(239,68,68,0.8); filter:blur(4px); border-radius:50%;"></div>`
+      }
+    ];
+
+    function selectTimelineFrame(index) {
+      // Highlight frame card
+      const cards = document.querySelectorAll('.frame-card');
+      cards.forEach(card => card.classList.remove('active-frame'));
+      cards[index].classList.add('active-frame');
+
+      // Update Inspector panel data
+      const data = frameDetails[index];
+      document.getElementById('inspector-frame-time').innerText = data.time;
+      
+      const label = document.getElementById('inspector-frame-label');
+      label.innerText = data.label;
+      
+      document.getElementById('inspector-face-coords').innerText = data.face;
+      
+      const eyeContact = document.getElementById('inspector-eye-contact');
+      eyeContact.innerText = data.eyeContact;
+      if (data.eyeContact.includes('0.0%')) {
+        eyeContact.className = 'font-mono text-disabled';
+      } else {
+        eyeContact.className = 'font-mono text-green';
+      }
+
+      document.getElementById('inspector-zoom-vel').innerText = data.zoom;
+      document.getElementById('inspector-audio-db').innerText = data.db;
+      document.getElementById('inspector-summary-text').innerText = data.text;
+      
+      // Update progress bar in heatmap box
+      document.getElementById('inspector-timeline-bar').style.width = `${data.progress}%`;
+      
+      // Update heatmap dot distribution
+      document.getElementById('inspector-heatmap').innerHTML = data.heatmap;
+
+      window.showToast(`Inspecting timeline segment: ${data.label} (${data.time.split(' ')[1]})`, 'info');
+    }
+
+    function initTimelineTab() {
+      // Render waveform animation or simple alerts on first load
+      setTimeout(() => {
+        const waveLines = document.querySelectorAll('.wave-line');
+        waveLines.forEach(line => {
+          const h = Math.floor(Math.random() * 28) + 8;
+          line.setAttribute('height', h);
+          line.setAttribute('y', 20 - h/2);
+        });
+      }, 100);
+    }
+
+    // 11. AI Script & Hook Generator Simulator
+    async function triggerScriptGeneration() {
+      const brief = document.getElementById('ai-generator-prompt').value.trim();
+      const angle = document.getElementById('ai-generator-angle').value;
+      
+      if (!brief) {
+        window.showToast("Please input a creative brief prompt first.", "error");
+        return;
+      }
+
+      window.showToast("AI Generator initialized. Querying LLM pipeline...", "info");
+
+      // Hide empty & result states, show loading
+      document.getElementById('ai-gen-empty-state').style.display = 'none';
+      document.getElementById('ai-gen-result-state').style.display = 'none';
+      
+      const loading = document.getElementById('ai-gen-loading-state');
+      loading.style.display = 'flex';
+
+      const progress = document.getElementById('ai-gen-progress-bar');
+      const percentText = document.getElementById('ai-gen-percentage');
+      
+      // We will perform the real API request and animate the progress bar
+      let p = 0;
+      const interval = setInterval(() => {
+        if (p < 85) {
+          p += 5;
+          progress.style.width = `${p}%`;
+          percentText.innerText = `${p}%`;
+        }
+      }, 100);
+
+      try {
+        const response = await fetch('/api/ai/generate-caption', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/body', // Wait, server.js parses JSON so we use 'application/json'
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({ prompt: brief, tone: angle })
+        });
+        
+        const data = await response.json();
+        clearInterval(interval);
+        
+        // Finish progress bar animation quickly
+        progress.style.width = '100%';
+        percentText.innerText = '100%';
+        
+        setTimeout(() => {
+          renderGeneratedScript(angle, data.caption || data.text || "Failed to generate hook.");
+        }, 200);
+
+      } catch (err) {
+        console.warn("API Hook generation failed, using rule-based fallback:", err);
+        clearInterval(interval);
+        progress.style.width = '100%';
+        percentText.innerText = '100%';
+        
+        // Fallback copy
+        let fallback = "";
+        if (angle === 'curiosity') {
+          fallback = `Every builder checks their analytics, but 99% miss this ONE layout detail... 👀🍱\n\nIs your dashboard actually losing users before they even read the title?\n\n👉 Details at the link in bio!`;
+        } else if (angle === 'fomo') {
+          fallback = `Stop wasting money on bad layouts! 💸\nIf your landing page doesn't use the KONTAGI Bento design, you're literally throwing attention away.\n\n👉 Upgrade your dashboard structure today. Early access link in bio!`;
+        } else {
+          fallback = `The exact framework we used to scale dashboard interaction by 34% in 14 days. 🚀\n\nNo complexity, no fluff—just clean, high-performance UI components.\n\n👉 Get early beta access now.`;
+        }
+        
+        setTimeout(() => {
+          renderGeneratedScript(angle, fallback);
+        }, 200);
+      }
+    }
+
+    function renderGeneratedScript(angle, generatedCopyText) {
+      // Hide loading, show result
+      document.getElementById('ai-gen-loading-state').style.display = 'none';
+      const result = document.getElementById('ai-gen-result-state');
+      result.style.display = 'flex';
+
+      let staging = '';
+      let cue = '';
+      let scoreBadge = '';
+
+      if (angle === 'curiosity') {
+        staging = "Extreme zoom punch on presenter's eyes at 0.5s, flashing red graphic glow overlay.";
+        cue = "Low bass sweep chime at 0.0s, camera shutter click at 0.5s";
+        scoreBadge = `Variant 1 (Predicted Score: ${Math.floor(Math.random() * 6) + 90} - High Curiosity)`;
+      } else if (angle === 'fomo') {
+        staging = "Presenter holds phone up to screen, zoom focus scales by 1.2x at 1.0s.";
+        cue = "Alarm alert sound at 0.0s, ticking clock SFX throughout";
+        scoreBadge = `Variant 1 (Predicted Score: ${Math.floor(Math.random() * 6) + 88} - High FOMO)`;
+      } else if (angle === 'direct') {
+        staging = "Split-screen graphic: presenter on left, bar chart performance curve on right.";
+        cue = "Upbeat tech cursor clicking SFX at 0.5s, positive chime";
+        scoreBadge = `Variant 1 (Predicted Score: ${Math.floor(Math.random() * 6) + 85} - Direct Value)`;
+      } else {
+        staging = "Skeptical facial expression close-up, screen dims slightly at 0.8s for curiosity contrast.";
+        cue = "Mysterious synth chord at 0.0s, typewriter sound at 1.0s";
+        scoreBadge = `Variant 1 (Predicted Score: ${Math.floor(Math.random() * 6) + 87} - Socratic)`;
+      }
+
+      document.getElementById('gen-voice-copy').innerText = generatedCopyText;
+      document.getElementById('gen-visual-staging').innerText = staging;
+      document.getElementById('gen-sound-cue').innerText = cue;
+      document.getElementById('gen-variant-badge').innerText = scoreBadge;
+
+      window.showToast("Hook optimized and generated successfully!", "success");
+    }
+
+    function copyGeneratedScript() {
+      const copyText = document.getElementById('gen-voice-copy').innerText;
+      navigator.clipboard.writeText(copyText).then(() => {
+        window.showToast("Script copy copied to clipboard!", "success");
+      });
+    }
+
+    // 12. A/B test winner selection
+    async function declareABWinner(variant) {
+      window.showToast(`${variant} declared as winner! Syncing creative settings with ad accounts...`, "success");
+      
+      const challenger = document.getElementById('ab-challenger-input');
+      if (challenger) {
+        challenger.value = variant.toLowerCase().includes('challenger') ? "challenger_applied_active" : "control_applied_active";
+        challenger.classList.add('input-success');
+      }
+
+      try {
+        if (activeVideo) {
+          activeVideo.ab_winner = variant;
+          const db = await dbClient.getMockDb();
+          const index = db.videos.findIndex(v => v.id === activeVideo.id);
+          if (index !== -1) {
+            db.videos[index] = activeVideo;
+            await dbClient.saveMockDb(db);
+            console.log("A/B winner saved to DB");
+          }
+        }
+      } catch (err) {
+        console.warn("Error saving A/B winner:", err);
+      }
+    }
+
+    // Propagate project context parameters
+    function switchProjectContext(val) {
+      const url = new URL(window.location.href);
+      url.searchParams.set('id', val);
+      window.history.pushState({}, '', url.toString());
+
+      // Propagate query parameter to links
+      document.querySelectorAll('a.sidebar-nav-item, .dashboard-sidebar a, a[href$=".html"]').forEach(a => {
+        const href = a.getAttribute('href');
+        if (href && href.includes('.html') && !href.startsWith('http') && !href.startsWith('//')) {
+          try {
+            const u = new URL(href, window.location.origin);
+            u.searchParams.set('id', val);
+            a.setAttribute('href', u.pathname + u.search);
+          } catch(e) {}
+        }
+      });
+
+      loadVideoContext(val);
+    }
+
+    let activeVideo = null;
+
+    function generateFrameDetails(video) {
+      const tags = video.tags || ['hook'];
+      return [
+        {
+          time: "Frame 0.0s Inspector",
+          label: "Voice Intro",
+          face: "[X: 180, Y: 120, W: 90, H: 90]",
+          eyeContact: "98.4% Compliance",
+          zoom: "0.0 px/frame (Static)",
+          db: "-4.8 dB",
+          text: `Intake phase of ${video.title || 'video'}. Audio levels average -21dB. Face focus is stable, direct view compliance is high.`,
+          progress: 10,
+          heatmap: `<div class="heatmap-cell" style="grid-row:3; grid-column:3; background-color:rgba(239,68,68,0.7); filter:blur(4px); border-radius:50%;"></div>`
+        },
+        {
+          time: "Frame 0.5s Inspector",
+          label: "Text Pop-in",
+          face: "[X: 182, Y: 121, W: 90, H: 90]",
+          eyeContact: "97.2% Compliance",
+          zoom: "2.4 px/frame (Slow Zoom)",
+          db: "-5.2 dB",
+          text: `Visual text overlays matching the context tags: #${tags.join(', #')}. Text hook matches critical pattern interrupt velocity metrics.`,
+          progress: 25,
+          heatmap: `<div class="heatmap-cell" style="grid-row:2; grid-column:3; background-color:rgba(245,158,11,0.6); filter:blur(4px); border-radius:50%;"></div>
+                    <div class="heatmap-cell" style="grid-row:4; grid-column:2; background-color:rgba(239,68,68,0.7); filter:blur(3px); border-radius:50%;"></div>`
+        },
+        {
+          time: "Frame 1.0s Inspector",
+          label: "Zoom Punch",
+          face: "[X: 160, Y: 90, W: 130, H: 130]",
+          eyeContact: "99.1% Compliance",
+          zoom: "8.2 px/frame (Rapid Punch)",
+          db: "-2.1 dB (Chime)",
+          text: `Visual analysis indicates ${video.visual_analysis || 'stable panning speed'}. Scale shift reinforces engagement.`,
+          progress: 45,
+          heatmap: `<div class="heatmap-cell" style="grid-row:2; grid-column:3; background-color:rgba(239,68,68,0.85); filter:blur(4px); border-radius:50%;"></div>
+                    <div class="heatmap-cell" style="grid-row:4; grid-column:3; background-color:rgba(16,185,129,0.5); filter:blur(3px); border-radius:50%;"></div>`
+        },
+        {
+          time: "Frame 1.5s Inspector",
+          label: "Eye Contact",
+          face: "[X: 162, Y: 92, W: 130, H: 130]",
+          eyeContact: "100.0% Compliance",
+          zoom: "0.2 px/frame (Static)",
+          db: "-4.6 dB",
+          text: `Facial keypoint tracking reports optimal alignment. Gaze vector deviation remains near zero.`,
+          progress: 60,
+          heatmap: `<div class="heatmap-cell" style="grid-row:2; grid-column:3; background-color:rgba(239,68,68,0.9); filter:blur(4px); border-radius:50%;"></div>`
+        },
+        {
+          time: "Frame 2.0s Inspector",
+          label: "Graphic B-roll",
+          face: "No face detected in center",
+          eyeContact: "0.0% (Off-screen)",
+          zoom: "4.8 px/frame (Motion Pan)",
+          db: "-5.0 dB",
+          text: `${video.caption || 'Product screen state sweep'}. Visual information curiosity loop is active.`,
+          progress: 75,
+          heatmap: `<div class="heatmap-cell" style="grid-row:3; grid-column:2; background-color:rgba(245,158,11,0.65); filter:blur(4px); border-radius:50%;"></div>`
+        },
+        {
+          time: "Frame 2.5s Inspector",
+          label: "Color Shift",
+          face: "[X: 178, Y: 118, W: 92, H: 92]",
+          eyeContact: "94.2% Compliance",
+          zoom: "1.2 px/frame (Gently drifting)",
+          db: "-4.9 dB",
+          text: `Return to talking head screen state. Gaze vectors remain within optimal tracking boundaries.`,
+          progress: 88,
+          heatmap: `<div class="heatmap-cell" style="grid-row:3; grid-column:4; background-color:rgba(239,68,68,0.6); filter:blur(4px); border-radius:50%;"></div>`
+        },
+        {
+          time: "Frame 3.0s Inspector",
+          label: "Action Hook End",
+          face: "[X: 180, Y: 120, W: 90, H: 90]",
+          eyeContact: "96.4% Compliance",
+          zoom: "0.5 px/frame (Static)",
+          db: "-3.2 dB (Slight rise)",
+          text: `${video.hook_analysis || 'First 3-second attention threshold completed successfully.'}`,
+          progress: 100,
+          heatmap: `<div class="heatmap-cell" style="grid-row:2; grid-column:3; background-color:rgba(239,68,68,0.8); filter:blur(4px); border-radius:50%;"></div>`
+        }
+      ];
+    }
+
+    async function loadVideoContext(videoId) {
+      try {
+        const db = await dbClient.getMockDb();
+        const video = db.videos.find(v => v.id === videoId);
+        if (!video) return;
+
+        activeVideo = video;
+        
+        // Update Hook Score circular progress rings
+        const score = video.hook_score || 75;
+        document.getElementById('hook-score-val').innerText = score;
+        const offset = 314.16 * (1 - score / 100);
+        document.getElementById('hook-score-circle').setAttribute('stroke-dashoffset', offset);
+
+        // Update Sub-ratings breakdown
+        const visual = video.visual_score || 70;
+        const audio = video.audio_score || 80;
+        const emotional = Math.round((score + visual + audio) / 3);
+        const motion = Math.round((visual * 1.1) % 100);
+
+        document.getElementById('sub-visual-val').innerText = `${visual}%`;
+        document.getElementById('sub-visual-bar').style.width = `${visual}%`;
+
+        document.getElementById('sub-text-val').innerText = `${audio}%`;
+        document.getElementById('sub-text-bar').style.width = `${audio}%`;
+
+        document.getElementById('sub-emotional-val').innerText = `${emotional}%`;
+        document.getElementById('sub-emotional-bar').style.width = `${emotional}%`;
+
+        document.getElementById('sub-motion-val').innerText = `${motion}%`;
+        document.getElementById('sub-motion-bar').style.width = `${motion}%`;
+
+        // Update platform probabilities
+        const ttok = Math.min(100, score + 6);
+        const ig = score;
+        const yt = Math.max(30, score - 6);
+
+        document.getElementById('tiktok-prob-badge').innerText = `${ttok}% Probability`;
+        document.getElementById('tiktok-prob-bar').style.width = `${ttok}%`;
+
+        document.getElementById('instagram-prob-badge').innerText = `${ig}% Probability`;
+        document.getElementById('instagram-prob-bar').style.width = `${ig}%`;
+
+        document.getElementById('youtube-prob-badge').innerText = `${yt}% Probability`;
+        document.getElementById('youtube-prob-bar').style.width = `${yt}%`;
+
+        // Update Before/After slider details
+        document.getElementById('after-score-badge').innerText = `After AI Optimizations (Score: ${score}%)`;
+        document.getElementById('after-joy-badge').innerText = `JOY EXPRESSION (${score}%)`;
+
+        const titleClean = video.title ? video.title.replace(/\.[^/.]+$/, "") : "Hook Concept";
+        document.getElementById('after-typography-text').innerHTML = `
+          ${titleClean} <span style="color: var(--accent-orange);">AI Edit</span>
+        `;
+
+        // Update inputs
+        const challenger = document.getElementById('ab-challenger-input');
+        if (challenger) {
+          challenger.value = `${video.id}_optimized`;
+          challenger.classList.remove('input-success');
+        }
+
+        // Update frameDetails and timeline
+        frameDetails = generateFrameDetails(video);
+        selectTimelineFrame(0);
+
+        window.showToast(`Loaded hook parameters for video: ${video.title || video.id}`, 'success');
+      } catch (err) {
+        console.error("Error loading video hook context:", err);
+      }
+    }
+
+    // App Initialization
+    window.onload = async () => {
+      // Check URL query param
+      try {
+        const db = await dbClient.getMockDb();
+        const select = document.getElementById('project-context-select');
+        if (select && db && db.videos) {
+          select.innerHTML = '';
+          db.videos.forEach(v => {
+            const opt = document.createElement('option');
+            opt.value = v.id;
+            opt.textContent = v.title || v.id;
+            select.appendChild(opt);
+          });
+
+          const urlParams = new URLSearchParams(window.location.search);
+          let videoId = urlParams.get('id');
+          if (!videoId && db.videos.length > 0) {
+            videoId = db.videos[0].id;
+            urlParams.set('id', videoId);
+            window.history.replaceState({}, '', window.location.pathname + '?' + urlParams.toString());
+          }
+
+          if (videoId) {
+            select.value = videoId;
+            await loadVideoContext(videoId);
+            
+            // Also propagate query parameter to all sidebar links immediately
+            document.querySelectorAll('a.sidebar-nav-item, .dashboard-sidebar a, a[href$=".html"]').forEach(a => {
+              const href = a.getAttribute('href');
+              if (href && href.includes('.html') && !href.startsWith('http') && !href.startsWith('//')) {
+                try {
+                  const u = new URL(href, window.location.origin);
+                  u.searchParams.set('id', videoId);
+                  a.setAttribute('href', u.pathname + u.search);
+                } catch(e) {}
+              }
+            });
+          }
+        }
+      } catch (err) {
+        console.warn("DB load fallback:", err);
+      }
+    };
+
+    // 13. Dynamic Toast alert loader
+    window.showToast = function(message, type = 'success') {
+      const container = document.getElementById('global-toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast toast-${type}`;
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(20px)';
+      toast.style.transition = 'opacity 300ms, transform 300ms';
+      
+      let icon = '';
+      if (type === 'success') {
+        icon = `<svg width="18" height="18" fill="none" stroke="var(--accent-green)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      } else if (type === 'error') {
+        icon = `<svg width="18" height="18" fill="none" stroke="var(--accent-red)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      } else {
+        icon = `<svg width="18" height="18" fill="none" stroke="var(--accent-blue)" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>`;
+      }
+
+      toast.innerHTML = `
+        ${icon}
+        <span class="text-body-small font-medium">${message}</span>
+        <button style="background:transparent; border:none; margin-left: auto; color: var(--text-secondary); cursor: pointer; font-size: 1.125rem;" onclick="this.parentElement.remove()">&times;</button>
+      `;
+
+      container.appendChild(toast);
+      
+      setTimeout(() => {
+        toast.style.opacity = '1';
+        toast.style.transform = 'translateY(0)';
+      }, 50);
+
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(20px)';
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    };
+  </script>
+
+  <script src="/js/db-client.js"></script>
+  <script src="design-system.js"></script>
+</body>
+</html>
