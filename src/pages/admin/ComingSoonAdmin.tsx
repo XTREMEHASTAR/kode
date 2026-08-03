@@ -7,6 +7,7 @@ import {
   ReleaseUpdateItem,
   VIRAL_HEADLINES
 } from '../../services/comingSoonService';
+import { LaunchService } from '../../services/launchService';
 import kontagiLogo from '../../assets/branding/kontagi-icon-180x180.png';
 
 export const ComingSoonAdmin: React.FC = () => {
@@ -29,10 +30,12 @@ export const ComingSoonAdmin: React.FC = () => {
 
   const handleSave = async () => {
     const updated = await ComingSoonService.saveConfig(config);
+    LaunchService.clearCache();
     setConfig(updated);
     setSavedToast(true);
     setTimeout(() => setSavedToast(false), 3000);
   };
+
 
   const handleAddReleaseNote = () => {
     if (!newNoteTitle.trim()) return;

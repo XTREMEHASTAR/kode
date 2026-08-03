@@ -138,7 +138,7 @@ export async function extractFramesFromVideo(
         }
         canvas.width = thumbW;
         canvas.height = thumbH;
-        const ctx = canvas.getContext('2d');
+        const ctx = canvas.getContext('2d', { willReadFrequently: true });
         if (!ctx) {
           throw new Error('Could not get canvas context');
         }

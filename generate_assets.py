@@ -20,7 +20,49 @@ for d in out_dirs:
 icon_img = Image.open(icon_src_path).convert('RGBA')
 wm_img = Image.open(wm_src_path).convert('RGBA')
 
+# Remove the 4 outer white corners AND the white border stroke around the squircle
+def make_transparent_corners(img):
+    img = img.convert('RGBA')
+    width, height = img.size
+    radius = int(width * 0.24) # ~245px corner arc region
+
+    pixels = img.load()
+    for y in range(height):
+        for x in range(width):
+            r, g, b, a = pixels[x, y]
+
+            # Check 4 outer corner regions
+            in_top_left = (x < radius and y < radius)
+            in_top_right = (x > width - radius and y < radius)
+            in_bottom_left = (x < radius and y > height - radius)
+            in_bottom_right = (x > width - radius and y > height - radius)
+
+            if in_top_left or in_top_right or in_bottom_left or in_bottom_right:
+                cx = radius if x < radius else (width - radius)
+                cy = radius if y < radius else (height - radius)
+                dist = ((x - cx) ** 2 + (y - cy) ** 2) ** 0.5
+
+                # 1. Any pixel outside the rounded navy squircle curve -> 100% transparent
+                if dist > radius - 15:
+                    # If pixel is white / light outline border (not navy #162A3B and not orange #FF6B3D)
+                    # Navy background is ~R:15-30, G:30-45, B:50-65
+                    if r > 100 or g > 100 or b > 100:
+                        # Exclude the orange dot (r > 200, g < 150) if it touches corner
+                        if not (r > 200 and g < 150 and b < 100):
+                            pixels[x, y] = (0, 0, 0, 0)
+                elif dist > radius:
+                    pixels[x, y] = (0, 0, 0, 0)
+
+    return img
+
+
+icon_img = make_transparent_corners(icon_img)
+
+
+
+
 print(f"Loaded icon: {icon_img.size}, wordmark: {wm_img.size}")
+
 
 # 1. Create transparent version of wordmark by thresholding white background
 def make_transparent_wordmark(img):

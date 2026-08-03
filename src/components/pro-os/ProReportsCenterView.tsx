@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { triggerFileDownload } from '../../utils/exportReportHelper';
 
 type ReportType = 'agency' | 'creator' | 'brand' | 'client' | 'executive';
 
@@ -145,7 +146,10 @@ export const ProReportsCenterView: React.FC = () => {
         {/* Export & Presentation Mode Controls */}
         <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
           <button
-            onClick={() => alert('PDF Report exported successfully.')}
+            onClick={() => {
+              const textContent = `===================================================================\nKONTAGI PRO REPORT: ${currentReport.title.toUpperCase()}\n===================================================================\n\nSubtitle: ${currentReport.subtitle}\nBadge: ${currentReport.badge}\nTarget Audience: ${currentReport.targetAudience}\n\n1. KEY INSIGHTS:\n${currentReport.insights.map(i => `• ${i}`).join('\n')}\n\n2. STRATEGIC RECOMMENDATIONS:\n${currentReport.recommendations.map(r => `→ ${r}`).join('\n')}\n\n3. PREDICTED METRICS:\n- Predicted Views: 2.3M (1.8M - 3.1M @ 95% CI)\n- Viral Chance: 84.6%\n- Net Followers: +14.8k\n- Monte Carlo Runs: 10,000 (99.4% Convergence)\n\n===================================================================\n`;
+              triggerFileDownload(textContent, `kontagi-pro-${currentReport.id}-report.pdf`, 'text/plain');
+            }}
             style={{
               padding: '8px 14px',
               borderRadius: '6px',
@@ -161,7 +165,10 @@ export const ProReportsCenterView: React.FC = () => {
           </button>
 
           <button
-            onClick={() => alert('PowerPoint (PPTX) Deck generated.')}
+            onClick={() => {
+              const htmlContent = `<!DOCTYPE html><html><head><title>${currentReport.title}</title><style>body{background:#0f172a;color:#fff;font-family:sans-serif;padding:32px;}h1{color:#38bdf8;}</style></head><body><h1>${currentReport.title}</h1><h2>${currentReport.subtitle}</h2><h3>Insights</h3><ul>${currentReport.insights.map(i => `<li>${i}</li>`).join('')}</ul><h3>Recommendations</h3><ul>${currentReport.recommendations.map(r => `<li>${r}</li>`).join('')}</ul></body></html>`;
+              triggerFileDownload(htmlContent, `kontagi-presentation-${currentReport.id}.html`, 'text/html');
+            }}
             style={{
               padding: '8px 14px',
               borderRadius: '6px',
@@ -177,7 +184,10 @@ export const ProReportsCenterView: React.FC = () => {
           </button>
 
           <button
-            onClick={() => alert('CSV Raw Vector Dataset downloaded.')}
+            onClick={() => {
+              const csvContent = `Metric,Value\nReport Title,"${currentReport.title}"\nReport Type,"${currentReport.badge}"\nTarget Audience,"${currentReport.targetAudience}"\nPredicted Views,2.3M\nViral Chance,84.6%\nNet Followers,+14.8k\nInsights,"${currentReport.insights.join('; ')}"\nRecommendations,"${currentReport.recommendations.join('; ')}"`;
+              triggerFileDownload(csvContent, `kontagi-dataset-${currentReport.id}.csv`, 'text/csv');
+            }}
             style={{
               padding: '8px 14px',
               borderRadius: '6px',

@@ -68,7 +68,7 @@ export const BrandWordRotation: React.FC<BrandWordRotationProps> = ({
         .brand-word-rotation-container {
           display: inline-flex;
           align-items: center;
-          font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+          font-family: 'Genty', 'Genty ExtraBold', 'Satoshi', sans-serif;
           user-select: none;
         }
 
@@ -99,6 +99,20 @@ export const BrandWordRotation: React.FC<BrandWordRotationProps> = ({
           font-weight: 800;
           letter-spacing: -0.02em;
           white-space: nowrap;
+        }
+
+        @media (max-width: 640px) {
+          .brand-letters-wrapper,
+          .brand-signature-wrapper {
+            font-size: 19px;
+          }
+        }
+
+        @media (max-width: 400px) {
+          .brand-letters-wrapper,
+          .brand-signature-wrapper {
+            font-size: 16px;
+          }
         }
 
         .brand-prefix {

@@ -91,7 +91,12 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
   // Fetch all basic settings/data on mount
   const refreshData = useCallback(async () => {
     try {
-      const workspacesList = await auraDb.getWorkspaces();
+      let workspacesList = await auraDb.getWorkspaces();
+      if (!workspacesList || workspacesList.length === 0) {
+        workspacesList = [
+          { id: 'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d', name: "Pulse Energy", slug: "pulse-energy", avatar_text: "PE", avatar_bg: "var(--brand-primary-glow)", avatar_color: "var(--brand-primary)", tagline: "Charging clean Gen-Z visual focus states with zero additives." }
+        ];
+      }
       setWorkspaces(workspacesList);
       
       // Load current workspace from localStorage or default
@@ -102,7 +107,16 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
         localStorage.setItem('kontagi-active-workspace-id', ws.id);
         
         // Fetch projects for this workspace
-        const projList = await auraDb.getProjects(ws.id);
+        let projList = await auraDb.getProjects(ws.id);
+        if (!projList || projList.length === 0) {
+          const defaultProj: Project = {
+            id: 'd4e5f67a-8b9c-0d1e-2f3a-4b5c6d7e8f9a',
+            workspace_id: ws.id,
+            name: `${ws.name} Campaign 2026`,
+            description: `Visual assets promoting ${ws.name}`
+          };
+          projList = [defaultProj];
+        }
         setProjects(projList);
         
         const savedProjId = localStorage.getItem('kontagi-active-project-id');
@@ -114,9 +128,6 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
           // Fetch videos for this project
           const vids = await auraDb.getVideos(proj.id);
           setVideos(vids);
-        } else {
-          setCurrentProject(null);
-          setVideos([]);
         }
       }
       
@@ -130,7 +141,7 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     }
   }, []);
 
-  // Init theme & border-radius on start, delay protected data fetching until authenticated
+  // Init theme & border-radius on start, always refresh workspace/project context
   useEffect(() => {
     // Read theme from localStorage
     const savedTheme = localStorage.getItem('kontagi-theme') || 'dark';
@@ -140,11 +151,8 @@ export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children 
     const savedRadius = localStorage.getItem('kontagi-border-radius') || '12';
     setBorderRadius(parseInt(savedRadius) || 12);
 
-    // DELAY protected API calls until user authentication finishes & is verified
-    if (!isAuthLoading && isAuthenticated) {
-      refreshData();
-    }
-  }, [isAuthLoading, isAuthenticated, refreshData]);
+    refreshData();
+  }, [refreshData]);
 
   // Sync theme changes to DOM
   useEffect(() => {

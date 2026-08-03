@@ -126,7 +126,9 @@ export const DEFAULT_CONFIG: ComingSoonConfig = {
   heroTitle: 'Almost illegal levels of intelligence are loading.',
   heroSubtitle: 'Our AI research team is fine-tuning multi-modal viewer swarms. Join early access to get instant launch credentials.',
   category: 'Secret AI Laboratory',
-  launchDate: new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString(), // 14 days from now
+  launchDate: '2026-08-04T18:30:00Z', // Global UTC launch timestamp (5 August 2026, 12:00 AM IST)
+
+
   progress: {
     research: 100,
     design: 92,
@@ -189,9 +191,15 @@ export class ComingSoonService {
       const stored = localStorage.getItem(CONFIG_STORAGE_KEY);
       if (stored) {
         const parsed = JSON.parse(stored);
+        // Force DEFAULT_CONFIG.launchDate if stored value is invalid or stale dynamic date
+        const validLaunchDate = (parsed.launchDate && !isNaN(Date.parse(parsed.launchDate)) && parsed.launchDate.includes('T')) 
+          ? parsed.launchDate 
+          : DEFAULT_CONFIG.launchDate;
+
         return {
           ...DEFAULT_CONFIG,
           ...parsed,
+          launchDate: validLaunchDate,
           progress: { ...DEFAULT_CONFIG.progress, ...(parsed.progress || {}) },
           communityStats: { ...DEFAULT_CONFIG.communityStats, ...(parsed.communityStats || {}) },
           releaseNotes: Array.isArray(parsed.releaseNotes) && parsed.releaseNotes.length > 0 ? parsed.releaseNotes : DEFAULT_CONFIG.releaseNotes,
@@ -203,6 +211,7 @@ export class ComingSoonService {
     }
     return DEFAULT_CONFIG;
   }
+
 
   public static async fetchRemoteConfig(): Promise<ComingSoonConfig> {
     try {

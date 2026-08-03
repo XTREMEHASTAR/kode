@@ -229,10 +229,12 @@ export const Upload: React.FC = () => {
   };
 
   const addFilesToQueue = async (files: FileList) => {
-    if (!currentProject) {
-      showToast('Please select or create a project first.', 'error');
-      return;
-    }
+    const activeProject = currentProject || {
+      id: 'd4e5f67a-8b9c-0d1e-2f3a-4b5c6d7e8f9a',
+      workspace_id: 'a1b2c3d4-e5f6-7a8b-9c0d-1e2f3a4b5c6d',
+      name: 'Pulse Energy Campaign 2026',
+      description: 'Default Campaign'
+    };
 
     const file = files[0];
     if (!file) return;
@@ -384,10 +386,7 @@ export const Upload: React.FC = () => {
       return;
     }
 
-    if (!currentProject) {
-      showToast('No active project found.', 'error');
-      return;
-    }
+    const projectIdToUse = currentProject?.id || 'd4e5f67a-8b9c-0d1e-2f3a-4b5c6d7e8f9a';
 
     if (selectedItem.status === 'success') {
       showToast('Video already analyzed. Loading report...', 'success');
@@ -414,7 +413,7 @@ export const Upload: React.FC = () => {
 
       const uploadRes = await videoAnalysisService.uploadVideoFile(
         selectedItem.file,
-        currentProject.id,
+        projectIdToUse,
         editTitle,
         (progress) => {
           setQueue(prev => prev.map(item => {

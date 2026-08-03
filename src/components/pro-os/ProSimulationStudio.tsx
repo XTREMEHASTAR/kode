@@ -8,13 +8,16 @@ import { ExecutionConsole, ConsoleLogEntry } from './simulation-studio/Execution
 import { TelemetryResultsDashboard } from './simulation-studio/TelemetryResultsDashboard';
 import { ProContentDnaView } from './ProContentDnaView';
 import { ProAiPopulationView } from './ProAiPopulationView';
+import { ProTwinManagerView } from './ProTwinManagerView';
+import { ProKnowledgeExplorerView } from './ProKnowledgeExplorerView';
+import { ProWhatIfLabView } from './ProWhatIfLabView';
 import { ProCard } from './shared/ProCard';
 import { ProMetric } from './shared/ProMetric';
 import { ProBadge } from './shared/ProBadge';
 
 export const ProSimulationStudio: React.FC = () => {
   // Active Workspace Module Mode
-  const [workspaceMode, setWorkspaceMode] = useState<'studio' | 'dna' | 'population' | 'recommendation' | 'trends' | 'memory'>('studio');
+  const [workspaceMode, setWorkspaceMode] = useState<'studio' | 'dna' | 'population' | 'recommendation' | 'trends' | 'memory' | 'twin' | 'ckg' | 'whatif'>('studio');
 
   // 1. Content Assets State
   const [assets, setAssets] = useState<SimulationContentAssets>({
@@ -201,6 +204,9 @@ export const ProSimulationStudio: React.FC = () => {
               { id: 'studio', label: '⚡ Studio Workspace', icon: '⚡' },
               { id: 'dna', label: '🧬 Content DNA', icon: '🧬' },
               { id: 'population', label: '👥 AI Viewers', icon: '👥' },
+              { id: 'whatif', label: '🧪 What-If Lab', icon: '🧪' },
+              { id: 'twin', label: '👤 Creator Twin', icon: '👤' },
+              { id: 'ckg', label: '🌐 Knowledge Graph', icon: '🌐' },
               { id: 'recommendation', label: '🎯 Algorithm Waves', icon: '🎯' },
               { id: 'trends', label: '🔥 Trend Surge', icon: '🔥' },
               { id: 'memory', label: '💾 Memory & Consensus', icon: '💾' }
@@ -255,6 +261,18 @@ export const ProSimulationStudio: React.FC = () => {
 
       {workspaceMode === 'population' && (
         <ProAiPopulationView />
+      )}
+
+      {workspaceMode === 'whatif' && (
+        <ProWhatIfLabView />
+      )}
+
+      {workspaceMode === 'twin' && (
+        <ProTwinManagerView />
+      )}
+
+      {workspaceMode === 'ckg' && (
+        <ProKnowledgeExplorerView />
       )}
 
       {workspaceMode === 'recommendation' && (

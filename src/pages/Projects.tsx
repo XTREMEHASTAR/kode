@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { CustomSelect } from '../components/ui/CustomSelect';
+import { downloadJsonReport } from '../utils/exportReportHelper';
 
 interface ProjectItem {
   id: string;
@@ -402,6 +403,7 @@ export const Projects: React.FC = () => {
                         </svg>
                         <div className="project-card-actions" onClick={e => e.stopPropagation()}>
                           <button className="btn btn-primary btn-sm" style={{ padding: '2px 6px', fontSize: '0.625rem', marginRight: '4px' }} onClick={(e) => { e.stopPropagation(); navigate(`/assets/${proj.videoId || proj.id}/report`); }}>View Report</button>
+                          <button className="btn btn-secondary btn-sm" style={{ padding: '2px 6px', fontSize: '0.625rem', marginRight: '4px' }} onClick={(e) => { e.stopPropagation(); const v = videos.find(item => item.id === (proj.videoId || proj.id)) || { id: proj.id, title: proj.name, filename: proj.name, score: proj.confidence }; downloadJsonReport(v as any); showToast('Report downloaded', 'success'); }}>Download</button>
                           <button className="btn btn-tertiary btn-sm" style={{ padding: '2px 6px', fontSize: '0.625rem' }} onClick={(e) => handleDuplicate(proj.id, e)}>Copy</button>
                           <button className="btn btn-tertiary btn-sm" style={{ padding: '2px 6px', fontSize: '0.625rem', marginLeft: '4px' }} onClick={(e) => handleArchive(proj.id, e)}>Archive</button>
                           <button className="btn btn-ghost btn-sm text-danger" style={{ padding: '2px 6px', fontSize: '0.625rem', marginLeft: '4px' }} onClick={(e) => handleDelete(proj.id, e)}>Delete</button>

@@ -5,6 +5,7 @@
   "main": "design-system.js",
   "scripts": {
     "dev": "vite",
+    "dev:server": "npm --prefix server run dev",
     "build": "tsc && vite build",
     "build:server": "npm --prefix server run build",
     "start": "npm --prefix server run start:prod",

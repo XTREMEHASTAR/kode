@@ -281,3 +281,728 @@ model UserUsage {
   @@index([userId, date])
   @@map("user_usages")
 }
+
+// ─── Audience Intelligence & Persona Simulation ────────────────
+
+model AudienceFact {
+  id               String   @id @default(uuid()) @db.Uuid
+  platform         String   @db.VarChar(100) // instagram, youtube_shorts, tiktok
+  country          String   @db.VarChar(10)  // US, IN, GB, CA, etc.
+  ageBand          String   @map("age_band") @db.VarChar(50) // 18-24, 25-34, etc.
+  gender           String?  @db.VarChar(20)  // M, F, All
+  language         String   @default("en") @db.VarChar(10)
+  deviceCategory   String   @default("mobile") @map("device_category") @db.VarChar(50)
+  timezoneBucket   String   @default("UTC") @map("timezone_bucket") @db.VarChar(50)
+  interestCategory String?  @map("interest_category") @db.VarChar(100)
+  metricType       String   @map("metric_type") @db.VarChar(100) // population_share, save_rate_benchmark, etc.
+  value            Float
+  unit             String   @default("ratio") @db.VarChar(50)
+  source           String   @db.VarChar(255)
+  sourceConfidence Float    @default(0.9) @map("source_confidence")
+  effectiveDate    DateTime @default(now()) @map("effective_date") @db.Timestamptz
+  datasetVersionId String   @map("dataset_version_id") @db.Uuid
+  ingestedAt       DateTime @default(now()) @map("ingested_at") @db.Timestamptz
+
+  @@index([platform, country, ageBand, datasetVersionId])
+  @@map("audience_facts")
+}
+
+model Persona {
+  id                    String   @id @default(uuid()) @db.Uuid
+  versionId             String   @map("version_id") @db.Uuid
+  representsUsersCount  BigInt   @default(500000) @map("represents_users_count")
+  weightPct             Float    @default(0.01) @map("weight_pct")
+  demographicCell       Json     @map("demographic_cell")
+  interestVector        Json     @map("interest_vector")
+  behavioralPriors      Json     @map("behavioral_priors")
+  narrativeProfile      String   @map("narrative_profile") @db.Text
+  provenance            Json?
+  isActive              Boolean  @default(true) @map("is_active")
+  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  weightSetEntries WeightSetEntry[]
+  personaResponses PersonaResponse[]
+
+  @@index([isActive])
+  @@map("personas")
+}
+
+model WeightSet {
+  id               String   @id @default(uuid()) @db.Uuid
+  scopeType        String   @map("scope_type") @db.VarChar(50) // global | creator_targeted
+  scopeRefId       String?  @map("scope_ref_id") @db.Uuid
+  datasetVersionId String   @map("dataset_version_id") @db.Uuid
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  entries WeightSetEntry[]
+  jobs    SimulationJob[]
+
+  @@map("weight_sets")
+}
+
+model WeightSetEntry {
+  weightSetId String @map("weight_set_id") @db.Uuid
+  personaId   String @map("persona_id") @db.Uuid
+  weightPct   Float  @map("weight_pct")
+
+  weightSet WeightSet @relation(fields: [weightSetId], references: [id], onDelete: Cascade)
+  persona   Persona   @relation(fields: [personaId], references: [id], onDelete: Cascade)
+
+  @@id([weightSetId, personaId])
+  @@map("weight_set_entries")
+}
+
+model SimulationJob {
+  id                     String    @id @default(uuid()) @db.Uuid
+  userId                 String    @map("user_id") @db.Uuid
+  platform               String    @default("instagram") @db.VarChar(50)
+  title                  String?   @db.VarChar(255)
+  caption                String?   @db.Text
+  thumbnailUrl           String?   @map("thumbnail_url") @db.Text
+  videoUrl               String?   @map("video_url") @db.Text
+  scriptText             String?   @map("script_text") @db.Text
+  contentFeatureHash     String    @map("content_feature_hash") @db.VarChar(64)
+  personaTier            String    @default("standard") @map("persona_tier") @db.VarChar(50) // quick, standard, deep, exhaustive
+  personaRegistryVersion String    @map("persona_registry_version") @db.Uuid
+  weightSetId            String    @map("weight_set_id") @db.Uuid
+  samplingSeed           String    @map("sampling_seed") @db.VarChar(64)
+  status                 String    @default("queued") @db.VarChar(50) // queued, processing, completed, failed
+  createdAt              DateTime  @default(now()) @map("created_at") @db.Timestamptz
+  completedAt            DateTime? @map("completed_at") @db.Timestamptz
+
+  weightSet        WeightSet          @relation(fields: [weightSetId], references: [id])
+  personaResponses PersonaResponse[]
+  findings         ModeratorFinding[]
+  results          SimulationResult[]
+  realOutcomes     RealOutcome[]
+
+  @@index([userId])
+  @@index([status])
+  @@map("simulation_jobs")
+}
+
+model PersonaResponse {
+  id          String   @id @default(uuid()) @db.Uuid
+  jobId       String   @map("job_id") @db.Uuid
+  personaId   String   @map("persona_id") @db.Uuid
+  questionKey String   @map("question_key") @db.VarChar(100) // would_stop_scrolling, would_watch_3s, etc.
+  probability Float
+  reasoning   String   @db.Text
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  job     SimulationJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  persona Persona       @relation(fields: [personaId], references: [id], onDelete: Cascade)
+
+  @@index([jobId])
+  @@index([jobId, questionKey])
+  @@map("persona_responses")
+}
+
+model ModeratorFinding {
+  id          String   @id @default(uuid()) @db.Uuid
+  jobId       String   @map("job_id") @db.Uuid
+  findingType String   @map("finding_type") @db.VarChar(50) // pattern, contradiction, segment_cluster
+  payload     Json
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  job SimulationJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([jobId])
+  @@map("moderator_findings")
+}
+
+model SimulationResult {
+  id                     String   @id @default(uuid()) @db.Uuid
+  jobId                  String   @map("job_id") @db.Uuid
+  metricKey              String   @map("metric_key") @db.VarChar(100)
+  predictedValue         Float    @map("predicted_value")
+  lowerBound             Float    @map("lower_bound")
+  upperBound             Float    @map("upper_bound")
+  confidenceLevel        String   @default("Moderate") @map("confidence_level") @db.VarChar(50)
+  samplingUncertainty    Float    @map("sampling_uncertainty")
+  calibrationUncertainty Float    @map("calibration_uncertainty")
+  createdAt              DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  job SimulationJob @relation(fields: [jobId], references: [id], onDelete: Cascade)
+
+  @@index([jobId])
+  @@map("simulation_results")
+}
+
+model RealOutcome {
+  id         String   @id @default(uuid()) @db.Uuid
+  jobId      String?  @map("job_id") @db.Uuid
+  userId     String   @map("user_id") @db.Uuid
+  contentRef Json     @map("content_ref")
+  metricKey  String   @map("metric_key") @db.VarChar(100)
+  actualValue Float   @map("actual_value")
+  measuredAt DateTime @map("measured_at") @db.Timestamptz
+  reportedAt DateTime @default(now()) @map("reported_at") @db.Timestamptz
+
+  job SimulationJob? @relation(fields: [jobId], references: [id], onDelete: SetNull)
+
+  @@index([userId])
+  @@map("real_outcomes")
+}
+
+model CalibrationAdjustment {
+  id                   String   @id @default(uuid()) @db.Uuid
+  segmentKey           String   @map("segment_key") @db.VarChar(255)
+  metricKey            String   @map("metric_key") @db.VarChar(100)
+  adjustmentDelta      Float    @map("adjustment_delta")
+  basedOnOutcomeBatch  String   @map("based_on_outcome_batch") @db.Uuid
+  appliedAt            DateTime @default(now()) @map("applied_at") @db.Timestamptz
+
+  @@map("calibration_adjustments")
+}
+
+// ─── V2 Creative Knowledge Graph & Creator Twins ───────────────
+
+model CreativeKnowledgeGraphNode {
+  id        String   @id @default(uuid()) @db.Uuid
+  nodeType  String   @map("node_type") @db.VarChar(50) // creator, content_feature, segment, outcome
+  label     String   @db.VarChar(255)
+  payload   Json     @default("{}")
+  createdAt DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  outgoingEdges CreativeKnowledgeGraphEdge[] @relation("SourceNode")
+  incomingEdges CreativeKnowledgeGraphEdge[] @relation("TargetNode")
+
+  @@index([nodeType])
+  @@map("ckg_nodes")
+}
+
+model CreativeKnowledgeGraphEdge {
+  id           String   @id @default(uuid()) @db.Uuid
+  sourceNodeId String   @map("source_node_id") @db.Uuid
+  targetNodeId String   @map("target_node_id") @db.Uuid
+  relationType String   @map("relation_type") @db.VarChar(100) // influences, resembles, improved_by, contradicts
+  weight       Float    @default(1.0)
+  confidence   Float    @default(0.9)
+  provenance   Json?
+  createdAt    DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  sourceNode CreativeKnowledgeGraphNode @relation("SourceNode", fields: [sourceNodeId], references: [id], onDelete: Cascade)
+  targetNode CreativeKnowledgeGraphNode @relation("TargetNode", fields: [targetNodeId], references: [id], onDelete: Cascade)
+
+  @@index([sourceNodeId])
+  @@index([targetNodeId])
+  @@index([relationType])
+  @@map("ckg_edges")
+}
+
+model AudienceGraphEdge {
+  sourcePersonaId String @map("source_persona_id") @db.Uuid
+  targetPersonaId String @map("target_persona_id") @db.Uuid
+  homophilyScore  Float  @default(0.5) @map("homophily_score")
+  sharePropagateRate Float @default(0.1) @map("share_propagate_rate")
+
+  @@id([sourcePersonaId, targetPersonaId])
+  @@map("audience_graph_edges")
+}
+
+model ReasoningTrace {
+  id         String   @id @default(uuid()) @db.Uuid
+  jobId      String   @map("job_id") @db.Uuid
+  agentRole  String   @map("agent_role") @db.VarChar(50) // hook, thumbnail, copy, pacing, trend
+  personaId  String?  @map("persona_id") @db.Uuid
+  traceText  String   @map("trace_text") @db.Text
+  claims     Json     @default("[]")
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([jobId])
+  @@index([agentRole])
+  @@map("reasoning_traces")
+}
+
+model CounterfactualScenario {
+  id                 String   @id @default(uuid()) @db.Uuid
+  jobId              String   @map("job_id") @db.Uuid
+  proposedChangeName String   @map("proposed_change_name") @db.VarChar(255)
+  modifiedComponent  String   @map("modified_component") @db.VarChar(50) // hook, thumbnail, caption, pacing
+  originalValue      String   @map("original_value") @db.Text
+  newValue           String   @map("new_value") @db.Text
+  predictedLiftPct   Float    @map("predicted_lift_pct")
+  isValidated        Boolean  @default(true) @map("is_validated")
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([jobId])
+  @@map("counterfactual_scenarios")
+}
+
+model SpecialistAgent {
+  id           String   @id @default(uuid()) @db.Uuid
+  role         String   @unique @db.VarChar(50) // hook, thumbnail, copy, pacing, trend
+  modelTarget  String   @default("gemini-2.0-flash") @map("model_target") @db.VarChar(100)
+  totalEvaluations Int  @default(0) @map("total_evaluations")
+  accuracyScore Float   @default(0.92) @map("accuracy_score")
+  updatedAt    DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("specialist_agents")
+}
+
+model BiasAuditLog {
+  id             String   @id @default(uuid()) @db.Uuid
+  jobId          String   @map("job_id") @db.Uuid
+  demographicTag String   @map("demographic_tag") @db.VarChar(100)
+  stereotypeRisk Float    @default(0.0) @map("stereotype_risk")
+  flaggedReason  String?  @map("flagged_reason") @db.Text
+  auditPassed    Boolean  @default(true) @map("audit_passed")
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([jobId])
+  @@map("bias_audit_logs")
+}
+
+model BacktestRun {
+  id                     String   @id @default(uuid()) @db.Uuid
+  runBatchId             String   @map("run_batch_id") @db.Uuid
+  contentRef             Json     @map("content_ref")
+  realOutcomeId          String?  @map("real_outcome_id") @db.Uuid
+  simulatedResult        Json     @map("simulated_result")
+  personaRegistryVersion String?  @map("persona_registry_version") @db.VarChar(100)
+  weightSetId            String?  @map("weight_set_id") @db.VarChar(100)
+  segmentKey             String   @map("segment_key") @db.VarChar(255)
+  coveredByCi            Boolean  @map("covered_by_ci")
+  predictedBucket        String   @map("predicted_bucket") @db.VarChar(50)
+  actualBucket           String   @map("actual_bucket") @db.VarChar(50)
+  predictedRank          Float    @map("predicted_rank")
+  actualRank             Float    @map("actual_rank")
+  brierComponent         Float    @map("brier_component")
+  evaluatedAt            DateTime @default(now()) @map("evaluated_at") @db.Timestamptz
+
+  @@index([runBatchId])
+  @@index([segmentKey])
+  @@map("backtest_runs")
+}
+
+model BacktestSegmentSummary {
+  id                String   @id @default(uuid()) @db.Uuid
+  runBatchId        String   @map("run_batch_id") @db.Uuid
+  segmentKey        String   @map("segment_key") @db.VarChar(255)
+  sampleSize        Int      @map("sample_size")
+  coveragePct       Float    @map("coverage_pct")
+  bucketAccuracyPct Float    @map("bucket_accuracy_pct")
+  spearmanRho       Float    @map("spearman_rho")
+  meanBrierScore    Float    @map("mean_brier_score")
+  claimEligible     Boolean  @default(false) @map("claim_eligible")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([runBatchId])
+  @@index([segmentKey])
+  @@map("backtest_segment_summaries")
+}
+
+// ─── Pipeline Test Fixtures (Synthetic Data Isolation) ─────────────────
+// WARNING: This table stores SYNTHETIC test fixture predictions for statistical pipeline math verification only.
+// It is physically isolated from production BacktestRun tables and MUST NEVER be used for claim_eligible gating.
+
+model BacktestPipelineTestRun {
+  id                     String   @id @default(uuid()) @db.Uuid
+  runBatchId             String   @map("run_batch_id") @db.Uuid
+  contentRef             Json     @map("content_ref")
+  realOutcomeId          String?  @map("real_outcome_id") @db.Uuid
+  simulatedResult        Json     @map("simulated_result")
+  personaRegistryVersion String?  @map("persona_registry_version") @db.VarChar(100)
+  weightSetId            String?  @map("weight_set_id") @db.VarChar(100)
+  segmentKey             String   @map("segment_key") @db.VarChar(255)
+  coveredByCi            Boolean  @map("covered_by_ci")
+  predictedBucket        String   @map("predicted_bucket") @db.VarChar(50)
+  actualBucket           String   @map("actual_bucket") @db.VarChar(50)
+  predictedRank          Float    @map("predicted_rank")
+  actualRank             Float    @map("actual_rank")
+  brierComponent         Float    @map("brier_component")
+  isSyntheticTestFixture Boolean  @default(true) @map("is_synthetic_test_fixture")
+  evaluatedAt            DateTime @default(now()) @map("evaluated_at") @db.Timestamptz
+
+  @@index([runBatchId])
+  @@index([segmentKey])
+  @@map("backtest_pipeline_test_runs")
+}
+
+model BacktestPipelineTestSummary {
+  id                     String   @id @default(uuid()) @db.Uuid
+  runBatchId             String   @map("run_batch_id") @db.Uuid
+  segmentKey             String   @map("segment_key") @db.VarChar(255)
+  sampleSize             Int      @map("sample_size")
+  coveragePct            Float    @map("coverage_pct")
+  bucketAccuracyPct      Float    @map("bucket_accuracy_pct")
+  spearmanRho            Float    @map("spearman_rho")
+  meanBrierScore         Float    @map("mean_brier_score")
+  claimEligible          Boolean  @default(false) @map("claim_eligible")
+  isSyntheticTestFixture Boolean  @default(true) @map("is_synthetic_test_fixture")
+  createdAt              DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([runBatchId])
+  @@index([segmentKey])
+  @@map("backtest_pipeline_test_summaries")
+}
+
+// ─── Embedding Intelligence & Vector Store ────────────────────
+
+model ContentEmbedding {
+  id              String   @id @default(uuid()) @db.Uuid
+  contentRefId    String   @map("content_ref_id") @db.VarChar(255)
+  modality        String   @db.VarChar(50) // video, audio, script, thumbnail, caption, title, creator, ckg_graph
+  providerId      String   @map("provider_id") @db.VarChar(100)
+  modelVersion    String   @map("model_version") @db.VarChar(50)
+  dimension       Int
+  embeddingVector Json     @map("embedding_vector") // Stored vector float array
+  l2Norm          Float    @default(1.0) @map("l2_norm") // Precomputed L2 norm for fast Cosine similarity
+  metadata        Json     @default("{}")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([contentRefId])
+  @@index([modality])
+  @@index([providerId, modelVersion])
+  @@map("content_embeddings")
+}
+
+model SemanticCluster {
+  id             String   @id @default(uuid()) @db.Uuid
+  clusterName    String   @map("cluster_name") @db.VarChar(255)
+  modality       String   @db.VarChar(50)
+  centroidVector Json     @map("centroid_vector")
+  memberCount    Int      @default(0) @map("member_count")
+  velocityScore  Float    @default(0.0) @map("velocity_score") // Trend momentum score
+  updatedAt      DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  createdAt      DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([modality])
+  @@index([velocityScore(sort: Desc)])
+  @@map("semantic_clusters")
+}
+
+model DuplicateDetectionRecord {
+  id                   String   @id @default(uuid()) @db.Uuid
+  primaryContentRefId  String   @map("primary_content_ref_id") @db.VarChar(255)
+  duplicateContentRef  String   @map("duplicate_content_ref") @db.VarChar(255)
+  similarityScore      Float    @map("similarity_score")
+  detectedAt           DateTime @default(now()) @map("detected_at") @db.Timestamptz
+
+  @@index([primaryContentRefId])
+  @@index([duplicateContentRef])
+  @@map("duplicate_detection_records")
+}
+
+// ─── Evidence Graph (Explainability Engine) ────────────────────
+
+model EvidenceNode {
+  id                 String   @id @default(uuid()) @db.Uuid
+  jobId              String   @map("job_id") @db.Uuid
+  nodeType           String   @map("node_type") @db.VarChar(50) // prediction, scene_segment, content_feature, persona_reaction, moderator_finding, recommendation
+  title              String   @db.VarChar(255)
+  summary            String   @db.Text
+  timestampInterval  Json?    @map("timestamp_interval") // { startSec: 0.0, endSec: 3.0 }
+  confidenceScore    Float    @default(0.9) @map("confidence_score")
+  sourceAttribution  String   @map("source_attribution") @db.VarChar(100) // ContentEngine, PersonaSwarm, ModeratorAgent, CalibrationEngine
+  ckgNodeId          String?  @map("ckg_node_id") @db.VarChar(255)
+  personaId          String?  @map("persona_id") @db.VarChar(255)
+  payload            Json     @default("{}")
+  createdAt          DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  outgoingEdges EvidenceEdge[] @relation("SourceEvidenceNode")
+  incomingEdges EvidenceEdge[] @relation("TargetEvidenceNode")
+
+  @@index([jobId])
+  @@index([nodeType])
+  @@map("evidence_nodes")
+}
+
+model EvidenceEdge {
+  id                   String   @id @default(uuid()) @db.Uuid
+  jobId                String   @map("job_id") @db.Uuid
+  sourceEvidenceNodeId String   @map("source_evidence_node_id") @db.Uuid
+  targetEvidenceNodeId String   @map("target_evidence_node_id") @db.Uuid
+  relationType         String   @map("relation_type") @db.VarChar(50) // explains, traced_to, caused_by, disagreed_by, recommends_fix
+  weight               Float    @default(1.0)
+  confidence           Float    @default(0.9)
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  sourceNode EvidenceNode @relation("SourceEvidenceNode", fields: [sourceEvidenceNodeId], references: [id], onDelete: Cascade)
+  targetNode EvidenceNode @relation("TargetEvidenceNode", fields: [targetEvidenceNodeId], references: [id], onDelete: Cascade)
+
+  @@index([jobId])
+  @@index([sourceEvidenceNodeId])
+  @@index([targetEvidenceNodeId])
+  @@map("evidence_edges")
+}
+
+// ─── Calibration Registry (Closed-Loop Learning) ─────────────
+
+model CalibrationRecord {
+  id               String   @id @default(uuid()) @db.Uuid
+  jobId            String   @map("job_id") @db.VarChar(255)
+  creatorId        String?  @map("creator_id") @db.VarChar(255)
+  platform         String   @db.VarChar(50)
+  predictedMetrics Json     @map("predicted_metrics") // { scrollStop: 0.68, watch3s: 0.55, completion: 0.35, views: 50000 }
+  actualMetrics    Json     @map("actual_metrics")    // { scrollStop: 0.72, watch3s: 0.58, completion: 0.38, views: 58000, likes: 2400, shares: 310 }
+  predictionError  Json     @map("prediction_error")  // { brierScore: 0.042, meanAbsolutePctError: 6.8, logLoss: 0.12 }
+  status           String   @default("evaluated") @db.VarChar(50)
+  publishedAt      DateTime @default(now()) @map("published_at") @db.Timestamptz
+  evaluatedAt      DateTime @default(now()) @map("evaluated_at") @db.Timestamptz
+
+  @@index([jobId])
+  @@index([creatorId])
+  @@index([platform])
+  @@map("calibration_records")
+}
+
+model CalibrationWeightSet {
+  id              String   @id @default(uuid()) @db.Uuid
+  scope           String   @db.VarChar(50) // global, platform, creator, persona
+  targetRefId     String   @map("target_ref_id") @db.VarChar(255) // 'instagram', 'creator_123', 'persona_tech_01'
+  priorWeight     Float    @map("prior_weight")
+  posteriorWeight Float    @map("posterior_weight")
+  brierScore      Float    @default(0.05) @map("brier_score")
+  sampleCount     Int      @default(1) @map("sample_count")
+  version         String   @default("v1.0") @db.VarChar(50)
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@unique([scope, targetRefId])
+  @@index([scope])
+  @@map("calibration_weight_sets")
+}
+
+model CalibrationUpdateLog {
+  id                     String   @id @default(uuid()) @db.Uuid
+  calibrationRecordId    String   @map("calibration_record_id") @db.Uuid
+  scope                  String   @db.VarChar(50)
+  targetRefId            String   @map("target_ref_id") @db.VarChar(255)
+  deltaWeight            Float    @map("delta_weight")
+  priorBrier             Float    @map("prior_brier")
+  posteriorBrier         Float    @map("posterior_brier")
+  bayesianEvidenceFactor Float    @default(1.0) @map("bayesian_evidence_factor")
+  createdAt              DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([calibrationRecordId])
+  @@index([scope, targetRefId])
+  @@map("calibration_update_logs")
+}
+
+// ─── Benchmark Intelligence Engine ────────────────────────────
+
+model BenchmarkDistribution {
+  id          String   @id @default(uuid()) @db.Uuid
+  dimension   String   @db.VarChar(50)  // hook, retention, editing, audio, visualQuality, speech, emotion, thumbnail, caption, engagement, views
+  category    String   @default("all") @db.VarChar(50) // tech, fitness, finance, entertainment, education, all
+  platform    String   @default("all") @db.VarChar(50) // instagram, tiktok, youtube_shorts, all
+  country     String   @default("global") @db.VarChar(50) // US, UK, CA, AU, IN, BR, global
+  p1          Float    // Top 1% threshold
+  p5          Float    // Top 5% threshold
+  p10         Float    // Top 10% threshold
+  p50         Float    // Median threshold
+  p75         Float    // Percentile 75 threshold
+  p25         Float    // Bottom 25% threshold
+  sampleCount Int      @default(10000) @map("sample_count")
+  updatedAt   DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@unique([dimension, category, platform, country])
+  @@index([dimension])
+  @@map("benchmark_distributions")
+}
+
+model BenchmarkEvaluationRecord {
+  id                       String   @id @default(uuid()) @db.Uuid
+  contentRefId             String   @map("content_ref_id") @db.VarChar(255)
+  category                 String   @db.VarChar(50)
+  platform                 String   @db.VarChar(50)
+  country                  String   @default("global") @db.VarChar(50)
+  dimensionScores          Json     @map("dimension_scores")      // { hook: 88, retention: 76, ... }
+  dimensionPercentiles     Json     @map("dimension_percentiles") // { hook: 94.2, retention: 81.5, ... }
+  dimensionTiers           Json     @map("dimension_tiers")       // { hook: 'Top 5%', retention: 'Top 10%', ... }
+  overallOpportunityScore  Float    @map("overall_opportunity_score") // 0 - 100
+  radarChartData           Json     @map("radar_chart_data")
+  strengths                Json
+  weaknesses               Json
+  improvementSuggestions   Json     @map("improvement_suggestions")
+  createdAt                DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([contentRefId])
+  @@map("benchmark_evaluation_records")
+}
+
+// ─── Scenario Engine (Counterfactual Comparison) ───────────────
+
+model ScenarioComparisonSession {
+  id               String   @id @default(uuid()) @db.Uuid
+  sessionName      String   @map("session_name") @db.VarChar(255)
+  creatorId        String?  @map("creator_id") @db.VarChar(255)
+  baseContentRefId String   @map("base_content_ref_id") @db.VarChar(255)
+  bestVariantId    String?  @map("best_variant_id") @db.VarChar(255)
+  createdAt        DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  variants ScenarioVariant[]
+
+  @@index([baseContentRefId])
+  @@index([creatorId])
+  @@map("scenario_comparison_sessions")
+}
+
+model ScenarioVariant {
+  id                String   @id @default(uuid()) @db.Uuid
+  sessionId         String   @map("session_id") @db.Uuid
+  variantName       String   @map("variant_name") @db.VarChar(255) // Baseline, Scenario A: Better Hook, Scenario B: Better Thumbnail
+  modifications     Json     @map("modifications")                 // { hookType: 'question', thumbnailStyle: 'high_contrast' }
+  overallScore      Float    @map("overall_score")
+  metrics           Json     // { scrollStop: 0.85, watch3s: 0.72, completion: 0.45, views: 85000 }
+  retentionCurve    Json     @map("retention_curve")
+  deltaFromBaseline Json     @map("delta_from_baseline")           // { scoreDelta: +14, scrollStopDelta: +0.18, viewDelta: +35000 }
+  whyOutperforms    String   @map("why_outperforms") @db.Text
+  isBestVersion     Boolean  @default(false) @map("is_best_version")
+  createdAt         DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  session ScenarioComparisonSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+
+  @@index([sessionId])
+  @@map("scenario_variants")
+}
+
+// ─── Explainability Engine (Transparent Reasoning) ────────────
+
+model ExplainabilityReport {
+  id                      String   @id @default(uuid()) @db.Uuid
+  jobId                   String   @map("job_id") @db.VarChar(255)
+  overallScore            Float    @map("overall_score")
+  scorePillars            Json     @map("score_pillars")             // 7 mandatory pillars per metric
+  reasonChains            Json     @map("reason_chains")             // Step-by-step causal lineage
+  confidenceTree          Json     @map("confidence_tree")           // Source attribution breakdown
+  featureImportance       Json     @map("feature_importance")        // Relative weight contribution percentages
+  personaReasoning        Json     @map("persona_reasoning")         // Cohort quotes & agreement percentages
+  moderatorReasoning      Json     @map("moderator_reasoning")       // Agent debate synthesis
+  counterfactual          Json                                       // Optimal variant & score delta
+  @@index([jobId])
+  @@map("explainability_reports")
+}
+
+// ─── Creator Twin Engine (Persistent AI Representation) ───────
+
+model CreatorTwin {
+  id                   String   @id @default(uuid()) @db.Uuid
+  creatorId            String   @unique @map("creator_id") @db.VarChar(255)
+  twinName             String   @map("twin_name") @db.VarChar(255)
+  handle               String   @db.VarChar(255)
+  nicheCategory        String   @default("tech") @map("niche_category") @db.VarChar(100)
+  styleFingerprint     Json     @map("style_fingerprint")         // 12 core dimensions
+  overallMaturityScore Float    @default(50.0) @map("overall_maturity_score")
+  totalAnalyzedVideos  Int      @default(0) @map("total_analyzed_videos")
+  createdAt            DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt            DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  memories  CreatorTwinMemory[]
+  snapshots CreatorTwinSnapshot[]
+
+  @@index([creatorId])
+  @@map("creator_twins")
+}
+
+model CreatorTwinMemory {
+  id         String   @id @default(uuid()) @db.Uuid
+  twinId     String   @map("twin_id") @db.Uuid
+  memoryType String   @map("memory_type") @db.VarChar(50) // pattern_learned, calibration_actual, weakness_identified
+  key        String   @db.VarChar(255)
+  value      Json
+  confidence Float    @default(0.85)
+  createdAt  DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  twin CreatorTwin @relation(fields: [twinId], references: [id], onDelete: Cascade)
+
+  @@index([twinId])
+  @@map("creator_twin_memories")
+}
+
+model CreatorTwinSnapshot {
+  id                      String   @id @default(uuid()) @db.Uuid
+  twinId                  String   @map("twin_id") @db.Uuid
+  forecast90Days          Json     @map("forecast_90_days")          // Low, Medium, High trajectories
+  strategyRecommendations Json     @map("strategy_recommendations")  // Actionable strategic steps
+  createdAt               DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  twin CreatorTwin @relation(fields: [twinId], references: [id], onDelete: Cascade)
+
+  @@index([twinId])
+  @@map("creator_twin_snapshots")
+}
+
+// ─── Model Registry & Routing Engine ──────────────────────────
+
+model ModelRegistration {
+  id              String   @id @db.VarChar(100) // e.g. gemini-2-flash, gpt-4o, claude-3-5-sonnet
+  modelName       String   @map("model_name") @db.VarChar(255)
+  provider        String   @db.VarChar(50)      // openai, claude, gemini, whisper, local, fine-tuned
+  capabilities    Json                          // ['text-generation', 'vision', 'audio-transcription', 'embedding']
+  avgLatencyMs    Float    @default(250.0) @map("avg_latency_ms")
+  costPer1kTokens Float    @default(0.001) @map("cost_per_1k_tokens")
+  version         String   @db.VarChar(50)
+  fallbackModelId String?  @map("fallback_model_id") @db.VarChar(100)
+  qualityScore    Float    @default(90.0) @map("quality_score")
+  isActive        Boolean  @default(true) @map("is_active")
+  createdAt       DateTime @default(now()) @map("created_at") @db.Timestamptz
+  updatedAt       DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@index([provider])
+  @@index([isActive])
+  @@map("model_registrations")
+}
+
+model ModelRoutingPolicy {
+  id               String   @id @default(uuid()) @db.Uuid
+  capability       String   @unique @db.VarChar(100) // text-generation, vision, audio-transcription, embedding
+  routingStrategy  String   @default("direct") @map("routing_strategy") @db.VarChar(50) // direct, ab_test, canary, fallback_chain
+  primaryModelId   String   @map("primary_model_id") @db.VarChar(100)
+  secondaryModelId String?  @map("secondary_model_id") @db.VarChar(100)
+  trafficSplitPct  Float    @default(50.0) @map("traffic_split_pct") // 50.0 for 50/50 A/B, or 10.0 for 10% canary
+  updatedAt        DateTime @updatedAt @map("updated_at") @db.Timestamptz
+
+  @@map("model_routing_policies")
+}
+
+model ModelExecutionLog {
+  id          String   @id @default(uuid()) @db.Uuid
+  modelId     String   @map("model_id") @db.VarChar(100)
+  capability  String   @db.VarChar(100)
+  latencyMs   Float    @map("latency_ms")
+  tokenCount  Int      @default(0) @map("token_count")
+  status      String   @default("success") @db.VarChar(50) // success, failed, fallback_triggered
+  createdAt   DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([modelId])
+  @@index([capability])
+  @@map("model_execution_logs")
+}
+
+// ─── Decision Intelligence Engine (Actionable Creator Guidance) ──
+
+model DecisionPlanRecord {
+  id                    String   @id @default(uuid()) @db.Uuid
+  jobId                 String   @map("job_id") @db.VarChar(255)
+  contentRefId          String   @map("content_ref_id") @db.VarChar(255)
+  creatorId             String?  @map("creator_id") @db.VarChar(255)
+  primaryDirective      String   @map("primary_directive") @db.VarChar(100) // PUBLISH_NOW, OPTIMIZE_BEFORE_PUBLISH, RESTRUCTURE_REQUIRED, WAIT_FOR_TIMING_WINDOW
+  overallDecisionScore  Float    @map("overall_decision_score")
+  actionItems           Json     @map("action_items")                       // Array of ActionPlanItem: { actionKey, title, priority, expectedLiftPts, expectedViewGain, confidencePct, impact, executionSteps }
+  optimalPostingWindow  Json     @map("optimal_posting_window")             // { recommendedDay: 'Tuesday', recommendedHourUtc: 18, reason: 'Peak tech engagement' }
+  totalExpectedScoreGain Float   @map("total_expected_score_gain")
+  totalExpectedViewGain Int      @map("total_expected_view_gain")
+  createdAt             DateTime @default(now()) @map("created_at") @db.Timestamptz
+
+  @@index([jobId])
+  @@index([contentRefId])
+  @@map("decision_plan_records")
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+

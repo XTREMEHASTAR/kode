@@ -4,6 +4,7 @@ import { useApp } from '../context/AppContext';
 import { useAuth } from '../context/AuthContext';
 import { ErrorBoundary } from '../components/ErrorBoundary';
 import { FeatureGate } from '../components/guards/FeatureGate';
+import { BrandWordmark } from '../components/common/BrandWordmark';
 import kontagiLogo from '../assets/branding/kontagi-icon-180x180.png';
 
 export const AppShell: React.FC = () => {
@@ -117,7 +118,7 @@ export const AppShell: React.FC = () => {
                   >
                     <img src={kontagiLogo} alt="Kontagi Icon" style={{ width: '22px', height: '22px', objectFit: 'contain' }} />
                   </div>
-                  <span style={{ fontSize: '18px', fontWeight: 900, color: '#FFFFFF', letterSpacing: '0.05em', fontFamily: 'monospace' }}>
+                  <span style={{ fontSize: '20px', fontWeight: 800, color: '#FFFFFF', letterSpacing: '0.02em', fontFamily: "'Genty', 'Genty ExtraBold', sans-serif" }}>
                     KONTAGI
                   </span>
                 </div>

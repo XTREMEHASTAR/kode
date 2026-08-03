@@ -96,6 +96,21 @@ if (process.env.SUPABASE_URL && process.env.SUPABASE_ANON_KEY) {
 // --------------------------------------------------------------------------
 // COMING SOON & PRE-REGISTRATION API ENDPOINTS
 // --------------------------------------------------------------------------
+app.get('/api/public/launch', (req, res) => {
+  const db = getMockDb();
+  const config = db.comingSoonConfig || {};
+  const launchDate = config.launchDate || '2026-08-04T18:30:00Z';
+  const launchEnabled = Boolean(config.launchEnabled ?? false);
+  const maintenance = Boolean(config.maintenanceMode ?? config.maintenance ?? false);
+
+
+  res.json({
+    launchDate,
+    launchEnabled,
+    maintenance
+  });
+});
+
 app.get('/api/coming-soon/config', (req, res) => {
   const db = getMockDb();
   res.json(db.comingSoonConfig || {});
@@ -125,6 +140,7 @@ app.get('/api/coming-soon/registrations', (req, res) => {
   const db = getMockDb();
   res.json(db.waitlistRegistrations || []);
 });
+
 
 // --------------------------------------------------------------------------
 // GOOGLE GEMINI LAYER

@@ -52,7 +52,10 @@ export function createVideoRouter(): Router {
   router.get('/', videoController.list);
   router.get('/:id', videoController.getById);
   router.post('/', upload.single('video'), videoController.create);
+  router.post('/:id', videoController.updateAnalysis);
   router.post('/:id/analysis', videoController.updateAnalysis);
+  router.put('/:id', videoController.updateAnalysis);
+  router.patch('/:id', videoController.updateAnalysis);
   router.delete('/:id', videoController.delete);
 
   return router;

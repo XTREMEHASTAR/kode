@@ -10,7 +10,17 @@ import { errorHandler } from './middleware/errorHandler.js';
 import { rateLimiter } from './middleware/rateLimiter.js';
 
 // Module routers
+import embeddingRoutes from './modules/embedding/embeddingRoutes.js';
+import calibrationRoutes from './modules/simulation/calibrationRoutes.js';
+import benchmarkRoutes from './modules/simulation/benchmarkRoutes.js';
+import scenarioRoutes from './modules/simulation/scenarioRoutes.js';
+import explainabilityRoutes from './modules/simulation/explainabilityRoutes.js';
+import creatorTwinRoutes from './modules/simulation/creatorTwinRoutes.js';
+import modelRegistryRoutes from './modules/simulation/modelRegistryRoutes.js';
+import decisionRoutes from './modules/simulation/decisionRoutes.js';
+import intelligenceOSRoutes from './modules/simulation/intelligenceOSRoutes.js';
 import { createAuthRouter } from './modules/auth/auth.routes.js';
+import simulationRoutes from './modules/simulation/simulationRoutes.js';
 import { createUserRouter } from './modules/user/user.routes.js';
 import { createWorkspaceRouter } from './modules/workspace/workspace.routes.js';
 import { createProjectRouter } from './modules/project/project.routes.js';
@@ -147,19 +157,40 @@ export function createApp(): express.Express {
     });
   });
 
+  function requireFeature(enabled: boolean) {
+    return (_req: express.Request, res: express.Response, next: express.NextFunction) => {
+      if (!enabled) {
+        res.status(404).json({ success: false, message: 'Route not found' });
+        return;
+      }
+      next();
+    };
+  }
+
+  app.use(`${prefix}/v1`, requireFeature(config.ENABLE_SIMULATION), simulationRoutes);
   app.use(`${prefix}/auth`, createAuthRouter());
   app.use(`${prefix}/users`, createUserRouter());
   app.use(`${prefix}/workspaces`, createWorkspaceRouter());
   app.use(`${prefix}/projects`, createProjectRouter());
   app.use(`${prefix}/videos`, createVideoRouter());
   app.use(`${prefix}/upload`, createVideoRouter());
+  app.use(`${prefix}/analysis`, createVideoRouter());
   app.use(`${prefix}/scripts`, createScriptRouter());
   app.use(`${prefix}/ai`, createAiRouter());
   app.use(`${prefix}/subscription`, createSubscriptionRouter());
   app.use(`${prefix}/usage`, createUsageRouter());
-  app.use(`${prefix}/admin`, createAdminRouter());
-  app.use(`${prefix}/auracore`, createAuraCoreRouter());
-  app.use(`${prefix}/auraworld`, createAuraWorldRouter());
+  app.use(`${prefix}/admin`, requireFeature(config.ENABLE_ADMIN), createAdminRouter());
+  app.use(`${prefix}/auracore`, requireFeature(config.ENABLE_PRO), createAuraCoreRouter());
+  app.use(`${prefix}/auraworld`, requireFeature(config.ENABLE_PRO), createAuraWorldRouter());
+  app.use(`${prefix}/embeddings`, requireFeature(config.ENABLE_PRO), embeddingRoutes);
+  app.use(`${prefix}/calibration`, requireFeature(config.ENABLE_SIMULATION), calibrationRoutes);
+  app.use(`${prefix}/benchmarks`, requireFeature(config.ENABLE_PRO), benchmarkRoutes);
+  app.use(`${prefix}/scenarios`, requireFeature(config.ENABLE_SIMULATION), scenarioRoutes);
+  app.use(`${prefix}/explainability`, requireFeature(config.ENABLE_PRO), explainabilityRoutes);
+  app.use(`${prefix}/creator-twin`, requireFeature(config.ENABLE_CREATOR_TWIN), creatorTwinRoutes);
+  app.use(`${prefix}/model-registry`, requireFeature(config.ENABLE_PRO), modelRegistryRoutes);
+  app.use(`${prefix}/decisions`, requireFeature(config.ENABLE_PRO), decisionRoutes);
+  app.use(`${prefix}/intelligence-os`, requireFeature(config.ENABLE_PRO), intelligenceOSRoutes);
 
   // ── Static Files (uploads) ────────────────────
   app.use('/uploads', express.static(config.UPLOAD_DIR));

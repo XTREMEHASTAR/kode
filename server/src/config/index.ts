@@ -93,6 +93,18 @@ const envSchema = z.object({
   // App
   APP_URL: z.string().default('http://localhost:5173'),
   APP_NAME: z.string().default('Kontagi'),
+
+  // Feature Flags (Free Tier Lockdown Defaults)
+  ENABLE_PRO: z.coerce.boolean().default(false),
+  ENABLE_ADMIN: z.coerce.boolean().default(false),
+  ENABLE_ENTERPRISE: z.coerce.boolean().default(false),
+  ENABLE_CREATOR_TWIN: z.coerce.boolean().default(false),
+  ENABLE_SIMULATION: z.coerce.boolean().default(false),
+  ENABLE_BILLING: z.coerce.boolean().default(false),
+  ENABLE_COUNTERFACTUAL: z.coerce.boolean().default(false),
+  ENABLE_OPTIMIZATION: z.coerce.boolean().default(false),
+  ENABLE_REPORTS: z.coerce.boolean().default(false),
+  ENABLE_INTERNAL_DASHBOARD: z.coerce.boolean().default(false),
 });
 
 // ──────────────────────────────────────────────

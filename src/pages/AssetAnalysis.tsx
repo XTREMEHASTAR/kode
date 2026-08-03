@@ -3,6 +3,7 @@ import { useParams, useLocation, useNavigate } from 'react-router-dom';
 import { useApp } from '../context/AppContext';
 import { RecommendationSimulationEngine } from '../services/recommendationSimulationEngine';
 import { CalibratedPredictionEngine } from '../services/calibratedPredictionEngine';
+import { downloadPdfReport, downloadHtmlReport, downloadJsonReport, downloadCsvReport } from '../utils/exportReportHelper';
 
 export const AssetAnalysis: React.FC = () => {
   const { videoId, subPath } = useParams<{ videoId: string; subPath: string }>();
@@ -1292,28 +1293,28 @@ export const AssetAnalysis: React.FC = () => {
         </div>
 
         <div className="grid-12" style={{ gap: '12px' }}>
-          <button className="col-span-3 btn btn-secondary flex-column align-center text-center" style={{ padding: '14px' }} onClick={() => showToast('PDF Report generated cleanly!', 'success')}>
+          <button className="col-span-3 btn btn-secondary flex-column align-center text-center" style={{ padding: '14px' }} onClick={() => { downloadPdfReport(currentVideo); showToast('PDF Report downloaded!', 'success'); }}>
             <span style={{ fontSize: '1.5rem' }}>📄</span>
             <span className="font-bold text-primary block" style={{ marginTop: '4px' }}>Export PDF Report</span>
             <span className="text-micro text-muted">Full 13-Section Audit</span>
           </button>
 
-          <button className="col-span-3 btn btn-secondary flex-column align-center text-center" style={{ padding: '14px' }} onClick={() => showToast('Interactive HTML Bundle exported!', 'success')}>
+          <button className="col-span-3 btn btn-secondary flex-column align-center text-center" style={{ padding: '14px' }} onClick={() => { downloadHtmlReport(currentVideo); showToast('Interactive HTML Report downloaded!', 'success'); }}>
             <span style={{ fontSize: '1.5rem' }}>🌐</span>
             <span className="font-bold text-primary block" style={{ marginTop: '4px' }}>Interactive HTML</span>
             <span className="text-micro text-muted">Self-Contained Dashboard</span>
           </button>
 
-          <button className="col-span-3 btn btn-secondary flex-column align-center text-center" style={{ padding: '14px' }} onClick={() => showToast('Presentation Mode launched!', 'info')}>
-            <span style={{ fontSize: '1.5rem' }}>🖥️</span>
-            <span className="font-bold text-primary block" style={{ marginTop: '4px' }}>Presentation Deck</span>
-            <span className="text-micro text-muted">Fullscreen Creator View</span>
+          <button className="col-span-3 btn btn-secondary flex-column align-center text-center" style={{ padding: '14px' }} onClick={() => { downloadJsonReport(currentVideo); showToast('JSON Intelligence Data downloaded!', 'success'); }}>
+            <span style={{ fontSize: '1.5rem' }}>📊</span>
+            <span className="font-bold text-primary block" style={{ marginTop: '4px' }}>Export JSON Data</span>
+            <span className="text-micro text-muted">Raw Intelligence Vectors</span>
           </button>
 
-          <button className="col-span-3 btn btn-secondary flex-column align-center text-center" style={{ padding: '14px' }} onClick={() => showToast('Agency White-Label Report ready!', 'success')}>
+          <button className="col-span-3 btn btn-secondary flex-column align-center text-center" style={{ padding: '14px' }} onClick={() => { downloadCsvReport(currentVideo); showToast('CSV Metrics Report downloaded!', 'success'); }}>
             <span style={{ fontSize: '1.5rem' }}>💼</span>
-            <span className="font-bold text-primary block" style={{ marginTop: '4px' }}>Agency White-Label</span>
-            <span className="text-micro text-muted">Unbranded Client Report</span>
+            <span className="font-bold text-primary block" style={{ marginTop: '4px' }}>Export CSV Metrics</span>
+            <span className="text-micro text-muted">Spreadsheet Metrics Matrix</span>
           </button>
         </div>
       </div>

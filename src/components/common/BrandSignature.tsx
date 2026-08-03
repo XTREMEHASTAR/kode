@@ -1,4 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react';
+import { BrandWordmark } from './BrandWordmark';
 
 export const DEFAULT_BRAND_WORDS = [
   "Analyze",
@@ -151,7 +152,7 @@ export const BrandSignature: React.FC<BrandSignatureProps> = ({
     <div
       className={`brand-signature-root inline-flex items-baseline select-none whitespace-nowrap ${className}`}
       style={{
-        fontFamily: 'Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        fontFamily: "'Genty', 'Genty ExtraBold', 'Satoshi', system-ui, -apple-system, sans-serif",
         lineHeight: 1,
         display: 'inline-flex',
         alignItems: 'baseline'
@@ -163,15 +164,16 @@ export const BrandSignature: React.FC<BrandSignatureProps> = ({
         className="brand-signature-prefix flex-shrink-0"
         style={{
           fontSize: typography.prefixSize,
-          fontWeight: 900,
-          letterSpacing: '-0.03em',
+          fontWeight: 800,
+          fontFamily: "'Genty', 'Genty ExtraBold', 'Satoshi', sans-serif",
+          letterSpacing: '-0.02em',
           color: prefixColor,
           marginRight: '0.12em',
           display: 'inline-block'
         }}
       >
         {prefix}
-        <span style={{ color: wordColor, fontWeight: 900 }}>{period}</span>
+        <span style={{ color: wordColor, fontWeight: 800, fontFamily: "'Genty', 'Genty ExtraBold', 'Satoshi', sans-serif" }}>{period}</span>
       </span>
 
       {/* ANIMATED WORD CONTAINER SLOT */}
@@ -192,6 +194,7 @@ export const BrandSignature: React.FC<BrandSignatureProps> = ({
           style={{
             color: wordColor,
             fontWeight: typography.wordWeight,
+            fontFamily: "'Genty', 'Genty ExtraBold', 'Satoshi', sans-serif",
             letterSpacing: '0.02em',
             textShadow: showGlow ? `0 0 16px ${wordColor}35` : 'none',
             transformOrigin: 'left center',

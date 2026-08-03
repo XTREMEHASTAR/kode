@@ -27,15 +27,16 @@ export function authenticate(req: Request, _res: Response, next: NextFunction): 
       } catch (jwtError: any) {
         logger.debug(
           { requestId, path: req.path, jwtError: jwtError?.message, fallbackUserId },
-          'JWT verification failed — checking x-user-id fallback',
+          'JWT verification failed — rejecting unauthenticated request',
         );
+        throw new UnauthorizedError(jwtError?.message || 'Invalid or expired token');
       }
     }
 
-    // Fallback: Check x-user-id header attached by client session (development only)
-    if (fallbackUserId && !isProd) {
+    // Fallback: Check x-user-id header attached by client session or default dev fallback (development only)
+    if (!isProd) {
       req.user = {
-        userId: fallbackUserId,
+        userId: fallbackUserId || '00000000-0000-0000-0000-000000000000',
         role: 'USER',
       };
       return next();

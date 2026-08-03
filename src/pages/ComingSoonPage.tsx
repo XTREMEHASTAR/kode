@@ -4,10 +4,20 @@ import {
   ComingSoonService,
   ComingSoonConfig
 } from '../services/comingSoonService';
+import { LaunchService, PublicLaunchConfig } from '../services/launchService';
 import { CountdownTimer } from '../components/common/CountdownTimer';
 import { PreRegisterForm } from '../components/common/PreRegisterForm';
+import { WaitlistModal } from '../components/common/WaitlistModal';
+import { LegalModal } from '../components/common/LegalModal';
 import { SecretLabEasterEggModal } from '../components/common/SecretLabEasterEggModal';
+
+
+import { WaitlistCommunityFeed } from '../components/common/WaitlistCommunityFeed';
+import { PremiumFooter } from '../components/common/PremiumFooter';
 import { BrandSignature } from '../components/common/BrandSignature';
+
+
+import { BrandWordmark } from '../components/common/BrandWordmark';
 import { AppLoader, PageReveal } from '../components/common/AppLoader';
 import kontagiLogo from '../assets/branding/kontagi-icon-180x180.png';
 
@@ -24,6 +34,8 @@ export const ComingSoonPage: React.FC<ComingSoonPageProps> = ({
 }) => {
   const navigate = useNavigate();
   const [config, setConfig] = useState<ComingSoonConfig>(ComingSoonService.getConfig());
+  const [launchConfig, setLaunchConfig] = useState<PublicLaunchConfig | null>(null);
+  const [isLaunchMode, setIsLaunchMode] = useState<boolean>(false);
   const [headline, setHeadline] = useState<string>('');
   const [, setAiQuote] = useState<string>('');
   const [orbClickCount, setOrbClickCount] = useState<number>(0);
@@ -37,19 +49,83 @@ export const ComingSoonPage: React.FC<ComingSoonPageProps> = ({
 
   // Pre-Registration Modal state (Triggers on clock click)
   const [isPreRegisterOpen, setIsPreRegisterOpen] = useState(false);
+  const [legalModalState, setLegalModalState] = useState<{ isOpen: boolean; tab: 'privacy' | 'terms' | 'contact' }>({
+    isOpen: false,
+    tab: 'terms'
+  });
 
-  // Idle Timer notification state
+
+  // Idle Toast Notification state with dismiss animation
   const [idleNotification, setIdleNotification] = useState<string | null>(null);
+  const [toastExiting, setToastExiting] = useState(false);
 
-  // 1. Initial Load & Remote Config Sync
+  const dismissToast = useCallback(() => {
+    setToastExiting(true);
+    setTimeout(() => {
+      setIdleNotification(null);
+      setToastExiting(false);
+    }, 350);
+  }, []);
+
+  // Auto dismiss toast after 5 seconds
   useEffect(() => {
-    ComingSoonService.fetchRemoteConfig().then((fetched) => setConfig(fetched));
+    if (!idleNotification) return;
+    const dismissTimer = setTimeout(() => {
+      dismissToast();
+    }, 5000);
+
+    return () => clearTimeout(dismissTimer);
+  }, [idleNotification, dismissToast]);
+
+
+  // 0. Force window scroll to top on initial page load and history restoration
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }
+  }, []);
+
+  const handlePreloaderComplete = useCallback(() => {
+    setShowPreloader(false);
+    if (typeof window !== 'undefined') {
+      window.scrollTo(0, 0);
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }
+  }, []);
+
+
+  // 1. Fetch Central UTC Launch Configuration from API Server
+  useEffect(() => {
+    // Fetch public launch date from Central Launch Configuration Service
+    LaunchService.getLaunchConfig().then((pubConfig) => {
+      setLaunchConfig(pubConfig);
+      setConfig((prev) => ({
+        ...prev,
+        launchDate: pubConfig.launchDate
+      }));
+
+      if (pubConfig.launchEnabled || Date.parse(pubConfig.launchDate) <= Date.now()) {
+        setIsLaunchMode(true);
+      }
+    });
+
+    ComingSoonService.fetchRemoteConfig().then((fetched) => {
+      setConfig((prev) => ({
+        ...fetched,
+        launchDate: prev.launchDate || fetched.launchDate
+      }));
+    });
+
 
     // Pick randomized headline if props didn't override
     const initialHeadline = title || ComingSoonService.getRandomQuote();
     setHeadline(initialHeadline);
     setAiQuote(ComingSoonService.getRandomAiResponse());
   }, [title]);
+
 
   // 2. Konami Code Listener (Easter Egg #2)
   useEffect(() => {
@@ -140,10 +216,11 @@ export const ComingSoonPage: React.FC<ComingSoonPageProps> = ({
       {/* ── 0. KONTAGI OS BOOT & PRELOADER EXPERIENTIAL SYSTEM ───────── */}
       {showPreloader && (
         <AppLoader
-          onComplete={() => setShowPreloader(false)}
+          onComplete={handlePreloaderComplete}
           textColor={textColor}
         />
       )}
+
 
       {/* ── STAGGERED PAGE APPLICATION REVEAL ───────────────────────── */}
       <PageReveal isRevealed={!showPreloader}>
@@ -208,16 +285,57 @@ export const ComingSoonPage: React.FC<ComingSoonPageProps> = ({
         >
           {/* ── HERO COUNTDOWN TIMER SHOWCASE ── */}
           <div style={{ margin: '10px auto 36px auto', width: '100%', display: 'flex', justifyContent: 'center' }}>
-            <CountdownTimer
-              targetDate={config?.launchDate || new Date(Date.now() + 14 * 24 * 60 * 60 * 1000).toISOString()}
-              theme={config?.theme || 'off-white'}
-              onClick={() => setIsPreRegisterOpen(true)}
-              onReachZero={() => {
-                setEasterEggType('countdown_zero');
-                setEasterEggOpen(true);
-              }}
-            />
+            {isLaunchMode ? (
+              <div
+                style={{
+                  padding: '24px 40px',
+                  borderRadius: '24px',
+                  backgroundColor: 'rgba(16, 185, 129, 0.15)',
+                  border: '2px solid #10B981',
+                  color: '#10B981',
+                  textAlign: 'center',
+                  boxShadow: '0 10px 30px rgba(16, 185, 129, 0.2)',
+                  animation: 'toastSlideIn 0.4s ease forwards'
+                }}
+              >
+                <span style={{ fontSize: '28px', display: 'block', marginBottom: '8px' }}>🚀</span>
+                <h2 style={{ fontSize: '24px', fontWeight: 900, margin: '0 0 6px 0' }}>WE ARE LIVE!</h2>
+                <p style={{ margin: 0, fontSize: '14px', color: subtextColor }}>
+                  Welcome to Kontagi Neural Simulation Platform. Launch Mode Active Worldwide.
+                </p>
+                <button
+                  onClick={() => navigate('/free-tier')}
+                  style={{
+                    marginTop: '16px',
+                    padding: '12px 28px',
+                    borderRadius: '12px',
+                    backgroundColor: '#10B981',
+                    color: '#FFFFFF',
+                    border: 'none',
+                    fontWeight: 800,
+                    fontSize: '14px',
+                    cursor: 'pointer',
+                    boxShadow: '0 4px 14px rgba(16, 185, 129, 0.4)'
+                  }}
+                >
+                  Enter Platform
+                </button>
+              </div>
+            ) : (
+              <CountdownTimer
+                targetDate={config?.launchDate || '2026-08-04T18:30:00Z'}
+                theme={config?.theme || 'off-white'}
+                onClick={() => setIsPreRegisterOpen(true)}
+                onReachZero={() => {
+                  setIsLaunchMode(true);
+                  setEasterEggType('countdown_zero');
+                  setEasterEggOpen(true);
+                }}
+              />
+            )}
+
           </div>
+
 
           {/* Dynamic Viral Headline */}
           <h1
@@ -249,6 +367,8 @@ export const ComingSoonPage: React.FC<ComingSoonPageProps> = ({
           </p>
         </section>
 
+
+
         {/* ── IDLE NOTIFICATION FLOATING TOAST ────────────────────── */}
         {idleNotification && (
           <div
@@ -267,7 +387,9 @@ export const ComingSoonPage: React.FC<ComingSoonPageProps> = ({
               display: 'flex',
               alignItems: 'center',
               gap: '12px',
-              animation: 'toastSlideIn 0.3s ease forwards'
+              animation: toastExiting
+                ? 'toastSlideOut 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards'
+                : 'toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards'
             }}
           >
             <span style={{ fontSize: '20px' }}>🤖</span>
@@ -275,7 +397,7 @@ export const ComingSoonPage: React.FC<ComingSoonPageProps> = ({
               {idleNotification}
             </div>
             <button
-              onClick={() => setIdleNotification(null)}
+              onClick={dismissToast}
               style={{ background: 'none', border: 'none', color: '#94A3B8', cursor: 'pointer', fontWeight: 'bold' }}
             >
               ✕
@@ -283,59 +405,21 @@ export const ComingSoonPage: React.FC<ComingSoonPageProps> = ({
           </div>
         )}
 
-        {/* ── PRE-REGISTRATION MODAL (TRIGGERS ON CLOCK CLICK) ────────── */}
-        {isPreRegisterOpen && (
-          <div
-            style={{
-              position: 'fixed',
-              inset: 0,
-              zIndex: 99999,
-              backgroundColor: 'rgba(22, 42, 59, 0.45)',
-              backdropFilter: 'blur(12px)',
-              WebkitBackdropFilter: 'blur(12px)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '20px'
-            }}
-            onClick={() => setIsPreRegisterOpen(false)}
-          >
-            <div
-              style={{
-                position: 'relative',
-                width: '100%',
-                maxWidth: '560px',
-                animation: 'toastSlideIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards'
-              }}
-              onClick={(e) => e.stopPropagation()}
-            >
-              <button
-                onClick={() => setIsPreRegisterOpen(false)}
-                style={{
-                  position: 'absolute',
-                  top: '16px',
-                  right: '16px',
-                  zIndex: 10,
-                  width: '32px',
-                  height: '32px',
-                  borderRadius: '50%',
-                  backgroundColor: 'rgba(0, 0, 0, 0.06)',
-                  border: 'none',
-                  fontSize: '16px',
-                  fontWeight: 'bold',
-                  color: '#64748B',
-                  cursor: 'pointer',
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center'
-                }}
-              >
-                ✕
-              </button>
-              <PreRegisterForm theme={config?.theme || 'off-white'} />
-            </div>
-          </div>
-        )}
+
+        {/* ── WAITLIST MODAL ────────────────────────────────────────── */}
+        <WaitlistModal
+          isOpen={isPreRegisterOpen}
+          onClose={() => setIsPreRegisterOpen(false)}
+          theme={config?.theme === 'dark-cyber' ? 'dark-cyber' : 'off-white'}
+        />
+
+        {/* ── LEGAL MODAL ───────────────────────────────────────────── */}
+        <LegalModal
+          isOpen={legalModalState.isOpen}
+          initialTab={legalModalState.tab}
+          onClose={() => setLegalModalState((prev) => ({ ...prev, isOpen: false }))}
+          theme={config?.theme === 'dark-cyber' ? 'dark-cyber' : 'off-white'}
+        />
 
         {/* ── EASTER EGG MODAL ────────────────────────────────────── */}
         <SecretLabEasterEggModal
@@ -344,20 +428,14 @@ export const ComingSoonPage: React.FC<ComingSoonPageProps> = ({
           triggerType={easterEggType}
         />
 
-        {/* ── FOOTER ──────────────────────────────────────────────── */}
-        <footer
-          style={{
-            marginTop: '110px',
-            textAlign: 'center',
-            fontSize: '13px',
-            color: '#64748B',
-            zIndex: 1
-          }}
-        >
-          <p style={{ margin: 0 }}>
-            © {new Date().getFullYear()} Kontagi Inc. All Rights Reserved. • Secret AI Laboratory
-          </p>
-        </footer>
+        {/* ── PREMIUM FOOTER ─────────────────────────────────────────── */}
+        <PremiumFooter
+          theme={config?.theme === 'dark-cyber' ? 'dark-cyber' : 'off-white'}
+          onJoinWaitlistClick={() => setIsPreRegisterOpen(true)}
+          onOpenLegal={(tab) => setLegalModalState({ isOpen: true, tab })}
+        />
+
+
       </PageReveal>
 
       <style>{`
@@ -367,9 +445,15 @@ export const ComingSoonPage: React.FC<ComingSoonPageProps> = ({
         }
 
         @keyframes toastSlideIn {
-          0% { opacity: 0; transform: translateY(20px); }
-          100% { opacity: 1; transform: translateY(0); }
+          0% { opacity: 0; transform: translate3d(0, 24px, 0) scale(0.92); }
+          100% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
         }
+
+        @keyframes toastSlideOut {
+          0% { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
+          100% { opacity: 0; transform: translate3d(0, 24px, 0) scale(0.92); }
+        }
+
       `}</style>
     </div>
   );
